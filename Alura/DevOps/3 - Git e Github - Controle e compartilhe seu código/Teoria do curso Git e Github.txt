@@ -1,6 +1,7 @@
 
 Git e Github: Controle e compartilhe seu código Git e Github: Controle e compartilhe seu código - Teoria do curso -------
 
+Teoria completa do Git: https://git-scm.com/book/pt-br/v2
 
 Aula 1 - O que é Git? -------
 
@@ -31,6 +32,14 @@ Aula 1 - O que é Git? -------
 			Informa que está rodando no Branch Master: On Branch Master...
 			Que não tem nenhum comit ainda: No commits yet...
 			Os arquivos que ainda não estão sendo monitorados: Untracked Files...
+			
+			Informações extras que podem estar juntas com o git status:
+			
+				HEAD: Estado atual do código.
+				
+				Working tree: Local onde os arquivos realmente estão sendo armazenados e editados.
+				
+				index: Local onde o Git armazena o que será commitado, ou seja, o local entre a working tree e o repositório Git em si.
 		
 	
 	Questões -------
@@ -75,5 +84,35 @@ Aula 2 - Iniciando os trabalhos -------
 			
 			A vantagem é que não precisamos de um .gitignore que será comitado junto mostrando a outras pessoas o que estamos ignorando em nosso repositório.
 		
+		git commit -m "Mensagem do commit": Realiza o commit e adiciona a mensagem relacionada ao mesmo.
+		
+			Primeiro commit: nesso@DESKTOP-L8HE2GA MINGW64 ~/Dropbox/Estudos (master)
+								$ git commit -m "Ínicio repositório Estudos"
+								[master (root-commit) 3c36730] Ínicio repositório Estudos
+								1905 files changed, 203360 insertions(+)
+								
+		git rm "arquivo ou diretorio" = Para que este seja ignorado pelo Git não sendo mais monitorado.
+		
+		git log = Mostra o histórico dos commits feitos, hash (Não existem commits com o mesmo hash), branch (Ramo em que o commit se encontra), autor, e-mail configurado, mensagem e data.
+		
+			HEAD = Local onde nos encontramos no nosso código. A informação a frente na seta é qual ramo estamos (No primeiro momento é normal estarmos no ramo denominado "Master).
+		
+			git log --oneline = Visualizar todos os commits resumidos em uma linha cada.
+			
+			git log -p = Visualizar os commits com muito mais informações.
+			
+				Obs: Neste formato as versões anteriores serão exibidas em vermelho e a versão modificada em verde.
+		
+		git config:
+		
+			git config --local = Para alterarmos as configurações locais, ou seja, do projeto atual do Git como nome, email etc.
+			
+			git config --global = Para alterarmos as configurações de qualquer repositório na máquina.
+			
+				git config --"local ou global" user.name "Nome Sobrenome" = Altera o nome do autor nas configurações do Git.
+				
+				git config --"local ou global" user.email "Email" = Altera o email nas configurações do Git.
+				
+				
 	
 	Questões:
