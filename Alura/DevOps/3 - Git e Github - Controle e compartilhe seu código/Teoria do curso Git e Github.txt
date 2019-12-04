@@ -3,6 +3,16 @@ Git e Github: Controle e compartilhe seu código Git e Github: Controle e compar
 
 Teoria completa do Git: https://git-scm.com/book/pt-br/v2
 
+Comandos que podem deixar o git bash mais rápido no Windows:
+
+	git config core.preloadindex true: Faz operações do sistema de arquivos em paralelo para ocultar a latência (atualização: ativada por padrão no Git 2.1)
+	
+	git config core.fscache true: Corrige problemas do UAC para que você não precise executar o Git como administrador (atualização: ativada por padrão no Git para Windows 2.8)
+	
+	git config --global gc.auto 256: Minimiza o número de arquivos em .git /
+	
+	git config --global status.submoduleSummary false: Se o git status demora, esta opção sendo definida, o comando é imediato.
+
 Aula 1 - O que é Git? -------
 
 	Teoria -------
@@ -83,6 +93,10 @@ Aula 2 - Iniciando os trabalhos -------
 			Adicione toda pasta ou arquivo que deseja que seja ignorado sem utilizar barra no ínicio (Isto se quiser que todos os arquivos com este nome ou extensão em todas as pastas no repositório sejam afetados).
 			
 			A vantagem é que não precisamos de um .gitignore que será comitado junto mostrando a outras pessoas o que estamos ignorando em nosso repositório.
+			
+				Obs: Caso já tenha adicionado alguma pasta que não deve ser compartilhada antes de configurar o arquivo exclude, será necessário remove-la via linha de comando...
+				
+					git rm --cached -r /."diretorio"
 		
 		git commit -m "Mensagem do commit": Realiza o commit e adiciona a mensagem relacionada ao mesmo.
 		
@@ -102,6 +116,22 @@ Aula 2 - Iniciando os trabalhos -------
 			git log -p = Visualizar os commits com muito mais informações.
 			
 				Obs: Neste formato as versões anteriores serão exibidas em vermelho e a versão modificada em verde.
+				
+			git log --pretty="format:%h %s" = Formatos específicos:
+			
+				h = Hash resumido.
+				
+				s = Mensagem completa.
+				
+				H = Hash completo.
+				
+				S = Mensagem resumida.
+				
+				ae = email.
+				
+					Podemos encontrar mais formatos para exibição de informações do git log no git log cheatsheet: https://devhints.io/git-log em https://devhints.io/git-log-format
+					
+				git log --help = Ver algumas opções possíveis para o comando git log.
 		
 		git config:
 		
@@ -116,3 +146,13 @@ Aula 2 - Iniciando os trabalhos -------
 				
 	
 	Questões:
+	
+		1 - Para que o Git saiba quem está realizando as alterações, ele precisa de algumas configurações. Na primeira vez que você tentar realizar um commit em uma máquina, ele pedirá que você o configure.
+
+		Como podemos definir o nome da pessoa que executa commits no repositório local atual?
+
+		Selecione uma alternativa
+		
+		R: git config --local user.name "Nome da pessoa"
+
+		Alternativa correta! Assim todos os commits executados neste repositório serão atribuídos à pessoa com nome Nome da pessoa. Para mais detalhes e outras configurações possíveis (até algumas mais avançadas), você pode conferir este link: https://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration.
