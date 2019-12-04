@@ -1,0 +1,5 @@
+INDEX VERSION 1.131+C:\Users\marlon.narcizo\Dropbox\Atividades Alura\Java\Java I - Primeiros Passos\.metadata\.plugins\org.eclipse.jdt.core
+428614973.index
+3349626540.index
+2669922798.index
+491024986.index

@@ -1,0 +1,1 @@
+We have a couple more places in zombiehelper.sol where we need to implement our new modifier ownerOf.

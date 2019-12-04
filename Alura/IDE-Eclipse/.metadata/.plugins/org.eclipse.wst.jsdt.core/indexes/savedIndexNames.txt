@@ -1,0 +1,5 @@
+INDEX VERSION 1.4+C:\Users\nesso\Dropbox\Atividades Alura\IDE-Eclipse\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+2276523708.index
+3978173081.index
+3790593844.index
+2724898080.index

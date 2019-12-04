@@ -1,0 +1,605 @@
+Bem vindo ao IntelliJ IDEA 2019.1.3!
+Você pode se familiarizar rapidamente com os principais recursos do IDE lendo essas dicas. Você pode experimentar os recursos descritos nas dicas enquanto esta caixa de diálogo permanece aberta na tela. Se você fechar a caixa de diálogo, poderá sempre voltar a ela a partir do item de menu Help | Tip of the Day.
+
+Alt + Insert (Na aba project) = Novo arquivo/pasta. 
+
+Alt + Insert (Dentro do editor) = Gerador de código...Getter and Setter, Constructor etc.
+
+Alt + Insert (Em Live template) = Da a opção de criar um novo Live Template ou Template Group.
+
+psvm ou main = Método main.
+
+sout = System.out.println().
+
+Ctrl + Alt + L = Identar o código.
+
+Alt + 1 (Números parte superior do teclado) = Ocultar a View/Navegar no projeto.
+
+Alt + Shift + Insert = No editor deixa o pipe em coluna para que possamos definir, por exemplo, o encapsulamento "private" para todos os atributos.
+
+Alt + Shift + Seta Cima ou Seta Baixo = Manipula a linha inteira na qual o pipe está.
+
+File > Settings > Keymap = Mapa de todos os atalhos definidos.
+
+Help > Keymap Reference = PDF com todos os atalhos default do IntelliJ, para Windows, Linux e Mac. 
+
+Ctrl + Shift + F10 = Executar uma classe e "Shift + F10" após já ter indexado a classe como executável.
+
+Alt + F7 = Encontrar classes, métodos ou variáveis em todo o projeto selecionado um nome e apertando o comando após.
+
+Ctrl + Q = Ver rapidamente documentação com termo selecionado.
+
+Ctrl + "Click do Mouse" ou Ctrl + B = Navegar até a declaração do método.
+
+Ctrl + F12 = Navegar no arquivo atual editado. Irá mostrar a lista de membros da classe atual. Selecione um elemento para onde você quer navegar e precione "Enter" ou "F4".
+
+Shift + F6 = Refatorar/Renomear todas as ocorrências de determinado termo.
+
+Ctrl + O = Sobreescrever métodos.
+
+Ctrl + I = Implementar métodos da interface que a classe atual implementa.
+
+Ctrl + Shift + Espaço = Sujestões para autocompletar (SmartType).
+
+	Obs: Podemos utilizar o SmartType após a palavra chave "new" para instanciarmos um objeto.
+	
+		 Também para realizar casts exemplo: String s = ("Pipe aqui").
+
+Botão do meio do mouse ou Shift + "Click do Mouse" = Fechar uma aba.
+
+Alt + F1 = Selecionar o atual elemento editado.
+
+Shift + Esc = Move o foco para o editor e também esconde a atual ou ultima janela de ferramenta ativa. F12 retorna para a ultima janela de ferramenta ativa.
+
+Ctrl + Alt + T = Adicionar if else, try catch, while etc a algum trecho de código.
+
+	Obs: Podemos customizar o "corpo" do código gerado em "Code" aba "File" - "Settings" e "File and Code Template".
+	
+Ctrl + Alt + B = Para navegar para um método abstrato implementado, posicionando o pipe sobre o local onde é usado ou sobre o nome da declaração.
+
+Ctrl + W = Seleção extendida de todo o escopo do método podendo chegar até mesmo na expressão que chama o mesmo.
+
+Ctrl + Alt + V = Após selecionar determinada expressão para extrairmos uma variável daí.
+
+Ctrl + Shift + / = Para comentarmos completamente o bloco selecionado.
+
+Shift + F1 e View | External Documentation = Sobre um elemento para abrir sua documentação externa.
+
+Ctrl + D = Para duplicar linha ou bloco.
+
+Tab = Navegar entre os elementos de um método.
+
+Ctrl + Espaço = Após inserir o tipo da variável para o IntelliJ sugerir um nome para a mesma.
+	Obs: Quanto utilizar o autocompletar básico (Ctrl + Espaço), digite qualquer caractér que existe em qualquer lugar no identificador.
+		 Use o autocompletar básico para completar palavras no texto e comentar nos arquivos dos varios diferentes tipos.
+		 Todas as palavras do arquivo atual que começarem com o prefixo digitado vão aparecer na lista acima.
+
+Ctrl + P = Entre os parenteses de um método para que o IntelliJ liste os parâmetros válidos.
+
+Ctrl + Shift + Backspace = Levar você de volta ao ultimo local onde você realizou mudanças (Navigate | Last Edit Location).
+
+Ctrl + Shift + F7 = Para destacar os usos de alguma variável no arquivo atual.
+
+	Obs: F3 ou Shift + F3 para navegar através dos locais destacados.
+			Esc para remover os destaques.
+			
+
+Code | Reformat Code = Para reformatar o código de acordo com suas preferências de estilo...File | Setting | Code Style.
+
+Você pode também usar Code | Optimize Imports para automaticamente otimizar seus imports (Remover imports não utilizados etc.)
+Para acessar esta opção, use File | Stettings | Code Style | Imports.
+
+Para ver seu histórico local de mudanças em um arquivo, acione Local History | Show History no menu Context. Você poderá navegar através de diferentes versões de arquivos, veja as diferenças e reverta para qualquer versão anterior.
+
+Use o mesmo item no menu context para ver o histórico das mudanças no diretório. Você nunca vai perder nenhum codigo com esta ferramenta.
+			
+Alt + Q (View | Context Info) = Para ver a declaração do método atual sem que precise rolar o scroll por todo ele.
+
+Ctrl + E (View | Recent Files) = Traz uma lista numa popup dos arquivos visitados recentemente. Esoclha o arquivo que desejar e precione "Enter" para abri-lo.
+
+F2 / Shift + F2 = Para pular entre os erros de sintax destacados.
+
+Ctrl + Alt + Acima / Ctrl + Alt + Abaixo = Para pular entre mensagens de erros de compilação ou procurar resultados de operações.
+
+Para pular alertas, clique direito na barra lateral de validação / barra de marcação e escolha "Go to high priority problems only".
+
+Para abrir sugestões de qualquer template válido e ativo comece a digitar o nome e depois precione Ctrl + J.
+
+Para mostrar o separador de linhas entre os métodos no editor, abra as opções do editor e selecione a checkbox "Show method separators" na página de aparência.
+
+Alt + Acima/Alt + Abaixo = Para se mover rapidamente entre os métodos no editor.
+
+Ctrl + Shift + J = Para juntar duas linhas em uma e remover espaço desnecessário e combinar seu estilo de código.
+
+Refactor | Copy = Criar classe idêntica a selecionada. Isto serve para agilizar o trabalho quando suas classes tem muito em comum.
+
+Ctrl + Shift + V = Para escolher e inserir o conteúdo recente da área de transferência no texto.
+
+Ctrl + H (Navigate | Type Hierarchy) = Para ver a herança da classe selecionada. Você também pode acionar a visão da hierarquia direto do editor para ver a hierarquia da classe atual editada.
+
+Clicando com o botão direito em um breakpoint marker (Na barra à esquerda do texto) aciona o speedmenu onde você pode rapidamente habilitar/desabilitar o breakpoint ou ajustar suas propriedades.
+
+Alt + F8 = Selecionando o texto, Para facilmente avaliar o valor de qualquer expressão enquanto debuga o programa.
+
+	Obs: Você pode precionar um Ctrl + W umas poucas vezes para eficientemente realizar esta operação.
+	
+F6 = Na view project, sobre a classe, utilize a feature move para designar em qual pacote a classe ficará.
+	
+Alt + Enter = Show Intention Action / Opções / Correção / Erros.	
+	
+Ctrl + Shift + A = Find Action.
+
+Ctrl + Shift + F = Find Path (Busca até mesmo textos... "intervalos textuais").
+
+Ctrl + N = Find Class (Se colocar dois pontos após o nome da classe e o número da linha você irá diretamente a linha que quer).
+
+Ctrl + Shift + N = Find Files / Encontrar arquivos.
+
+Ctrl + Alt + Shift + N = Symbols ( Atributos, fields, métodos que podemos encontrar dentro das classes).
+	
+Ctrl + B = Vai até a classe dona do elemento onde o cursor está posicionado. 
+	
+Alt + "Setas" (Dentro do editor) = Navegar através das abas.	
+
+Ctrl + Alt + M = Extração de método.
+	
+Alt + Shift + Seta (Acima/Abaixo) = Move a linha.
+
+Ctrl + Shift + Seta (Acima/Abaixo) = Move a linha dentro do escopo.	
+
+Ctrl + Y = Remove a linha completa sem precisar selecionar ela toda.
+
+Ctrl + Shift + X = Fechar todas as abas exceto a que está sendo utilizada.
+
+Shift, Shift = Procurar em toda IDE (Search Everywhere).
+
+Ctrl + F12 = Mostra a estrutura da classe atual com a possibilidade de navegação entre os elementos.
+
+Ctrl + H = Ver toda a herança.
+
+Alt + Home = Navegar melhor entre os pacotes.
+
+ALt + F7 = Encontrar os usos de determinado elemento (Após encontrar onde o elemento estiver sendo usado, aperte ENTER para ir até ele).
+
+Ctrl + Shift + Alt + T = Refatoração.
+
+Ctrl + Shift + F6 =  Migração de Tipo.
+
+Ctrl + W =  Seleção por progressão.
+
+Alt + Shift + F10 = Menu para execução de alguma classe já indexada.
+
+Ctrl + Shift + F10 = Executar apenas o "contexto" (Classe/Método atual).
+
+Ctrl + / = Comentar trecho de código. Para tirar o comentário, selecione o mesmo trecho e apert "Ctrl" + "/" novamente
+
+Ctrl + Shift + / =  Comentar com /*;
+
+Ctrl + V = Criar variável local depois de ter criado a instância de determinada classe.
+
+Ctrl + Alt + F = Para criar um Atributo.
+
+Ctrl + Shift + F12 = Maximizar tela de edição.
+
+Ctrl + J = Para verificar que tipo de template nativo do Intellij baseado naquele contexto.
+
+	Obs: Podemos encontrar também os templates do Intellij utilizando o atalho "Ctrl + Shift + A" em "Find Action" digitando "Live Templates".
+
+Ctrl + Alt + O = Organizar os imports.
+
+
+
+***** MODO DEBUG *****
+
+
+Alt + Shift + F9 = Debug (Escolher a classe para debugar).
+
+Shift + F9 = Debugar a classe principal.
+
+Alt + F8 = Evaluate Expression - Verifica tudo sobre determinada expressão métodos, variáveis etc - Consegue realizar testes também.
+
+F7 = Step into. Debugando passo a passo (entrando em métodos).
+
+F8 = Step Over. Debugando pulando etapas, médotos, váriaveis sendo instanciadas etc.
+
+Alt + Shift + F7 = Force Step Into. Vai até a classe de nível mais baixo.
+
+Shift + F8 = Step Out. Sai fora do escopo a qualquer momento pulando para a próxima etapa.
+
+Alt + F9 = Run to cursor. Começa a Debugar a partir do local onde o cursor estiver posicionado.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Obs: Temos que sempre nos atentar para os "Verbos" no código, cada verbo representa uma ação, consequentemente cada ação no nosso código, representa um método.
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Arquivo em Markdown é um arquivo geralmente usado para descrever o que o projeto tem, o que ele significa e como pode ser usado, entre outras coisas.
+
+Jars or Directories***
+
+"Temos a classe de testes criada. Caso o IntelliJ apresente erros na classe, será necessário mais algumas configurações.
+
+Usaremos o atalho "Ctrl + Shift + Alt + S" para acessarmos a janela de Project Structure. Agora em "Modules > Dependencies" usaremos o atalho "Alt + Insert" e selecionaremos a opção JARs or directories, selecionando a pasta lib do projeto bytebank"
+
+Caso algum template de if feito por nós não apareça com o atalho "Ctrl + J", utilize o "Ctrl + Alt + T" (Surround with).
+
+
+
+
+	
+****************************************************************************************************************DICAS****************************************************************************************************************
+
+
+
+***** LIVE TEMPLATE *****************************************************************************************************************************************************************************************************************
+
+101 - Se você mudou um Live Template, ele fica azul. Se você quiser retornar ao texto original, clique com o botão direito do mouse em um modelo azul e escolha Restaurar padrões no menu de contexto.
+
+104 - Ao escolher um Live Template de uma lista de sugestões, pressione Ctrl + Q para ver a documentação rápida - para ter certeza de fazer a escolha certa.
+
+142 - Live Templates permitem que você gere muitas construções típicas de código em segundos! 
+Use a tecla Tab para se mover entre os campos do modelo. Veja o File | Settings | Live Templates para mais detalhes. 
+
+146 - Podemos também criar os nossos templates selecionando o trecho de código que utilizamos rotineiramente digitando
+o atalho "Ctrl + Shift + A" "Save as live template".
+
+147 - O IntelliJ possui variáveis nativas para serem utilizadas dentro do seu template como é o caso da $SELECTION$, que diz onde o conteúdo selecionado ficará dentro do template, e da $END$ que diz onde o cursor (Pipe) estará
+após o template ser adicionado.
+
+148 - O padrão que o IntelliJ utiliza nas variáveis nativas é justamente em letras maiúsculas separando palavras com underscore/underline entre $$. Então quando criarmos nossas variáveis para Live Templates utilizamos este padrão.
+
+
+**********************************************************************************************************************************************************************************************************************************
+	
+1 - Para rápida evaliação de qualquer expressão enquanto debuga o programa, segure Alt (Ctrl + Alt + Shift no Linux) e clique nesta expressão para ver seu valor e calculá-lo, chamar o método, etc.
+
+2 - Ctrl + Q (View | Quick Documentation), Ctrl + P (View | Parameter Info), Ctrl + B (Navigate | Declaration) e outros = Podem ser usados não apenas no editor mas também na popup lista de autocompletar códigos.
+
+3 - Quanto utilizar o autocompletar, você pode aceitar a atual seleção destacada na lista em forma de popup com ponto (.), virgula (,) e ponto e virgula (;), espaço e outros caracteres.
+
+
+4 - O nome selecionado é inserido automaticamente no editor, seguido do caractere digitado.
+
+5 - Para ajudar você a aprender o proposito de cada item no menu principal, esta pequena descrição é mostrado na barra de status na parte de baixo da aplicação quando você posicionar o ponteiro do mouse sobre este item.
+
+6 - Para padronizar a procura nas popups "Go to Class, Go to Symbol e Go to File", use * e simbolos de espaço.
+* permanece para qualquer simbolo.
+
+
+7 - Espaço no final significa o fim de um padrão, e a string anterior será considerada não apenas um prefixo, mas um padrão inteiro. A lista dos nomes sugeridos será reduzida de acordo com isto.
+
+
+8 - Quando você invoca a refatoração de movimento (F6) em uma classe aninhada que é declarada estática, você recebe uma opção para torná-la uma classe de nível superior ou movê-la para outra classe.
+
+
+9 - Você pode usar a refatoração Extrair Variável mesmo em instruções incompletas. Basta pressionar Ctrl + Alt + V e escolher a expressão desejada:
+ 
+10 - Para abrir rapidamente qualquer método ou campo específico no editor, pressione Ctrl + Alt + Shift + N (Navegar | Símbolo) e comece a digitar seu nome.
+Escolha o símbolo na lista suspensa exibida.
+ 
+11 - Utilize Alt + Shift + C para rapidamente rever suas recentes mudanças no projeto.
+
+12 - Use o autocompletar básico (Ctrl + Espaço) em HTML, CSS e outros arquivos para completar os nomes dos arquivos de imagem.
+
+13 - Você pode começar a se referir a uma propriedade ou destino da Ant, mesmo que ela ainda não esteja definida. Um recurso de ação de intenção sugere que você crie automaticamente a tag necessária, sem a necessidade de deixar o local de edição atual.
+
+14 - Com um único pressionamento de tecla, você pode aplicar outro estilo de código / esquema de cores ou keymap diretamente do editor. Basta pressionar:
+Ctrl + `(View | Quick Switch Scheme), para especificar o esquema que você deseja alterar.
+
+15 - Use Ctrl + Shift + Enter para completar uma instrução atual, como if, do-while, try-catch, return (ou uma chamada de método) em uma construção sintaticamente correta (por exemplo, adicionar chaves).
+
+16 - Quando estiver em pop-up Go to Class, Go to Symbol ou Go to File, você pode facilitar a pesquisa filtrando a lista de pesquisa com a ajuda dos prefixos "camel words".	
+
+17 - Use Ctrl + Shift + I (View| Quick Definition) para revisar rapidamente a definição ou o conteúdo do símbolo no cursor, sem a necessidade de abri-lo em uma nova guia do editor.
+
+18 - Você pode usar a Conclusão básica (Ctrl + Espaço) em arquivos HTML, CSS e JavaScript, para concluir atributos, parâmetros, tags, seletores etc.
+
+19 - O Edit | Copy Reference pode ser usada para inserir uma referência a um campo / método / classe / arquivo na posição atual no editor.
+
+20 - Por exemplo, vá para a classe JDK java.util.Collections, coloque o cursor dentro do campo EMPTY_MAP e pressione Ctrl + Alt + Shift + C: > Em seguida, retorne ao seu código-fonte e pressione Ctrl + V: 
+Você também pode copiar referências nos diálogos Go to Class / Go to Symbol / Go to File. Basta pressionar Ctrl + C em qualquer elemento na lista de pesquisa.
+
+21 - O Code | Move Statement A ação para cima / para baixo é útil para reorganizar as linhas de código no seu arquivo, por exemplo, para aproximar uma declaração de variável do uso da variável.
+Selecione um fragmento de código e pressione Ctrl + Shift + Acima ou Ctrl + Shift + Abaixo.
+As imagens a seguir mostram uma localização inicial de um fragmento de código e os resultados de mover o fragmento selecionado para cima e para baixo. Quando nada é selecionado no editor, a linha no cursor será movida.
+
+22 - Pressionando Alt + Shift + F10 você pode acessar o menu suspenso Executar / Depurar na barra de ferramentas principal, sem a necessidade de usar o mouse.
+
+23 - O Quick Definition Viewer (Ctrl + Shift + I) também pode ser usado para itens em listas de pesquisa que aparecem nos comandos de conclusão de código e de navegação de classe / arquivo / símbolo.
+
+24 - Você pode usar o autocompletar básico (Ctrl + Espaço) nos literais Java String e em outros tipos de arquivo, para concluir as chaves .properties.
+
+25 - Você pode rever rapidamente todos os estilos atualmente aplicados a uma tag HTML, clicando com o botão direito do mouse no nome da tag e selecionando Show Applied Styles For Tag no menu de contexto:
+
+26 - Você pode visualizar rapidamente a imagem referenciada no cursor usando a Quick Definition (Ctrl + Shift + I). A imagem subjacente será aberta em um pop-up em vez de uma guia separada do editor.
+
+27 - É possível renomear os seletores CSS diretamente do HTML. Posicione o cursor no seletor a ser renomeado e pressione Shift + F6 (Refator | Rename).
+
+28 - A barra de navegação é uma alternativa rápida para a visualização do projeto.
+Use o atalho de teclado Alt + Início para mostrar a barra de navegação e as teclas de seta para localizar os arquivos ou pastas necessários.
+
+29 - A janela da ferramenta Controle de versão mostra todos os arquivos excluídos, modificados e não versionados em uma única visualização. Use o atalho de teclado para mostrar ou ocultar essa janela de ferramenta.
+Na janela da ferramenta Controle de versão, você pode executar todas as ações de controle de versão necessárias: confirmar alterações, gerenciar listas de alterações, colocar recursos sob controle de versão, examinar diferenças e muito mais.
+
+30 - Se você perceber que o IntelliJ IDEA funciona lentamente, considere a possibilidade de reduzir o número de pastas sob proteção antivírus.
+Cada verificação de antivírus no seu projeto consome recursos. Você pode melhorar significativamente o desempenho, se você excluir determinadas pastas da proteção antivírus.
+
+31 - Você pode abrir rapidamente um projeto Maven selecionando um arquivo pom.xml no File | Open Dialog. O projeto Maven correspondente é importado com configurações padrão, sem iniciar o assistente.
+
+32 - Se você não quiser commitar algumas das alterações feitas no repositório, poderá separá-las por um tempo, movendo-as para uma lista de mudanças separada ou colocando-as em uma prateleira. Selecione esse arquivo na guia Local da janela da ferramenta Alterações e, no menu de contexto, escolha Mover para Outra Lista de Mudanças ou Armazenar Alterações.
+
+33 - Você pode abrir rapidamente um projeto do Eclipse selecionando um arquivo .classpath ou .project no File | Open Dialog. O projeto Eclipse correspondente é importado com configurações padrão, sem ativar o assistente.
+
+34 - Você pode trazer para frente a lista de todos os usos de uma classe, método ou variável em todo o projeto e pular rapidamente para o uso selecionado. Para fazer isso, coloque o sinal de intercalação no nome do símbolo ou em seu uso no código e pressione Ctrl + Alt + F7 (Editar | Localizar | Mostrar Usos no menu principal), role a lista e clique no uso desejado.
+
+35 - Para localizar rapidamente um comando de menu ou ação da barra de ferramentas, não é necessário procurar pelos menus. Basta pressionar Ctrl + Shift + A (Help | Find Action on the Main Menu) e começar a digitar o nome da ação. Escolha a ação desejada na lista de sugestões.
+
+36 - O Quickly Find and Run an Inspection, pressione Ctrl + Alt + Shift + I e comece a digitar o nome da inspeção ou seu grupo. Escolha a inspeção desejada na lista de sugestões e, em seguida, especifique o escopo desejado.
+
+37 - Você pode encontrar rapidamente uma configuração que você precisa na caixa de diálogo Settings / Preferences, sem navegar pelas inúmeras opções. Basta digitar alguns caracteres que, na sua opinião, existem na descrição da opção e a lista de configurações será reduzida às correspondentes. Selecione a entrada desejada e veja a configuração que contém os caracteres inseridos destacados:
+
+38 - Você pode criar construções de código usando o completar da instrução. Comece a digitar uma declaração de método ou uma instrução e pressione Ctrl + Shift + Enter após o parêntese de abertura. As chaves são criadas, com o cursor colocado dentro:
+
+39 - Você pode visualizar todos os métodos das interfaces implementadas em uma classe, se você colocar o cursor na palavra-chave implements na declaração de classe, pressione Ctrl + Shift + F7 e selecione a interface desejada na lista.
+
+40 - Ao pesquisar por uma string de texto em um arquivo, use o histórico recente: com o painel de pesquisa já aberto, clique na seta para baixo para exibir a lista de entradas recentes.
+
+41 - Quando você está encontrando texto no arquivo atual (Ctrl + F), não é necessário digitar toda a cadeia de pesquisa: a Conclusão básica de código está disponível no campo de pesquisa. Comece a digitar, pressione Ctrl + Espaço e selecione a string desejada na lista de sugestões.
+
+42 - Para visualizar todos os pontos de saída de um método, coloque o cursor em um deles, por ex. a instrução de retorno e pressione Ctrl + Shift + F7.
+
+43 - Você pode ver todas as instruções dentro do método onde certas exceções podem ser capturadas. Basta colocar o cursor na palavra-chave throws em uma declaração de método, pressione Ctrl + Shift + F7 e selecione a classe de exceção desejada na lista. Isso também funcionará para try-catch.
+
+44 - Quando você pressionar Alt + Enter para invocar uma correção rápida ou ação de intenção, pressione a tecla de seta para a direita para exibir a lista de opções adicionais.
+Dependendo do contexto, você pode optar por desabilitar a inspeção, corrigir todos os problemas, alterar o perfil de inspeção etc.
+
+45 - Ctrl + Clique (no Windows) ou Cmd + Clique (no MacOS) uma guia no editor para navegar para qualquer parte do caminho do arquivo. Selecione o elemento necessário na lista suspensa e o caminho do arquivo correspondente é aberto em um navegador externo (por exemplo, no Explorer, se o seu SO for Windows).
+
+46 - O IntelliJ IDEA permite que você pule do comentário de check-in para um problema no rastreador de tarefas.
+Tudo o que você precisa fazer é definir padrões de navegação de problemas em Settings | Version Control | Issue Navigation Dialog.
+
+47 - O IntelliJ IDEA simplifica seu trabalho com cores em arquivos CSS. As propriedades de cor têm os ícones da cor correspondente na área da calha esquerda do editor.
+Clique nos ícones de cores para escolher a cor desejada no seletor de cores.
+
+48 - O IntelliJ IDEA ajuda a criar casos de teste diretamente da declaração de classe. Com o cursor no nome da classe no editor, pressione Alt + Enter e escolha Criar teste na lista de sugestões.
+
+49 - Você pode facilmente fazer a seleção de colunas arrastando o ponteiro do mouse enquanto mantém a tecla Alt pressionada.
+
+50 - Você não precisa adivinhar qual arquivo index.html você está vendo ...
+Faça as guias do editor e as linhas nas listas de navegação se destacarem usando a página Cores do Arquivo das configurações do projeto.
+
+51 - Se nada for selecionado no editor e você pressionar Ctrl + C, a linha inteira no cursor será copiada para a área de transferência.
+
+52 - Você pode mover qualquer arquivo para uma lista de alterações de sua escolha. Para fazer isso, basta selecionar Mover para outra lista de mudanças no menu de contexto do arquivo na janela da ferramenta Controle de versão.
+
+53 - Mantenha seu código-fonte livre de erros com a ajuda do Spellchecker interno.
+Todos os textos, incluindo comentários, textos e literais, são inspecionados em relação aos dicionários pré-definidos. Todos os erros de digitação são destacados, o que deixa você com a tarefa de escolher a palavra correta, aceitar a ortografia atual ou desabilitar a inspeção.
+Use Alt + Enter para ver a lista de ações disponíveis.
+
+54 - Se você não tiver palavras nos dicionários pré-definidos, você pode criar seus próprios. Um dicionário personalizado é um mero arquivo de texto com uma extensão .dic, com cada palavra começando em uma nova linha.
+Tudo o que você precisa fazer é apontar para os diretórios onde seus dicionários estão armazenados, na caixa de Spelling of the Settings Dialog.
+
+55 - Todos os seus comandos VCS mais indispensáveis ​​estão a apenas um clique de distância ...
+Escolha VCS | VCS Operations Popup no menu principal, e obtenha um popup com os comandos VCS que são relevantes para o contexto atual:
+
+56 - Use o Alternador (Ctrl + Guia) para alternar entre arquivos abertos e janelas de ferramentas. Mantendo o Ctrl pressionado, use as teclas de seta para cima e para baixo, Tab ou Shift + Tab, Alt para navegação; use Excluir ou BackSpace para fechar a guia do editor ou ocultar uma janela de ferramenta.
+
+57 - Você pode facilmente abrir um arquivo externo para edição, basta arrastá-lo do Explorer ou do Finder para o editor.
+
+58 - Existem duas maneiras de fechar todas as guias no editor, exceto a atual:
+Primeiro, clique com o botão direito do mouse na guia do editor e escolha Close Others on the Context Menu.
+Segundo, mantendo a tecla Alt pressionada, clique na aba do editor.
+
+59 - Você pode ir diretamente para qualquer arquivo profundamente enterrado, se você pressionar Ctrl + Shift + N e digitar apenas alguns caracteres dos diretórios e nomes de arquivos incluídos.
+
+60 - Para abrir qualquer classe ou arquivo no editor na linha desejada, pressione Ctrl + Shift + N (Navigate | File), comece a digitar o nome e escolha o da lista de sugestões. Em seguida, digite os dois pontos (:) e um número de linha.
+O arquivo selecionado será aberto com o cursor na linha especificada.
+
+61 - Anotações de controle de versão mostram as últimas alterações de cada linha em um clique.
+Basta clicar com o botão direito do mouse em uma anotação e usar o comando Show Diff no menu de contexto.
+
+62 - Para comparar dois diretórios, selecione um ou ambos na visualização Projeto e pressione Ctrl + D.
+
+63 - Para comparar dois arquivos jar, selecione um ou ambos na visualização Projeto e pressione Ctrl + D.
+
+64 - Se você precisar de mais espaço de trabalho, poderá ocultar as barras da janela de ferramentas: clique no canto inferior esquerdo.
+Se necessário, você pode mostrar os botões da janela da ferramenta apenas por um momento. Para fazer isso, pressione a tecla Alt (para Windows / * nix) ou Command (para Mac) duas vezes e mantenha-a pressionada. Enquanto a tecla é pressionada, os botões da janela da ferramenta ficam visíveis.
+
+65 - Você pode excluir qualquer arquivo do seu projeto. Como resultado, esse arquivo será ignorado pela indexação, inspeção e conclusão de código.
+Na janela da ferramenta Projeto, selecione o arquivo que você deseja ignorar e escolha Marcar como texto simples em seu menu de contexto.
+Se necessário, você sempre pode retornar o arquivo ao seu tipo original usando o comando de menu de contexto Marcar como <tipo de arquivo>.
+
+66 - Ao usar o preenchimento de código básico (Ctrl + Espaço), você não precisa digitar letras maiúsculas nos nomes do CamelHump. É suficiente digitar as letras iniciais dos camel names em letras minúsculas e elas serão inteligentemente reconhecidas.
+
+67 - O atalho de teclado Ctrl + K permite que você invoque rapidamente a caixa de diálogo Commit Changes.
+Esta caixa de diálogo mostra todas as modificações no projeto, fornece informações resumidas sobre o status do arquivo e sugere melhorias antes do check-in.
+
+68 - É muito fácil alternar entre localizar e substituir a funcionalidade.
+Quando você executa a pesquisa e a substitui em um arquivo, pressionar Ctrl + F mostra o painel de pesquisa. Pressionando Ctrl + R adiciona campo, onde você pode digitar a string de substituição.
+Enquanto na caixa de diálogo Localizar no caminho, você pode alternar para substituir pressionando Ctrl + Shift + R. Do mesmo modo, pressione Ctrl + Shift + F para ocultar o campo Substituir por e mude para a mera pesquisa.
+
+69 - Se você estiver trabalhando em um projeto grande, com vários itens TODO, filtre-os por escopos.
+Use a guia Scope-Based na janela da ferramenta TODO para mostrar apenas os itens que pertencem ao escopo de interesse.
+
+70 - A janela da ferramenta TODO permite que você visualize cada um dos itens TODO encontrados - basta clicar no botão de visualização na barra de ferramentas.
+
+71 - Se uma assinatura de método foi alterada, o IntelliJ IDEA destaca as tags que ficaram sem sincronização com o comentário da documentação e sugere uma solução rápida
+
+72 - Ao trabalhar com uma longa lista de tarefas, você não precisa excluí-las uma por uma. Selecione várias tarefas, usando as teclas Shift ou Control / Command, clique na seta para a direita e, em seguida, clique em Remover.
+
+73 - Se houver muitas configurações de execução / depuração do mesmo tipo, você poderá agrupá-las em pastas e, assim, distingui-las visualmente.
+
+74 - Nas configurações dos Modelos dinâmicos, use a pesquisa rápida para encontrar modelos com determinado texto na abreviação do modelo, corpo ou descrição.
+Comece a digitar o texto desejado e a lista de modelos disponíveis diminuirá para mostrar somente os modelos correspondentes:
+
+75 - Você pode evitar fugir de barras invertidas em suas expressões regulares. Comece a digitar uma expressão regular, pressione Alt + Enter e escolha Editar RegExp. A expressão regular é aberta em uma guia separada no editor, onde você pode digitar barras invertidas como está.
+Todas as alterações são sincronizadas com a expressão regular original e as fugas são apresentadas automaticamente. Quando estiver pronto, basta pressionar Escape para fechar o editor de expressões regulares
+
+76 - Acelerar o desenvolvimento de HTML, XML ou CSS com o Emmet.
+Habilite este framework na página correspondente do Editor | Nó Emmet (Configurações / Preferências)
+
+77 - Para ver qual estilo de separador de linha está sendo usado no arquivo atual, olhe para a barra de status.
+
+78 - Você não precisa abrir um arquivo no editor para mudar seu estilo de separador de linha. Use a Project Tool Window em vez disto. Selecione um ou mais arquivos, ou pastas, aponte para Arquivo | Line Separators no menu principal, e então ecolha o estilo final de linha desejado.
+
+79 - Se você colocar o cursos em determinado simbolo e precionar Ctrl + Alt + Shift + T, você vera a lista de refatoração aplicável para determinado contexto.
+
+80 - Você quer que seus favoritos e pontos de interrupção estejam sempre à mão, para que você possa navegar facilmente por eles?
+Eles são visíveis na janela da ferramenta Favorites, que você pode encaixar ou flutuar conforme necessário.
+
+81 - Você pode arrastar um arquivo externo do Explorer ou do Finder e soltá-lo na janela da ferramenta Favoritos.
+
+82 - Ajuste o layout das janelas da ferramenta IntelliJ IDEA para aproveitar melhor sua tela.
+Alterne entre o posicionamento vertical e lado-a-lado das janelas da ferramenta por Ctrl + Click / Cmd + Clique no divisor
+
+83 - Você não precisa deixar o IntelliJ IDEA para trabalhar com seu shell favorito. Basta clicar no botão da janela da ferramenta Terminal e aproveitar o uso do terminal local incorporado.
+
+84 - Para o terminal local incorporado, você pode definir seu shell favorito, o nome da guia padrão e outras configurações. Escolha o File | Settings no menu principal e abra a página Terminal.
+
+85 - Habilite a rolagem horizontal com a roda do mouse segurando a tecla Shift.
+
+86 - O IntelliJ IDEA permite que você pesquise através das classes, arquivos, janelas de ferramentas, ações, configurações e símbolos do seu projeto, pressionando a tecla Shift duas vezes.
+
+87 - Ao usar a autopopup completion de código, você pode selecionar o primeiro item usando Ctrl + .. O nome selecionado é inserido automaticamente no editor seguido de ponto.
+
+88 - Quando uma autopopup completion estiver ativa, Ctrl + Abaixo e Ctrl + Acima a fecharão e moverão o cursor para baixo ou para cima no editor.
+
+89 - Quando na consulta Code Completion, você pode facilitar a pesquisa, filtrando a lista com a ajuda dos prefixos "camel words".
+
+90 - Pressionar o mesmo atalho depois de ter chamado a SmartType Completion quando houver uma matriz do tipo esperado no contexto sugerirá obter um elemento dessa matriz.
+
+91 - Pressionar o mesmo atalho depois de ter chamado a SmartType Completion quando um tipo de coleta é esperado procurará por matrizes com o mesmo tipo de componente e sugerirá convertê-las usando a chamada Arrays.asList ().
+
+92 - Pressionar o mesmo atalho depois de ter chamado a SmartType Completion procurará expressões encadeadas que tenham o tipo esperado.
+
+93 - Ao usar a Code Completion, você pode aceitar a seleção realçada na lista suspensa com Ctrl + Shift + Enter, IntelliJ IDEA não apenas insere a seqüência selecionada, mas também fará o melhor para transformar a construção de código atual em correta sintaticamente ( equilibre parênteses, adicione chaves ausentes e ponto e vírgula, etc.)
+
+94 - Ao usar a Code Completion em Java, você pode aceitar a seleção realçada na lista pop-up com o caractere de exclamação (!). Ele será inserido antes do método booleano ou da variável que você estava concluindo, negando assim toda a expressão.
+
+95 - Para concluir rapidamente uma chamada de método de um método estático localizado em qualquer lugar em seu projeto, bibliotecas ou JDK, insira um prefixo e pressione Ctrl + Espaço duas vezes. Você verá todos os métodos correspondentes. Se você quiser que o método escolhido seja importado estaticamente, pressione Alt + Enter e veja o que acontece.
+
+96 - Quando você invocou a Basic Completion (Ctrl + Espaço) em Java e não encontrou sua classe desejada na lista, isso significa que ela ainda não foi importada no arquivo atual. Pressione Ctrl + Espaço mais uma vez para ver todas as classes acessíveis.
+
+
+97 - Pressionar o mesmo atalho depois de ter chamado a Smart-Type Completion quando um tipo de matriz for esperado procurará coleções com o mesmo tipo de componente e sugerirá convertê-las usando a chamada toArray ().
+
+98 - Você pode alternar entre as variantes de conclusão de classificação por relevância ou por ordem alfabética usando um ícone no canto inferior direito.
+
+99 - A conclusão do código Postfix é aplicada "da direita para a esquerda" e permite evitar saltos de cursor invertidos durante a codificação. Após o fragmento de código que você deseja alterar, digite um ponto (.), Pressione Ctrl + J e selecione a opção desejada.
+
+100 - Os arquivos de rascunho permitem experimentar e criar protótipos diretamente no editor, sem criar nenhum arquivo de projeto.
+Para criar um arquivo de rascunho, pressione Ctrl + Alt + Shift + Insert e, em seguida, selecione seu idioma.
+
+
+102 - Adicione vários cursores ao seu editor. Para fazer isso, pressione Ctrl duas vezes, mantenha a tecla pressionada e pressione as teclas de seta.
+No Mac, use Alt em vez de Ctrl.
+
+103 - Clone o cursor estritamente para cima ou para baixo. Para fazer isso, pressione Ctrl + Shift + A, digite Clone caret e escolha a ação desejada.
+
+
+
+105 - O IntelliJ IDEA possibilita o lançamento do terminal local incorporado usando apenas o teclado. Pressione Alt + F12 e veja o terminal em execução.
+
+106 - Faça suas impressões (File | Print) agradáveis e informativas com a ajuda de palavras-chave.
+Por exemplo, use $ DATE $ e $ TIME $ para especificar a data e a hora exatas da impressão.
+
+107 - Quando em uma pesquisa de conclusão de código, pressione Ctrl + Q para mostrar a documentação de um item de pesquisa, incluindo construtores de classe.
+Assim, se uma classe tiver mais de um construtor, os links serão exibidos.
+
+108 - Você percebeu os botões >> << marcando as diferenças no visualizador Differences?
+Você pode simplesmente aplicar diferenças entre painéis, clicando em um desses botões da divisa.
+Mantenha a tecla Ctrl pressionada e os botões da divisa mudam para """". Clique em um desses botões para anexar o conteúdo do painel atual do visualizador Differences ao outro painel.
+Se você mantiver Shift pressionado, as divisas se transformarão em X. Clique neste botão para reverter as alterações.
+
+109 - Passe o ponteiro do mouse sobre um aviso, faixa de erro ou apenas alguma seção do código-fonte na barra de rolagem fora da caixa de rolagem, e você verá uma lente.
+
+110 - Para selecionar vários fragmentos no "Column Mode", mantenha Control + Alt + Shift (no Windows e Linux) ou Cmd + Alt + Shift (no MAC) e arraste o cursor do mouse.
+
+111 - Você pode facilmente selecionar vários fragmentos de texto. Para fazer isso, basta manter Alt + Shift e arrastar o cursor do mouse.
+
+112 - Para selecionar várias palavras, pressione Alt + Shift, coloque o cursor em cada palavra a ser selecionada e clique duas vezes com o botão esquerdo do mouse.
+
+113 - Você não precisa invocar documentação rápida explicitamente (Ctrl + Q) - se você simplesmente mover o ponteiro do mouse sobre o símbolo desejado, a janela pop-up de documentação rápida será mostrada automaticamente.
+Para ativar esse recurso, marque a caixa de seleção Show Quick Doc on Mouse Move nas configurações do editor.
+
+114 - Para ver todos os arquivos rascunho disponíveis, escolha Scratches view na janela da ferramenta Project.
+
+115 - Você sabia que é possível copiar rich text?
+Certifique-se de que a caixa de seleção Copiar rich text por padrão na página Geral das configurações / preferências do Editor esteja seleciona
+
+116 - Você sabia que pode remover apenas os botões da janela de ferramentas dos quais você não precisa atualmente?
+É muito fácil de fazer - basta clicar com o botão direito do mouse no botão que você deseja ocultar e, no menu de contexto, selecionar Remove From Sidebar.
+
+117 - Para abrir rapidamente qualquer arquivo em particular no editor, pressione Ctrl + Shift + N (Navigate | File) e comece a digitar seu nome.
+Escolha o símbolo na lista suspensa exibida.
+
+118 - Ctrl + Y no editor exclui a linha inteira no cursor.
+
+119 - Pressionar Alt + / ajuda a completar palavras no escopo visível - assim, os protótipos são destacados.
+
+120 - Lembre-se de que você pode mover os parâmetros do método na declaração e na invocação. Para fazer isso, use Ctrl + Alt + Shift + Esquerda / Ctrl + Alt + Shift + Direita.
+Além disso, é possível propagar tal movimento em uma declaração de método para as invocações de método - imediatamente após mover pressione Alt + Enter e escolha Apply Signature Change.
+
+121 - Use Analyze | inspect Code para executar análise de código para todo o projeto ou um escopo personalizado e examinar os resultados em uma exibição amigável
+
+122 - Uma variante especial do recurso de Complementação de Código, chamada pressionando Ctrl + Espaço duas vezes, permite que você preencha nomes de tags XML de namespaces não declarados no arquivo atual. Se o namespace não for declarado, a declaração será gerada automaticamente.
+
+123 - Consulte uma tag de destino inexistente em seu "Ant Build File" e o IntelliJ IDEA sugerirá que você crie automaticamente a tag correspondente. 
+Essa ação de intenção não fará nem mesmo você alterar seu local de edição atual.
+
+124 - Você pode injetar SQL em uma string literal (Alt + Enter | Inject language ou reference | <SQL dialect>) e, em seguida, usar a ajuda de codificação para SQL.
+
+125 - Kotlin é uma linguagem poderosa, concisa e expressiva criada pela JetBrains.
+O IntelliJ IDEA está pronto para o uso da mesma.
+Para criar um arquivo Kotlin, clique com o botão direito do mouse na pasta de destino e escolha a opção correspondente no menu Novo:
+Essa ação de intenção não fará nem mesmo você alterar seu local de edição atual.
+
+126 - O IntelliJ IDEA fornece dois tipos de projetos Kotlin: Kotlin (JVM) e Kotlin (JavaScript).
+
+127 - O IntelliJ IDEA permite que você chame facilmente um código Java do Kotlin.
+
+128 - É fácil converter qualquer classe Java no Kotlin com a mesma semântica.
+Para fazer isso, basta escolher Code | Convert Java File to Kotlin File no menu principal.
+
+129 - Para abrir qualquer classe no editor rapidamente, pressione Ctrl + N (Navigate | Class) e comece a digitar o nome da classe. Escolha a class de uma lista suspensa exibida.
+
+130 - O recurso de Code Completion permite que você complete rapidamente diferentes tipos de instruções no código. Por exemplo, comece a digitar um nome de classe e pressione Ctrl + Espaço para concluí-lo. Quando várias opções estão disponíveis, elas são mostradas na lista de pesquisa.
+
+131 - Você pode encontrar rapidamente todos os lugares onde uma determinada classe, método ou variável é usada em todo o projeto, posicionando o cursor no nome do símbolo ou em seu uso no código e pressionando Alt + F7 (Edit| Find | Find Usages no menu popup) ).
+
+132 - Para ver rapidamente a documentação de uma classe ou método no cursor, pressione Ctrl + Q (View | Quick Documentation).
+
+133 - Para navegar até a declaração de uma classe, método ou variável usada em algum lugar no código, posicione o cursor no uso e pressione Ctrl + B (Navigate | Declaration). Você também pode clicar no mouse nos usos com a tecla Ctrl pressionada para pular para as declarações.
+
+134 - Você pode navegar rapidamente no arquivo atualmente editado com Ctrl + F12 (Navigate | File Structure).
+Mostra a lista de membros da classe atual. Selecione um elemento para o qual você deseja navegar e pressione a tecla Enter ou a tecla F4.
+Para localizar facilmente um item na lista, comece a digitar seu nome.
+
+135 - Você pode facilmente renomear suas classes, métodos e variáveis ​​com correção automática de todos os lugares onde eles são usados.
+Para experimentá-lo, coloque o cursor no símbolo que deseja renomear e pressione Shift + F6 (Refator | Rename). Digite o novo nome na janela pop-up exibida ou selecione um dos nomes sugeridos e pressione Enter.
+
+136 - Você pode facilmente substituir métodos da classe base pressionando Ctrl + O (Code | Override Methods).
+Para implementar métodos das interfaces que a classe atual implementa (ou da classe base abstrata), use Ctrl + I (Code | Implement methods).
+
+137 - O preenchimento de código SmartType ajuda muito a encontrar métodos e variáveis ​​adequados no contexto atual, analisando o tipo esperado de toda a expressão. Assim, o IntelliJ IDEA identifica os cinco principais resultados mais adequados e os destaca no plano de fundo azul. Por exemplo, digite.
+O SmartType Completion também funciona após a palavra-chave de retorno, em uma atribuição, em uma lista de argumentos de uma chamada de método e outros locais.
+
+138 - Ao usar a Conclusão de código, você pode aceitar a seleção realçada na lista suspensa com a tecla Guia.
+Ao contrário de aceitar com a tecla Enter, o nome selecionado sobrescreve o resto do nome à direita do cursor. Isso pode ser especialmente útil para substituir um método ou nome de variável por outro.
+
+139 - Você sabia que pode fechar as guias no editor e nas janelas de ferramentas do IntelliJ IDEA sem realmente usar os comandos do menu de contexto? Basta apontar o cursor do mouse para uma guia a ser fechada e clicar no botão do meio do mouse ou apenas usar a combinação Shift + clique.
+
+140 - A Speed Search está disponível em todas as visualizações em árvore: basta começar a digitar e você localizará rapidamente o item necessário.
+
+141 - Quando você quiser capturar exceções lançadas por algum fragmento de código, selecione-o no editor, pressione Ctrl + Alt + T (Code | Surround With) e escolha try / catch. Os blocos catch para todas as exceções lançadas dentro do bloco serão gerados automaticamente.
+Você pode personalizar os corpos dos blocos catch gerados na guia Code de File | Settings | File and Code Templates.
+Use outros itens na lista para envolver outras construções.
+
+
+
+143 - O recurso CodeCompletion pode sugerir um nome para uma variável quando você a declara. Por exemplo, comece a digitar
+private FileOutputStream
+e pressione Ctrl + Espaço.
+
+144 - Você pode personalizar os prefixos de nomes para variáveis ​​locais, parâmetros, instâncias e campos estáticos em File | Settings | Code Style.
+
+145 - Para fazer cópia de uma classe basta deixar o pipe sobre o nome dela e apertar F5.

@@ -1,0 +1,77 @@
+ class Funcionario{
+	protected String nome;
+	protected String cpf;
+	protected Double salario;
+	
+	public String getNome(){
+		return this.nome;
+	}
+	
+	public void setNome(String nome){
+		this.nome = nome;
+	}
+	
+	public String getCpf(){
+		return this.cpf;
+	}
+	
+	public void setCpf(String cpf){
+		this.cpf = cpf;
+	}
+	
+	public Double getSalario(){
+		return this.salario;
+	}
+	
+	public void setSalario(Double salario){
+		this.salario = salario;
+	}
+	
+	public double getBonificacao(){
+		return this.salario * 0.10;
+	}
+	
+ }
+ 
+ class Gerente extends Funcionario{
+	 private int senha;
+	 private int numeroDeFuncionariosGerenciados;
+	 
+	 public boolean autentica(int senha){
+		if(this.senha == senha){
+			System.out.println("Acesso Permitido!");
+			return true;
+		} else {
+			System.out.println("Acesso Negado!");
+			return false;
+		}
+	 }
+	 
+	 public int getSenha(){
+		 return this.senha;
+	 }
+	 
+	 public void setSenha(int senha){
+		 this.senha = senha;
+	 }
+	 
+	 public double getBonificacao(){
+		 return this.salario * 0.15;
+	 }
+ }
+ 
+ class Testa{
+	 public static void main(String []args){
+		 Gerente gerente = new Gerente();
+		 
+		 //Podemos chamar os métodos do Funcionário.
+		 gerente.setNome("JoÃ£o da Silva");
+		 
+		 //E também os métodos do Gerente.
+		 gerente.setSenha(1234);
+		 
+		 gerente.setSalario(5000.0);
+		 
+		 System.out.println(gerente.getBonificacao());
+	 }
+ }

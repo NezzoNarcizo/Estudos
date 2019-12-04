@@ -1,0 +1,589 @@
+Teoria do curso - Tópicos
+
+	- Descobrir quais são os processos que estão sendo executados em nossa máquina e como finalizar tais processos;
+	- Executar programas no background ou no foreground;
+	- Configurar programas para ter permissão de execução;
+	- Procurar arquivos no Sistema Operacional;
+	- Gerenciar novos usuários;
+	- Configurar as permissões de acesso aos arquivos;
+	- Configurar variáveis de ambiente;
+	- Instalar novos programas do zero;
+	- Inicializar e parar serviços que rodam junto com o início da máquina;
+	- Compilar e instalar um programa do zero a partir de seu código fonte;
+	- Fazer o acesso remoto às máquinas que rodam Linux;
+
+
+
+
+
+
+Aula 1 - Kill, ps e grep -------
+
+	Comandos:
+	
+		ps = Verificar quais processos estão sendo executados no momento (Somente processos do bash (Terminal)).
+			
+			ps -e = Verificar todos os processos em todo o sistema.
+			
+			ps -ef = Mostra maiores detalhes sobre os processos.
+			
+			ps -ef | grep "Nome do programa" = Filtra um programa específico para que possamos ler apenas seus detalhes.
+			
+			Obs: grep é um filtro de dados, | (Pipe) é um redirecionador de saídas de programas para programas,  
+			
+			Também podemos utilizá-lo para pesquisarmos linhas com palavras específicas...
+				Ex: grep "termo" "arquivo.txt" ou cat "arquivo.txt" | grep "termo"
+			
+		kill + "id" = "Mata" o processo com o identificador informado, porém da uma chance para ele se recuperar.
+			
+			Obs: Alguns programas tentam se recuperar pois o "Kill" é o fechamento de programas de forma não convencional.
+			
+			Kill -9 + "id" = O modificador -9 não da chance para que o programa se recupere fechando o mesmo de uma vez.
+			
+			Obs: Podemos também interromper a execução de um processo e depois continuá-la utilizando sinais como o STOP e CONT.
+			
+				kill STOP "id" = Interrompe a execução do programa com o identificador informado.
+				
+				kill CONT "id" = Continua a execução do programa interrompido anteriormente.
+				
+				O sinal TERM serve para que o programa termine tarefas antes de fechar.
+					Obs: Este sinal é executado por padrão quando executamos o comando kill sem parâmetro nenhum.
+					
+					Ex: kill "id" (De forma implícita o sinal TERM está sendo enviado).
+				
+				
+			
+	Questões Aula 1:
+	
+		1 - Vimos que quando abrimos um programa ele será executado pelo nosso processador. Quando invocamos um programa, um processo será criado. Basicamente, um processo é um programa em execução. Como podemos listar os processos que estão em execução no bash atual? 
+		
+		Selecione uma alternativa:
+		 
+		R: ps
+		
+		
+		2 - O comando ps lista apenas os processos que foram iniciados a partir do terminal em que estamos. Como fazemos para obter a lista com todos os processos do sistema com informações completas, como por exemplo, a hora em que o processo foi criado?
+
+		Selecione uma alternativa
+		
+		R: ps -ef
+
+
+		3 - Como podemos fazer para imprimir, no terminal, as linhas que contêm o termo "Larry Page and Sergey Brin" no nosso arquivo google.txt, que está no diretório workspace?
+
+		Selecione uma alternativa
+		
+		R: $ cat google.txt | grep "Larry Page and Sergey Brin"
+		
+		
+	
+Aula 2 - Killall, top -------
+
+	Comandos:
+	
+		top = Mostra a situação dos processos, do processador e da memória, além de outras informações em uma única tela.
+			
+			Obs: A ordem dos processos é apresentada de acordo com o uso do CPU.
+			
+			ps -ef | grep top = Veremos uma listagem apenas dos processos que estão utilizando o comando top.
+			
+				Obs: Poderíamos trocar top por qualquer outro programa/processo.
+			
+			Após vermos quais são os ids dos programas que estão utilizando o comando top, poderíamos fechar todos da seguinte maneira...
+			
+			kill -9 "id" "id" ou killall top = Que fecha automaticamente todos os processos "top" sem precisar ficar digitando o id de cada um.
+			
+			killall -9 top = Forçaria o fechamento de uma vez dos processos "top"
+			
+			Obs: Basicamente a diferença entre o ps e o top é que o top está constantemente atualizando informações. Além de apresentar informações importantes como o uso do CPU e memória.
+			
+			top -u "usuário" = Mostra dados sobre usuário informado.
+			
+			Podemos combinar os comandos...
+				$ ps -e | grep firefox = Pegar apenas informações do programa ou processo desejado e depois:
+					$ top -p "id" = Teremos apenas o processo do identificador informado exibindo informações.
+
+
+
+			Obs: O delay de atualização das informações do comando top é de três segundos, para que possamos alterar este delay apertamos "d" enquanto o comando top estiver sendo executado, e então informamos na frente da frase "Change delay from 3,0 to..." o tempo em segundos que desejamos configurar.
+			
+			Caso queira mais comandos para combinar com a função top, lembre-se do man...
+			
+				Ex: man top
+				
+			
+			
+	Questão Aula 2:
+		
+		1 - Imagine que estamos executando o comando top ao mesmo tempo em mais de uma aba do terminal. Como fazer para matar todos os processos criados devido às execuções do comando top, utilizando o nome do comando no lugar do PID?
+
+		Selecione uma alternativa
+
+		R: killall top ou killall -9 top
+		
+
+		
+Aula 3 - Jobs, bg, fg, pstree, & -------
+
+		
+	Comandos: 
+		
+		/etc/firefox/firefox-bin = Na minha máquina virtual Kali no WSL para abrir o firefox
+			
+			Obs: Normalmente no linux abrimos os programas digitando apenas seu nome no terminal.
+				Se abrirmos o programa através do terminal, este ficará travado pois os programa estará rodando em fg (foreground)
+				
+		pstree = Serve para que possamos ver a árvore de todos os nossos processos (Ver quais processos estão rodando dentro de qual processo).
+				
+			Obs: Se caso tenha usado o primeiro terminal para abrir um programa e o mesmo estiver travado, podemos abrir um segundo terminal e executar 	este comando para verificar em que lugar da "tree" nosso processo está.
+				
+			Dos processos que estão rodando através do terminal...
+			
+				CTRL + Z = Para o processo temporariamente.
+				
+				CTRL + C = "Mata" o processo de uma vez.
+			
+			jobs = Verifica o status atual dos processos que estão rodando no terminal.
+			
+				Para mandar um processo para o bg (background) utilizamos o comando:
+					bg + "id" (Desta vez aquele fornecido pelo comando jobs)
+						Assim destravamos o bash...
+						
+				Para trazer de volta para o foreground utilizamos o comando:
+					fg + "id" do programa que antes estava no background
+					
+			Podemos abrir um programa pelo terminal mandando direto para o background com "nome do programa" + "&"
+				Ex: gedit $
+				
+				Desta forma já ficaos com o terminal livre sem precisar realizar mais nenhum comando.
+				
+		
+	Questões Aula 3: 
+		
+		1 - No Linux, um processo pode criar outros processos, mantendo assim uma hierarquia, onde cada processo pode dar origem a novos processos. Qual comando podemos utilizar para conseguir visualizar essa árvore de processos?
+
+		Selecione uma alternativa
+			
+		R: pstree
+			
+		O comando que nos mostra a árvore de processos é o pstree. Esse comando nos mostra um diagrama no qual é possível identificar quem originou (processo pai) cada um dos processos (processo filho).
+
+
+		2 - Quando iniciamos um aplicativo através do seu comando, o terminal fica bloqueado, impedindo sua utilização. O que deve ser feito para liberar o terminal e fazer com que o programa passe a ser executado em background?
+
+		Selecione uma alternativa
+			
+		R: Pressionar Ctrl + z e executar o comando $ bg
+
+			
+		3 - Vimos que é possível iniciar mais de um processo em um mesmo terminal, fazendo combinações entre trazer um determinado processo para o foreground, pausá-lo, e deixá-lo executando em background. Qual comando podemos utilizar para ver os processos que estão pausados ou sendo executados em segundo plano no bash em que estamos?
+
+		Selecione uma alternativa
+			
+		R: jobs
+			
+
+			
+Aula 4 - Scripts e permissões de execução: sh e chmod -------
+
+
+	Comandos: 
+		
+		gedit "Nome do arquivo" $ = Abre um arquivo com o nome informado em background.
+			
+			Dentro do arquivo...
+					
+				echo "Texto" = Mensagem que deseja exibir.
+					
+				sleep = tempo de "delay" que deseja adicionar.
+					
+		sh "Nome do Arquivo" = Força a leitura do arquivo pelo bash.
+		
+		whoami = "Who am i?" - Serve para descobrir qual usuário está operando o sistema.
+
+		chmod = "Change mode" - Serve para modificarmos permissões de diretórios e arquivos.
+			
+			chmod "+r ou +w ou +x ou +rwx" "Arquivo ou diretório" = Define leitura, escrita ou execução para todos em determinado arquivo ou diretório.
+					Obs: Para retirar determinada permissão digitamos "-" ao invés de "+"
+			
+			Obs: Por questões de localização as vezes não poderemos executar o script, por isso utilizamos ./"Nome do arquivo" 
+					(Indicando que está no diretório atual).
+			
+			~/workspace/ = O "~" indica tudo que vem antes de workspace. Utilizamos este sinal quando não queremos informar os diretórios anteriores e o nome do usuário.
+			
+		Permissões:
+		
+			r = Leitura.
+			
+			w = Escrita.
+			
+			x = Execução.
+			
+			d = Indica o que é diretório.
+			
+			- = No início indica que é um arquivo, nas demais informações sobre permissões indica a falta de uma delas.
+			
+			Obs: Permissões podem ser por dono, grupo e outros usuários.
+			
+		
+	Questões Aula 4:
+		
+		1 - No momento, se simplesmente tentarmos executar o script que foi criado anteriormente, não vamos conseguir. Qual das alternativas a seguir apresenta o comando que pode executar o script realizabackup?
+
+		Selecione uma alternativa
+			
+		R: sh realizabackup
+			
+			
+Aula 5 - Procurando arquivos: locate e updatedb -------
+
+	Comandos:
+		
+		locate "Nome do programa ou arquivo" = Localiza no sistema inteiro todas as ocorrências do nome em arquivos ou pastas.
+			Obs: Caso o comando locate não funcione é provável que não esteja instalado. Para instalar o programa devemos executar "apt-get install locate"
+			Pode ser também que... "sua pasta home provavelmente está encriptada e por default o updatedb suprime(prune) pastas encriptadas.
+									Basta editar o arquivo /etc/updatedb.conf como sudo na propriedade PRUNEFS remova a tag encryptfs."
+										
+									Solução encontrada em: https://askubuntu.com/questions/592162/locate-does-not-locate-files
+			
+			
+		updatedb = Para atualizar seu banco de dados interno com a localização de todos os arquivos no sistema operacional.
+			
+			
+			
+	Questões Aula 5:
+		
+		1 - O comando locate pode nos apresentar dados desatualizados na busca, pois sua base de pesquisa é atualizada apenas de tempos em tempos. Como podemos fazer para atualizar essa base de dados no momento que desejarmos?
+		
+		Selecione uma alternativa
+			
+		R: sudo updatedb
+			
+			
+Aula 6 - Trocando de usuários: sudo e su -------
+
+	Comandos:
+		
+		which "Comando" = Saber onde está o programa que é executado quando realizamos o comando informado.
+			Obs: Todos os programas que executamos anteriormente estão dentro do diretório /usr/bin/
+				
+		sudo mv dorme /usr/bin/ = Moveu o arquivo "dorme" para o diretório bin do usuário para que fosse executado apenas com o comando "dorme" no terminal.
+			
+			Obs: Após configurar também o arquivo bin com o caminho do firefox o mesmo passou a ser executado apenas com o comando "firefox".
+			Obs: Cada vez que utilizar o comando sudo será necessário informar a senha do root.
+				
+		ls /usr/bin | grep dorme = Para verificar se o arquivo dorme está dentro do diretório desejado. "which dorme" identificaria se o arquivo está lá também.
+
+			Obs: Teoricamente agora podemos executar o comando dorme sem o sh ou ./.
+			
+				
+		sudo passwd ou sudo passwd root = Para alterar a senha do root. Será necessário confirmar a nova senha.
+			Obs: É preciso cuidado ao utilizar o usuário root, pois ele é o principal usuário do sistema e possui privilégios avançados, inclusive de realizar operações destrutivas. Não é atoa que o root é conhecido como "superusuário".
+				
+		su "Usuário" = Para trocar de usuário.
+		
+			Obs: Se estivermos na sessão do usuário "root" podemo ir para sessão de qualquer outro usuário sem precisar informar senha, por isso o perigo de deixar a senha do root com qualquer pessoa.
+			
+		exit = Para sair da sessão de um usuário.
+			
+			
+	Questões Aula 6: 
+			
+		1 - Já vimos como executar um script que estava no nosso diretório atual. E sabemos que quando executamos determinados comandos, apesar de apenas digitarmos o nome do arquivo, eles não se encontram no nosso diretório atual. Como saber, por exemplo, o caminho onde se encontra o arquivo do comando zip?
+
+		Selecione uma alternativa		
+				
+		R: 	which zip
+			Será exibido: /usr/bin/zip
+			
+			
+		2 (Dissertativa seguida de teoria) - Se tentarmos mover o arquivo realizabackup para o diretório /usr/bin usando o comando $ mv realizabackup /usr/bin, não iremos conseguir. Por que isso ocorre e como podemos resolver?
+			Aproveite para mover o arquivo e testar se o script realizabackup pode ser executado como um comando independente de qual seja o nosso diretório atual.
+			
+		R: Não temos permissão. Elevando permissão com o comando "sudo" seguido do comando "mv", do nome do arquivo "realizabackup" e do caminho "/usr/bin".
+		
+		
+		3 - Como podemos fazer para alterar a senha do usuário root? Aproveite para alterar a senha do usuário root do seu sistema.
+		
+		Selecione uma alternativa
+		
+		R: sudo passwd
+		
+		
+		4 - Como podemos nos logar com um outro usuário, cujo nome é nico, dentro da nossa sessão no terminal? Aproveite e faça um teste logando-se como usuário root.
+	
+		Selecione uma alternativa
+		
+		R: su nico
+		
+		Caso não seja informado nenhum usuário ao tentar logar apenas com "su" será automaticamente utilizado o root
+		
+		
+Aula 7 - Novos usuários e controle de acesso: adduser e chmod -------
+
+	Comandos:
+		
+		Caso estejamos na home do usuário podemos com o comando "ls" ver quais usuários existem no sistema.
+			
+		adduser "Usuário" = Inicia a adição de um novo usuário com criação de pasta no diretório /home.
+			Obs: A informação adicionada no lugar do termo "usuario" é como deve estar o login. Ex: "fulanodetal" ou "fulano.detal"
+				
+			As seguintes informações serão solicitadas:
+				
+				Nova senha:
+				Re insira nova senha:
+					
+				E então...
+					
+				O nome completo:
+				"Número da sala":
+				Telefone de trabalho:
+				Telefone de Casa:
+				Outro (Telefone):
+				
+				Irá surgir uma pergunta verificando se as informações estão corretas...
+				
+				E pronto! Usuário criado com sucesso!
+				
+		userdel "Usuário" = Exclui usuário criado.
+		
+		chmod o-rx "diretorio ou arquivo" = Retira permissões (Como já vimos anteriormente). O "o" significa "Others", o "-" significa que estamos tirando permissões, o "r" significa leitura e o "x" execução.
+			Obs: Se quiséssemos retirar permissões do próprio usuário ao invés do "o" utilizariamos o "u" e se ao invés da permissão do próprio usuário, quiséssemos retirar a permissão do grupo, utilizaríamos o "g".
+			
+	
+	Questões Aula 7:
+	
+		1 - Imagine que não estamos logados como usuário root. Qual o comando necessário para adicionar um usuário com o nome nico no sistema?
+
+		Selecione uma alternativa
+			
+		R: sudo adduser nico
+		
+		
+		2 - Se acessarmos a pasta home utilizando o comando $ cd /home podemos verificar que o diretório do usuário nico, não possui permissões de escrita para o grupo:
+		
+			$ ls -l
+			
+			total 24
+			drwx------  2 root  root  16384 Jan 16 17:07 lost+found
+			drwxr-xr-x 31 lucas lucas  4096 Jan 30 16:07 lucas
+			drwxr-xr-x  2 nico  nico   4096 Jan 30 16:53 nico
+			
+		Após utilizarmos o comando $ su nico para nos logarmos com o usuário nico, como podemos adicionar permissão de escrita para o grupo ao qual pertence o diretório nico?
+		
+		Selecione uma alternativa
+		
+		R: chmod g+w nico/
+		
+		
+Aula 8 - Variáveis de Ambiente e o Path -------
+
+	Para não precisar mover para o diretório /usr/bin todos os programas que quisermos executar apenas com uma palavra (sem precisar digitar o caminho ou sh antes do nome do programa) dando assim acesso a qualquer usuário do sistema, podemo configurar outro ambiente, um ambiente privado, para executar programas particulares.
+	
+	A dúvida seria: Onde o terminal (bash) procura os programas para executar, a resposta é: PATH, uma vaviável de ambiente.
+	
+	Comandos:
+	
+		env = Visualiza todas as variáveis de ambiente.
+		
+			env | grep PATH = Separa apenas o PATH para ser analisado.
+			
+			PATH=$PATH:/home/nezzonarcizo/workspace = Adiciona a pasta workspace que está no usuário nezzonarcizo à variável PATH.
+				
+				Obs: Está configuração só fica válida enquanto o bash (temrinal) atual estiver aberto.
+				
+		Para que possamos configurar de forma definitiva a variável PATH para ter está configuração a qualquer momento que abrirmos o terminal, devemos configurar da seguinte maneira:
+		
+		O arquivo .bashrc é responsável pela configuração do nosso terminal e ele se encontra na pasta raiz do usuário.
+		Devemos, portanto, com a ajuda de qualquer editor de textos adicionar ao final dele o comando que executamos acima:
+		
+			PATH=$PATH:/home/nezzonarcizo/workspace
+			
+			
+			Este comando deve ser adicionado no arquivo .bashrc após o ultimo "fi".
+			Agora toda vez que executarmos o terminal este ambiente já estará configurado para executar o programa apenas com a chamada do seu nome.
+			
+			Podemos verificar que ele é visto de qualquer lugar do sistema executando o comando:
+			
+				which "Nome do programa" = Mostrará onde se encontra o programa.
+			
+			Obs: Se utilizarmos o comando "echo" com "$PATH" ou qualquer outra variável de ambiente com o caractere "$", visualizaremos o conteúdo desta variável.
+			
+			
+		wc "Nome do arquivo" = Podemo utilizar este comando para ler a quantidade de linhas, palavras e caracteres do arquivo.
+			Primeira informação linha, segunda informação palavras e terceira informação caracteres.
+			
+		wc -w "Nome do arquivo" = Conta apenas o número de palavras do arquivo.	
+			
+			Se utilizarmos o coringa wc -w *.txt por exemplo, ele contará o número de palavras de cada arquivo .txt informando um resultado total no final.
+			
+				Obs: Para que o wc mostre a linha com o total é necessário que exista mais de um arquivo .txt no diretório em que executamos o contapalavras.
+			
+		wc -c "Nome do arquivo" = Conta apenas o número de caracteres do arquivo.
+
+		wc -l "Nome do arquivo" = Conta apenas o número de linhas do arquivo.
+			
+			Podemos combinar o comando ps -e (Que exibe todos os processos que estão rodando no sistema) com o comando wc -l (Que conta a quantidade de linhas).
+			
+				ps -e | wc -l = Isto nos retornará a quantidade linhas que o comando anterior (ps -e) exibiu no terminal.
+			
+				
+		Podemos visualizar ou alterar qualquer variável:		
+			
+			Ex: echo $PS1"
+			
+			
+Aula 9 - Instalação de programas: apt -------
+
+	Comandos:
+
+		apt-get update = Ver as versões atualizadas dos programas que estão disponíveis para instalação.
+		
+			Obs: É uma tarefa de administração, por isso se não estivermos com o usuário root, devemos utilizar o comando sudo.
+			
+		apt-cache search "Programa" = Para buscar um programa do tipo desejado. Ex.: apt-cache search ftp para buscar um programa de servidor FTP.
+		
+		apt-get install "Programa" = Instala o programa informado.
+		
+		apt-get remove "Programa" = Remove o programa informado.
+		
+		
+	Questões Aula 9:
+	
+		1 - Antes de instalar um programa, é recomendado atualizar a lista de pacotes disponíveis para instalação, para garantir que iremos instalar o pacote mais atual que está disponível nos repositórios. Como podemos atualizar essa lista?
+
+		Selecione uma alternativa
+		
+		R: sudo apt-get update
+			
+		A opção upgrade do apt-get, serve para atualizar todo o nosso sistema, atualizando as versões dos pacotes que já estão instalados.
+		
+		
+		2 - O MySQL é um sistema de gerenciamento de banco de dados bastante conhecido. Como podemos fazer para pesquisar quais programas estão disponíveis para instalação, utilizando na busca o termo "mysql-server"?
+
+		Selecione uma alternativa
+		
+		R: apt-cache search mysql-server
+			
+			
+Aula 10 - Instalando novos programas: dpkg -------
+
+	Comandos:
+	
+		sudo dpkg -i "programa".deb = Instala programa dpkg.
+		
+			Obs: O "-i" indica que estamos instalando o programa.
+			Obs2: Aqui o nome do pacote baixado deve estar completo, exemplo: sudo dpkg -i vsftpd_3.0.2-17+deb8u1_i386.deb
+			
+		sudo dpkg -r "programa".deb = Desinstala programa dpkg.
+		
+			Obs: o "-r" indica que estamos removendo o programa dpkg.
+			Obs: Aqui basta o nome do programa para que possamos remove-lo, exemplo: sudo dpkg -r vsftpd
+			
+		Então sabemos que devemos instalar ou desinstalar algo via apt, quando o programa já está disponibilizado na central do Sistema Linux, e via dpkg, quando baixamos peloo navegador da internet um pacote .deb do programa.
+		
+		apt-get -f install = Para tentar corrigir uma instalação. As vezes um pacote dpkg necessitará de outras dependências para que funcione.
+	
+		Podemos também remover um programa dpkg através do apt-get, exemplo: apt-get remove google-chrome-stable
+	
+	
+	Questões Aula 10:
+	
+		1 - O Google chrome é um dos navegadores mais utilizados. Na página de downloads somos capazes de baixar um arquivo .deb com o nome google-chrome-stable_current_amd64.deb. Como podemos instalar esse arquivo no nosso sistema?
+
+		Selecione uma alternativa
+		
+		R:  sudo dpkg -i google-chrome-stable_current_amd64.deb
+		
+		
+		2 - Ao instalar o arquivo .deb do Google Chrome, o nome do pacote será google-chrome-stable. Como podemos remover esse pacote do nosso sistema?
+
+		Selecione uma alternativa
+		
+		R: sudo dpkg -r google-chrome-stable
+		
+		
+Aula 11 - Scripts de inicialização e serviços do sistema -------
+
+	Comandos:
+	
+		sudo service "Programa" stop = Para pararmos um serviço que roda toda vez que ligamos e desligamos a máquina.
+		
+			Obs: Este comando deve ser executado como root.
+			Obs: Para iniciar novamente um serviço utilizamos o comando:
+				sudo service "Programa" start
+				
+		O local onde estes programas que iniciam junto com a máquina estão é: /etc/init.d Aqui é onde os scripts rodam "por baixo dos panos" ligando e desligando os processos.
+		
+			Obs: É importante lembrar que para verificarmos se algo é executável ou não utilizamos o comando ls -l.
+			
+			Para executar ou parar um serviço diretamente podemos fazer: sudo /etc/init.d/"programa" start (Para iniciar) ou sudo /etc/init.d/"programa" stop (Para parar)
+		
+		O /etc/init.d/"Programa" é o script que, "educadamente", notifica o vsftpd para parar ou inicializar.
+		
+		Os scripts dentro do diretório /etc/init.d são os programas que são executados no startup da máquina. Eles podem continuar rodando até desligarmos o computador ou rodar por apenas um instante e depois parar. Caso queiramos que um programa seja executado sempre ao iniciar da máquina, basta que deixemos esse programa nesta pasta.
+		
+		ls /etc/init.d/ = Para verificar os serviços que possuímos no nosso sistema.
+		
+		sudo service "programa" status = Verificar o status do programa informado.
+		
+		
+Aula 12 - Compilando a partir do código fonte: Make e Git -------
+
+	Obs: A extensão tar.gz mantém as permissões de execução dos arquivos, enquanto um .zip não mantém.
+	
+	O padrão de criação para instalação de um projeto através do código fonte em C* é primeiramente testarmos a configuração da nossa máquina, ou seja, verificar se está faltando algum arquivo ou programa em nossa máquina que o *Git precise para funcionar. Para isso, em geral, é disponibilizado um script chamado "configure". O Git disponibiliza esse script, Vamos executá-lo:
+		
+		./configure
+		
+	O script configure fará uma série de checagens em nossa máquina, e ao fim, caso nenhum problema seja encontrado, poderemos usar o comando make, que é o padrão para rodar o build do projeto em C*, no caso do *Git. 
+	
+		make
+	
+	Caso não encontre alguma biblioteca seremos informados.
+	
+	É necessário instalar a biblioteca que estiver faltando.
+	
+		Utilize o apt-cache search "biblioteca ou programa" para instalar o que estiver faltando. Use o " | grep "especificação" " caso tenha algum atributo de preferência sobre o que tiver que ser baixado.
+		
+	Agora realizaremos de fato a instalação do programa que baixamos, configuramos e compilamos...
+	
+		sudo make install 
+		
+			Obs: O atributo "-i" após o make, exemplo: "make -i" (Para compilação) ou "sudo make -i install" (Para instalação) ignoram erros de compilação ou instalação respectivamente.
+	
+	Verificamos então três comandos básicos para instalar um programa à partir de seu código fonte:
+	
+		.\configure = Para verificar as dependências e configurações da máquina.
+		
+		make = Para compilar. Podem existir outras dependências nesta parte que exigirão mais instalações.
+		
+		sudo make install = Para instalação.
+		
+		
+Aula 13 - Acesso remoto com ssh e scp -------
+
+	Comandos:
+	
+		sudo apt-get install ssh = Instala tanto o cliente (ssh-client) quanto o servidor (ssh-server)
+		
+			Para testarmos: ssh usuario@localhost (localhost pode ser substituido por outro nome de máquina ou IP na rede)
+			
+				Obs: Desta forma não teremos acesso ao modo gráfico.
+					
+					Para utilizarmos os aplicativos no localhost no modo gráfico devemos acessar da seguinte forma: ssh -X usuario@localhost
+		
+		
+		exit = Sai do acesso remoto.
+		
+		scp arquivo.extensão usuario@localhost:/home/usuario = Copia arquivo da nossa pasta atual (Onde o terminal está aberto) e copia para a pasta indicada na máquina remota.
+		
+			Obs: Lembrando que se a pasta para onde deseja que o arquivo vá seja a pasta home do usuário logado na máquina remota podemos abreviar com "~", exemplo: scp arquivo.extensão usuario@localhost:~/
+	
+			Obs: Caso necessite copiar uma pasta inteira (Com subpastas e arquivos nelas) basta utilizar o parâmetro "-r" para copiar de forma recursiva assim como faziamos com os comando "mv" e "cp".
+			
+				Exemplo: scp -r "pasta" usuario@localhost:~/
+				
+	
+	
+	

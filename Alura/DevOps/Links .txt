@@ -1,0 +1,21 @@
+------- Primeiros passos com DevOps.
+
+Livro do Danilo sobre Devops - https://www.casadocodigo.com.br/products/livro-devops
+
+Livro do Google - Site Realiability Engineering - https://landing.google.com/sre/sre-book/toc/
+
+Carreira Engenheiro Devops - https://www.alura.com.br/formacao-devops
+
+Curso de Ansible - https://www.alura.com.br/curso-online-infraestrutura-como-codigo-com-ansible
+
+Containers e Docker – Hipsters #75 - https://hipsters.tech/containers-e-docker-hipsters-75/
+
+Monitoramento: não receba mais telefonemas de madrugada! – Hipsters #12
+
+Ansible - https://www.ansible.com/
+
+Puppet - https://puppet.com/
+
+Chef - https://www.chef.io/products/chef-infra/
+
+BlueGreenDeployment do Martin Fowler - https://martinfowler.com/bliki/BlueGreenDeployment.html

@@ -1,0 +1,406 @@
+Teoria Linux
+
+Primeira Aula: Trabalhando com arquivos e diretórios  ---
+
+	Comandos: 
+		 
+		 pwd = descobrir o diretório que está.
+
+	     ls = Lista de arquivos e diretórios.
+		 
+			ls -l = Mostra os dados (informações detalhadas como permissões) do que tenho dentro do meu diretório.
+		 
+			ls -la = Mostra todos os arquivos e diretórios, inclusive os ocultos.
+				obs: Itens que começam com "." são os ocultos.
+		 
+		 echo = "Repetir" inserir argumentos.
+				obs: Se passar entre "" se torna um único argumentos.
+				
+		 > = Redirecionar o conteúdo para algum lugar.
+			 
+			 Obs: O comando "echo" com o atributo ">" cria o arquivo com o conteúdo informado caso não exista, se já existir ele irá sobrescrever.
+					Se quiser adicionar novo conteúdo utilize ">>".
+		 
+		 cat = Ler conteúdo do arquivo.
+		 
+		 clear / Ctrl + L = limpar a tela.
+				
+		 man = "Manual". Digitando antes de algum comando, veremos detalhes e mais parâmetros deste comando.
+				obs: Apertando a tecla "q" saíremos do "manual".
+				
+		 "TAB" (Do teclado) = Utilizado para nevegar. Completa nome de diretórios ou arquivos presentes no diretório atual.
+		 
+		 chmod 777 "diretório ou arquivo" = Dar total permissão em determinado diretório ou arquivo (sem aspas).
+		 
+		 chmod 000 "diretório ou arquivo" = Tirar todas as permissões em determinado diretório ou arquivo (sem aspas).
+		 
+		 rm -r "diretório" = Forçar deleção de uma pasta.
+		 
+		 tar -xf "arquivo.tar" = Dezipar o arquivo.
+		 
+
+	Questões Aula 1:
+		 
+		 1 - Para quê usamos o comando pwd?
+		 R: Para descobrir o diretório em que estamos atualmente.
+			Correto. No meu caso estou no diretório base do usuário nezzonarcizo. Então:
+			$ pwd
+			/home/nezzonarcizo
+		 
+		 
+		 2 - Execute o comando whoami no seu terminal. O que ele faz? Qual a saída?
+		 R: O nome do usuário no Linux.
+		 O comando whoami, retorna o nome do usuário que está sendo usado. No meu caso, o nome do usuário é lucas então o retorno é:
+		 $ whoami
+		 nezzonarcizo
+		 
+		 
+		 3 - Como a gente consegue listar o conteúdo de um diretório no terminal do Ubuntu?
+		 R: O comando ls nos retorna o conteúdo do diretório atual. 
+		 No terminal do Ubuntu, ele separa o tipo do conteúdo (arquivo ou diretório) pela cor.
+		 
+		 
+		 4 - Quais parâmetros passamos para o comando ls para listar todos os arquivos e diretórios, incluindo os ocultos, de uma forma mais detalhada?
+		 R: -a. Para listar os arquivos e diretórios incluindo arquivos ocultos passamos o parâmetro -a para o comando ls.
+			-l. Para listar de forma detalha usamos o parâmetro -l.
+		 
+		 5 - Qual o comando necessário para imprimir no terminal o conteúdo do arquivo bemvindo.txt?
+		 R: cat bemvindo.txt. 
+		 Correta! O cat recebe o nome do arquivo como argumento e imprime seu conteúdo.
+		 
+		 
+		 6 - Em alguns momentos nós acabamos com o terminal cheio com os comandos que digitamos e seus retornos. Qual comando podemos utilizar para limpar a tela do nosso terminal?
+		 R: clear. 
+		 Utilizamos o comando clear para limpar a tela do terminal. O atalho Ctrl + L tem a mesma função.
+		 
+		 
+		 7 - Muitos dos comandos que você verá nesse curso possuem várias opções que alteram o comportamento de um comando. Para saber as possíveis opções de um comando e o que cada uma das opções faz, você pode verificar o manual do comando. Isso é feito digitando man seguido do nome comando que você deseja estudar.
+		 Olhe o manual do comando cat e diga qual a opção que deve ser usada para além de mostrar o conteúdo do arquivo mostrar também a linha.
+		 R: cat -n. 
+		 A opção -n mostra as linhas além de mostrar o conteúdo de um arquivo.
+		 
+
+Segunda Aula: Mais sobre redirecionamento e caracteres coringas no Bash ---
+	
+	Comandos:
+		
+		cd "Diretório" = Vai para o diretório desejado.
+			
+			Obs: No Ubuntu, Fedora ou outra distribuição que suportam o nosso Português (pt_BR) a tradicional pasta "Desktop" foi renomeada para "Área de Trabalho" e, como os iniciados sabem, ela precisa ser acessada pelo terminal com o uso de barras invertidas ("") para designar os espaços, ou seja:
+
+			Exemplo: cd Área\ de\ Trabalho/
+		
+		cd .. (cd "espaço" ..) = Utilizado para retornar ao diretório anterior.
+		
+		cd . (cd "espaço" .) = Diretório atual.
+		
+		mkdir (Significa "make dir") "Nome do diretório" = Cria um diretório (pasta) com o nome informado.
+		
+		cd = Voltar para o diretório base.
+			 Obs: O diretório base não é raiz de tudo, é apenas onde os comandos começaram.
+			 
+		ls / = Raiz de tudo (S.O).
+		
+		rmdir "Nome do diretório" =  Remove um diretório comm o nome informado.
+			Obs: rmdir só remove diretórios vazios.
+				 Utilize rm -r "Nome do diretório" para excluir de forma recursiva.
+		
+		rm "Nome do arquivo" = Remove um arquivo com o nome informado.
+		
+		Obs: cat "arquivo?.txt" = Exibe o conteúdo de todos os arquivos com o nome informado que tenha qualquer caractere no lugar de "?".
+			 cat "arquivo*.txt" = Exibe o conteúdo de todos os arquivos que tenham qualquer caractere e independente de quantos tiverem a partir de "*".
+			 
+			 De forma mais clara, esses caracteres de ? e * são utilizados para que sejam buscados mais de um arquivo que tenham o mesmo nome base, porém existe uma pequena diferença: O ? só encontra os arquivos que tenham apenas UM caractere diferente do nome base, enquanto o * busca quaisquer números de caracteres.
+		
+			 cat *.txt = Busca todos os arquivos com a extensão .txt.
+				Obs: Se buscarmos o arquivo desta forma "*.txt", o comando interpretará o "*" como parte do nome do arquivo.
+			
+			 Também funciona com: ls (Listar arquivos e diretórios).
+		
+	Questões Aula 2:
+		
+		1 - Se você já estiver no diretório base de um usuário, qual das alternativas apresenta o comando correto para mudar para o diretório workspace, que está dentro do diretório do usuário?
+		R: cd workspace. 
+		Correto! Podemos também passar para o comando cd o caminho absoluto. Nesse caso iniciamos a partir da raiz(/). Se quisermos, por exemplo, acessar o diretório workspace dentro do diretório do usuário nezzonarcizo, podemos fazer: $ cd /home/nezzonarcizo/workspace. Ou, neste caso, podemos usar um atalho para a home do usuário e fazer cd ~/workspace
+		
+		
+		2 - Qual dos comandos abaixo podemos utilizar no Linux para remover o diretório projetos-java, que está dentro do diretório atual, e está vazio?
+		R: rmdir projetos-java. 
+		Utilizamos o comando rmdir para remover um diretório se ele estiver vazio.
+	
+	
+Terceira Aula: Manipulando, compactando e descompactando arquivos ---
+
+	Comandos:
+	
+		cp "arquivo.extensao" "arquivo.extensao" = Copia o conteúdo do primeiro arquivo para o segundo arquivo.
+		
+			cp -r "diretório" "diretório" = Copiar diretório para dentro de outro diretório. Pois assim como a exclusão, a cópia de diretórios tem que ser   recursiva.
+
+		mv "arquivo.extensao" "arquivo.extensao" = Muda o nome do primeiro arquivo para o segundo arquivo.
+		
+			mv "arquivo.extensao" "diretorio" = Move o arquivo para dentro do diretório.
+		
+		zip "nomeDoArquivo.zip" "arquivo.extensao" = Coloca dentro do arquivo zip o arquivo informado.
+			
+			zip -r "nomeDoArquivo.zip" "diretorio" = Assim como o copiar e o remover, compactar um diretorio deve ser de forma recursiva.
+			
+		unzip "nomeDoArquivo.zip" = Descompactar arquivos com a extensão zip.
+			
+			Obs: Sobrescreve arquivos com o mesmo nome no diretório caso existam.
+			
+			Obs2: Perceba que tanto o zip quanto o unzip são comandos muito verborrágicos, ou seja, imprimem muita informação. O modificador -q permite que o retorno seja vazio (apesar de o resto funcionar perfeitamente):
+		
+				zip -rq "arquivo.zip" "diretorio"
+				
+				unzip -q "arquivo.zip"
+				
+				Podemos deixar juntos o -q e o comando de recursividade -r formando o -rq
+				
+				
+			unzip -l "arquivo.zip" = Mostra o que foi compactado.
+			
+	Questões Aula 3:
+	
+		1 - Qual o comando necessário no Linux para realizar a cópia do arquivo bemvindo.txt para um novo arquivo chamado mensagem.txt?
+		R: cp bemvindo.txt mensagem.txt
+		Para copiar um arquivo no Linux, utilizamos o comando cp passando o nome do arquivo que desejamos copiar, e o nome do novo arquivo que será criado após a cópia.
+		
+		
+		2 - Qual das alternativas a seguir contém o comando correto, no Linux, para que seja possível compactar todos os arquivos com extensão .txt que estão dentro do diretório workspace, para um arquivo chamado bemvindo.zip. Considere que workspace é o nosso diretório atual.
+		Selecione uma alternativa
+		R: zip bemvindo.zip *.txt
+		Para criar um arquivo no formato .zip utilizamos o commando zip passando o nome do arquivo que desejamos criar e os arquivos que desejamos incluir. No nosso caso todos que possuem extensão .txt.
+		
+		
+		3 - Qual das alternativas a seguir contém o comando necessário para listar os arquivos e diretórios que se encontram compactados dentro de um arquivo .zip?
+		R: unzip -l work.zip
+		Para listar os arquivos dentro do arquivo .zip utilizamos o comando unzip passando o parâmetro -l
+		
+		
+Quarta Aula: Mais sobre compactação, descompactação e comandos do terminal ---
+
+	
+	Comandos:
+	
+		tar -cz "diretório" > work.tar.gz = Empacota e compacta um diretório no "arquivo.tar.gz".
+			Obs: O tar sozinho não serve para compactar arquivos. Na verdade o tar serve para empacotar vários diretórios e arquivos em um único arquivo, facilitando a transferência. Para compactar usaremos o tar combinado com o zip, o primeiro empacota e o segundo compacta. O modificador -cz indica que o arquivo tar será criado (-c) e será compactado pelo zip(-z) usando o redirecionamento >. Uma observação interessante é que comando tar já é automaticamente recursivo.
+			
+		tar -xz < "arquivo".tar.gz = Descompacta o arquivo .tar.gz.
+			Obs: -x (Extract) < (Indica o direcionamento).
+			
+		tar -czf "arquivo".tar.gz "diretório" = Envia o diretório para o "arquivo".tar.gz
+			Obs: -f para evitar ficar utilizando o sinal do direcionamento, ">" ou "<".
+			
+		tar -xzf "arquivo".tar.gz = Extrai o conteúdo do arquivo tar.gz
+			Obs: Como no exemplo anterior o "-f" é para não usar o sinal de direcionamento, que neste caso seria "<".
+			
+		tar -vxzf work.tar.gz = Para que as informações de compactação apareçam.
+			Obs: Como o tar não é verborrágico como o zip, o comando é inverso, ao invés de fazermos o comando para que ele esconda informações temos que colocar o comando para que ele mostre informações.
+			
+		tar -cjf work.tar.bz2 "diretório" = Esse formato é mais eficiente na compactação, conseguindo criar arquivos menores. Porém o tempo que o .bzip2 leva para criar o arquivo compactado é maior do que o tempo do gzip. Repare que o "z" é substituído por "j" e o "gz" por "bz2".
+		
+		touch "arquivo.extensao" = Para apenas "tocar" o arquivo e mudar a data de ultima modificação.
+		
+		date = Exibe a data do sistema.
+			date "+%d/%m/%Y" = Imprime apenas dias, mês e ano do sistema.
+			date "+%d de %B de %Y" = "21 de Novembro de 2019"
+
+		
+		help "comando" ou "comando" --help = O help é um comando interno do interpretador bash, que, quando executado sem parâmetros, 
+			retorna uma lista com 	todos os demais comandos internos do shell bash. Quando executado com parâmetro, o comando help retorna a sintaxe de utilização e uma descrição do comando interno que estamos interessados.
+			Obs: Não funciona com todos os comandos.
+	
+		head "arquivo.txt" = Lê as dez primeiras linhas do arquivo.
+			Obs: Podemos considerar complementos do comando cat, que lê todo o arquivo.
+			
+			head -n 3 "arquivo.txt" = Define quantas linhas do arquivo serão exibidas no terminal.
+		
+		tail "arquivo.txt" = Exibe as 10 ultimas linhas do arquivo.
+			tail -n 3 "arquivo.txt" = Exibe as 3 ultimas linhas do arquivo.
+			
+		less "arquivo.txt" = Permite ler o arquivo no terminal utilizando as setas.
+			Obs: Para fechar o arquivo utilizamos a tecla "q" do teclado.
+	
+	Questões Aula 4:
+	
+	
+		1 - Qual das alternativas a seguir contém o comando necessário para compactar o diretório workspace, utilizando o comando tar, para o arquivo do tipo .tar.gz?
+		Selecione uma alternativa
+		R: tar -czf work.tar.gz workspace/
+		O parâmetro -c indica ao comando tar que desejamos criar um novo arquivo.
+		O comando tar apenas empacota vários arquivos em um único arquivo, sem realizar compactação, e por isso passamos o parâmetro -z para indicar que queremos, além de criar um único arquivo, realizar um processo de compactação utilizando o formato .gz. Quando compactamos podemos reduzir o tamanho.
+		O parâmetro -f indica que compactaremos para um arquivo.
+		
+		
+		2 - Qual das alternativas a seguir contém o comando necessário para descompactar o arquivo work.tar.gz?
+		Selecione uma alternativa
+		R: tar -xzf work.tar.gz
+		Para descompactar o arquivo .tar.gz, substituímos o -c que usamos antes por -x, para indicar que iremos extrair os arquivos.
+		O f indica que lemos de um arquivo. E o z, que o arquivo está compactado.
+		O parâmetro z na verdade é ignorado na extração, no man fala que só funciona no creation mode.
+		Logo poderíamos fazer: tar -xf work.tar.gz
+		
+		
+		3 - Vimos como obter ajuda e um pouco sobre formatação de datas. Verifique as opções de formatação apresentadas na man page do date ou com o date --help, e marque a alternativa que contém o comando que retorna a data atual no formato parecido com "19 de janeiro de 2016" (dia de nome_do_mes de ano).
+		Selecione uma alternativa
+		R: date "+%d de %B de %Y"
+		Vimos que podemos mostrar o dia com %d e o ano com %Y. Para mostrar o nome completo do mês, utilizamos %B. O nome do mês pode estar em um idioma diferente, dependendo da sua configuração de local
+
+		4 - Qual das alternativas a seguir contém o comando que imprime, no terminal, as 6 primeiras linhas do arquivo google.txt?
+		Selecione uma alternativa
+		R: head -n 6 google.txt
+		O comando head, por padrão imprime as 10 primeiras linhas de um arquivo. Para imprimir o número de linhas que desejamos, utilizamos o parâmetro -n
+
+		5 - Qual das alternativas a seguir contém o comando que imprime, no terminal, as 3 últimas linhas do arquivo google.txt?
+		Selecione uma alternativa
+		R: tail -n 3 google.txt
+		O comando tail, por padrão imprime as 10 últimas linhas de um arquivo. Para imprimir o número de linhas que desejamos, utilizamos o parâmetro -n.
+		
+
+Quinta aula: Edição de arquivos com o VI: Inclusão, alteração, exclusão e repetição  ---
+
+	Comandos:
+		
+		Utilizando o editor para terminal VI...
+		
+		vi "arquivo.txt" = Abre o arquivo no terminal para ser editado, utilizando o editor VI.
+		
+			Dentro do arquivo...
+				
+				i = Começa a editar à partir da posição atual.
+				
+				a = Iniciar a edição na posição seguinte a do cursor.
+				
+				x = Excluir caractere atual.
+				
+					Obs: digitando um número antes excluíra a quantidade digitada à partir do caractere atual.
+					
+				dd = Exclui a linha inteira.	
+				
+				
+				Obs: Teclas em maiúsculo tem funções diferentes.
+				
+				A = Começa a edição no final da linha atual.
+				
+				G = Ir para a última linha do arquivo.
+				
+				gg = Ir para o ínicio do arquivo.
+				
+				"Número da linha", G = Vai para a linha informada.
+				
+					"Número da linha", gg = Também vai para a linha informada.
+				
+				$ = Ir para o final da linha atual.
+				
+				0 = Vai para o início da linha atual.
+				
+				/, "Termo para busca" = Procura ocorrências do termo no texto.
+				
+					n = Ir para a próxima ocorrência.
+					
+					N = Voltar para ocorrência anterior.
+				
+				yy = Copiar uma linha.
+				
+					"Número de linhas", yy = Copia a quantidade de linhas informadas à partir da atual.
+				
+				p = Colar a linha copiada anteriormente.
+				
+					"Número de linhas", p = Cola a quantidade de linhas informadas do conteúdo copiado anteriormente.
+				
+				
+				ESC = Para sair do modo de edição.
+				
+					:w = Para salvar alterações.
+					
+					:q = Para sair do arquivo.
+					
+						Obs: podemos combinar estes dois comandos :wq (Salvar e Sair).
+						
+					
+	
+	Questões Aula 5:
+	
+		
+		1 - Qual das alternativas a seguir contém o comando correto que podemos utilizar no modo de comandos do vi para salvar as alterações feitas e sair?
+		Selecione uma alternativa		
+		R: :wq
+		Para salvar as alteração e sair do editor podemos combinar os comando :w (salvar alterações) e :q (sair do editor): :wq.
+
+		2 - Qual das alternativas a seguir contém o comando correto que podemos utilizar no modo de comandos do vi para sair sem salvar as alterações realizadas?
+		Selecione uma alternativa
+		R: :q!
+		Correto. O q sai e a exclamação indica para ignorar alterações.
+		
+		3 - Qual das alternativas a seguir contém, respectivamente, os comandos que utilizamos para ir até o final do arquivo e até o início do arquivo?
+		Selecione uma alternativa
+		R: G(Shift + g) e 1G (Shift + g)
+		Para conseguir navegar até o fim do arquivo, utilizamos o comando G (Shift + g). Para navegar até o início do arquivo, utilizamos o comando 1G (Shift + g).
+		Para ir até o início do arquivo, podemos utilizar também o comando gg.
+		
+		4 - Qual das alternativas a seguir, contém, respectivamente, os comandos que utiliza-se para ir até o inicío de uma linha e até o final de uma linha.
+		Selecione uma alternativa
+		R: 0 e $
+		Para ir até o início de uma linha, utilizamos o comando 0 e para ir até o final de uma linha, utilizamos o comando $.
+		
+		5 - Qual das alternativas a seguir contém o comando do VI que copia 6 linhas?
+		Selecione uma alternativa
+		R: 6yy
+		Para copiar a linha onde está o cursor utilizamos o comando y. Para copiar 6 linhas fazemos 6yy.
+		
+		6 - Qual das alternativas a seguir contém o comando do VI que cola 2 vezes o conteúdo que foi copiado?
+		Selecione uma alternativa
+		R: 2p
+		Para colar o conteúdo copiado utilizamos o comando p. Para colar 2 vezes fazemos 2p.
+		
+		
+AUDIO FIX KALI LINUX ON WINDOWS WSL -------
+
+Before use the script...
+
+Change the file daemon.conf on /etc/pulse after you have install pulseaudio and daemon...
+
+Change the line "daemonize" from "no" to "yes"
+
+On terminal, type: systemctl --user enable pulseaudio
+
+				   systemctl --user start pulseaudio
+
+				   
+SO...
+				   
+For the benefit of others with the same problem. Create the file /etc/systemd/user/audio_fix.service and fill with the following:
+
+[Unit]
+Description=Fix for speaker pop
+Requires=pulseaudio.service
+After=pulseaudio.service
+
+[Service]
+Type=simple
+Restart=always
+RemainAfterExit=yes
+ExecStart=/usr/bin/pactl load-module module-sine frequency=1
+ExecStop=/usr/bin/pactl unload-module module-sine
+
+[Install]
+WantedBy=pulseaudio.service
+To enable on boot (sudo NOT required)
+
+systemctl --user enable audio_fix
+To start the service
+
+systemctl --user start audio_fix
+Or, as mentioned above, use a custom pulse audio config:
+
+Create the file ~/.config/pulse/default.pa with the contents:
+
+#!/usr/bin/pulseaudio -nF
+
+.include /etc/pulse/default.pa
+
+.ifexists module-sine.so
+load-module module-sine frequency=1
+.endif
+Logout and login for it to take effect.

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.ui.internal.QuickAccess">
+		<item key="dialogHeight" value="788"/>
+		<item key="dialogWidth" value="969"/>
+		<list key="orderedElements">
+			<item value="org.eclipse.jdt.ui.preferences.CodeAssistPreferenceFavorites"/>
+			<item value="org.eclipse.jdt.ui.preferences.TypeFilterPreferencePage"/>
+			<item value="org.eclipse.jdt.ui.preferences.SmartTypingPreferencePage"/>
+			<item value="org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.ui.preferencePages.Keys)"/>
+			<item value="org.eclipse.wst.sse.ui.preferences.json.contentassist"/>
+			<item value="org.eclipse.jpt.jpa.eclipselink.ui.jpaProblemSeveritiesPreferences"/>
+			<item value="org.eclipse.jdt.ui.preferences.SaveParticipantPreferencePage"/>
+			<item value="org.eclipse.jdt.ui.edit.text.java.clean.up"/>
+		</list>
+		<list key="orderedProviders">
+			<item value="org.eclipse.ui.preferences"/>
+			<item value="org.eclipse.ui.preferences"/>
+			<item value="org.eclipse.ui.preferences"/>
+			<item value="org.eclipse.ui.commands"/>
+			<item value="org.eclipse.ui.preferences"/>
+			<item value="org.eclipse.ui.preferences"/>
+			<item value="org.eclipse.ui.preferences"/>
+			<item value="org.eclipse.ui.commands"/>
+		</list>
+		<list key="textEntries">
+			<item value="2"/>
+			<item value="1"/>
+			<item value="1"/>
+			<item value="1"/>
+			<item value="1"/>
+			<item value="1"/>
+			<item value="1"/>
+			<item value="2"/>
+		</list>
+		<list key="textArray">
+			<item value="favorites"/>
+			<item value="content assist"/>
+			<item value="type filters"/>
+			<item value="typing"/>
+			<item value="keys"/>
+			<item value="contentassis"/>
+			<item value="errors"/>
+			<item value="save actions"/>
+			<item value="clean up"/>
+			<item value="clean"/>
+		</list>
+	</section>
+	<section name="NewWizardAction">
+	</section>
+	<section name="WorkbenchPreferenceDialogSettings">
+		<item key="DIALOG_X_ORIGIN" value="571"/>
+		<item key="DIALOG_Y_ORIGIN" value="137"/>
+	</section>
+	<section name="org.eclipse.ui.preferences.keysPreferencePage">
+		<item key="actionSetFilter" value="true"/>
+		<item key="internalFilter" value="true"/>
+		<item key="uncategorizedFilter" value="true"/>
+	</section>
+</section>

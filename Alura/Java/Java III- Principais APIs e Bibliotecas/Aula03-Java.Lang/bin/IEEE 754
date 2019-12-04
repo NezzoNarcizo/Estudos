@@ -1,0 +1,146 @@
+----------------------------------------IEEE 754----------------------------------------------
+
+Origem: Wikipédia, a enciclopédia livre.
+
+
+O padrão IEEE 754 (definido pelo Instituto de Engenheiros Eletricistas e Eletrônicos) foi adotado em 
+1985 e desde então passou por algumas modificações, e define algumas regras de normalização a serem 
+seguidas nas operações e representações de números binários com ponto flutuante. Antes disso, cada 
+fabricante de computadores e outros dispositivos, possuía um formato de representação diferente.
+
+---------------------------------Normalização-------------------------------------------
+
+Para que o número esteja de acordo com as normas, deve obedecer a seguinte configuração:
+
+S M * 2E
+
+onde S é o sinal, M é a mantissa ou parte fracionária, 2 é a base (binário) e E é o expoente. 
+Deve ter a mesma forma utilizada em notação científica.
+
+Na representação em bits, usa-se a seguinte configuração:
+
+Sinal	Expoente	Mantissa
+Exemplo:
+
++ 9,5 decimal => + 1,0011 * 2³
+
+0	10000010	00110000000000000000000
+(Um exemplo mais detalhado da transformação encontra-se logo abaixo)
+
+------------------------------Sinal--------------------------------------------
+
+Independente do sistema de precisão utilizado, o sinal sempre é representado por apenas um bit, 
+podendo ser negativo (1) ou positivo (0).
+
+-------------------------------Arredondamento------------------------------------
+
+Embora o arredondamento possa alterar ligeiramente o resultado, muitas vezes se faz necessário. 
+Quando isso ocorre, as regras são semelhantes às utilizadas no arredondamento de números decimais. 
+
+Temos:
+
+Arredondamento em direção ao zero (round toward 0): despreza-se os bits “excedentes”;
+
+Arredondamento em direção ao infinito positivo (round toward +∞): arredonda para cima;
+
+Arredondamento em direção ao infinito negativo (round toward -∞): arredonda para baixo;
+
+Arredondamento para o mais próximo (round to the nearest): quando está entre dois números, 
+aproxima-se para o mais próximo, devendo terminar em zero.
+
+Exemplo:
+Número inicial: 1,0011101 (está entre 1,0011 e 1,0100)
+Tipo de Arredondamento	Final
+Para zero - 1,0011
+Para +∞	- 1,0100
+Para -∞	- 1,0011
+Aproximação	- 1,0100
+
+---------------------------------------Parte Inteira--------------------------------
+
+Deve haver apenas um número antes da vírgula, ou seja, o 1. Porém, somente a parte fracionária do 
+número é representada, pois a parte inteira, que sempre será 1, fica implícita. Assim, o bit que deixou
+ de ser ocupado, poderá ser utilizado pelo expoente, proporcionando uma maior precisão.
+ 
+ ----------------------------------------Expoente------------------------------------------
+ 
+O expoente deve ser ajustado de acordo com as normas, sendo somado ao número padronizado -Bias- 127
+ (simples) ou 1023 (dupla).
+
+-----------------------------------------Precisão-----------------------------------------
+
+Distribuição dos bits. Precisão simples
+
+Distribuição dos bits. Precisão dupla
+Quanto à precisão da representação numérica, as principais são:
+
+Simples----
+
+32 bits ou precisão simples (float), equivalente a até 7 dígitos decimais.
+1 bit para o sinal.
+8 bits para o expoente.
+23 bits para a representação da mantissa.
+
+Dupla----
+
+64 bits ou precisão dupla (double), equivalente a até 15 dígitos decimais.
+1 bit destinado para o sinal;
+11 bits destinados para o expoente;
+52 bits destinados para a mantissa.
+
+-----------------------------------------------Valores Especiais---------------------------------
+Valor	Sinal	Expoente	Mantissa
+Zero	0	0s	0s
++ Infinito	0	1s	0s
+- Infinito	1	1s	0s
+NaN	0	1s	Diferente de 0s
+
+No padrão IEEE 754, os NaN (Not a Number), possuem sinal 0, expoente 1 e mantissa com qualquer valor - exceto 
+tudo 0s, pois isso caracteriza infinito- e representam exceções como divisão por zero, raiz de negativos etc.
+
+-------------------------------------------Convertendo número decimal para binário--------------------------
+
+Tomando por base o primeiro exemplo, -9.5, vamos representá-lo como ponto flutuante com precisão 32 bits. Exemplo:
+
+Sinal negativo →  1
+9,5 para binário → 1001,1
+deslocamos a vírgula → 1,0011 * 2³
+agora que temos o expoente 3, devemos normalizá-lo → 3+127 = 130
+em binário temos 3 = 11 e 127 = 1111111, somando os dois temos → 10000010
+
+Resultado:
+
+1 10000010 00110000000000000000000
+Os espaços restantes são preenchidos com zeros.
+
+--------------------------------------Convertendo número binário para decimal------------------------------------------
+
+Para converter binários de ponto flutuante para decimal, devemos fazer o inverso do que fizemos acima.
+
+Primeiramente, devemos identificar os componentes e decompô-los em sinal, expoente (8 ou 11 bits) e o restante será a mantissa.
+
+Não devemos esquecer de recompor a parte inteira, ou seja o 1.
+
+Exemplo
+1	10000010	00110000000000000000000
+sinal	expoente	fração
+expoente → 130-127 = 3
+reconstituindo a parte inteira e adicionando-a a mantissa → 10011
+adicionando a vírgula → 1,0011
+deslocando-a de acordo com o expoente → 1001,1
+convertendo para decimal → 9,5
+adicionando o sinal → - 9,5
+
+------------------------------------Aritmética com ponto flutuante----------------------------------
+
+Quando são feitas adição ou subtração, os números devem ter os mesmos expoentes – movendo a vírgula. Após isso, os cálculos são efetuados normalmente.
+
+Em divisões e multiplicações, não é necessário igualar os expoentes. Procede-se da seguinte forma:
+
+multiplica-se as mantissas e soma-se os expoentes ou divide-se as mantissas e subtrai-se os expoentes, dependendo da operação em questão.
+
+Independente da operação, o resultado deve ser normalizado, se necessário.
+
+--------------------------------------------Bibliografia-----------------------------------------------
+
+VAHID, Frank. Sistemas Digitais: projetos, otimização e HDLs. São Paulo: Artmed, 2008.

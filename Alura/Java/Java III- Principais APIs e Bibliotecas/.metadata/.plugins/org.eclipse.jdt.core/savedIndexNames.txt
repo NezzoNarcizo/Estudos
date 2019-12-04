@@ -1,0 +1,1 @@
+INDEX VERSION 1.130+C:\Users\marlon.narcizo\Dropbox\Atividades Alura\Java\Java III- Principais APIs e Bibliotecas\.metadata\.plugins\org.eclipse.jdt.core

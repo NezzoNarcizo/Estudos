@@ -1,0 +1,274 @@
+------- Linguagem Java (Antes chamada de Oak)
+
+Chama e chamava atenção por causa destas características:
+
+- Orientada a objetos.
+- Muitas Bibliotecas.
+- Parece com C++.
+- Vários SO's.
+
+James Gosling (Considerado o pai do Java)
+
+Trabalhava na SUN Microsystems....(SUN = Stanford University Network)
+
+Trabalhavam mais com Hardware: Trabalhavam com "SPARC's".
+
+Não sabiam como ganhar dinheiro com Software, pois o sistema que utilizavam em seus micros era o UNIX (SOLARIS)
+
+Atacaram um problema da época de 90, mais exatamente 92, onde existiam muitos equipamentos eletrônicos (e surgiam cada vez mais).
+
+A intenção a principio era criar um chip para que interpretasse o código generico para qualquer eletronico - Esta ideia fracassou, pois seria custoso colocar um chip em cada eletro-eletronico.
+
+Por isso criaram a JVM (Java virtual machine).
+
+Quando compilamos o código criamos o .class, que é interpretada não pelo Linux, Windows ou Mac OS, mas sim, a JVM.
+
+Apesar do "Java" ter focado no mercado WEB ele se torno muito utilizado no server-side por ser multiplataforma.
+Assim ele não fica preso no que chamamos de vendor lock-in.
+
+As principais características do conceito de Máquina Virtual Java são:
+
+- Multiplataforma
+- Gerenciamento de memória
+- Segurança
+- Sandbox
+- Otimizações
+- JIT Compiler
+
+
+Obs: A máquina virtual do JAVA no Windows, por exemplo, está dentro da JRE.
+
+------- A Plataforma Java (Onde não somente a linguagem java roda, mas também outras várias linguagens)
+
+Características:
+
+Portabilidade
+Fácil acesso e desenvolvimento
+Segurança
+Onipresença
+
+Atributos - 
+
+- Máquina Virtual Java - JVM.
+- Blibliotecas - API.
+- Linguagem Java, Ruby, Scala, Python, Groovy, Clojure...Todas geram o bytecode e a JVM interpreta para qualquer SO (Linux, Windows e Mac OS).
+
+
+Dica: JDK = JRE + ferramentas desenvolvimento
+      JRE = JVM + bibliotecas
+
+
+
+------- Variáveis de Ambiente
+
+Adicionar os seguintes valores:
+
+Variáveis de Usuário: JAVA_HOME = C:\Program Files\Java\jdk-13\
+
+Variáveis do Sistema: CLASSPATH = .;%JAVA_HOME%\lib;%JAVA_HOME%\lib\tools.jar;%JAVA_HOME%\lib\dt.jar;%JAVA_HOME%\lib\htmlconverter.jar;%JAVA_HOME%\jre\lib;%JAVA_HOME%\jre\lib\rt.jar
+					  Path = C:\Program Files\Java\jdk-13\bin
+
+
+
+
+
+
+------- Questões
+
+
+1 - Qual é o grande benefício de uma Máquina Virtual Java (JVM)?
+
+R: Correto, no mundo Java você terá sempre o mesmo "executável" ou Bytecode que será executado pela Maquina Virtual Java, totalmente independente do sistema operacional. Assim não é preciso rescrever ou adaptar o código para rodar em um outro sistema operacional. Temos um único executável para todos os sistemas!
+
+
+
+2 - A linguagem Java nasceu com algumas características que são mantidas até hoje.
+Selecione todas que se aplicam:
+Selecione 3 alternativas
+
+R: Parecido com C++ - Correto, Java nasceu sendo parecido com C++ que era a linguagem mais popular na época.
+R: Muitas bibliotecas - Correto, desde o início o Java possui muitas bibliotecas que ainda muito aumentaram devido as milhares de contribuições da comunidade open source.
+R: Multiplataforma - Correto, Java é multiplataforma, roda em qualquer sistema operacional desde que exista a máquina virtual Java.
+
+
+3 - Dependendo da linguagem de programação existem vários tipos de sistemas que você pode desenvolver, como por exemplo:
+
+a) Sistemas para Web (Web Sites ou Web Apps)
+
+b) Sistemas puramente "Server-Side"
+
+c) Aplicativos para Android
+
+d) Applets que rodam no navegador
+
+Quais tipos de sistemas você pode criar com a linguagem Java?
+
+R: Todos - Correto, seja web ou puramente server-side, aplicativo Android ou um antigo applet, Java atende todas essas áreas! No entanto, os sistemas web e Android são os que mais fizeram sucesso no mundo Java e mais empregam desenvolvedores.
+
+
+4 - Qual é a diferença entre o executável do Windows (exe) e o executável do mundo Java (Bytecode)?
+
+R: Os executáveis do mundo Java são portáveis, os do mundo Windows não - Correto, lembrando portável significa que podem ser executados em vários sistemas operacionais diferentes (Windows, Linux, Mac, etc).
+R: Os executáveis do mundo Windows podem ser executados diretamente no sistema operacional, os do mundo Java precisam da máquina virtual - Correto! Os executáveis Java precisam da máquina virtual Java.
+
+
+5 - Todas as afirmações abaixo sobre o Bytecode são verdadeiras, exceto:
+Selecione uma alternativa
+
+R: O Bytecode é o código fonte - A afirmação "O Bytecode é o código fonte" não é verdadeira. O código fonte é para o desenvolvedor entender, o Bytecode foi criado e otimizado para a máquina virtual.
+
+Já falamos um pouco sobre o Bytecode que é um código de máquina parecido com o Assembly. Talvez você (como eu!) estranhou o nome Bytecode, no entanto, tem uma explicação bem simples para tal. Existe um conjunto de comandos que a máquina virtual Java entende. Esses comandos também são chamados de opcodes (operation code), e cada opcode possui o tamanho de exatamente 1 Byte! E aí temos um opcode de 1 Byte ou, mais simples, Bytecode. :)
+
+
+
+6 - Quais das afirmações abaixo são verdadeiras referente a JDK e JRE?
+    Selecione 2 alternativas
+
+R: O JRE é o ambiente para executar uma aplicação Java - Caso queira executar uma aplicação Java apenas, basta o JRE (Java Runtime Environment).
+R: O JDK é o ambiente para executar uma aplicação Java e possui várias ferramentas de desenvolvimento - O JDK são as ferramentas de desenvolvimento (como o compilador) mas também tem JRE embutido!
+
+
+
+7 - Qual é a definição correta do método main da classe principal?
+
+R: public static void main(String[] args).
+
+
+
+8 - Veja as afirmações abaixo sobre a compilação e execução de código Java:
+
+A - Durante a compilação acontece uma verificação sintática do código fonte.
+
+B - Na compilação e execução podem aparecer erros.
+
+C - A JVM lê e executa o Bytecode.
+
+D - O compilador gera o Bytecode caso não tenha nenhum erro sintático no código fonte.
+
+Quais afirmações são verdadeiras?
+
+R: Todas!
+
+
+9 - Quais comandos ele deve usar para compilar e rodar esse código Java?
+
+R: javac Programa.java
+   java Programa
+
+Correto! Repare que passamos a extensão do arquivo (.java) para o comando javac:
+javac Programa.java
+
+E para chamar a JVM usamos apenas o nome da classe (sem extensão):
+java Programa
+
+
+10 - Podemos programar em Java utilizando editores de textos e IDEs. Nesse contexto, temos as seguintes afirmativas:
+
+a) Um IDE é um ambiente integrado de desenvolvimento que centraliza em um único lugar o compilador da linguagem utilizada, editor de texto, documentação, banco de dados e tudo que gira em torno da criação de aplicações.
+
+b) Para quem está começando, o Eclipse IDE for Java EE Developers é o mais recomendado.
+
+c) NetBeans e Intellij são outros IDEs famosos do mundo Java.
+
+d) Um editor de texto possui tudo o que um IDE oferece.
+
+Marque a opção verdadeira a respeito das afirmações anteriores:
+
+Selecione uma alternativa
+
+R: A, C são verdadeiras. Correto! Um IDE é um ambiente integrado de desenvolvimento que centraliza em um único lugar, e NetBeans e Intellij são outros exemplos famosos de IDEs Java.
+
+
+11 - Marque as alternativas verdadeiras:
+
+Selecione 3 alternativas
+
+R: Um workspace é a pasta padrão que será utilizado para armazenar todos os projetos criados com a IDE Eclipse.
+R: Cada projeto do Eclipse é uma pasta dentro de um workspace.
+R: O conjunto de janelas exibidas pelo Eclipse IDE é denominado perspectiva.
+
+
+12 - Marque as alternativas verdadeiras:
+
+Selecione 3 alternativas
+
+R: Executamos nosso programa no Eclipse através do menu Run -> Run as -> Java Application. Exato! Inclusive há uma tecla de atalho, exibida durante a opção que varia de acordo com seu sistema operacional.
+R: Dentro de um projeto Java, criamos uma nova classe através da opção do menu File -> New -> Class. Correto! Caso o projeto não seja um projeto Java, a opção Class não estará disponível, fique atento!
+R: A saída do nosso programa executado pelo Eclipse é feita através da view console. Correto! A view console mostra a saída do programa.
+
+
+13 - Marque a alternativa correta a respeito da View Navigator:
+
+Selecione uma alternativa
+
+R: É parecida com o Windows Explorer do Windows ou o Finder do MAC. Exato. Ela nos permite ver o diretório do projeto com seus arquivos na integra.
+
+
+14 - Selecione a opção que mostra como podemos criar e definir o valor de uma variável para representar a quantidade de dias de um mês?
+
+Selecione uma alternativa
+
+R: int diasDoMes;
+
+diasDoMes = 30;
+
+
+15 - Verificando cada instrução abaixo diga qual das opções está errada.
+
+int brindes = 15;
+int pessoas = 2;
+System.out.println(brindes / pessoas);
+Deve imprimir 7.5
+
+Este código é o errado. Pois quando fazemos operações entre inteiros o resultado sempre será inteiro e não de ponto flutuante. O resultado na verdade seria 7.
+
+
+16 - Indicar todas as alternativas abaixo que mostrem o resultado "A idade de Marcos é 30!".
+
+Selecione 3 alternativas
+
+A - 
+int idade = 20;
+System.out.println("A idade de Marcos é 30!");
+
+Opção correta! Neste caso não estamos usando a variável idade que recebe 20.
+
+C-
+double idade = 30.0;
+System.out.println("A idade de Marcos é " + (int) idade + "!");
+
+Opção correta! Estamos fazendo o type cast no double que tem seu valor convertido para int. Desta forma não aparece a casa decimal.
+
+E-
+int idade = 30;
+System.out.println("A idade de Marcos é " + idade + "!");
+
+Opção correta!
+
+Obs: No IntelliJ - O nome da Pasta do Projeto é na verdade todo o local do Projeto, ele não cria uma nova pasta mesmo que você coloque o nome do projeto diferente.
+					Por isso se atentar em indicar o local do projeto e criar uma nova pasta para o projeto desejado.
+					
+					
+IDE = Integrated Development Environment
+
+Curiosidade: A Microsoft, quando lançou o Visual Studio, foi atrás dos recursos apresentados pelo Eclipse, com o ReSharper, contratando o Erich Gamma, autor de Design Patterns: Elements of Reusable Object-Oriented Software, para trabalhar com o IDE deles. O Eclipse foi uma inspiração para muitos, e é considerado uma ferramenta incrível.
+
+Java é Estaticamente Tipada (Precisa declarar todas as variáveis que vão ser utilizadas), e também fortemente tipada num todo.
+
+CamelCase =  É a denominação em inglês para a prática de escrever as palavras compostas ou frases, onde cada palavra é iniciada com maiúsculas e unidas. (Wikipédia)
+
+No Java, um statment (ou instrução) não funciona fora dos métodos, portanto precisaremos no mínimo do ponto inicial, o "public static void main".
+
+evaluation = Resultado da expressão.
+
+No Java não há costume de se abreviar palavras, como é o caso de variáveis.
+
+Operadores aritméticos:
+
++ para Soma
+
+- para Subtração
+
+* para Multiplicação
+
+/ para Divisão

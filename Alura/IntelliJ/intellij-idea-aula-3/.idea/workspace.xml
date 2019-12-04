@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="20dea68f-1cd5-4eaf-b17a-d5bc8dcd03e4" name="Default" comment="" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FavoritesManager">
+    <favorites_list name="intellij-idea-aula-3" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+        <option value="Interface" />
+        <option value="Class" />
+        <option value="JUnit5 Test Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1POJA5dePYYg5ylAYDkLIOG4UoD" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="PropertiesComponent">
+    <property name="Downloaded.Files.Path.Enabled" value="false" />
+    <property name="Repository.Attach.Annotations" value="false" />
+    <property name="Repository.Attach.JavaDocs" value="false" />
+    <property name="Repository.Attach.Sources" value="false" />
+    <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary" value="JUnit5" />
+    <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5" value="" />
+    <property name="create.test.in.the.same.root" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/lib" />
+    <property name="project.structure.last.edited" value="Libraries" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="editing.templates" />
+  </component>
+  <component name="RecentsManager">
+    <key name="ExtractSuperBase.RECENT_KEYS">
+      <recent name="br.com.alura.bytebank.io" />
+    </key>
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="br.com.alura.bytebank.io.teste.outro" />
+      <recent name="br.com.alura.bytebank.io.teste" />
+    </key>
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="br.com.alura.bytebank.model" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\nesso\Dropbox\Atividades Alura\IntelliJ\intellij-idea-aula-3\lib" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="br.com.alura.bytebank" />
+      <recent name="br.com.alura.bytebank.registrador" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\nesso\Dropbox\Atividades Alura\IntelliJ\intellij-idea-aula-3\src\br\com\alura\bytebank\model" />
+      <recent name="$PROJECT_DIR$/recursos" />
+    </key>
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="br.com.alura.bytebank.registrador" />
+      <recent name="br.com.alura.bytebank.model" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Application.Principal">
+    <configuration default="true" type="Applet">
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Principal" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="br.com.alura.bytebank.Principal" />
+      <module name="bytebank" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="br.com.alura.bytebank.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="LeitorCSVTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="bytebank" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="br.com.alura.bytebank.io.teste.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="br.com.alura.bytebank.io.teste" />
+      <option name="MAIN_CLASS_NAME" value="br.com.alura.bytebank.io.teste.LeitorCSVTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="LeitorCSVTest.ler" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="bytebank" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="br.com.alura.bytebank.io.teste.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="br.com.alura.bytebank.io.teste" />
+      <option name="MAIN_CLASS_NAME" value="br.com.alura.bytebank.io.teste.LeitorCSVTest" />
+      <option name="METHOD_NAME" value="ler" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="LeitorCSVTest.pagamentosDeAbril" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="bytebank" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="br.com.alura.bytebank.io.teste.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="br.com.alura.bytebank.io.teste" />
+      <option name="MAIN_CLASS_NAME" value="br.com.alura.bytebank.io.teste.LeitorCSVTest" />
+      <option name="METHOD_NAME" value="pagamentosDeAbril" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="LeitorCSVTest.pagamentosDeJunho" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="bytebank" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="br.com.alura.bytebank.io.teste.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="br.com.alura.bytebank.io.teste" />
+      <option name="MAIN_CLASS_NAME" value="br.com.alura.bytebank.io.teste.LeitorCSVTest" />
+      <option name="METHOD_NAME" value="pagamentosDeJunho" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JUnit" factoryName="JUnit">
+      <option name="TEST_OBJECT" value="class" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="TestNG">
+      <option name="TEST_OBJECT" value="CLASS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <properties />
+      <listeners />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType">
+      <module name="" />
+      <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
+      <option name="PROGRAM_PARAMETERS" />
+      <predefined_log_file enabled="true" id="idea.log" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Principal" />
+        <item itemvalue="JUnit.LeitorCSVTest" />
+        <item itemvalue="JUnit.LeitorCSVTest.pagamentosDeJunho" />
+        <item itemvalue="JUnit.LeitorCSVTest.pagamentosDeAbril" />
+        <item itemvalue="JUnit.LeitorCSVTest.ler" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="20dea68f-1cd5-4eaf-b17a-d5bc8dcd03e4" name="Default" comment="" />
+      <created>1509385142974</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1509385142974</updated>
+    </task>
+    <servers />
+  </component>
+</project>

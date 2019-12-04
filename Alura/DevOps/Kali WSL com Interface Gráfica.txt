@@ -1,0 +1,28 @@
+Baixar o arquivo de wget https://kali.sh/xfce4.sh
+Depois do diretório raiz executar o comando "sh xfce4.sh"
+
+ou
+
+apt-get --yes --force-yes install kali-desktop-xfce xorg xrdp
+
+
+Para iniciar o xrdp: /etc/init.d/xrdp start -- para parar -- stop
+
+Depois...
+
+Alterar o arquivo xrdp.ini para uma porta diferente da padrão: "nano etc/xrdp/xrdp.ini" 
+
+"i" = Iniciar o modo de edição.
+Ctrl + X = Para sair do modo de edição.
+
+Obs: Alterar para a porta 3390, por exemplo.
+
+Após trocar o número da porta restartar o serviço = service xrdp restart
+
+
+Tentar acessar através do "mstsc /v localhost:3390"
+
+
+Comandos extras -- ?
+
+

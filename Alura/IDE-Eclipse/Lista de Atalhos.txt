@@ -1,0 +1,164 @@
+Ctrl + N = Novo projeto, novo pacote, nova classe etc.
+
+Ctrl + Shift + F = Identar o Código.
+
+Ctrl + Espaço = Alto Completar.
+
+Ctrl + . = Erro mais próximo.
+
+Ctrl + 1 = Correção de erros.
+
+Alt + Shift + A = Com o modo de seleção em bloco ativado (Shift e seta para baixo, sem o mouse) inicio das linhas, para escrever um palavra que será repetida, como o "private".
+
+Ctrl + 3 = Chamar qualquer menu por busca do nome.
+
+Alt + Shift + S e depois R = Abrir o gerador de get/set.
+
+Alt + Shift + S e depois S = Gerar o toString com os atributos da classe.
+
+Alt + Shift + S e depois E = Gerar o equals e o hashcode.
+
+Ctrl + Alt + Baixo = Copia a linha atual para a de baixo.
+
+Ctrl + Alt + Cima = Copia a linha atual para a de cima.
+
+Ctrl + Z = Desfaz ultima ação.
+
+Alt + (Letra atalho) = Vai até o botão desejado.
+
+Alt + Shift + R  ou Ctrl + 2, R = Renomear todas as incidencias do nome indicado.
+
+Segurar Alt e utilizar setas cima ou baixo = Muda linha para posição desejada.
+
+Shift + Alt + M = (Refactoring) Cria um método baseado nas linhas selecionadas adicionando também a chamada do novo método.
+
+Ctrl + Shift + O = Organiza todos os imports.
+
+Ctrl + I = Identa o código após selecionar tudo.
+
+Alt + T = Refatoração
+
+Alt + Shift + T = Possíveis refatorações para determinado elemento.
+
+Alt + Shift + L = Para extrair uma variável a partir de alguma expressão.
+
+Alt + Shift + V = Para mover algum elemento para um lugar onde ele faça mais sentido.
+
+Alt + Shift + C = Para mudar a assinatura de um método, adicionando, removendo ou reordenando parâmetros, trocando o tipo de retorno, mudando o nome, etc.
+
+Ctrl + Shift + R = Abrir Resources.
+
+Ctrl + Shift + T = Abrir Types.
+
+Ctrl + O = Abre uma caixa de diálogo com todos os membros da classe.
+
+---------------------------------------------
+O Eclipse usa diversos símbolos para cada tipo de membro:
+
+Quadrados vermelhos para membros que são private;
+
+Círculos verdes para membros que são public;
+
+Losangos amarelos para membros que são protected;
+
+Triângulos azuis para membros que são default;
+
+A diferenciação entre atributos e métodos é feita através do tamanho do símbolo, pequeno para atributos, grande para métodos. Além disso também são utilizadas letras para elementos especiais, como construtores, onde além do desenho também aparece a letra C.
+-----------------------------------------------
+
+
+F3 = Ir para a declaração da variável.
+
+Ctrl + T = Ver todas as implementações da classe / Ver todas as classes que implementam o método.
+
+Alt + Seta pra esquerda = Funciona como o botão voltar do seu navegador web.
+
+Alt + Seta pra direita = Funciona como o botão avançar do seu navegador web.
+
+Ctrl + Shift + G = Chamado de Find Usages, encontra os usos de classes, métodos ou atributos.
+
+Ctrl + Alt + H = Call Hierarchy, além de mostrar os usos de um método, mostra também os usos dos métodos que usam esse método, e assim por diante, ou seja, a hierarquia de chamadas de método até chegar no método pesquisado.
+
+Ctrl + F = Abrirá uma tela para digitar o termo de busca.
+
+Ctrl + J + Escrever palavra da busca ex: public = Busca incremental....Depois....Ctrl + K e Ctrl + Shift + K para ir para a próxima ocorrência ou a anterior respectivamente.
+
+Ctrl + H = Buscar em vários arquivos de um projeto ou pasta específica, onde você pode filtrar a busca para um dos tipos de arquivo.
+
+F4 =  Verificar qual é a hierarquia da classe (Lado Esquerdo).
+
+Ctrl + Alt + G = Detalha em qual classe e linha determinado método, atributo ou até mesmo classe é utilizado. 
+
+Ctrl + G = Busca a declaração de um termo (Classe, Atributo, Método) no Workspace.
+
+Ctrl + Alt + H = Verifica por quem determinado método ou variável é utilizado.
+
+Ctrl + F11 = Rodar testes (Testa qualquer classe).
+
+Alt + Shift + X Seguido da letra T = Rodar testes sem ambiguidade (Testa apenas classes com anotações de "Test").
+
+Ctrl + Shift + B = Com o cursor em cima da linha desejada cria um breakpoint.
+
+Alt + Shift + D, T = Debug JUnit Teste.
+
+Ctrl + R = Run To Line (Modo Debug).
+
+Ctrl + Shift + D = Mostrar o valor da expressão.
+
+Ctrl + Shift + I = Mostrar o valor da expressão (Versão mais detalhada).
+
+F5 = Entrar na próxima chamada (Debugando).
+
+F6 = Para frente (Debugando).
+
+F7 = Para trás (Debugando).
+
+F8 = Resumo da execução até o próximo breakpoint (Debugando).
+
+Ctrl + F2 = Para a execução (Debugando).
+
+Ctrl + F8 = Sair da perspectiva de debug.
+
+Ctrl + Shift + L = Lista de todos os atalhos do Eclipse.
+
+Ctrl + Shift + M = Import estático automático.
+
+
+
+Dica 1: Podemos criar nossos próprios atalhos para funções que já existem mas não tem atalho pré-definido em Ctrl + 3 - General - Keys.
+ 
+Dica 2: Podemos definir melhor as regras de identação do código (Ctrl + Shift + F) em Java > Code Style > Formatter, podemos buscar em Ctrl + 3 este menu.
+
+Dica 3: Rodar Clean Up no código para limpar variáveis não utilizadas, imports não utilizados, @Override sobre métodos sobrescritos (Buscar em Ctrl +_ 3).
+
+Dica 4: Configurar Clean Up para rodar automaticamente sempre que salvarmos um arquivo (Java > Editor > Save Actions).
+
+	Remove trailing whitespace, All lines: para evitar commits corrigindo só espaços em branco;
+	Organize imports: para não esquecermos imports desnecessários no nosso código;
+	Add missing annotations, ambas: para deixar clara a intenção de sobrescrita e o problema do uso de API depreciada;
+	Remove unused private members: para não mantermos, acidentalmente, métodos e atributos não utilizados;
+	Remove unused local variables: mesma idéia, só que para variáveis locais;
+	Remove unnecessary casts: para evitar confusão sobre a tipagem utilizada e inibir imports errados.
+
+Dica 5: Definir que Warnings devem aparecer ou não em Errors/Warnings em Java/Compiler, pode ser acessado através de Ctrl + 3.
+
+Dica 6: Considerar uso de itens "Deprecated" e "Restricted API" como "error" dentro do menu Java/Compiler.
+
+Dica 7: Em Java > Editor > Typing configurar para que ponto e virgula e chaves sejam posicionadas corretamente ao serem digitadas.
+
+Dica 8: Em Java > Editor > Content Assist configurar para que ao invés do Java apenas completar inserts substitua por aquele que escolhemos.
+
+Dica 9: Em Java > Editor > Content Assist configurar para que o eclipse deduza os nomes corretos dos parametros em construtores, por exemplo.
+
+Dica 10: Definir quais imports não deverão ser feitos (Configuração que deve ser alterada de acordo com o projeto) em Java > Editor > Content Assist > Type Filters
+
+Dica 11: Definir quais serão os imports mais usados (Configuração que deve ser alterada de acordo com o projeto) em Java > Editor > Content Assist > Type Filters.
+
+
+
+
+
+Siglas -------
+
+Getters/Setters = ggas
+Constructor = gcuf

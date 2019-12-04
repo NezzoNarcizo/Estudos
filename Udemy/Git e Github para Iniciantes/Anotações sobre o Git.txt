@@ -1,0 +1,289 @@
+Caso queira utilizar o terminal do Git no Intellij colocar o Path "D:\Programas\Git\bin\sh.exe" --login -i em S
+
+Diferente de outros sistemas de versionamento o Git armazena snapshop de todos os arquivos, modificados ou não, pois sempre teremos uma versão de cada arquivo para que possamos voltar em qualquer versão sem maiores problemas.
+
+Coisas importantes sobre o sistema de versionamento do Git:
+
+	1 - Ele é responsável por versionar os arquivos do projeto para que não precisemos fazer isso manualmente.
+	
+	2 - Os outros sistemas de versionamento trabalham com diferenças de arquivos (somente os que tem mudanças) diferente do Git que trabalha com os estados dos arquivos (a cada versão um snapshot de cada arquivo).
+	
+	
+O Github é o serviço de Web compartilhado para projetos que utilizam o Git para versionamento. É apenas um local na nuvem que vai armazenar os projetos versionados pelo Git. O Github só existem por causa do Git.
+
+
+O Git armazena suas informações em 3 lugares:
+	
+	Git Config: Do Sistema em Geral.
+	Git Config: Do Usuário.
+	Git Config: Do Projeto Específico do Repositório.
+	
+	
+
+Configurando o Git *******
+
+	Definindo informações para que sejam setadas em todos os repositórios de determinado usuário, chamado Global:
+	
+     - Para configurar username: git config --global user.name "Marlon Narcizo"
+	
+	 - Para configurar E-mail: git config --global user.email "nesso.narcizo@hotmail.com"
+	 
+	 - Para configurar o editor principal do Git: git config --global core.editor 'comando do editor' (sub (sublime), vim, vi ou emacs)
+		obs: Se não definirmos ele vai por padrão utilizar o vim.
+		
+		
+		Para saber o valor do dado que você configurou: git config "chave desejada" (user.name, user.email etc)
+		Para saber tudo: git config --list
+
+		
+		
+Inicializando um repositório *******
+
+	Criando um repositório para que possamos adicionar o nosso projeto
+	
+		- Para criarmos um repositório, devemos ir até a pasta desejada através terminal e depois digitar: mkdir "NOME_DA_PASTA".
+		
+		- Para entrarmos na pasta depende de cada S.O, no caso do Windows é cd, ou seja: cd "NOME_DA_PASTA"/
+		
+		- Para inicializar um repositório e ele passar de fato a fazer parte do ecossistema do Git: git init
+		
+		- Para listar o que há dentro do diretório no Windows: dir /A (Exibe arquivos com atributos específicados)
+			Obs: Em caso de dúvido sobre qual comando digitar para coletar informações do diretório: dir /?
+		
+		
+Usando o editor do terminal *******
+
+		Obs: Normalmente utilizamos um editor de textos separados e utilizamos o terminal apenas para mexer com a parte do Git
+
+		
+Ciclo de Vida dos Status dos Arquivos
+
+	O Git separa em quatro estados bem definidos como os arquivos vão ser:
+	
+		- Untracked: Momento em que o arquivo acabou de ser adicionado no repositório mas ainda não foi "visto" pelo Git.
+		
+		- Unmodified: Ele não foi modificado. Ele existe no Git mas ainda não houve nenhuma modificação nele. Se tentar comitar o Git avisará que: "Não tem nada pra comitar.
+		
+		- Modified: Depois que modificou o arquivo. Precisará utilizar o comando git add "NOME_DO_ARQUIVO" para que possa comitar.
+		
+		- Staged: Local de onde os arquivos saem prontos para a versão. Depois disso voltam a ser Unmodified. 
+		
+		
+		
+		
+ATALHOS/COMANDOS GIT TERMINAL *******
+
+clear = Limpa a tela. Mesma ação do cls no MSDOS.
+
+$ q = Quitar de algum comando que ainda esteja executando.
+
+$ cd "diretório" = Avança para o diretório.
+
+$ cd .. = Volta para um diretório acima (Atenção para o espaço entre o "CD" e os "..", não é junto como no cmd do windows).
+
+$ git status = Mostra o status de tudo que estiver dentro do diretório atual.
+
+$ git add "NOME_DO_ARQUIVO" = Adiciona o arquivo que foi criado para o Staged. Onde já pode ser comitado e criada uma versão do mesmo.
+
+$ git commit = Para "comitar" um arquivo.
+	-m = Para adicionar uma mensagem ao commit. Adicionar entre "".
+	Após comitar as seguintes informações aparecerão.
+	
+		[master (root-commit) 862d869] Add Readme.md //No master (local atual) criou um commit com a Hash 862d869 (versão do arquivo), com este comentario
+		1 file changed, 3 insertions(+) //1 Arquivo modificado com 3 inserções.
+		create mode 100644 Readme.md //Foi o create mode.
+	-am = Para adicionar, commitar e comentar ao mesmo tempo.
+
+		
+$ git log = Ver tudo que já foi realizado.
+	--decorate = Para ver mais detalhes dos commit's.
+	--author="NOME_DO_AUTOR" (Sem espaços) = Filtrará apenas os commits do autor indicado.
+	--graph = Mostra de forma gráfica o que esta acontecendo com os branches e as versões.
+	
+$ git show "HASH" = Mostra todos os dados de determinado commit como: (Informações mais importantes) Quem realizou, o que já tinha no arquivo e o que foi 	adicionado.
+	
+$ git shortlog = Mostra em ordem alfabética quais foram os autores, quantos commits fizeram e quais eles foram.
+	-sn = Apenas a quantidade de commit de cada um.
+	
+$ git diff = Verificar as mudanças antes de comitar.
+	--name-only = Para ver apenas o nome do arquivo que foi modificado.
+	
+$ git checkout "NOME_DO_ARQUIVO" = Voltar para a versão antes da ultima modificação.
+
+$ git reset HEAD "NOME_DO_ARQUIVO"
+	--soft = Vai pegar as modificações e vai matar o commit e voltar o arquivo para o Staged e deixa-lo pronto para ser comitado de novo.
+	--mixed = Vai matar o commit, porém retornará os arquivos para antes do Staged, ou seja, para o Modified.
+	--hard = Vai ignorar a existência do commit e matar tudo o que foi feito antes dele.
+	
+	
+	
+	
+
+DENTRO DO EDITOR VIM *******
+
+	Obs: Se apenas digitarmos vim e um nome de arquivo com extensão, mesmo que o mesmo não exista, será criado.
+	
+vim "NOME_DO_ARQUIVO.extensão" = Para editar.
+I = Modo de inserção de dados dentro do arquivo (INSERT/INSERÇÃO).
+ESC = Sair do modo de inserção.
+
+: = Entrar no modo de comando para manipulação de arquivo.
+	q = Sair depois de salvar.
+	q! = Forçar saída sem salvar.
+	w = Salvar.
+
+	
+Github *******
+		
+		No Github para conectar é utilizada uma chave SSH.
+		
+		
+		"https://help.github.com/en/articles/connecting-to-github-with-ssh"
+		
+		
+		
+		Exemplo da criação:
+			nesso@DESKTOP-L8HE2GA MINGW64 ~/Dropbox/Udemy/Git e Github para Iniciantes/git-course (master)                          $ ssh-keygen -t rsa -b 4096 -C "nesso.narcizo@hotmail.com"                                                              Generating public/private rsa key pair.                                                                                 Enter file in which to save the key (/c/Users/nesso/.ssh/id_rsa):                                                       Created directory '/c/Users/nesso/.ssh'.                                                                                Enter passphrase (empty for no passphrase):                                                                             Enter same passphrase again:                                                                                            Your identification has been saved in /c/Users/nesso/.ssh/id_rsa.                                                       Your public key has been saved in /c/Users/nesso/.ssh/id_rsa.pub.                                                       The key fingerprint is:                                                                                                 SHA256:ub8kfUX0H13mlCvZMaBfBMK7PzJXMiS2NbUOd9Kw0Lk nesso.narcizo@hotmail.com                                            The key's randomart image is:                                                                                           +---[RSA 4096]----+                                                                                                     |          .. ++o=|                                                                                                     |           .+.=Xo|                                                                                                     |           ...=BO|                                                                                                     |         . +.OE==|                                                                                                     |        S . *.B.o|                                                                                                     |         o o + o |                                                                                                     |        o o o +  |                                                                                                     |         + + +   |                                                                                                     |          o.+ .  |                                                                                                     +----[SHA256]-----+  
+	
+	Diretório raiz para verificar a chave do Github: $ cd ~/.ssh/
+	
+	Local de criação Gerenciamento de chaves no Github: https://github.com/settings/keys
+	
+	$ git remote add origin https://github.com/NezzoNarcizo/github-course.git = Adicionar um repositório remoto com o nome Origin (nome default).
+	
+	$ git remote = Mostra os repositórios remotos.
+	
+	$ git remote -v = Ele mostra mais informações como endereço.
+	
+	$ git push -u origin master = Envia tudo que temos no repositório local como, arquivos, logs, modificações para o repositório que estamos determinando.
+								O "-u" serve apenas para "Trackear" para não precisar digitar tudo no próximo git push.
+								Neste comando acima está indo do Mast
+								
+								Mensagem após o envio dos arquivos:
+								
+							    Enumerating objects: 18, done.
+								Counting objects: 100% (18/18), done.
+								Delta compression using up to 4 threads
+								Compressing objects: 100% (12/12), done.
+								Writing objects: 100% (18/18), 1.63 KiB | 834.00 KiB/s, done.
+								Total 18 (delta 5), reused 0 (delta 0)
+								remote: Resolving deltas: 100% (5/5), done.
+								To https://github.com/NezzoNarcizo/github-course.git
+								 * [new branch]      master -> master
+								Branch 'master' set up to track remote branch 'master' from 'origin'.
+	
+	Podemos nos interessar por projetos opensource famosos ou pegar por completo um projeto no Github para trabalharmos na nossa máquina com nossas modificações ou até mesmo nosso próprio código. Para isso temos um comando chamado "git clone".
+	
+	Para fazermos isso o Github libera o endereço do repositório por SSH ou HTTPS (Sempre prefira SSH pois é mais rápido).
+	
+	Iremos clonar nosso próprio repositório com outro nome.
+	
+		Obs: Clone fora de qualquer branche.
+		
+	$ git clone git@github.com:NezzoNarcizo/github-course.git "NOME_DO_NOVO_REPOSITÓRIO"
+	
+	
+	Podemos também fazer um Fork de outro projeto para que adicionemos algo que achamos que falta ou até mesmo apenas contribuir com o mesmo.
+	Primeiro copia o projeto, altera o que acha necessário e depois envia um aviso o dono do projeto as alterações que foram feitas.
+	
+	A diferença entre Fork e Clone, é que no clone se fizermos uma modificação não conseguiremos subir de volta o código se o repositório não for nosso.
+	
+	
+BRANCH*******
+
+	O Branch é um ponteiro móvel que leva um commit. A função dele é apontar para um commit. Para cada commit é criada uma hash e para cada hash um snapshot.
+	O primeiro branch do repositório sempre sera o Master. A cada commit o Master vai apontar para o commit mais recente.
+	Podemos criar um novo Branch, com outro nome que aponta para o mesmo commit ou outro se quiser.
+	
+	
+	Por que usar mais um Branch?
+	
+		1ª - Podemos modificar os arquivos sem alterar o local principal. Podemos corrigir um bug sem alterar o Branch master.
+		2ª - Ele é facilmente desligado. Podemos cria-los e apaga-los com muita facilidade.
+		3ª - Multiplas pessoas trabalhando em multiplos branch sem ninguém atrapalhar ninguém.
+		4ª - Eles evitam conflitos. Mesclar commit com branch master sem maiores problemas, sem todo mundo commitando o mesmo código.
+		
+	Criando um novo Branch.
+		
+		$ git checkout -b "NOME_DO_NOVO_BRANCH" //-b é a forma de dizer que está criando um novo branch
+		Mensagem: "Switched to a new branch 'testing'"
+		
+		git branch = Nos mostra os branch existentes...O Branch com asterísco é o branch que você está no momento.
+		
+	Movendo e Deletando Branches
+	
+		$ git checkout "NOME_DO_BRANCH" = Muda o branch no qual você está.
+		$ git branch -D "NOME_DO_BRANCH" = Deleta o branch desejado.
+			Obs: Não é possível deletar o branch no qual você está, é necessário ir para outro branch, de preferência o Master, para depois deletar o desejado.
+		
+	
+	Unindo Branches com Merge e Rebase
+	
+		Os dois fazem basicamente a mesma coisa, unem os Branches, mas de forma diferente.
+	
+		Merge: Cria um novo commit apenas para juntar os que estavam separados. "git merge "NOME_DO_BRANCH""
+		
+			Pro: Operação não destrutiva, ele não destrói commit nenhum, nem modifica o histórico.
+			Contra: Commit extra apenas para juntar outros commits, cria um commit que não adiciona nada e deixa um histórico poluído.
+			
+		Rebase: Mata o commit que estava. Pega tudo que estava no branch separado e coloca na frente da fila dos commit. O branch secundário e o master passam 	a apontar para o mesmo commit.
+
+			Pro: Evita commit extra que são uteis apenas para alinhar o projeto. Também teremos um histórico linear.
+			Contra: Perde a ordem cronológica. Um commit que foi feito antes pode ser posto na posição de atual. Tem o perigo da outra pessoa não conseguir commitar pois vai dar conflito. Deve ser usado com muito cuidado. É aconselhado em geral utilizar o git pool --rebase antes de qualquer commit para verificar o que estava diferente.
+			
+			$ git rebase rebase-branch
+			First, rewinding head to replay your work on top of it...
+			Applying: Add seila
+			
+	Gitignore
+	
+		Serve para ignorar, não "trackear" determinadas informações. Informações ou arquivos que precisamos dentro do nosso projeto mas não quermos subir para lugar algum. Como exemplos que o próprio sistema gera.
+		
+		Basicamente ele é um arquivo do nosso diretório onde especificamos o
+		
+	
+	Comandos importantes do dia a dia do Git *******
+	
+		$ git stash = Responsável por guardar modificações que anda não foram comitadas numa pasta ou arquivo que possamos chamar quando for necessário.
+		
+			$ git stash list = Lista tudo que estiver no stash.
+			$ git stash clear = limpa tudo que estiver no stash.
+			
+		Alias, os atalhos para comandos.
+		
+			$ git config --global alias.s status = Definiria a letra"s" para ser utilizada no lugar da palavra completa status utilizada no comando "git status".
+			
+			
+	Versionamento com Tags
+	
+		 $ git tag -a 1.0.0 -m "Mensagem desejada" = Para definir a tag do seu branch.
+		 $ git push origin master --tags = Para subir sua tag.
+		 $ git tag = Para listar todas as tag's geradas.
+	
+	
+	Git Revert
+	
+		 $ git revert "HASH" = Reverte o que foi feito no commit indicado pela hash, mas não apaga o commit em si.
+	
+
+	
+	Apagando Tags e Branches Remotos
+	
+		 Utilize a "$ git tag" para listar suas tags.
+		 
+		 Após isto usar o seguinte comando:
+		 
+			$ git tag -d "tag desejada" (Sem aspas)                                        
+			A seguinte mensagem aparecerá: Deleted tag '1.0.0' (was f1b5b22)
+			
+			Ainda assim não subiu para o repositório as nossas modificações.
+			
+			Podemos verificar com o comando: $ git push origin master --tags
+			
+			Para apagar de fato as tags de fato, devemos executar o comando:
+			
+			$ git push origin :"tag"  (Com aspas)
+			
+				Obs: Se possuíssemos um Branch que desejassemos apagar, seria desta mesma forma.
+		 
+		 

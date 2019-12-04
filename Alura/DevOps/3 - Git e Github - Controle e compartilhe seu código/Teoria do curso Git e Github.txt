@@ -1,0 +1,79 @@
+
+Git e Github: Controle e compartilhe seu código Git e Github: Controle e compartilhe seu código - Teoria do curso -------
+
+
+Aula 1 - O que é Git? -------
+
+	Teoria -------
+		
+		Controle de versões: Se temos várias versões de um mesmo código, precisaremos de um controle destas versões, pois modificações estão sendo feitas em paralelo.
+			Um servidor de arquivos preparado para receber as alterações de cada pessoa envolvida no projeto resolve este problema.
+			Neste servidor deve haver alguma ferramenta capaz de identificar que a versão enviada não é a mais recente, e portanto não deixe o arquivo ser enviado.				Portanto para realizar alterações no código que já está neste servidor, devemos baixar sua versão, realizar alterações e então enviar uma alteração mais nova que aquela.
+			E é isto que o Git faz para nós.
+	
+	
+		Temos outras alternativas além do Git, alguma delas são:
+				
+			CVS
+			SVN
+			Mercurial
+					
+		Uma das vantagens do Git sobre estas ferramentas é: Permitir uma cópia do projeto, um repositório do projeto em sua máquina, para que se possa trabalhar em cima dela e então enviá-lo para outro repositório, o que se denomina repositórios distribuídos. Isto permite o trabalho Offline antes do envio de sua versão.
+				
+					
+	Comandos -------
+	
+		git init = Inicia um repositório onde o Git irá monitorar todos os arquivos e pastas.
+			Obs: Comando deve ser executado dentro da pasta desejada através do terminal.
+			Obs2: Atráves do Git bash normalmente a pasta ficará com a indicação "Master" a frente do pasta que foi escolhida como repositório.
+		
+		git status = Informa qual a situação atual de cada arquivo ou pasta. O que precisa ser adicionado, o que foi modificado etc.
+			Informa que está rodando no Branch Master: On Branch Master...
+			Que não tem nenhum comit ainda: No commits yet...
+			Os arquivos que ainda não estão sendo monitorados: Untracked Files...
+		
+	
+	Questões -------
+	
+		1 - Agora que nós já entendemos para que serve um VCS (Version Control System), ou sistema de controle de versões, podemos dar continuidade com este treinamento, mas só para garantir...
+		Quais das afirmações a seguir sobre o Git estão corretas?
+
+		Selecione 2 alternativas
+		
+		R1: Nos deixa organizar o trabalho em equipe, mantendo as alterações nos arquivos em um servidor específico para isso.
+		Alternativa correta! O Git permite que a gente armazene as modificações feitas em cada arquivo em um servidor próprio para isso. Toda a gestão de alterações é feita pelo Git e nós só precisamos nos preocupar em criar código que funciona, e não em quem alterou o que antes.
+		
+		R2: Permite armazenamento e acesso a um histórico de modificações.
+		Alternativa correta! Cada alteração que você faz fica gravada em um histórico, podendo ser visualizada e restaurada a qualquer instante.
+		
+		2 - Já entendemos o motivo para utilizar o Git. Começamos também a entender como o Git funciona. Sabemos que o Git faz a gestão de repositórios, e cada pessoa na equipe pode ter o seu repositório.
+
+		Como fazemos para o Git passar a enxergar determinada pasta como um repositório e a observar as mudanças em seus arquivos?
+
+		Selecione uma alternativa
+		
+		R: Através do comando git init
+		
+		Alternativa correta! O git init inicializa um repositório no diretório em que o comando for executado. A partir deste comando, o Git poderá gerenciar as modificações realizadas nos arquivos.
+		
+		
+Aula 2 - Iniciando os trabalhos -------
+
+	Comandos:
+		
+		git add "arquivo ou pasta" = Adiciona o arquivo ou pasta informada ao monitoramento do Git.
+			Obs: Muitas vezes o nome do arquivo ou diretório é muito grande, portanto uma informação de quebra de linha será exibida.
+				CR - MacOS, LF - Linux e CR+LF - Windows.
+				
+		Criando um ".gitignore" global:
+
+			No terminal executar o seguinte comando: $ git config --global core.excludesfile ~/.gitignore_global
+			
+			O arquivo estará em: .git/info/exclude
+			
+			Adicione toda pasta ou arquivo que deseja que seja ignorado sem utilizar barra no ínicio (Isto se quiser que todos os arquivos com este nome ou extensão em todas as pastas no repositório sejam afetados).
+			
+			A vantagem é que não precisamos de um .gitignore que será comitado junto mostrando a outras pessoas o que estamos ignorando em nosso repositório.
+		
+	
+	Questões:

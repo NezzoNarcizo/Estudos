@@ -1,0 +1,41 @@
+Repare que, se você declarar a coleção e dar new assim:
+
+
+        Collection<Integer> teste = new ArrayList<>();
+        
+        
+em vez de:
+
+		ArrayList<Integer> teste = new ArrayList<>();
+		
+É garantido que vai ter de alterar só essa linha para substituir a implementação por HashSet. Estamos aqui usando o polimorfismo 
+para nos proteger de que mudanças de implementação venham nos obrigar a alterar muito código. 
+Mais uma vez: programe voltado a interface, e não à implementação!
+
+Esse é um excelente exemplo de bom uso de interfaces, afinal, de que importa como a coleção funciona? O que queremos é uma 
+coleção qualquer, isso é suficiente para os nossos propósitos! Nosso código está com baixo acoplamento em relação a estrutura 
+de dados utilizada: podemos trocá-la facilmente.
+
+Esse é um código extremamente elegante e flexível. Com o tempo você vai reparar que as pessoas tentam programar sempre 
+se referindo a essas interfaces menos específicas, na medida do possível: métodos costumam receber e devolver Collections, 
+Lists e Sets em vez de referenciar diretamente uma implementação. É o mesmo que ocorre com o uso de InputStream e OutputStream: 
+eles são o suficiente, não há porque forçar o uso de algo mais específico.
+
+Obviamente, algumas vezes não conseguimos trabalhar dessa forma e precisamos usar uma interface mais específica ou mesmo nos 
+referir ao objeto pela sua implementação para poder chamar alguns métodos. Por exemplo, TreeSet tem mais métodos que os definidos 
+em Set, assim como LinkedList em relação à List.
+
+Dê um exemplo de um caso em que não poderíamos nos referir a uma coleção de elementos como Collection, mas necessariamente por 
+interfaces mais específicas como List ou Set.
+
+* Opinião Instrutor
+
+Quando precisamos colocar a semântica de que uma coleção não pode ter repetição, por exemplo, precisamos de um Set. 
+Se precisamos necessariamente de ordem, precisamos de uma List.
+
+Pense na preparação de um mochilão pela Europa. Se eu estou interessado em contar para meus amigos por quais países eu vou passar,
+a repetição não importa, então eu escolheria um List.
+
+Agora, se eu quero planejar as passagens de um local a outro dessa viagem, sem a repetição de locais e não importando a ordem. 
+Então, preciso de um Set.
+
