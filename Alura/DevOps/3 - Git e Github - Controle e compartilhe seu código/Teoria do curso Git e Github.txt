@@ -97,6 +97,8 @@ Aula 2 - Iniciando os trabalhos -------
 				Obs: Caso já tenha adicionado alguma pasta que não deve ser compartilhada antes de configurar o arquivo exclude, será necessário remove-la via linha de comando...
 				
 					git rm --cached -r /."diretorio"
+					
+			git add .gitignore = Adiciona um arquivo .gitignore local.
 		
 		git commit -m "Mensagem do commit": Realiza o commit e adiciona a mensagem relacionada ao mesmo.
 		
@@ -104,7 +106,9 @@ Aula 2 - Iniciando os trabalhos -------
 								$ git commit -m "Ínicio repositório Estudos"
 								[master (root-commit) 3c36730] Ínicio repositório Estudos
 								1905 files changed, 203360 insertions(+)
-								
+		
+			Obs: Nunca devemos commitar um código que não esteja funcionando.
+		
 		git rm "arquivo ou diretorio" = Para que este seja ignorado pelo Git não sendo mais monitorado.
 		
 		git log = Mostra o histórico dos commits feitos, hash (Não existem commits com o mesmo hash), branch (Ramo em que o commit se encontra), autor, e-mail configurado, mensagem e data.
