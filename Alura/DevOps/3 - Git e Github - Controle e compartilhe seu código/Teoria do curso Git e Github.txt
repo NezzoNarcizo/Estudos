@@ -160,3 +160,50 @@ Aula 2 - Iniciando os trabalhos -------
 		R: git config --local user.name "Nome da pessoa"
 
 		Alternativa correta! Assim todos os commits executados neste repositório serão atribuídos à pessoa com nome Nome da pessoa. Para mais detalhes e outras configurações possíveis (até algumas mais avançadas), você pode conferir este link: https://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration.
+		
+		
+Aula 3 - Compartilhando o trabalho -------
+
+	Comandos:
+	
+		mkdir "Nome do diretório" = Cria um diretório com o nome informado (Assim como no Linux).
+		
+		git init --bare = Informa que será um servidor de arquivos e modificações não um diretório de trabalho (Em outras palavras, diretório puro).
+		
+		git remote = Todos os repositórios remotos que o repositório local conhece são listados pelo nome.
+		
+			git remote add "Nome do repositório remoto" "URL, caminho de rede ou lugar no localhost do servidor" = Faz nossa pasta de trabalho conhecer um repositório remoto e insere o nome que informamos para identificação.
+		
+			git remote -v = Faz com que o endereço do repositório principal (servidor) seja exibido.
+			
+				Além disso, é indicado que os dados deste caminho serão buscados (fetch), e enviados para este mesmo caminho (push).
+				
+				Obs: A busca pode ser feita de um local e o envio para outro.
+		
+		git clone "Endereço repositório" "Nome da pasta de trabalho" = Para que sejam trazidos os dados do repositório localizado neste endereço para nossa pasta de trabalho.
+		
+			Obs: Se não colocarmos o nome na frente do endereço para esolhermos o nome da pasta no nosso ambiente de trabalho, o nome que será definido automaticamente será o nome da pasta onde se encontram os dados clonados.
+
+		
+	Questões:
+	
+		1 - No último vídeo, nós trabalhamos bastante. Nossa primeira tarefa foi criar um novo repositório, que será utilizado como o nosso "servidor" Git, ou seja, todos os membros da equipe o acessarão para compartilhar suas mudanças.
+
+		Como fizemos para definir um repositório Git neste caso?
+
+		Selecione uma alternativa
+		
+		R: git init --bare
+
+		Alternativa correta! Com este comando nós criamos um repositório que não terá a working tree, ou seja, não conterá uma cópia dos nossos arquivos. Como o repositório servirá apenas como servidor, para que outros membros da equipe sincronizem seus trabalhos, poupamos espaço de armazenamento desta forma.
+		
+		
+		2 - Antes de sincronizar as nossas mudanças no código com algum repositório remoto, precisamos antes adicioná-lo ao nosso repositório local.
+
+		Como adicionamos esta ligação entre os repositórios?
+
+		Selecione uma alternativa
+		
+		R: git remote add nome-repositorio caminho/para/o/repositorio
+
+		Alternativa correta! Desta forma teremos um link do nosso repositório local com o repositório remoto, que chamamos de nome-repositorio, que está armazenado em caminho/para/o/repositorio.
