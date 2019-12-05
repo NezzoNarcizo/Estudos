@@ -180,10 +180,19 @@ Aula 3 - Compartilhando o trabalho -------
 				
 				Obs: A busca pode ser feita de um local e o envio para outro.
 		
+			git remote rename "Nome atual" "Novo nome" = Substituí o nome atual que indica o servidor de arquivos pelo novo nome.
+		
 		git clone "Endereço repositório" "Nome da pasta de trabalho" = Para que sejam trazidos os dados do repositório localizado neste endereço para nossa pasta de trabalho.
 		
 			Obs: Se não colocarmos o nome na frente do endereço para esolhermos o nome da pasta no nosso ambiente de trabalho, o nome que será definido automaticamente será o nome da pasta onde se encontram os dados clonados.
 
+		git push "Destino (nome)" "Origem (nome)" = Envia para o servidor remoto (Destino) nossas alterações (Ou todo o projeto caso ainda não tenhamos enviado nada) que estão na pasta de trabalho (Origem).
+
+			Obs: Após isto, teremos uma mensagem de que uma nova branch (ramo) foi criada la no servidor remoto.
+			
+		git pull "Origem (nome)" "Destino (nome)" = Traz os dados ou projeto completo do servidor (Origem) remoto para pasta atual de trabalho (Destino).
+
+			Obs: Para não se perder na hora de usar os comandos push e pull basta lembrar que nosso local (Master por exemplo) é sempre a segunda informação, e o repositório remoto a primeira.
 		
 	Questões:
 	
@@ -207,3 +216,14 @@ Aula 3 - Compartilhando o trabalho -------
 		R: git remote add nome-repositorio caminho/para/o/repositorio
 
 		Alternativa correta! Desta forma teremos um link do nosso repositório local com o repositório remoto, que chamamos de nome-repositorio, que está armazenado em caminho/para/o/repositorio.
+		
+		
+		3 - Além de adicionar repositórios remotos para sincronizar os dados, vimos que o git clone traz um repositório remoto para o nosso computador, criando um repositório local.
+
+		Ao alterar os códigos em nosso repositório local, como enviar as alterações para o repositório remoto?
+
+		Selecione uma alternativa
+		
+		R: git push [repositorio] master
+
+		Alternativa correta! Desta forma, nós enviamos as alterações em nosso branch master (falaremos mais sobre branches já já) para o repositório remoto. Basta substituir [repositorio] pelo nome que demos ao repositório ao adicioná-lo. Já para trazer os dados que estiverem no repositório remoto, podemos utilizar o git pull [repositorio] master.

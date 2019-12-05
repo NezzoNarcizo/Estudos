@@ -1,0 +1,5 @@
+1 – Comentar o código com as respectivas anotações Java.
+2 – Sempre utilizar classes de teste.
+3 – Criar templates para agilizar a escrita do código (Eclipse ou IntelliJ).
+4 – Tratar sempre todos os erros com exceptions.
+5 – Verificar se não está sub ou super utilizando uma Collection.
