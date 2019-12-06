@@ -296,6 +296,17 @@ Aula 4 - Trabalhando em equipe -------
 			
 			Obs: Está é uma alternativa ao uso do Visualizing Git.
 			
+		Obs: Se houver conflitos de versões eles devem ser resolvidos antes de realizar o rebase ou merge.
+		
+			Current Changes: São dados do commit atual, na master.
+			
+			Incoming Changes: São os dados da nossa branch, os dados do ramo secundário.
+			
+			Depois de corrigirmos as divergências podemos o git status para verificar. Então adicionaremos o arquivo para ser commitado (git add "arquivo") então git commit para que o commit de merge seja realizado.
+			
+		Obs2: Pode acontecer de enquanto estivermos trabalhando em um projeto alguém enviou modificações para a branch master tornando o código que estamos trabalhando desatualizado.
+				Para que isso não ocorra é necessário que, toda vez que formos enviar modificações realizemos um git pull origin master, isto atualizará o nosso código, impedindo que sebrescrevamos alguma alteração de outra pessoa.
+			
 	Questões:
 	
 		1 - Agora que entendemos como separar o desenvolvimento em linhas ("ramos") diferentes, é hora de trazer estas modificações para a master, que é a nossa branch "padrão".
