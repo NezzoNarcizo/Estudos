@@ -3,6 +3,19 @@ Git e Github: Controle e compartilhe seu código Git e Github: Controle e compar
 
 Teoria completa do Git: https://git-scm.com/book/pt-br/v2
 
+Problemas com Graph Feature -- Solução
+
+	git config --global core.commitGraph true: Isso permite que todo repositório Git use o arquivo de gráfico de confirmação, se presente.
+	
+	git config --global gc.writeCommitGraph true: Essa configuração informa ao comando git gc para gravar o arquivo commit-graph sempre que você fizer uma coleta de lixo não trivial. Reescrever o arquivo commit-graph é 
+													uma operação relativamente pequena em comparação com uma operação completa do GC.
+	
+	git commit-graph write --reachable: Este comando atualizará seu arquivo commit-graph para conter todas as confirmações alcançáveis. Você pode executar isso para criar o arquivo de gráfico de confirmação imediatamente, 
+										em vez de aguardar sua primeira operação do GC.
+										
+										Fonte: https://devblogs.microsoft.com/devops/updates-to-the-git-commit-graph-feature/
+	
+
 Comandos que podem deixar o git bash mais rápido no Windows:
 
 	git config core.preloadindex true: Faz operações do sistema de arquivos em paralelo para ocultar a latência (atualização: ativada por padrão no Git 2.1)
@@ -32,7 +45,7 @@ Aula 1 - O que é Git? -------
 		Uma das vantagens do Git sobre estas ferramentas é: Permitir uma cópia do projeto, um repositório do projeto em sua máquina, para que se possa trabalhar em cima dela e então enviá-lo para outro repositório, o que se denomina repositórios distribuídos. Isto permite o trabalho Offline antes do envio de sua versão.
 				
 					
-	Comandos -------
+	Comandos:
 	
 		git init = Inicia um repositório onde o Git irá monitorar todos os arquivos e pastas.
 			Obs: Comando deve ser executado dentro da pasta desejada através do terminal.
@@ -52,7 +65,7 @@ Aula 1 - O que é Git? -------
 				index: Local onde o Git armazena o que será commitado, ou seja, o local entre a working tree e o repositório Git em si.
 		
 	
-	Questões -------
+	Questões:
 	
 		1 - Agora que nós já entendemos para que serve um VCS (Version Control System), ou sistema de controle de versões, podemos dar continuidade com este treinamento, mas só para garantir...
 		Quais das afirmações a seguir sobre o Git estão corretas?
@@ -227,3 +240,81 @@ Aula 3 - Compartilhando o trabalho -------
 		R: git push [repositorio] master
 
 		Alternativa correta! Desta forma, nós enviamos as alterações em nosso branch master (falaremos mais sobre branches já já) para o repositório remoto. Basta substituir [repositorio] pelo nome que demos ao repositório ao adicioná-lo. Já para trazer os dados que estiverem no repositório remoto, podemos utilizar o git pull [repositorio] master.
+		
+		
+Aula 4 - Trabalhando em equipe -------
+
+	Teoria:
+	
+		Branches:
+		
+			Programa para entender melhor o Git vizualiando como ele trabalha com Branches: https://git-school.github.io/visualizing-git/
+			
+			Branches servem para deixar bem definido em qual parte do projeto estamos trabalhando. Na página de exemplo do curso, index.html, poderíamos por exemplo deixar um desenvolvedor trabalhando no título enquanto outro desenvolvedor trabalharia na lista de cursos.
+			
+			Criando assim os branches, titulo e lista para que somente mais tarde quando os trabalhos estivessem realmente terminado adicionaríamos as modificações no branch master.
+			
+			Isto ajuda muito, pois cada desenvolvedor trabalha no seu ramo, deixando claro a outras pessoas do projeto onde está trabalhando. Outra vantagem é que as pessoas envolvidas no projeto não estariam mexendo no mesmo código ao mesmo tempo.
+			
+			Obs: O branch master é o branch padrão.
+			
+		Merge:
+		
+			Utilizamos o merge para fazer os ramos do projeto se encontrar novamente depois que os ramos que partiram do master estiverem prontos, porém os commits dos ramos secundários não serão vistos.
+			
+				
+		Rebase:
+
+			Utilizamos o rebase para literalmente unir o projeto, seus commits etc, gerando uma unica linha novamente, diferente do merge que parte de um ponto totalmente novo.
+			
+		
+		Obs: Quando temos um erro ou bug que estava na master, não devemos corrigi-lo se estivermos no branch titulo, por exemplo. Devemos retornar para branch master, resolver seus conflitos e problemas, commitar e então voltar trabalhar na nossa branch título. Em outras palavras, as alterações de um branch secundário não podem influenciar no branch primário.
+	
+	Comandos:
+	
+		git branch = Mostra em qual branch estamos atualmente.
+		
+			git branch "Nome do branch" = Cria um novo branch com o nome informado, porém contínua no branch atual. Por convenção é bom que o nome informado tenha o nome da parte do projeto que estamos trabalhando.
+			
+			Obs: Tudo realizado em determinado branch, ficará somente naquele branch até que realizemos o rebase ou merge.
+		
+		git checkout "Nome do branch" = Muda para outro ramo do projeto com o nome informado, a partir daí não realizaremos mais mudanças diretamente no branch master.
+			
+			git checkout -b "Nome do branch" = Cria um novo branch e já muda o ambiente de trabalho para o mesmo.
+		
+		git merge "Nome do branch" = Cria um novo ponto onde o branch informado se encontra novamente com o nosso branch master.
+		
+			Obs: Após realizarmos o merge, será criado um commit de merge (merge commit) referenciando a junção que fizemos. Temos a possibilidade de editar a mensagem exibida, caso não queiramos podemos savar e confirmar a mensagem com ":x + Enter".
+			
+			Obs2: Se executarmos o git log veremos que não temos dois commits diferentes, mas sim, apenas um do merge.
+			
+		git rebase "Nome do branch" = Pega os commits do branch secundário atualiza o master ordenando seus commits junto com o do branch secundário gerando uma única linha.
+			
+			Obs: O último log será do commit da master, pois ela se torna a ponta do ramo mas não gera um commit único como o merge faz.
+			
+		git log --graph = Mostra atráves de linhas gráficas no terminal o histórico de cada branch.
+			
+			Obs: Está é uma alternativa ao uso do Visualizing Git.
+			
+	Questões:
+	
+		1 - Agora que entendemos como separar o desenvolvimento em linhas ("ramos") diferentes, é hora de trazer estas modificações para a master, que é a nossa branch "padrão".
+
+		Como podemos fazer o merge da branch titulo para a branch master?
+
+		Selecione uma alternativa
+		
+		R: git checkout master e git merge titulo
+		
+		Alternativa correta! Desta forma colocaremos o HEAD na branch master, ou seja, faremos com que o nosso código esteja no estado que o deixamos com o último commit na master. Depois, uniremos o trabalho da branch titulo com a branch atual (master).
+		
+		
+		2 - Já sabemos como trazer o trabalho de outra branch e unir com a branch atual. Conhecemos duas formas de fazer isso: merge e rebase.
+
+		Neste cenário, qual a diferença entre os comandos rebase e merge?
+
+		Selecione uma alternativa
+		
+		R: O merge junta os trabalhos e gera um merge commit. O rebase aplica os commits de outra branch na branch atual.
+		
+		Alternativa correta! Com isso, evitamos os commits de merge. Há uma longa discussão sobre o que é "melhor": rebase ou merge. Estude, pesquise, e tire suas próprias conclusões. Aqui tem um artigo (de milhares outros) que cita o assunto: https://medium.com/datadriveninvestor/git-rebase-vs-merge-cc5199edd77c.
