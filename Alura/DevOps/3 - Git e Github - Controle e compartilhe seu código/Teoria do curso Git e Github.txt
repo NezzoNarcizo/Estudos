@@ -329,3 +329,22 @@ Aula 4 - Trabalhando em equipe -------
 		R: O merge junta os trabalhos e gera um merge commit. O rebase aplica os commits de outra branch na branch atual.
 		
 		Alternativa correta! Com isso, evitamos os commits de merge. Há uma longa discussão sobre o que é "melhor": rebase ou merge. Estude, pesquise, e tire suas próprias conclusões. Aqui tem um artigo (de milhares outros) que cita o assunto: https://medium.com/datadriveninvestor/git-rebase-vs-merge-cc5199edd77c.
+		
+		
+Aula 5 - Manipulando as versões -------
+
+	
+	Comandos:
+	
+		git checkout -- "arquivo" = Descarta as alterações do arquivo antes do git add.
+		
+			Obs: Observamos que o git checkout serve também para navegarmos em estados do repositório, seja por meio de branches ou desfazendo modificações em arquivos.
+			
+			git restore "arquivo" = Realiza a mesma função. 
+			
+			
+		
+			
+		
+	
+	Questões:
