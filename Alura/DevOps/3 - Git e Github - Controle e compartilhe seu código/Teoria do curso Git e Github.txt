@@ -1,6 +1,11 @@
 
 Git e Github: Controle e compartilhe seu código Git e Github: Controle e compartilhe seu código - Teoria do curso -------
 
+-----------------------------
+git version 2.24.0.windows.2
+-----------------------------
+
+
 Teoria completa do Git: https://git-scm.com/book/pt-br/v2
 
 Problemas com Graph Feature -- Solução
@@ -340,7 +345,11 @@ Aula 5 - Manipulando as versões -------
 		
 			Obs: Observamos que o git checkout serve também para navegarmos em estados do repositório, seja por meio de branches ou desfazendo modificações em arquivos.
 			
-			git restore "arquivo" = Realiza a mesma função. 
+			git restore "arquivo" = Realiza a mesma função.
+
+		git reset HEAD "arquivo" = Volta para a fase de trabalho (desfaz o git add).
+		
+			git restore --staged "arquivo" = Realiza a mesma função.
 			
 			
 		
