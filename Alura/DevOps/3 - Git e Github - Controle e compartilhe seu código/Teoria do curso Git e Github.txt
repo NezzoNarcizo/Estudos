@@ -351,9 +351,31 @@ Aula 5 - Manipulando as versões -------
 		
 			git restore --staged "arquivo" = Realiza a mesma função.
 			
+		git revert "Hash do commit" = Desfaz tudo que foi feito no ultimo commit e realiza um novo commit com a versão antiga.
+
+			Obs: Utilizamos o git log para que possamos verificar qual é o hash do commit e copiá-lo. 
+			
+			Obs2: Será aberta uma tela para mudarmos a mensagem se quisermos informando o que aconteceu. Para salvar e sair utilizamos ":x".
+			
+			Obs3: Se utilizarmos o git log mais uma vez poderemos verificar que existem dois commits novamente um com as alterações que realizamos antes e outro informando que elas foram revertidas.
 			
 		
 			
 		
 	
 	Questões:
+	
+		1 - No último vídeo, nós aprendemos a desfazer alterações das quais não vamos precisar mais.
+
+		Quais os comandos, respectivamente, desfazem alterações antes de adicioná-las (1), depois de adicioná-las, mas antes de commitá-las (2), e após realizar o commit (3)?
+
+		Selecione uma alternativa
+		
+		R: 1 - git checkout
+
+			2 - git reset
+
+			3 - git revert
+
+
+		Alternativa correta! Com o git checkout nós desfazemos uma alteração que ainda não foi adicionada ao index ou stage, ou seja, antes do git add. Depois de adicionar com git add, para desfazer uma alteração, precisamos tirá-la deste estado, com git reset. Agora, se já realizamos o commit, o comando git revert pode nos salvar.
