@@ -359,7 +359,9 @@ Aula 5 - Manipulando as versões -------
 			
 			Obs3: Se utilizarmos o git log mais uma vez poderemos verificar que existem dois commits novamente um com as alterações que realizamos antes e outro informando que elas foram revertidas.
 			
+		git stash = Salvar as alterações de um código sem commitar. Após o comando git stash o código volta para o estado logo após o ultimo commit.
 		
+			git stash list = Para vermos quais foram as ultima alterações salvas no git stash.
 			
 		
 	
