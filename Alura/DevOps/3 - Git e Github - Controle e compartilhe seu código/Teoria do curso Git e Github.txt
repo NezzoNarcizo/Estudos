@@ -371,6 +371,8 @@ Aula 5 - Manipulando as versões -------
 			
 			git checkout "hash" = Retorna ao estado do commit do hash indicado.
 			
+				git switch - = Desfaz o último comando git checkout.
+			
 				Obs: O hash utilizado nesta atividade é aquele do git log --oneline.
 				
 				Obs2: Desta forma ficaremos foram dos branchs, ficaremos num estado chamado de "detached", ou desanexado. Assim podemos fazer umas alterações experimentais ou também descartar qualquer elemento do branch sem fazer mais nada. Se voltarmos a master tudo que commitarmos aqui será ignorado. Para que as alterações aqui sejam salvas, teremos que criar um novo branch.
@@ -379,8 +381,9 @@ Aula 5 - Manipulando as versões -------
 				
 				Podemos usar: git checkout -b "Nome Novo Branch" = Para que possamos a partir do ponto no tempo que estamos, criar um novo branch, estando assim associados a linha de desenvolvimento, conservando as alterações.
 				
+					git switch -c "Nome novo branch" = Tem a mesma função do git checkout -b "Nome novo branch".
+					
 				Assim sendo, podemos utilizar o git checkout para navegar no "tempo" do projeto, indo em cada um dos commits e realizando testes ou novos branchs com versões anteriores do projeto, bastando ter o número hash.
-				
 				
 				Obs4: Algo que me pareceu bem seguro com o git na questão dos checkouts, é que não conseguimos realizá-lo caso não tenhamos já commitado as alterações atuais, impedindo que percamos trabalhos que deveriam ser salvos.
 			
