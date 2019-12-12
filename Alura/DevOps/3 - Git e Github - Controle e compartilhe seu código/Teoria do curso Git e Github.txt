@@ -361,9 +361,30 @@ Aula 5 - Manipulando as versões -------
 			
 		git stash = Salvar as alterações de um código sem commitar. Após o comando git stash o código volta para o estado logo após o ultimo commit.
 		
-			git stash list = Para vermos quais foram as ultima alterações salvas no git stash.
+			git stash list = Para vermos quais foram as ultima alterações salvas no git stash com seus respectivos ids.
 			
-		
+			git stash apply "id" = Aplica as alterações do git stash referentes ao id informado.
+			
+			git stash drop "id" = Remove da lista do git stash as alterações salvas referentes ao id informado.
+			
+			git stash pop = Aplica as ultimas alterações realizadas do git stash e já remove de sua lista.
+			
+			git checkout "hash" = Retorna ao estado do commit do hash indicado.
+			
+				Obs: O hash utilizado nesta atividade é aquele do git log --oneline.
+				
+				Obs2: Desta forma ficaremos foram dos branchs, ficaremos num estado chamado de "detached", ou desanexado. Assim podemos fazer umas alterações experimentais ou também descartar qualquer elemento do branch sem fazer mais nada. Se voltarmos a master tudo que commitarmos aqui será ignorado. Para que as alterações aqui sejam salvas, teremos que criar um novo branch.
+				
+				Obs3: Após voltarmos para um ponto específico no "tempo", qualquer alteração será descartada, incluindo os commits, será um ponto perdido onde não poderemos mais voltar, caso voltemos a branch master sem criar uma nova branch onde estavamos.
+				
+				Podemos usar: git checkout -b "Nome Novo Branch" = Para que possamos a partir do ponto no tempo que estamos, criar um novo branch, estando assim associados a linha de desenvolvimento, conservando as alterações.
+				
+				Assim sendo, podemos utilizar o git checkout para navegar no "tempo" do projeto, indo em cada um dos commits e realizando testes ou novos branchs com versões anteriores do projeto, bastando ter o número hash.
+				
+				
+				Obs4: Algo que me pareceu bem seguro com o git na questão dos checkouts, é que não conseguimos realizá-lo caso não tenhamos já commitado as alterações atuais, impedindo que percamos trabalhos que deveriam ser salvos.
+			
+			
 	
 	Questões:
 	
@@ -381,3 +402,27 @@ Aula 5 - Manipulando as versões -------
 
 
 		Alternativa correta! Com o git checkout nós desfazemos uma alteração que ainda não foi adicionada ao index ou stage, ou seja, antes do git add. Depois de adicionar com git add, para desfazer uma alteração, precisamos tirá-la deste estado, com git reset. Agora, se já realizamos o commit, o comando git revert pode nos salvar.
+		
+		
+		2 - Vimos como podemos utilizar git stash para armazenar temporariamente algumas de nossas alterações.
+
+		Em que momento o stash parece útil?
+
+		Selecione uma alternativa
+		
+		R: Quando precisamos parar o desenvolvimento de algo no meio para trabalhar em outra coisa
+
+		Alternativa correta! Quando precisamos pausar o desenvolvimento de alguma funcionalidade, ou correção, antes de finalizar, talvez não seja interessante realizar um commit, pois o nosso código pode não estar funcionando ainda. Nesse caso é interessante salvar o trabalho para podermos voltar a ele depois.
+		
+		
+		3 - Já utilizamos em mais de uma ocasião o comando git checkout.
+
+		Resumidamente, para que serve o comando git checkout?
+
+		Selecione uma alternativa
+		
+		R: Para deixar o nosso código em determinado estado
+		
+		Alternativa correta! A descrição do comando git checkout --help, em uma tradução livre é: "Atualizar os arquivos na working tree para ficarem na versão especificada. [...]". Basicamente, podemos deixar o nosso código no estado do último commit de uma branch, de um commit específico, ou mesmo tags (que veremos adiante).
+		
+		
