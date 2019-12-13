@@ -447,8 +447,8 @@ Aula 6 - Gerando entregas -------
 			
 		Para verificarmos qual é o nome e link do nosso servidor remoto, utilizamos "git remote -v"
 		
-			Sabendo qual é, podemos atualizar nosso código com git push origin master e depois, enviar para esta versão do código um nome de tag, para que o código fique sempre disponível neste estado como uma release.
-			Para isto utilizaremos o comando git push origin "Nome da Tag".
+			Sabendo qual é, podemos atualizar nosso código com "git push origin master" e depois, enviar para esta versão do código um nome de tag, para que o código fique sempre disponível neste estado como uma release.
+			Para isto utilizaremos o comando "git push origin "Nome da Tag".
 			
 				Obs: Está tag informada no comando acima, já tem que estar definida na nossa branch. Utilize "git tag" para confirmar que ela existe.
 				
