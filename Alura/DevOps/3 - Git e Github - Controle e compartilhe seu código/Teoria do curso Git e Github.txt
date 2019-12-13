@@ -428,4 +428,62 @@ Aula 5 - Manipulando as versões -------
 		
 		Alternativa correta! A descrição do comando git checkout --help, em uma tradução livre é: "Atualizar os arquivos na working tree para ficarem na versão especificada. [...]". Basicamente, podemos deixar o nosso código no estado do último commit de uma branch, de um commit específico, ou mesmo tags (que veremos adiante).
 		
+
+Aula 6 - Gerando entregas -------
+
+	Comandos:
+	
+		Lembrando que, com git log -p poderemos ver o que foi alterado commit a commit.
+		
+			Obs: O que está em verde foi adicionado e o que está em vermelho foi removido.
+			
+		git diff = Para mostrar diferenças entre commits, porém, ele sem parâmetros, mostra apenas a diferenças do ultimo commit até o momento. Para verificarmos entre commits ou branches diferentes devemos fazer como o exemplo à seguir:
+		
+			Ex: git diff "Hash 1" "Hash 2" ou git diff "Branch 1" "Branch 2"
+			
+		git tag -a "Nome da tag" -m "Mensagem da versão" = Indica que criaremos uma tag (git tag -a) na versão ("Nome da tag") com a mensagem (-m "Mensagem da versão")
+		
+			git tag = (Sem parâmetros) Irá exibir todas as tags (marcos) criadas até o momento.
+			
+		Para verificarmos qual é o nome e link do nosso servidor remoto, utilizamos "git remote -v"
+		
+			Sabendo qual é, podemos atualizar nosso código com git push origin master e depois, enviar para esta versão do código um nome de tag, para que o código fique sempre disponível neste estado como uma release.
+			Para isto utilizaremos o comando git push origin "Nome da Tag".
+			
+				Obs: Está tag informada no comando acima, já tem que estar definida na nossa branch. Utilize "git tag" para confirmar que ela existe.
+				
+				Obs2: Verifique no GitHub se nossa release está pronta, se realmente está disponível para download.
+				
+				Obs3: A release poderá ser compartilhada com outras pessoas, por meio da URL correspondente, possibilitando o acompanhamento das releases do projeto.
+			
+		
+
+		
+	Questões:
+	
+		
+		Com o comando git diff, nós vimos que é possível visualizarmos as mudanças realizadas em determinado código. Podemos ver as diferenças entre commits, branches, etc.
+
+		1 - Como o git diff exibe as mudanças no código?
+
+		Selecione uma alternativa
+		
+		R: + linha adicionada
+		   - linha removida
+		   - linha modificada (versão antiga)
+		   + linha modificada (nova versão)
+
+		   Alternativa correta! O sinal de subtração (-) antes da linha indica que ela não está mais presente no arquivo. Já o sinal de adição (+) mostra que é uma linha nova. Alterações são representadas por uma remoção e uma adição de linha.
+		   
+		  
+		Vimos no último vídeo como gerar versões, ou marcos interessantes em nosso sistema de controle de versões.
+
+		2 - Que resultado gera o envio de uma tag para o GitHub?
+
+		Selecione uma alternativa 
+		
+		R: Gera uma Release, ou seja, conseguimos baixar um arquivo compactado com o nosso código neste ponto
+
+		Alternativa correta! O GitHub nos dá a possibilidade de baixar um arquivo compactado contendo o código no estado em que a tag foi gerada.
+	
 		
