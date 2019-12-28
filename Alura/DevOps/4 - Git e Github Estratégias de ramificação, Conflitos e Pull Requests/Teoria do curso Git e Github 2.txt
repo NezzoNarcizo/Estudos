@@ -1,0 +1,82 @@
+Aula 01 - GitHub e OpenSource -------
+
+	Teoria:
+	
+		GitHub é muito utilizado pela comunidade de desenvolvimento open source (Código aberto).
+		Publicamente isto envolve: Sugestão de melhorias, implementação de melhorias, solicitação de ferramentas ou recursos etc.
+		Isto torna o projeto efetivamente colaborativo.
+		
+		Exemplos de projetos de código aberto:
+		
+			- VS Code (IDE)
+			- NPM (Gerenciador de pacotes usado para baixar dependências do JavaScript e PHP)
+		
+		Código aberto a comunidade significa, muitas vezes, permitir a melhoria contínua do código de maneira colaborativa.
+	
+		Algumas boas funcionalidades em projetos open source são as "Issues" ou "Problemas" (Tradução Livre) que torna mais fácil controlar as sugestões de melhorias.
+		
+		Exemplo de projeto que utiliza Issues de forma interessante:
+		
+			http://github.com/phprio/cfp ou https://github.com/PHPSP/quero-palestrar/issues (Disponibilizado para cadastro de palestras ou palestrantes realizado por meio de Issues)
+			
+				Aqui conseguimos filtrar palestrantes através da lista de Issues do projeto.
+				
+				Ou seja, gerenciamos um tipo de conteúdo que não é propriamente um "problema".
+		
+		Também podemos organizar as Issues por ordem de prioriadade.
+		
+		Para entender melhor sobre projetos OpenSource e as vantagens do GitHub neste tipo de projeto:
+		
+			http://slides.com/daianealvesrj/software-livre-para-empreendedores (Palestra sobre projetos OpenSource bem sucedidos de Daiane Alves no Darkmira Tour PHP 2019)
+			
+		Por ora, podemos citar alguns tipos de projetos OpenSouce bem sucedidos como plataformas e linguagens de programação como é o caso do PHP, .Net Core, etc.
+		
+		- Nunca devemos fazer alterações no GitHub diretamente, devemos criar uma cópia do projeto (Fork).
+		
+		- Se formos donos do repositório ou fizermos parte da organização da empresa, poderemos fechar a issue ("Close issue"), indicando que o problema já foi resolvido.
+			Temos a possibilidade de reabrirmos a Issue se quisermos, informando que o problema voltou a acontecer.
+		
+		CRIANDO UM FORK PARA CONTRIBUIR COM ALGUM PROJETO
+		
+			1º - Estando logado com na conta do GitHub com a qual queremos contribuir, clicamos em "Fork" na página do projeto que desejado.
+			
+			2º - Criamos a pasta para alocar o projeto em nossa máquina.
+			
+			3º - Num primeiro momento o comando "git pull origin master" não funcionará pois o nosso diretório novo não conhece o repositório "origin".
+			
+			4º - 
+		
+		
+		CORRIGINDO ALGUNS ERROS:
+		
+			Para os erros:
+			
+				"error: failed to push some refs to..." fazer: git commit -m "comentário do commit" Após adicionar (git add .) todos os arquivos.
+				
+				"error: failed to push some refs to..." fazer: git pull origin "nome do branch" --allow-unrelated-histories
+
+				"error: cannot stat...filename too long" fazer: git config --system core.longpaths true
+				
+				
+		EXCLUINDO DIRETÓRIOS LOCAIS GitHub
+		
+			rm -rf .git = Exclui o diretório local do Git.
+			
+			
+	Questões:
+	
+		1 - Vimos no último vídeo uma funcionalidade interessante do GitHub: as issues. Com esta funcionalidade, podemos atingir alguns resultados interessantes na organização de um projeto.
+		
+		Sobre o que podemos fazer com issues, avalie as afirmativas abaixo:
+
+		1) Podemos reportar problemas
+
+		2) Podemos sugerir melhorias no código
+
+		3) Podemos organizar quaisquer coisas que façam sentido para o projeto
+
+		Selecione uma alternativa
+		
+		R: As afirmativas 1, 2 e 3 estão corretas
+		
+		Alternativa correta! Todas as afirmativas estão corretas, já que o propósito inicial das issues, como o nome já diz, era reportar e controlar os problemas e bugs de um projeto (afirmativa 1). Além disso, com o tempo, passaram a perceber que havia mais possibilidades nas issues, e elas foram utilizadas para sugestão de melhorias no projeto e pedidos de novas funcionalidades (afirmativa 2). Por fim, ótimos exemplos de usos das issues no GitHub são das comunidades PHPSP e PHPRio, que as utilizam para organizar os palestrantes e sugestões de palestras (afirmativa 3).
