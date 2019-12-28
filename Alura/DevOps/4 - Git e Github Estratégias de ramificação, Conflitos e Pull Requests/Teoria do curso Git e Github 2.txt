@@ -58,9 +58,30 @@ Aula 01 - GitHub e OpenSource -------
 				"error: cannot stat...filename too long" fazer: git config --system core.longpaths true
 				
 				
-		EXCLUINDO DIRETÓRIOS LOCAIS GitHub
+		EXCLUINDO DIRETÓRIOS LOCAIS GIT
 		
 			rm -rf .git = Exclui o diretório local do Git.
+		
+		REMOVENDO PERMISSÕES AUTOMATICAS / CORRIGINDO ERROS DE PUSH
+		
+			git config --local user.email "email da conta" = Adiciona o e-mail do dono do fork (Fork em referência a este curso, porém o procedimento seria o mesmo se estivessemos mudando a autenticação
+							para atender outro repositório do Github).
+		
+			
+			
+			Obs: No Windows, quando utilizamos um repositório do GitHub, ele sempre tentará utilizar as credenciais utilizadas uma vez, para remove-las...
+				"Painel de Controle > Contas de Usuário > Gerenciar suas Credenciais (Gerenciador de Credenciais) > Credenciais do Windows"
+					Remova a credencial genérica do GitHub (Clique na seta da credencial do GitHub, para verificar todas as informações e exibir o link de remover).
+			
+		
+		
+		REMOVENDO AUTENTICAÇÕES SSH
+		
+			ls -al ~/.ssh = Lista todas as chaves.
+			
+			rm -f ~/.ssh/id_rsa* = Deleta os arquivos id_rsa
+			
+			Então posso criar uma nova chave SSH clicando em Gerar chave na janela Git GUI mostrada anteriormente...
 			
 			
 	Questões:
