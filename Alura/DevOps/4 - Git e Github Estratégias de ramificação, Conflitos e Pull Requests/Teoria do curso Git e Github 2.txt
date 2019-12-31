@@ -22,6 +22,14 @@ Aula 01 - GitHub e OpenSource -------
 				Aqui conseguimos filtrar palestrantes através da lista de Issues do projeto.
 				
 				Ou seja, gerenciamos um tipo de conteúdo que não é propriamente um "problema".
+				
+				Lista melhorada do que podemos fazer com as "Issues":
+				
+					- Reportar problemas
+					- Sugerir melhorias
+					- Solicitar novas funcionalidades
+					- Organizar qualquer coisa que faça sentido para o projeto
+					- Etc
 		
 		Também podemos organizar as Issues por ordem de prioriadade.
 		
@@ -92,7 +100,7 @@ Aula 01 - GitHub e OpenSource -------
 				- Analisar solicitação de merge, como: Conflitos, alterações, adições etc
 				
 				- Clicar no botão "Merge pull request" e em seguida "Confirm merge"
-					Com isso teremos um "Pull Request" com o status "Merged".
+					Com isso teremos um "pull Request" com o status "Merged".
 					
 				- Se foi a solução de uma Issue, poderemos fecha-la, junto a um texto "Fechado pelo PR #2 (Id do Pull request), clicando em "Close and comment". (PR = Pull Request).
 					A Issue estará fechada e contendo o link para o último Pull request junto a todas as alterações realizadas.
@@ -114,6 +122,21 @@ Aula 01 - GitHub e OpenSource -------
 				Em outras palavras, um dos commits deverá absorver os outros para que se tornem um, consequentemente o comentário deste commit será aquele da resolução da Issue ou Pull Request qualquer que for enviado.
 				
 				 Obs: Aquele que contiver o rótulo "pick" será o commit principal, os outros que tiverem o rótulo "s" serão aqueles absorvidos por seus commits anteriores.
+				 
+				 Salvamos o arquivo que foi aberto com ":+x"
+				 
+		
+		ARTIGO PARA ENTENDER MELHOR OS PULL REQUEST FECHANDO AS ISSUES COM PALAVRAS CHAVE
+		
+			https://help.github.com/en/articles/closing-issues-using-keywords
+			
+		
+		ALTERNATIVAS AO GITHUB
+		
+			- Gitbucket: Pode ser criado repositórios públicos.
+			- GitLab: Full DevOps - Gerenciar ferramentas de servidores de integração e entrega contínua.
+			
+			Obs: GitHub permite que o repositório seja privado para projetos com até 3 colaboradores.
 			
 		
 			
@@ -145,5 +168,17 @@ Aula 01 - GitHub e OpenSource -------
 		R: Para garantir a qualidade do projeto pelos seus líderes e organizadores
 		
 		Alternativa correta! Através de pull requests, os principais mantenedores de um projeto podem analisar todas as alterações, aprová-las ou reprová-las, dar feedback e interagir de uma forma geral. Pull requests não são utilizados apenas para projetos Open Source. Muitas equipes utilizam pull requests em seu dia-a-dia, para enviar as alterações de código para revisão de algum supervisor.
+		
+		
+		3 - Tendo entendido o que são issues e pull requests, nada mais justo do que enviar um pull request para resolver uma issue, certo? Mas quando desenvolvemos, podemos realizar vários commits, o que pode não ser tão interessante para quem for revisar o pull request.
+
+		Por que é interessante unir os commits em um único para enviar um pull request?
+
+		Selecione uma alternativa
+		
+		R: Para que o responsável pela revisão do projeto tenha um único commit a revisar, com todas as alterações necessárias
+		
+		Alternativa correta! Revisar um único commit é bem mais fácil e rápido do que analisar diversos commits que resolvem um problema em comum. Por isso, nestes casos, é interessante utilizar o git rebase -i.
+		
 		
 		
