@@ -146,11 +146,16 @@ Aula 01 - GitHub e OpenSource -------
 				git cherry-pick "hash do commit desejado" = Se você quer apenas uma alteração de outra branch, informando o hash do commit em que houve a alteração, você irá traze-lá sem a necessidade de carregar todas as outras
 															alterações daquele branch para master.
 			
-			
+		
 		ENCONTRANDO BUGS
 		
+			Para encontrar bugs temos a ferramenta "git bisect" que serve para "debugarmos" nosso commit indo a partir de um commit específico até a nossa "HEAD" e verificarmos onde está a alteração que procuramos.
 			
-			
+				git bisect start = Inicia a ferramenta.
+				
+				git bisect bad "Hash do commit" = Onde estamos atualmente, em outras palavras o HEAD com o commit que não estamos satisfeitos.
+				
+				git bisect good "Hash do commit" = Onde irá iniciar o "debug" dos commits.
 		
 			
 	Questões:
