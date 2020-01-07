@@ -138,6 +138,15 @@ Aula 01 - GitHub e OpenSource -------
 			
 			Obs: GitHub permite que o repositório seja privado para projetos com até 3 colaboradores.
 			
+			
+		CHERRY-PICK
+		
+			Cherry-pick é uma forma de trazer apenas as alterações de um commit para o branch master.
+			
+				git cherry-pick "hash do commit desejado" = Se você quer apenas uma alteração de outra branch, informando o hash do commit em que houve a alteração, você irá traze-lá sem a necessidade de carregar todas as outras
+															alterações daquele branch para master.
+			
+			
 		
 			
 	Questões:
@@ -181,4 +190,13 @@ Aula 01 - GitHub e OpenSource -------
 		Alternativa correta! Revisar um único commit é bem mais fácil e rápido do que analisar diversos commits que resolvem um problema em comum. Por isso, nestes casos, é interessante utilizar o git rebase -i.
 		
 		
+		4 - No último vídeo, vimos como podemos trazer um único commit específico de outra branch para a branch em que estamos trabalhando.
+
+		Em que caso faz sentido trazer um commit específico para a branch atual?
+
+		Selecione uma alternativa
+		
+		R: Quando um bug que afeta a branch atual já foi solucionado em outra branch
+		
+		Alternativa correta! Se uma implementação é necessária em sua branch e já foi feita em outra branch, pode fazer sentido trazer um commit específico, utilizando o git cherry-pick.
 		
