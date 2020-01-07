@@ -146,6 +146,7 @@ Aula 01 - GitHub e OpenSource -------
 				git cherry-pick "hash do commit desejado" = Se você quer apenas uma alteração de outra branch, informando o hash do commit em que houve a alteração, você irá traze-lá sem a necessidade de carregar todas as outras
 															alterações daquele branch para master.
 			
+<<<<<<< HEAD
 		
 		ENCONTRANDO BUGS
 		
@@ -156,6 +157,9 @@ Aula 01 - GitHub e OpenSource -------
 				git bisect bad "Hash do commit" = Onde estamos atualmente, em outras palavras o HEAD com o commit que não estamos satisfeitos.
 				
 				git bisect good "Hash do commit" = Onde irá iniciar o "debug" dos commits.
+=======
+			
+>>>>>>> parent of b257648... Alterando o título (git bisect test)
 		
 			
 	Questões:
