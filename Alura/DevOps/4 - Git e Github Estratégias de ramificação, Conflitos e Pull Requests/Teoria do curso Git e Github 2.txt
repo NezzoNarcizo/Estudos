@@ -183,6 +183,17 @@ Aula 01 - GitHub e OpenSource -------
 						Obs 2: Podemos também depois de achar o commit desejado utilizar o git show, que nos mostra todas as alterações realizadas naquele commit.
 						
 							git show "Hash do commit (7 ou 8 primeiros caracteres)" = Mostra todas as alterações do commit do hash informado.
+							
+							
+		ENCONTRANDO O CULPADO
+		
+			Para que possamos encontrar o responsável por cada uma das linhas escritas em nosso código, utilizamos o recurso blame.
+			
+				git blame "arquivo" = É exibido o responsável por cada linha de código.
+				
+				Obs: Apesar do nome, o recurso blame nunca deve ser utilizado única e simplesmente para apontar culpados, dar bronca etc.
+					O intuito é ensinar, aprender mais, se atualizar ou criticar de forma construtiva.
+				
 		
 			
 	Questões:
@@ -246,4 +257,16 @@ Aula 01 - GitHub e OpenSource -------
 		R: Para encontrar o commit em que um bug foi introduzido
 
 		Alternativa correta! Encontrando o exato commit em que determinado bug foi introduzido, podemos revertê-lo ou até mesmo tentar entender o motivo daquele bug ter sido introduzido.
+		
+		
+		6 - Com o git blame, podemos ver quem é o responsável por cada linha no código.
+
+		Para que isso pode ser útil?
+
+		Selecione uma alternativa
+		
+		R: Para saber para quem perguntar sobre determinado bloco de código que não entendemos
+		
+		Alternativa correta! Com o git blame, nós podemos saber quem é o responsável por determinada linha ou bloco de código que nós não entendemos, e com isso sabemos com quem tirar a dúvida!
+		
 		
