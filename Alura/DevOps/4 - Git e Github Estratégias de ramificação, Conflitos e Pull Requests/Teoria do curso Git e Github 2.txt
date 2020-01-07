@@ -1,5 +1,16 @@
 Aula 01 - GitHub e OpenSource -------
 
+	Lembrete dos 4 estágios do arquivo no Git:
+	
+		untracked: Não rastreado ainda pelo Git, precisa ser adicionado.
+		
+		unmodified: Adicionado mas sem alteração alguma.
+		
+		modified: Adicionado e modificado, precisa ser adicionado para commit.	
+		
+		stage: Pronto para ser commitado.
+
+
 	Teoria:
 	
 		GitHub é muito utilizado pela comunidade de desenvolvimento open source (Código aberto).
@@ -146,7 +157,6 @@ Aula 01 - GitHub e OpenSource -------
 				git cherry-pick "hash do commit desejado" = Se você quer apenas uma alteração de outra branch, informando o hash do commit em que houve a alteração, você irá traze-lá sem a necessidade de carregar todas as outras
 															alterações daquele branch para master.
 			
-<<<<<<< HEAD
 		
 		ENCONTRANDO BUGS
 		
@@ -154,12 +164,25 @@ Aula 01 - GitHub e OpenSource -------
 			
 				git bisect start = Inicia a ferramenta.
 				
-				git bisect bad "Hash do commit" = Onde estamos atualmente, em outras palavras o HEAD com o commit que não estamos satisfeitos.
+					git bisect bad "Hash do commit" = Onde estamos atualmente, em outras palavras o HEAD com o commit que não estamos satisfeitos.
 				
-				git bisect good "Hash do commit" = Onde irá iniciar o "debug" dos commits.
-=======
-			
->>>>>>> parent of b257648... Alterando o título (git bisect test)
+					git bisect good "Hash do commit" = Onde irá iniciar o "debug" dos commits.
+				
+						git bisect bad = Enquanto não encontrar o commit desejado.
+						
+						git bisect good = Quando encontrar o commit desejado.
+						
+						git bisect reset = Para voltar para o branch master.
+						
+						Então, será possível usar o hash exibido para reverter alterações.
+						
+							git revert "Hash do commit (7 ou 8 primeiros caracteres do commit)" = Reverte as alterações indo para o commit do hash informado.
+						
+						Obs: É possível que haja conflitos com o nosso HEAD e a alteração que desejamos (se desejamos) trazer de volta, se isto acontecer resolva os conflitos adicione o arquivo para commit e realize o commit.
+						
+						Obs 2: Podemos também depois de achar o commit desejado utilizar o git show, que nos mostra todas as alterações realizadas naquele commit.
+						
+							git show "Hash do commit (7 ou 8 primeiros caracteres)" = Mostra todas as alterações do commit do hash informado.
 		
 			
 	Questões:
@@ -212,4 +235,15 @@ Aula 01 - GitHub e OpenSource -------
 		R: Quando um bug que afeta a branch atual já foi solucionado em outra branch
 		
 		Alternativa correta! Se uma implementação é necessária em sua branch e já foi feita em outra branch, pode fazer sentido trazer um commit específico, utilizando o git cherry-pick.
+		
+		
+		5 - No último vídeo, nós utilizamos o git bisect para encontrar determinado ponto na história do código em que alguma alteração foi introduzida. Fizemos isso, informando os estados do commit (se estava "bom" ou "ruim").
+
+		Para que o git bisect pode ser útil?
+
+		Selecione uma alternativa
+		
+		R: Para encontrar o commit em que um bug foi introduzido
+
+		Alternativa correta! Encontrando o exato commit em que determinado bug foi introduzido, podemos revertê-lo ou até mesmo tentar entender o motivo daquele bug ter sido introduzido.
 		
