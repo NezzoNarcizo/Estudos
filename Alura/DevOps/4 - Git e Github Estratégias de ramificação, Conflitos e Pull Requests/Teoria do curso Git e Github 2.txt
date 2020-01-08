@@ -207,7 +207,10 @@ Aula 02 - Controle avançado de conflitos -------
 			Que o comando git show {hash} mostra todas as alterações aplicadas pelo commit com o hash informado.
 				
 
-Aula 03 - Estratégias de Branching -------		
+Aula 03 - Estratégias de Branching -------
+
+		Iniciando a aula lembrando que não é uma boa prática commitar diretamente no branch master.
+		Utilizar sempre outros branchs (Um cada desenvolvedor que estiver trabalhando no projeto) para que depois que a mudança estiver estável possamos subir nossas alterações para o branch master.
 		
 			
 	Questões:
