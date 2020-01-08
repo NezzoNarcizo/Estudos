@@ -291,7 +291,9 @@ Aula 4 - Trabalhando em equipe -------
 		
 			Obs: Após realizarmos o merge, será criado um commit de merge (merge commit) referenciando a junção que fizemos. Temos a possibilidade de editar a mensagem exibida, caso não queiramos podemos savar e confirmar a mensagem com ":x + Enter".
 			
-			Obs2: Se executarmos o git log veremos que não temos dois commits diferentes, mas sim, apenas um do merge.
+			Obs 2: Se executarmos o git log veremos que não temos dois commits diferentes, mas sim, apenas um do merge.
+			
+			Obs 3: O merge deve ser executado da branch mais antiga pegando a hash mais nova da branch que fez as alterações. Ou seja, a branch que tiver as alterações mais recentes não reconhecerá o merge da branch mais antiga.
 			
 		git rebase "Nome do branch" = Pega os commits do branch secundário atualiza o master ordenando seus commits junto com o do branch secundário gerando uma única linha.
 			
