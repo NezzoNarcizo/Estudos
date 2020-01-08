@@ -148,7 +148,10 @@ Aula 01 - GitHub e OpenSource -------
 			- GitLab: Full DevOps - Gerenciar ferramentas de servidores de integração e entrega contínua.
 			
 			Obs: GitHub permite que o repositório seja privado para projetos com até 3 colaboradores.
-			
+		
+		
+		
+Aula 02 - Controle avançado de conflitos -------		
 			
 		CHERRY-PICK
 		
@@ -193,7 +196,18 @@ Aula 01 - GitHub e OpenSource -------
 				
 				Obs: Apesar do nome, o recurso blame nunca deve ser utilizado única e simplesmente para apontar culpados, dar bronca etc.
 					O intuito é ensinar, aprender mais, se atualizar ou criticar de forma construtiva.
+					
+		
+		Nesta aula, aprendemos:
+
+			Que o comando git cherry-pick pode trazer um commit específico para a branch atual;
+			Como encontrar o commit em que determinada alteração foi aplicada, utilizando o git bisect;
+			Como encontrar o responsável por determinada linha ou bloco de código, utilizando o git blame;
+			Que jamais devemos apontar um culpado por determinado bug. Uma equipe deve ser unida e se ajudar;
+			Que o comando git show {hash} mostra todas as alterações aplicadas pelo commit com o hash informado.
 				
+
+Aula 03 - Estratégias de Branching -------		
 		
 			
 	Questões:
