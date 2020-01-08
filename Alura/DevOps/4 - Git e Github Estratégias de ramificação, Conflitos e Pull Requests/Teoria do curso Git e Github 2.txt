@@ -287,3 +287,14 @@ Aula 03 - Estratégias de Branching -------
 		Alternativa correta! Com o git blame, nós podemos saber quem é o responsável por determinada linha ou bloco de código que nós não entendemos, e com isso sabemos com quem tirar a dúvida!
 		
 		
+		7 - Durante o vídeo, nós visualizamos o nosso log de commits de uma forma um pouco mais visual, onde as diferentes branches são representadas por linhas separadas.
+
+		Qual o comando para exibir o log desta forma?
+
+		Selecione uma alternativa
+		
+		R: git log --graph
+
+		Alternativa correta! Desta forma, uma representação um pouco mais gráfica do log é exibida na linha de comando.
+		
+		
