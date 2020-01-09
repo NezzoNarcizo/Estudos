@@ -219,7 +219,38 @@ Aula 03 - Estratégias de Branching -------
 			Relembrando: Para criar uma tag = git tag - "Nome da tag" (Depois devemos adicionar uma mensagem dentro do arquivo da Tag).
 			
 							Sair do Git (Terminal) = exit ou logout.
+							
+		GIT FLOW
 		
+			É uma forma de organização onde por padrão utilizamos cada branch para o seu devido fim.
+			
+				MASTER: Só serve para receber os commits que estão prontos para ir para produção, e a partir destes commits geramos as tags.
+						Obs: Sempre que encontramos um erro na branch master, criamos um branch hotfix para corrigir este erro.
+				
+				HOTFIX: Branch de correção de erros que acontecem direto na Master. As correções desenvolvidas aqui voltam direto para a Master.
+						Obs: Mandamos também as correções feitas aqui para a branch develop para que as features também possam se aproveitar das correções.
+				
+				DEVELOP: A partir dela serão criadas as branchs de features e as funcionalides serão mandadas de volta para a Develop.
+							Obs: Depois de todas as features criadas e já de volta a branch develop, criamos uma branch chamada Release.
+				
+				FEATURE: Branch de ferramentas individuais que após prontas vão para a branch develop. 
+				
+				RELEASE: Aqui dentro só corrigimos os bugs relacionados a esta release. Sempre que um bug for corrigido, mandamos de volta para a branch develop para que outras features utilizem está correção.
+		
+		
+		Nesta aula, aprendemos:
+
+			Que é uma convenção bem seguida que a branch master tenha apenas os commits prontos para ir para produção;
+			Que não é interessante realizar trabalho e commitar diretamente na branch master;
+			Como remover uma branch:
+			git branch -d {nome_branch} remove uma branch que já tem seu trabalho unido à branch atual;
+			git branch -D {nome_branch} remove uma branch mesmo que os commits desta branch ainda não estejam na branch atual, ou seja, força a remoção;
+			Um pouco do processo chamado de Git Flow:
+			Entendemos que o estado do código representado pela branch master deve ser o mesmo que estará em produção
+			Vimos que deve haver uma branch de desenvolvimento (comumente chamado de develop), onde todas as funcionalidades e correções devem ser muito bem testadas antes de ir para produção (master)
+			Vimos que cada funcionalidade deve ser feita em uma branch separada, e que é comum que esta branch tenha feature/ como prefixo
+			Aprendemos também que bugs normalmente são corrigidos em branches separadas, com o prefixo hotfix/
+			Além disso, branches específicas para cada release são criadas para realizar os testes e correções de bugs específicos
 			
 	Questões:
 	
@@ -306,3 +337,19 @@ Aula 03 - Estratégias de Branching -------
 		Alternativa correta! Desta forma, uma representação um pouco mais gráfica do log é exibida na linha de comando.
 		
 		
+		8 - Aprendemos de forma bem resumida sobre a estratégia de organização de branches, chamada Git Flow.
+
+		Quais as branches presentes nesta estratégia?
+
+		Selecione uma alternativa
+		
+		R: Master, Develop, Branches de feature, Branches de Hotfix e Branches de release
+
+		Alternativa correta! Cada uma das branches tem um propósito bem definido e nos ajudam a manter o nosso controle de versões bem organizado.
+		
+		
+Aula 04 - Ferramentas visuais -------
+
+	Nesta capitulo veremos algumas ferramentas visuais, embora existam muitas, algumas até recomendadas até no próprio site oficial do Git, conhecer todas neste momento seria inviável.
+	
+	Git Cola: Visualizar de forma detalhada e intuitiva nosso diretório do git.
