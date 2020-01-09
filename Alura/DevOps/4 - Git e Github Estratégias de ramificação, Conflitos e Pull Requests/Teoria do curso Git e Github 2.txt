@@ -44,7 +44,10 @@ Aula 01 - GitHub e OpenSource -------
 			
 			3º - Num primeiro momento o comando "git pull origin master" não funcionará pois o nosso diretório novo não conhece o repositório "origin".
 			
+<<<<<<< HEAD
 			4º - 
+=======
+>>>>>>> e9e6d46ecc8eee783e8428288efcdbd25733dcb4
 		
 		
 		CORRIGINDO ALGUNS ERROS:
@@ -58,10 +61,72 @@ Aula 01 - GitHub e OpenSource -------
 				"error: cannot stat...filename too long" fazer: git config --system core.longpaths true
 				
 				
+<<<<<<< HEAD
 		EXCLUINDO DIRETÓRIOS LOCAIS GitHub
 		
 			rm -rf .git = Exclui o diretório local do Git.
 			
+=======
+		EXCLUINDO DIRETÓRIOS LOCAIS GIT
+		
+			rm -rf .git = Exclui o diretório local do Git.
+		
+		
+		REMOVENDO PERMISSÕES AUTOMATICAS / CORRIGINDO ERROS DE PUSH
+		
+			git config --local user.email "email da conta" = Adiciona o e-mail do dono do fork (Fork em referência a este curso, porém o procedimento seria o mesmo se estivessemos mudando a autenticação
+							para atender outro repositório do Github).
+		
+			
+			
+			Obs: No Windows, quando utilizamos um repositório do GitHub, ele sempre tentará utilizar as credenciais utilizadas uma vez, para remove-las...
+				"Painel de Controle > Contas de Usuário > Gerenciar suas Credenciais (Gerenciador de Credenciais) > Credenciais do Windows"
+					Remova a credencial genérica do GitHub (Clique na seta da credencial do GitHub, para verificar todas as informações e exibir o link de remover).
+			
+		
+		REMOVENDO AUTENTICAÇÕES SSH
+		
+			ls -al ~/.ssh = Lista todas as chaves.
+			
+			rm -f ~/.ssh/id_rsa* = Deleta os arquivos id_rsa
+			
+			Então posso criar uma nova chave SSH clicando em Gerar chave na janela Git GUI mostrada anteriormente...
+			
+		
+		PULL REQUESTS (No GitHub) = Solicitações de merge com o repositório principal de alterações já realizadas no nosso Fork.
+		
+			Após clicar nesta área New pull request, no GitHub, ele irá verificar se o nosso Fork está "Apto para merge", se nossa branch pode ser automaticamente "mergeada" (rsrsrs)
+			
+			******* Na Conta dona do Repositório *******
+			
+				- Analisar solicitação de merge, como: Conflitos, alterações, adições etc
+				
+				- Clicar no botão "Merge pull request" e em seguida "Confirm merge"
+					Com isso teremos um "Pull Request" com o status "Merged".
+					
+				- Se foi a solução de uma Issue, poderemos fecha-la, junto a um texto "Fechado pelo PR #2 (Id do Pull request), clicando em "Close and comment". (PR = Pull Request).
+					A Issue estará fechada e contendo o link para o último Pull request junto a todas as alterações realizadas.
+					
+			Obs: É bom sempre no título do nosso Pull request especificarmos exatamente qual a correção estamos realizando para que o dono do repositório possa identificar a qual Issue ela se refere (caso exista alguma), para que assim esta Issue possa ser finalmente fechada.
+			
+		UNIFICANDO COMMITS PARA ORGANIZAR O PULL REQUESTS
+		
+			O ideal é que organizemos nossos commits em apenas um para quando formos subir o nosso código em um repositório compartilhado para que o dono possa analiza-lo com mais facilidade.
+			Podemos analisar nossos commits com um comando já aprendido no outro curso: git log --oneline.
+			
+			Podemos verificar a quantidade de commits que ainda não sofreram push para o repositório principal e realizar o comando:
+				git rebase -i HEAD~"Quantidade dos ultimos commits a serem juntados"
+				
+				Podemos também realizar o rebase utilizando o número hash do commit anterior aos commits que desejamos trabalhar/enviar:
+					git rebase -i "Hash do commit anterior aos que quero trabalhar/enviar"
+					
+				Após realizar o comando rebase seremos direcionados para uma tela onde os commits serão exibidos e teremos a oportunidade de definir qual sera o commit "pai" dos outros.
+				Em outras palavras, um dos commits deverá absorver os outros para que se tornem um, consequentemente o comentário deste commit será aquele da resolução da Issue ou Pull Request qualquer que for enviado.
+				
+				 Obs: Aquele que contiver o rótulo "pick" será o commit principal, os outros que tiverem o rótulo "s" serão aqueles absorvidos por seus commits anteriores.
+			
+		
+>>>>>>> e9e6d46ecc8eee783e8428288efcdbd25733dcb4
 			
 	Questões:
 	
@@ -69,6 +134,7 @@ Aula 01 - GitHub e OpenSource -------
 		
 		Sobre o que podemos fazer com issues, avalie as afirmativas abaixo:
 
+<<<<<<< HEAD
 		1) Podemos reportar problemas
 
 		2) Podemos sugerir melhorias no código
@@ -80,3 +146,29 @@ Aula 01 - GitHub e OpenSource -------
 		R: As afirmativas 1, 2 e 3 estão corretas
 		
 		Alternativa correta! Todas as afirmativas estão corretas, já que o propósito inicial das issues, como o nome já diz, era reportar e controlar os problemas e bugs de um projeto (afirmativa 1). Além disso, com o tempo, passaram a perceber que havia mais possibilidades nas issues, e elas foram utilizadas para sugestão de melhorias no projeto e pedidos de novas funcionalidades (afirmativa 2). Por fim, ótimos exemplos de usos das issues no GitHub são das comunidades PHPSP e PHPRio, que as utilizam para organizar os palestrantes e sugestões de palestras (afirmativa 3).
+=======
+		a) Podemos reportar problemas
+
+		b) Podemos sugerir melhorias no código
+
+		c) Podemos organizar quaisquer coisas que façam sentido para o projeto
+
+		Selecione uma alternativa
+		
+		R: As afirmativas a, b e c estão corretas
+		
+		Alternativa correta! Todas as afirmativas estão corretas, já que o propósito inicial das issues, como o nome já diz, era reportar e controlar os problemas e bugs de um projeto (afirmativa a). Além disso, com o tempo, passaram a perceber que havia mais possibilidades nas issues, e elas foram utilizadas para sugestão de melhorias no projeto e pedidos de novas funcionalidades (afirmativa b). Por fim, ótimos exemplos de usos das issues no GitHub são das comunidades PHPSP e PHPRio, que as utilizam para organizar os palestrantes e sugestões de palestras (afirmativa c).
+		
+		
+		2 - Já vimos como sugerir melhorias ou reportar problemas utilizando issues, mas o nosso trabalho no mundo Open Source pode ser mais ativo. Através de pull requests, nós podemos enviar melhorias e correções para projetos.
+
+		Por que utilizar pull requests e não editar o projeto original?
+
+		Selecione uma alternativa
+		
+		R: Para garantir a qualidade do projeto pelos seus líderes e organizadores
+		
+		Alternativa correta! Através de pull requests, os principais mantenedores de um projeto podem analisar todas as alterações, aprová-las ou reprová-las, dar feedback e interagir de uma forma geral. Pull requests não são utilizados apenas para projetos Open Source. Muitas equipes utilizam pull requests em seu dia-a-dia, para enviar as alterações de código para revisão de algum supervisor.
+		
+		
+>>>>>>> e9e6d46ecc8eee783e8428288efcdbd25733dcb4
