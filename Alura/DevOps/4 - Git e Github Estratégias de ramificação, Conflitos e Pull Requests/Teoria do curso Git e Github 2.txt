@@ -62,7 +62,6 @@ Aula 01 - GitHub e OpenSource -------
 			2º - Criamos a pasta para alocar o projeto em nossa máquina.
 			
 			3º - Num primeiro momento o comando "git pull origin master" não funcionará pois o nosso diretório novo não conhece o repositório "origin".
-			
 		
 		
 		CORRIGINDO ALGUNS ERROS:
@@ -76,6 +75,7 @@ Aula 01 - GitHub e OpenSource -------
 				"error: cannot stat...filename too long" fazer: git config --system core.longpaths true
 				
 				
+
 		EXCLUINDO DIRETÓRIOS LOCAIS GIT
 		
 			rm -rf .git = Exclui o diretório local do Git.
@@ -222,6 +222,7 @@ Aula 03 - Estratégias de Branching -------
 							
 		GIT FLOW
 		
+
 			É uma forma de organização onde por padrão utilizamos cada branch para o seu devido fim.
 			
 				MASTER: Só serve para receber os commits que estão prontos para ir para produção, e a partir destes commits geramos as tags.
@@ -251,6 +252,7 @@ Aula 03 - Estratégias de Branching -------
 			- Vimos que cada funcionalidade deve ser feita em uma branch separada, e que é comum que esta branch tenha feature/ como prefixo
 			- Aprendemos também que bugs normalmente são corrigidos em branches separadas, com o prefixo hotfix/
 			- Além disso, branches específicas para cada release são criadas para realizar os testes e correções de bugs específicos
+
 			
 	Questões:
 	
@@ -258,6 +260,8 @@ Aula 03 - Estratégias de Branching -------
 		
 		Sobre o que podemos fazer com issues, avalie as afirmativas abaixo:
 
+		Selecione uma alternativa
+    
 		a) Podemos reportar problemas
 
 		b) Podemos sugerir melhorias no código
@@ -474,3 +478,4 @@ Aula 05 - Hooks e deploy com Git -------
 
 		Alternativa correta! Entrega contínua é uma série de práticas que permitem que o código esteja de forma rápida e simples em produção. Tão rápido e simples quanto rodar um git push. Para saber mais sobre o assunto, confira o curso Integração Contínua: Maturidade e Produtividade no Desenvolvimento de Software aqui na Alura.
 		
+
