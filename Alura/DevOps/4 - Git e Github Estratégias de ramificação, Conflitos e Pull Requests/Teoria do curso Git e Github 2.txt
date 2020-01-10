@@ -1,5 +1,16 @@
 Aula 01 - GitHub e OpenSource -------
 
+	Lembrete dos 4 estágios do arquivo no Git:
+	
+		untracked: Não rastreado ainda pelo Git, precisa ser adicionado.
+		
+		unmodified: Adicionado mas sem alteração alguma.
+		
+		modified: Adicionado e modificado, precisa ser adicionado para commit.	
+		
+		stage: Pronto para ser commitado.
+
+
 	Teoria:
 	
 		GitHub é muito utilizado pela comunidade de desenvolvimento open source (Código aberto).
@@ -22,6 +33,14 @@ Aula 01 - GitHub e OpenSource -------
 				Aqui conseguimos filtrar palestrantes através da lista de Issues do projeto.
 				
 				Ou seja, gerenciamos um tipo de conteúdo que não é propriamente um "problema".
+				
+				Lista melhorada do que podemos fazer com as "Issues":
+				
+					- Reportar problemas
+					- Sugerir melhorias
+					- Solicitar novas funcionalidades
+					- Organizar qualquer coisa que faça sentido para o projeto
+					- Etc
 		
 		Também podemos organizar as Issues por ordem de prioriadade.
 		
@@ -43,11 +62,6 @@ Aula 01 - GitHub e OpenSource -------
 			2º - Criamos a pasta para alocar o projeto em nossa máquina.
 			
 			3º - Num primeiro momento o comando "git pull origin master" não funcionará pois o nosso diretório novo não conhece o repositório "origin".
-			
-<<<<<<< HEAD
-			4º - 
-=======
->>>>>>> e9e6d46ecc8eee783e8428288efcdbd25733dcb4
 		
 		
 		CORRIGINDO ALGUNS ERROS:
@@ -61,12 +75,7 @@ Aula 01 - GitHub e OpenSource -------
 				"error: cannot stat...filename too long" fazer: git config --system core.longpaths true
 				
 				
-<<<<<<< HEAD
-		EXCLUINDO DIRETÓRIOS LOCAIS GitHub
-		
-			rm -rf .git = Exclui o diretório local do Git.
-			
-=======
+
 		EXCLUINDO DIRETÓRIOS LOCAIS GIT
 		
 			rm -rf .git = Exclui o diretório local do Git.
@@ -102,7 +111,7 @@ Aula 01 - GitHub e OpenSource -------
 				- Analisar solicitação de merge, como: Conflitos, alterações, adições etc
 				
 				- Clicar no botão "Merge pull request" e em seguida "Confirm merge"
-					Com isso teremos um "Pull Request" com o status "Merged".
+					Com isso teremos um "pull Request" com o status "Merged".
 					
 				- Se foi a solução de uma Issue, poderemos fecha-la, junto a um texto "Fechado pelo PR #2 (Id do Pull request), clicando em "Close and comment". (PR = Pull Request).
 					A Issue estará fechada e contendo o link para o último Pull request junto a todas as alterações realizadas.
@@ -124,9 +133,126 @@ Aula 01 - GitHub e OpenSource -------
 				Em outras palavras, um dos commits deverá absorver os outros para que se tornem um, consequentemente o comentário deste commit será aquele da resolução da Issue ou Pull Request qualquer que for enviado.
 				
 				 Obs: Aquele que contiver o rótulo "pick" será o commit principal, os outros que tiverem o rótulo "s" serão aqueles absorvidos por seus commits anteriores.
+				 
+				 Salvamos o arquivo que foi aberto com ":+x"
+				 
+		
+		ARTIGO PARA ENTENDER MELHOR OS PULL REQUEST FECHANDO AS ISSUES COM PALAVRAS CHAVE
+		
+			https://help.github.com/en/articles/closing-issues-using-keywords
 			
 		
->>>>>>> e9e6d46ecc8eee783e8428288efcdbd25733dcb4
+		ALTERNATIVAS AO GITHUB
+		
+			- Gitbucket: Pode ser criado repositórios públicos.
+			- GitLab: Full DevOps - Gerenciar ferramentas de servidores de integração e entrega contínua.
+			
+			Obs: GitHub permite que o repositório seja privado para projetos com até 3 colaboradores.
+		
+		
+		
+Aula 02 - Controle avançado de conflitos -------		
+			
+		CHERRY-PICK
+		
+			Cherry-pick é uma forma de trazer apenas as alterações de um commit para o branch master.
+			
+				git cherry-pick "hash do commit desejado" = Se você quer apenas uma alteração de outra branch, informando o hash do commit em que houve a alteração, você irá traze-lá sem a necessidade de carregar todas as outras
+															alterações daquele branch para master.
+			
+		
+		ENCONTRANDO BUGS
+		
+			Para encontrar bugs temos a ferramenta "git bisect" que serve para "debugarmos" nosso commit indo a partir de um commit específico até a nossa "HEAD" e verificarmos onde está a alteração que procuramos.
+			
+				git bisect start = Inicia a ferramenta.
+				
+					git bisect bad "Hash do commit" = Onde estamos atualmente, em outras palavras o HEAD com o commit que não estamos satisfeitos.
+				
+					git bisect good "Hash do commit" = Onde irá iniciar o "debug" dos commits.
+				
+						git bisect bad = Enquanto não encontrar o commit desejado.
+						
+						git bisect good = Quando encontrar o commit desejado.
+						
+						git bisect reset = Para voltar para o branch master.
+						
+						Então, será possível usar o hash exibido para reverter alterações.
+						
+							git revert "Hash do commit (7 ou 8 primeiros caracteres do commit)" = Reverte as alterações indo para o commit do hash informado.
+						
+						Obs: É possível que haja conflitos com o nosso HEAD e a alteração que desejamos (se desejamos) trazer de volta, se isto acontecer resolva os conflitos adicione o arquivo para commit e realize o commit.
+						
+						Obs 2: Podemos também depois de achar o commit desejado utilizar o git show, que nos mostra todas as alterações realizadas naquele commit.
+						
+							git show "Hash do commit (7 ou 8 primeiros caracteres)" = Mostra todas as alterações do commit do hash informado.
+							
+							
+		ENCONTRANDO O CULPADO
+		
+			Para que possamos encontrar o responsável por cada uma das linhas escritas em nosso código, utilizamos o recurso blame.
+			
+				git blame "arquivo" = É exibido o responsável por cada linha de código.
+				
+				Obs: Apesar do nome, o recurso blame nunca deve ser utilizado única e simplesmente para apontar culpados, dar bronca etc.
+					O intuito é ensinar, aprender mais, se atualizar ou criticar de forma construtiva.
+					
+		
+		Nesta aula, aprendemos:
+
+			- Que o comando git cherry-pick pode trazer um commit específico para a branch atual;
+			- Como encontrar o commit em que determinada alteração foi aplicada, utilizando o git bisect;
+			- Como encontrar o responsável por determinada linha ou bloco de código, utilizando o git blame;
+			- Que jamais devemos apontar um culpado por determinado bug. Uma equipe deve ser unida e se ajudar;
+			- Que o comando git show {hash} mostra todas as alterações aplicadas pelo commit com o hash informado.
+				
+
+Aula 03 - Estratégias de Branching -------
+
+		Iniciando a aula lembrando que não é uma boa prática commitar diretamente no branch master.
+		Utilizar sempre outros branchs (Um cada desenvolvedor que estiver trabalhando no projeto) para que depois que a mudança estiver estável possamos subir nossas alterações para o branch master.
+		
+		git branch -d "Nome do Branch" = Deleta o branch desejado.
+		
+			Obs: Caso haja algum conflito como o branch a ser deletado estar à frente do branch atual teremos que utilizar ao invés de -d utilizar -D (Em maiúsculo).
+			
+			Relembrando: Para criar uma tag = git tag - "Nome da tag" (Depois devemos adicionar uma mensagem dentro do arquivo da Tag).
+			
+							Sair do Git (Terminal) = exit ou logout.
+							
+		GIT FLOW
+		
+
+			É uma forma de organização onde por padrão utilizamos cada branch para o seu devido fim.
+			
+				MASTER: Só serve para receber os commits que estão prontos para ir para produção, e a partir destes commits geramos as tags.
+						Obs: Sempre que encontramos um erro na branch master, criamos um branch hotfix para corrigir este erro.
+				
+				HOTFIX: Branch de correção de erros que acontecem direto na Master. As correções desenvolvidas aqui voltam direto para a Master.
+						Obs: Mandamos também as correções feitas aqui para a branch develop para que as features também possam se aproveitar das correções.
+				
+				DEVELOP: A partir dela serão criadas as branchs de features e as funcionalides serão mandadas de volta para a Develop.
+							Obs: Depois de todas as features criadas e já de volta a branch develop, criamos uma branch chamada Release.
+				
+				FEATURE: Branch de ferramentas individuais que após prontas vão para a branch develop. 
+				
+				RELEASE: Aqui dentro só corrigimos os bugs relacionados a esta release. Sempre que um bug for corrigido, mandamos de volta para a branch develop para que outras features utilizem está correção.
+		
+		
+		Nesta aula, aprendemos:
+
+			- Que é uma convenção bem seguida que a branch master tenha apenas os commits prontos para ir para produção;
+			- Que não é interessante realizar trabalho e commitar diretamente na branch master;
+			- Como remover uma branch:
+			- git branch -d {nome_branch} remove uma branch que já tem seu trabalho unido à branch atual;
+			- git branch -D {nome_branch} remove uma branch mesmo que os commits desta branch ainda não estejam na branch atual, ou seja, força a remoção;
+			- Um pouco do processo chamado de Git Flow:
+			- Entendemos que o estado do código representado pela branch master deve ser o mesmo que estará em produção
+			- Vimos que deve haver uma branch de desenvolvimento (comumente chamado de develop), onde todas as funcionalidades e correções devem ser muito bem testadas antes de ir para produção (master)
+			- Vimos que cada funcionalidade deve ser feita em uma branch separada, e que é comum que esta branch tenha feature/ como prefixo
+			- Aprendemos também que bugs normalmente são corrigidos em branches separadas, com o prefixo hotfix/
+			- Além disso, branches específicas para cada release são criadas para realizar os testes e correções de bugs específicos
+
 			
 	Questões:
 	
@@ -134,19 +260,8 @@ Aula 01 - GitHub e OpenSource -------
 		
 		Sobre o que podemos fazer com issues, avalie as afirmativas abaixo:
 
-<<<<<<< HEAD
-		1) Podemos reportar problemas
-
-		2) Podemos sugerir melhorias no código
-
-		3) Podemos organizar quaisquer coisas que façam sentido para o projeto
-
 		Selecione uma alternativa
-		
-		R: As afirmativas 1, 2 e 3 estão corretas
-		
-		Alternativa correta! Todas as afirmativas estão corretas, já que o propósito inicial das issues, como o nome já diz, era reportar e controlar os problemas e bugs de um projeto (afirmativa 1). Além disso, com o tempo, passaram a perceber que havia mais possibilidades nas issues, e elas foram utilizadas para sugestão de melhorias no projeto e pedidos de novas funcionalidades (afirmativa 2). Por fim, ótimos exemplos de usos das issues no GitHub são das comunidades PHPSP e PHPRio, que as utilizam para organizar os palestrantes e sugestões de palestras (afirmativa 3).
-=======
+    
 		a) Podemos reportar problemas
 
 		b) Podemos sugerir melhorias no código
@@ -171,4 +286,196 @@ Aula 01 - GitHub e OpenSource -------
 		Alternativa correta! Através de pull requests, os principais mantenedores de um projeto podem analisar todas as alterações, aprová-las ou reprová-las, dar feedback e interagir de uma forma geral. Pull requests não são utilizados apenas para projetos Open Source. Muitas equipes utilizam pull requests em seu dia-a-dia, para enviar as alterações de código para revisão de algum supervisor.
 		
 		
->>>>>>> e9e6d46ecc8eee783e8428288efcdbd25733dcb4
+		3 - Tendo entendido o que são issues e pull requests, nada mais justo do que enviar um pull request para resolver uma issue, certo? Mas quando desenvolvemos, podemos realizar vários commits, o que pode não ser tão interessante para quem for revisar o pull request.
+
+		Por que é interessante unir os commits em um único para enviar um pull request?
+
+		Selecione uma alternativa
+		
+		R: Para que o responsável pela revisão do projeto tenha um único commit a revisar, com todas as alterações necessárias
+		
+		Alternativa correta! Revisar um único commit é bem mais fácil e rápido do que analisar diversos commits que resolvem um problema em comum. Por isso, nestes casos, é interessante utilizar o git rebase -i.
+		
+		
+		4 - No último vídeo, vimos como podemos trazer um único commit específico de outra branch para a branch em que estamos trabalhando.
+
+		Em que caso faz sentido trazer um commit específico para a branch atual?
+
+		Selecione uma alternativa
+		
+		R: Quando um bug que afeta a branch atual já foi solucionado em outra branch
+		
+		Alternativa correta! Se uma implementação é necessária em sua branch e já foi feita em outra branch, pode fazer sentido trazer um commit específico, utilizando o git cherry-pick.
+		
+		
+		5 - No último vídeo, nós utilizamos o git bisect para encontrar determinado ponto na história do código em que alguma alteração foi introduzida. Fizemos isso, informando os estados do commit (se estava "bom" ou "ruim").
+
+		Para que o git bisect pode ser útil?
+
+		Selecione uma alternativa
+		
+		R: Para encontrar o commit em que um bug foi introduzido
+
+		Alternativa correta! Encontrando o exato commit em que determinado bug foi introduzido, podemos revertê-lo ou até mesmo tentar entender o motivo daquele bug ter sido introduzido.
+		
+		
+		6 - Com o git blame, podemos ver quem é o responsável por cada linha no código.
+
+		Para que isso pode ser útil?
+
+		Selecione uma alternativa
+		
+		R: Para saber para quem perguntar sobre determinado bloco de código que não entendemos
+		
+		Alternativa correta! Com o git blame, nós podemos saber quem é o responsável por determinada linha ou bloco de código que nós não entendemos, e com isso sabemos com quem tirar a dúvida!
+		
+		
+		7 - Durante o vídeo, nós visualizamos o nosso log de commits de uma forma um pouco mais visual, onde as diferentes branches são representadas por linhas separadas.
+
+		Qual o comando para exibir o log desta forma?
+
+		Selecione uma alternativa
+		
+		R: git log --graph
+
+		Alternativa correta! Desta forma, uma representação um pouco mais gráfica do log é exibida na linha de comando.
+		
+		
+		8 - Aprendemos de forma bem resumida sobre a estratégia de organização de branches, chamada Git Flow.
+
+		Quais as branches presentes nesta estratégia?
+
+		Selecione uma alternativa
+		
+		R: Master, Develop, Branches de feature, Branches de Hotfix e Branches de release
+
+		Alternativa correta! Cada uma das branches tem um propósito bem definido e nos ajudam a manter o nosso controle de versões bem organizado.
+		
+		
+Aula 04 - Ferramentas visuais -------
+
+	Nesta capitulo veremos algumas ferramentas visuais, embora existam muitas, algumas até recomendadas até no próprio site oficial do Git (https://git-scm.com/downloads/guis), conhecer todas neste momento seria inviável.
+	
+	Git Cola: Visualizar de forma detalhada e intuitiva nosso diretório do git (https://git-cola.github.io/).
+	
+	GitHub Desktop: Ferramenta que nos auxilia muito no trabalho com o Github, tira a necessidade de ficarmos por linha de comando trabalhando com o GitHub (https://desktop.github.com/).
+	
+		Obs: Para quem usa Linux: http://github.com/shiftkey/desktop.
+		
+		Obs 2: Link para discussão https://github.com/desktop/desktop/issues/1525, sobre o aplicativo nativo, ou seja, para que a própria equipe do GitHub Desktop lance uma versão oficial.
+		
+	GitKraken: Ferramenta muito mais complexa, util e visual para trabalhar com o Git e Github (https://www.gitkraken.com/).
+	
+	Nesta aula, aprendemos:
+
+		- Que há ferramentas visuais que podem nos auxiliar com o trabalho com o Git;
+		- O Git Cola foi uma das primeiras ferramentas visuais multiplataforma. Embora não seja a mais complexa ou visualmente atraente, é bem completa e pode nos ajudar bastante;
+		- O GitHub Desktop pode ser interessante para gerenciar os projetos do GitHub de forma mais ágil e facilitada, sem a necessidade de acessar o site;
+		- O GitKraken é uma ferramenta extremamente completa, que nos auxilia inclusive com a implementação do Git Flow.
+	
+	
+Aula 05 - Hooks e deploy com Git -------
+
+	Hooks: Execução de algum código quando determinado evento acontece.
+	
+		Dentro da pasta .git (Que foi criada ao criarmos o repositório Git) existe um subdiretório chamado hooks. Dentro deste diretório temos vários arquivos .sample, que são arquivos de exemplos de eventos que podem ser criados à partir de scripts (Shell Scripts).
+		
+			Obs: Quando entramos nesta (.git) pasta através do git bash é alertado com uma exclamação que estamos dentro de um diretório delicado.
+			
+		O nome dos arquivos estão relacionados a comandos que podem ser executados a cada evento que ocorre. Um exemplo é o pre-commit.sample que é um comandos que podem ser executados antes de cada commit.
+		
+			Obs: Com o comando cat pre-commit.sample (Dentro da pasta), podemos analisar o arquivo.
+			
+		Podemos então criar um arquivo nosso com o que desejamos que seja executado antes de cada commit no caso do arquivo pre-commit.
+		
+			Obs: O comando "vim pre-commit" abre um novo arquivo com este nome para que possamos escrever um script de acordo com as nossas necessidades.
+			
+			Obs: Caso queiramos escrever um arquivo Shell Script deixamos a primeira linha com as anotações "#!/bin/sh"
+					Um exemplo de teste é deixar o arquivo bem simples e com o comando "echo "Você está prestes a commitar..." e ver antes de cada commit naquele nosso diretório ser exibida aquela mensagem.
+					
+		Comandos uteis para este momento:
+		
+			ls -l = Ver permissões do arquivo.
+			
+			(Em uma plataforma diferente do Windows) chmod u+x "nome do arquivo" = Para dar todas as permissões que necessitamos.
+		
+		Este hook de pre-commit é muito útil para executarmos qualquer script de teste antes que seja commitada qualquer alterações no nosso projeto seja ele escrito em Java, C#, PHP etc.
+		
+			Obs: Inclusive podemos realizar o deploy da nossa aplicação incluindo um script para o mesmo no pre-commit.
+	
+	
+	Deploy com Git:
+	
+		Como visto anteriormente, podemos realizar implantações (deploy's) de forma automatizada com o Git, utilizando hooks, porém neste caso seria um script executado logo após um push.
+			Felizmente, assim como o pre-commit, também temos um arquivo que representa um comando para fazermos isso, que é o post-receive.
+			
+		Este post-receive é o script que ficaria como algo do tipo:
+		
+		------ Início do arquivo
+		
+			#!/bin/sh
+
+			cp index.html C:\Users\ALURA\Documents\git-e-github\web
+	
+		------- Fim do arquivo
+		
+		Porém só funcionária se o nosso repositório indicado já possuísse uma cópia do arquivo index.html
+		
+		Para que façamos funcionar temos que copiar todos os arquivos referentes ao projeto, em outras palavras, sua "Working tree"
+		
+			Ex: index.html, Pastas de CSS etc.
+			
+		Sendo assim, nosso arquivo deve ficar da seguinte forma:
+		
+		------- Início do arquivo
+		
+			#!/bin/sh
+
+			git --git-dir="C:\Users\ALURA\Documents\git-e-github\servidor" --work-tree="C:\Users\ALURA\Documents\git-e-github\web" checkout -f
+		
+		------- Fim do arquivo
+		
+		Onde o primeiro é o endereço do diretório Git, ou seja, o repositório, e o segundo é o projeto está implantado (Cópia dos arquivos).
+		
+		O comando checkout -f força um checkout, alterando o estado da aplicação, do nosso Work tree. Como não estamos passando nenhum novo estado, precisamos forçar o checkout.
+		
+		Assim conseguimos fazer nosso primeiro deploy automático. Assim sendo, se adicionarmos mais alguma modificação a nossa página index.html ela já sofreria as mudanças automaticamente após o push.
+		
+		Um curso indicado pelo instrutor para ter uma noção melhor de deploy automatizado e de integração contínua: Integração Contínua: Maturidade e Produtividade no Desenvolvimento de Software
+																									(https://cursos.alura.com.br/course/integracao-continua-jenkins)
+		
+	
+	Nesta aula, aprendemos:
+
+		- Que o Git trabalha com eventos e os chama de hooks;
+		- Que podemos definir códigos a serem executados quando determinado evento (hook) ocorrer;
+		- A criar hooks dentro da pasta .git/hooks, utilizando Shell Script;
+		- Que o nome do arquivo indica em qual hook (evento) ele será executado;
+		- Que, com hooks, podemos executar os testes automatizados do nosso código, ou até mesmo colocar uma aplicação em produção.
+	
+	
+	Questões:
+	
+	
+		1 - Vimos no último vídeo que o Git nos permite, através dos hooks, executar algum código quando determinado evento acontece.
+
+		Como podemos escrever um código que será executado em algum evento?
+
+		Selecione uma alternativa
+		
+		R: Criando um arquivo Shell Script, onde seu nome representa o evento, dentro da pasta .git/hooks
+		
+		Alternativa correta! Para ver com mais detalhes os possíveis hooks (eventos), confira este site: https://githooks.com/.
+		
+		
+		2 - Na última aula, vimos de forma bem rudimentar como configurar um processo de entrega contínua do nosso código.
+
+		Por que chamamos o resultado que alcançamos de entrega contínua?
+
+		Selecione uma alternativa
+		
+		R: Porque a cada commit (a cada mudança significativa na base de código), podemos fazer um push e entregar o sistema em produção
+
+		Alternativa correta! Entrega contínua é uma série de práticas que permitem que o código esteja de forma rápida e simples em produção. Tão rápido e simples quanto rodar um git push. Para saber mais sobre o assunto, confira o curso Integração Contínua: Maturidade e Produtividade no Desenvolvimento de Software aqui na Alura.
+		
+
