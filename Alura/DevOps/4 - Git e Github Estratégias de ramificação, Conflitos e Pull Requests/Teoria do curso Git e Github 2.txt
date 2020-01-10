@@ -200,11 +200,11 @@ Aula 02 - Controle avançado de conflitos -------
 		
 		Nesta aula, aprendemos:
 
-			Que o comando git cherry-pick pode trazer um commit específico para a branch atual;
-			Como encontrar o commit em que determinada alteração foi aplicada, utilizando o git bisect;
-			Como encontrar o responsável por determinada linha ou bloco de código, utilizando o git blame;
-			Que jamais devemos apontar um culpado por determinado bug. Uma equipe deve ser unida e se ajudar;
-			Que o comando git show {hash} mostra todas as alterações aplicadas pelo commit com o hash informado.
+			- Que o comando git cherry-pick pode trazer um commit específico para a branch atual;
+			- Como encontrar o commit em que determinada alteração foi aplicada, utilizando o git bisect;
+			- Como encontrar o responsável por determinada linha ou bloco de código, utilizando o git blame;
+			- Que jamais devemos apontar um culpado por determinado bug. Uma equipe deve ser unida e se ajudar;
+			- Que o comando git show {hash} mostra todas as alterações aplicadas pelo commit com o hash informado.
 				
 
 Aula 03 - Estratégias de Branching -------
@@ -240,17 +240,17 @@ Aula 03 - Estratégias de Branching -------
 		
 		Nesta aula, aprendemos:
 
-			Que é uma convenção bem seguida que a branch master tenha apenas os commits prontos para ir para produção;
-			Que não é interessante realizar trabalho e commitar diretamente na branch master;
-			Como remover uma branch:
-			git branch -d {nome_branch} remove uma branch que já tem seu trabalho unido à branch atual;
-			git branch -D {nome_branch} remove uma branch mesmo que os commits desta branch ainda não estejam na branch atual, ou seja, força a remoção;
-			Um pouco do processo chamado de Git Flow:
-			Entendemos que o estado do código representado pela branch master deve ser o mesmo que estará em produção
-			Vimos que deve haver uma branch de desenvolvimento (comumente chamado de develop), onde todas as funcionalidades e correções devem ser muito bem testadas antes de ir para produção (master)
-			Vimos que cada funcionalidade deve ser feita em uma branch separada, e que é comum que esta branch tenha feature/ como prefixo
-			Aprendemos também que bugs normalmente são corrigidos em branches separadas, com o prefixo hotfix/
-			Além disso, branches específicas para cada release são criadas para realizar os testes e correções de bugs específicos
+			- Que é uma convenção bem seguida que a branch master tenha apenas os commits prontos para ir para produção;
+			- Que não é interessante realizar trabalho e commitar diretamente na branch master;
+			- Como remover uma branch:
+			- git branch -d {nome_branch} remove uma branch que já tem seu trabalho unido à branch atual;
+			- git branch -D {nome_branch} remove uma branch mesmo que os commits desta branch ainda não estejam na branch atual, ou seja, força a remoção;
+			- Um pouco do processo chamado de Git Flow:
+			- Entendemos que o estado do código representado pela branch master deve ser o mesmo que estará em produção
+			- Vimos que deve haver uma branch de desenvolvimento (comumente chamado de develop), onde todas as funcionalidades e correções devem ser muito bem testadas antes de ir para produção (master)
+			- Vimos que cada funcionalidade deve ser feita em uma branch separada, e que é comum que esta branch tenha feature/ como prefixo
+			- Aprendemos também que bugs normalmente são corrigidos em branches separadas, com o prefixo hotfix/
+			- Além disso, branches específicas para cada release são criadas para realizar os testes e correções de bugs específicos
 			
 	Questões:
 	
@@ -350,6 +350,127 @@ Aula 03 - Estratégias de Branching -------
 		
 Aula 04 - Ferramentas visuais -------
 
-	Nesta capitulo veremos algumas ferramentas visuais, embora existam muitas, algumas até recomendadas até no próprio site oficial do Git, conhecer todas neste momento seria inviável.
+	Nesta capitulo veremos algumas ferramentas visuais, embora existam muitas, algumas até recomendadas até no próprio site oficial do Git (https://git-scm.com/downloads/guis), conhecer todas neste momento seria inviável.
 	
-	Git Cola: Visualizar de forma detalhada e intuitiva nosso diretório do git.
+	Git Cola: Visualizar de forma detalhada e intuitiva nosso diretório do git (https://git-cola.github.io/).
+	
+	GitHub Desktop: Ferramenta que nos auxilia muito no trabalho com o Github, tira a necessidade de ficarmos por linha de comando trabalhando com o GitHub (https://desktop.github.com/).
+	
+		Obs: Para quem usa Linux: http://github.com/shiftkey/desktop.
+		
+		Obs 2: Link para discussão https://github.com/desktop/desktop/issues/1525, sobre o aplicativo nativo, ou seja, para que a própria equipe do GitHub Desktop lance uma versão oficial.
+		
+	GitKraken: Ferramenta muito mais complexa, util e visual para trabalhar com o Git e Github (https://www.gitkraken.com/).
+	
+	Nesta aula, aprendemos:
+
+		- Que há ferramentas visuais que podem nos auxiliar com o trabalho com o Git;
+		- O Git Cola foi uma das primeiras ferramentas visuais multiplataforma. Embora não seja a mais complexa ou visualmente atraente, é bem completa e pode nos ajudar bastante;
+		- O GitHub Desktop pode ser interessante para gerenciar os projetos do GitHub de forma mais ágil e facilitada, sem a necessidade de acessar o site;
+		- O GitKraken é uma ferramenta extremamente completa, que nos auxilia inclusive com a implementação do Git Flow.
+	
+	
+Aula 05 - Hooks e deploy com Git -------
+
+	Hooks: Execução de algum código quando determinado evento acontece.
+	
+		Dentro da pasta .git (Que foi criada ao criarmos o repositório Git) existe um subdiretório chamado hooks. Dentro deste diretório temos vários arquivos .sample, que são arquivos de exemplos de eventos que podem ser criados à partir de scripts (Shell Scripts).
+		
+			Obs: Quando entramos nesta (.git) pasta através do git bash é alertado com uma exclamação que estamos dentro de um diretório delicado.
+			
+		O nome dos arquivos estão relacionados a comandos que podem ser executados a cada evento que ocorre. Um exemplo é o pre-commit.sample que é um comandos que podem ser executados antes de cada commit.
+		
+			Obs: Com o comando cat pre-commit.sample (Dentro da pasta), podemos analisar o arquivo.
+			
+		Podemos então criar um arquivo nosso com o que desejamos que seja executado antes de cada commit no caso do arquivo pre-commit.
+		
+			Obs: O comando "vim pre-commit" abre um novo arquivo com este nome para que possamos escrever um script de acordo com as nossas necessidades.
+			
+			Obs: Caso queiramos escrever um arquivo Shell Script deixamos a primeira linha com as anotações "#!/bin/sh"
+					Um exemplo de teste é deixar o arquivo bem simples e com o comando "echo "Você está prestes a commitar..." e ver antes de cada commit naquele nosso diretório ser exibida aquela mensagem.
+					
+		Comandos uteis para este momento:
+		
+			ls -l = Ver permissões do arquivo.
+			
+			(Em uma plataforma diferente do Windows) chmod u+x "nome do arquivo" = Para dar todas as permissões que necessitamos.
+		
+		Este hook de pre-commit é muito útil para executarmos qualquer script de teste antes que seja commitada qualquer alterações no nosso projeto seja ele escrito em Java, C#, PHP etc.
+		
+			Obs: Inclusive podemos realizar o deploy da nossa aplicação incluindo um script para o mesmo no pre-commit.
+	
+	
+	Deploy com Git:
+	
+		Como visto anteriormente, podemos realizar implantações (deploy's) de forma automatizada com o Git, utilizando hooks, porém neste caso seria um script executado logo após um push.
+			Felizmente, assim como o pre-commit, também temos um arquivo que representa um comando para fazermos isso, que é o post-receive.
+			
+		Este post-receive é o script que ficaria como algo do tipo:
+		
+		------ Início do arquivo
+		
+			#!/bin/sh
+
+			cp index.html C:\Users\ALURA\Documents\git-e-github\web
+	
+		------- Fim do arquivo
+		
+		Porém só funcionária se o nosso repositório indicado já possuísse uma cópia do arquivo index.html
+		
+		Para que façamos funcionar temos que copiar todos os arquivos referentes ao projeto, em outras palavras, sua "Working tree"
+		
+			Ex: index.html, Pastas de CSS etc.
+			
+		Sendo assim, nosso arquivo deve ficar da seguinte forma:
+		
+		------- Início do arquivo
+		
+			#!/bin/sh
+
+			git --git-dir="C:\Users\ALURA\Documents\git-e-github\servidor" --work-tree="C:\Users\ALURA\Documents\git-e-github\web" checkout -f
+		
+		------- Fim do arquivo
+		
+		Onde o primeiro é o endereço do diretório Git, ou seja, o repositório, e o segundo é o projeto está implantado (Cópia dos arquivos).
+		
+		O comando checkout -f força um checkout, alterando o estado da aplicação, do nosso Work tree. Como não estamos passando nenhum novo estado, precisamos forçar o checkout.
+		
+		Assim conseguimos fazer nosso primeiro deploy automático. Assim sendo, se adicionarmos mais alguma modificação a nossa página index.html ela já sofreria as mudanças automaticamente após o push.
+		
+		Um curso indicado pelo instrutor para ter uma noção melhor de deploy automatizado e de integração contínua: Integração Contínua: Maturidade e Produtividade no Desenvolvimento de Software
+																									(https://cursos.alura.com.br/course/integracao-continua-jenkins)
+		
+	
+	Nesta aula, aprendemos:
+
+		- Que o Git trabalha com eventos e os chama de hooks;
+		- Que podemos definir códigos a serem executados quando determinado evento (hook) ocorrer;
+		- A criar hooks dentro da pasta .git/hooks, utilizando Shell Script;
+		- Que o nome do arquivo indica em qual hook (evento) ele será executado;
+		- Que, com hooks, podemos executar os testes automatizados do nosso código, ou até mesmo colocar uma aplicação em produção.
+	
+	
+	Questões:
+	
+	
+		1 - Vimos no último vídeo que o Git nos permite, através dos hooks, executar algum código quando determinado evento acontece.
+
+		Como podemos escrever um código que será executado em algum evento?
+
+		Selecione uma alternativa
+		
+		R: Criando um arquivo Shell Script, onde seu nome representa o evento, dentro da pasta .git/hooks
+		
+		Alternativa correta! Para ver com mais detalhes os possíveis hooks (eventos), confira este site: https://githooks.com/.
+		
+		
+		2 - Na última aula, vimos de forma bem rudimentar como configurar um processo de entrega contínua do nosso código.
+
+		Por que chamamos o resultado que alcançamos de entrega contínua?
+
+		Selecione uma alternativa
+		
+		R: Porque a cada commit (a cada mudança significativa na base de código), podemos fazer um push e entregar o sistema em produção
+
+		Alternativa correta! Entrega contínua é uma série de práticas que permitem que o código esteja de forma rápida e simples em produção. Tão rápido e simples quanto rodar um git push. Para saber mais sobre o assunto, confira o curso Integração Contínua: Maturidade e Produtividade no Desenvolvimento de Software aqui na Alura.
+		
