@@ -1,13 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8f6205c8-d3ee-4e1c-b872-6a4b1a242142" name="Default Changelist" comment="" />
+    <list default="true" id="8f6205c8-d3ee-4e1c-b872-6a4b1a242142" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bionic64/.vagrant/machines/ansible/virtualbox/synced_folders" beforeDir="false" afterPath="$PROJECT_DIR$/bionic64/.vagrant/machines/ansible/virtualbox/synced_folders" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bionic64/.vagrant/machines/ansible/virtualbox/vagrant_cwd" beforeDir="false" afterPath="$PROJECT_DIR$/bionic64/.vagrant/machines/ansible/virtualbox/vagrant_cwd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bionic64/.vagrant/machines/dockerhost/virtualbox/vagrant_cwd" beforeDir="false" afterPath="$PROJECT_DIR$/bionic64/.vagrant/machines/dockerhost/virtualbox/vagrant_cwd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bionic64/.vagrant/machines/memcached/virtualbox/action_set_name" beforeDir="false" afterPath="$PROJECT_DIR$/bionic64/.vagrant/machines/memcached/virtualbox/action_set_name" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bionic64/.vagrant/machines/memcached/virtualbox/vagrant_cwd" beforeDir="false" afterPath="$PROJECT_DIR$/bionic64/.vagrant/machines/memcached/virtualbox/vagrant_cwd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bionic64/.vagrant/machines/mysqlserver/virtualbox/synced_folders" beforeDir="false" afterPath="$PROJECT_DIR$/bionic64/.vagrant/machines/mysqlserver/virtualbox/synced_folders" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bionic64/.vagrant/machines/mysqlserver/virtualbox/vagrant_cwd" beforeDir="false" afterPath="$PROJECT_DIR$/bionic64/.vagrant/machines/mysqlserver/virtualbox/vagrant_cwd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bionic64/.vagrant/machines/phpweb/virtualbox/action_set_name" beforeDir="false" afterPath="$PROJECT_DIR$/bionic64/.vagrant/machines/phpweb/virtualbox/action_set_name" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bionic64/.vagrant/machines/phpweb/virtualbox/synced_folders" beforeDir="false" afterPath="$PROJECT_DIR$/bionic64/.vagrant/machines/phpweb/virtualbox/synced_folders" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bionic64/.vagrant/machines/phpweb/virtualbox/vagrant_cwd" beforeDir="false" afterPath="$PROJECT_DIR$/bionic64/.vagrant/machines/phpweb/virtualbox/vagrant_cwd" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../../.." />
+  </component>
   <component name="ProjectId" id="1WDtoZXrB7Bj4StJ6nm3x3iiZfk" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showExcludedFiles" value="true" />
@@ -15,7 +31,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="D:/Projetos para Git e Github/Estudos/Alura/DevOps/Kali WSL com Interface Gráfica.txt" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Teoria do curso de Vagrant.txt" />
     <property name="settings.editor.selected.configurable" value="terminal" />
   </component>
   <component name="RecentsManager">
@@ -61,18 +77,18 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="640" y="249" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1579583003542" />
-    <state x="740" y="276" key="FileChooserDialogImpl" timestamp="1579382474732">
+    <state x="740" y="276" key="FileChooserDialogImpl" timestamp="1579669789606">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="740" y="276" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1579382474732" />
+    <state x="740" y="276" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1579669789606" />
     <state x="461" y="163" key="SettingsEditor" timestamp="1578783370501">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="461" y="163" key="SettingsEditor/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1578783370501" />
-    <state x="656" y="345" key="com.intellij.ide.util.TipDialog" timestamp="1579658645988">
+    <state x="656" y="345" key="com.intellij.ide.util.TipDialog" timestamp="1579669741804">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="656" y="345" key="com.intellij.ide.util.TipDialog/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1579658645988" />
+    <state x="656" y="345" key="com.intellij.ide.util.TipDialog/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1579669741804" />
     <state x="591" y="217" width="737" height="606" key="find.popup" timestamp="1579124470253">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
