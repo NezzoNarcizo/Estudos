@@ -95,6 +95,10 @@ Aula 01 - GitHub e OpenSource -------
 		
 		REMOVENDO AUTENTICAÇÕES SSH
 		
+			Obs: Caso o SSH agente não esteja funcionando 
+			
+				$ exec ssh-agent bash
+		
 			ls -al ~/.ssh = Lista todas as chaves.
 			
 			rm -f ~/.ssh/id_rsa* = Deleta os arquivos id_rsa

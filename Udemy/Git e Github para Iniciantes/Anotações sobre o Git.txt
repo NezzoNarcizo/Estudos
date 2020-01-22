@@ -140,6 +140,35 @@ Github *******
 		
 		"https://help.github.com/en/articles/connecting-to-github-with-ssh"
 		
+		Criação das chaves pública/privada resumidamente:
+		
+			1 - Verificar o link do origin: $ git remote -v
+			
+			2 - Criar as chaves pública e privado no computador local: $ ssh-keygen -t rsa -b 4096 -C "e-mail do acesso"
+			
+				As chaves irão ser geradas...
+				
+				Coloque uma frase de segurança se desejar
+				
+				Confirme a chave de segurança
+				
+				Confirme a localização padrão onde ficarão as chaves
+				
+				De "yes" para a confirmação do fingerprint
+			
+			3 - Garanta que o ssh-agent esteja rodando: $ exec ssh-agent bash
+			
+			4 - Adicione a chave: $ ssh-add ~/.ssh/id.rsa (Privada)
+			
+			5 - Copie o conteúdo do arquivo (Que é a chave pública): cat /c/Users/"usuario"/.ssh/id_rsa.pub
+			
+			6 - Cole no seu repositório do Github referente a este branch clicando:
+			
+				No ícone do perfil > Settings > SSH and GPG keys > New SSH key > 
+				
+					Adicione o conteúdo copiado do arquivo da chave pública em key e um título para saber a que estação se refere esta chave pública.
+		
+		
 		
 		
 		Exemplo da criação:

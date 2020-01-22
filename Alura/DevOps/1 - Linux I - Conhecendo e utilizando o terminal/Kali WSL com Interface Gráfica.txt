@@ -15,7 +15,7 @@ Alterar o arquivo xrdp.ini para uma porta diferente da padrão: "nano etc/xrdp/x
 "i" = Iniciar o modo de edição.
 Ctrl + X = Para sair do modo de edição.
 
-Obs: Alterar para a porta 3390, por exemplo.
+Obs: Alterar para a porta 3390, por exemplo (No começo do arquivo).
 
 Após trocar o número da porta restartar o serviço = service xrdp restart
 
