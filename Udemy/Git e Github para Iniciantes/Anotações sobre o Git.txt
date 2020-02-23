@@ -143,6 +143,10 @@ Github *******
 		Criação das chaves pública/privada resumidamente:
 		
 			1 - Verificar o link do origin: $ git remote -v
+				
+				Caso queira utilizar o link Https: $ git remote add origin https://github.com/USERNAME/REPOSITORY.git = Adicionar um repositório remoto com o nome Origin (nome default).
+				
+				Caso queira mudar para o túnel SSH: $ git remote set-url origin git@github.com:USERNAME/REPOSITORY.git = Nome do repostirório remoto aqui também será Origin.
 			
 			2 - Criar as chaves pública e privado no computador local: $ ssh-keygen -t rsa -b 4096 -C "e-mail do acesso"
 			
