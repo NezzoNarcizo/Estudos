@@ -42,9 +42,9 @@ Aula 1 - Kill, ps e grep -------
 			
 			Obs: Podemos também interromper a execução de um processo e depois continuá-la utilizando sinais como o STOP e CONT.
 			
-				kill STOP "id" = Interrompe a execução do programa com o identificador informado.
+				kill -STOP "id" = Interrompe a execução do programa com o identificador informado.
 				
-				kill CONT "id" = Continua a execução do programa interrompido anteriormente.
+				kill -CONT "id" = Continua a execução do programa interrompido anteriormente.
 				
 				O sinal TERM serve para que o programa termine tarefas antes de fechar.
 					Obs: Este sinal é executado por padrão quando executamos o comando kill sem parâmetro nenhum.
