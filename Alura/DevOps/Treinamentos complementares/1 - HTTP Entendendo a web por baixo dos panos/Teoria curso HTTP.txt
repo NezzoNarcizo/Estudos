@@ -1,0 +1,654 @@
+Aula 01: O que é HTTP?
+
+    Introdução:
+
+        Tópicos do curso:
+
+            - HTTPS: Web segura.
+            - Entendendo que o HTTP trafega texto puro enquanto o HTTPS trafega texto criptografado.
+            - Como tudo isso funciona por baixo dos panos.
+            - Endereços, Domínios, Recursos e Portas.
+            - Cookies, modelo de requisição e resposta HTTP.
+            - Parâmetros que são enviados na requisição, no corpo do HTTP ou na URL.
+            - Serviços REST.
+            - O tipo de verbo que o HTTP utiliza.
+            - HTTP2.
+
+    
+    O que é HTTP?
+
+        Neste treinamento focaremos nos fundamentos da Web pois a maior parte das aplicações hoje em dia rodam nela. Não focaremos em nenhuma plataforma específica
+        como Java ou PHP por exemplo, mas sim, nas regras de comunicação Web.
+
+        Estamos muito familiarizados a acessar sites através do protocolo http:// ou https://, por isso precisamos entender o que realmente está acontecendo ao fazer isso.
+
+        Toda arquitetura que vemos na Web é baseada em Client-Server ou em português Cliente-Servidor, onde um cliente solicita e o servidor responde, e entre eles está a 
+        internet.
+
+        Se pensarmos em qualquer tipo de comunicação, percebemos que existem regras para que haja compreensão entre as duas partes.
+
+        Os protocolos são definidos, especificados e disponibilizados para implementação em ambas as partes.
+
+        Podemos verificar quais são as especificações do HTTP na seguinte página:
+
+            https://tools.ietf.org/html/rfc2616
+
+        Do lado do cliente temos o navegador (Chrome, Firefox etc), na parte do servidor PHP, Java, .Net ou outros, entre eles temos a internet, utilizando o protocolo HTTP 
+        com suas regras de comunicação.
+
+            O que aprendemos neste capítulo?
+                - Na internet sempre tem um cliente e um servidor
+                - Entre o cliente e o servidor precisam haver regras de comunicação
+                - As regras são definidas dentro de um protocolo
+                - HTTP é o protocolo mais importante na internet
+
+        Neste treinamento, vamos falar sobre a "sigla" mais importante da internet: o HTTP. O objetivo é entender o protocolo HTTP detalhadamente. 
+        Quanto mais o desenvolvedor souber sobre este protocolo, melhor, pois ele é utilizado em todas aplicações web.
+        No entanto, não focaremos em como essas aplicações são criadas e funcionam internamente. Para isso, existem várias plataformas, como PHP, .NET ou Java 
+        (entre muitas outras) que não abordaremos. Temos treinamentos dedicados para conhecer estas plataformas.
+
+        Resumindo, nosso foco será o protocolo HTTP!
+        
+        Questões Aula 1:
+        
+            1 - Falamos tanto sobre essa sigla, mas você sabe qual é o significado do HTTP?
+
+            Selecione uma alternativa
+
+            R: Hypertext Transfer Protocol
+
+            
+            2 - O protocolo HTTP segue o modelo Client-Server. O que o navegador (como Chrome ou Firefox) representa nesse modelo? O cliente ou o servidor?
+
+            Selecione uma alternativa
+
+            R: Cliente
+
+            Exato, nós que estamos utilizando o navegador somos o cliente da Alura, que nos fornece o conteúdo, logo ela é o servidor.
+
+
+            3 - O cliente inicia a comunicação e o servidor responde. No entanto, qual é o papel do HTTP entre o cliente e o servidor?
+
+            Selecione uma alternativa
+
+            R: Estabelecer regras de comunicação
+
+            Exatamente, o HTTP foi feito para estabelecer regras de comunicação entre o modelo Cliente-Servidor que funciona na Web.
+
+
+                Temos um outro protocolo, o P2P (Peer to Peer) que nada mais é do que a comunicação entre dois "Clientes" ou, para uma melhor visualização, entre um cliente e 
+                um outro cliente fazendo papel de servidor. Utilizamos muito este protocolo quando estamos usando nosso torrent. Esta é uma forma de balancear a carga 
+                desonerando o servidor. Isto porque hoje em dia não há mais uma clara divisão entre Client-Server pois qualquer um pode ser Server.
+
+                P2P é muito util quando precisamos baixar algo de vários lugares diferentes.
+
+            
+            4 - O HTTP não é o único protocolo de comunicação que existe. Aliás, existem milhares de protocolos no mundo de TI, no entanto o HTTP é de longe o mais popular.
+
+            Na lista abaixo, há um item que não representa um protocolo para internet.
+
+            Qual é exatamente? Pesquise se for necessário.
+
+            Selecione uma alternativa
+
+            R: SQL
+
+            SQL (Structured Query Language) não é um protocolo para internet, e sim uma linguagem de consulta para banco de dados.
+
+
+                Sabendo que:
+
+                    - Estamos acessando o site da Alura para fazer este curso.
+                    - Que Alura é nosso servidor para este curso.
+                    - Que no seu lado servidor a plataforma é Java e que o servidor concreto se chama Tomcat.
+                    - Que a linguagem do banco de dados é SQL e o banco utilizado pela Alura é o MySQL.
+
+                    A estrutura que temos (Da Alura) é a seguinte:
+
+                        Cliente Chrome/Firefox  <--- HTTP <<Internet>> ---> Servidor Java/Tomcat  <--- SQL ---> Banco de dados MySQL
+
+                    Existem estruturas muito mais complexas, mas a grande maioria utiliza o protocolo HTTP no topo.
+                    Podemos nos conectar com qualquer servidor no mundo sem nos preocupar com Firewall ou outras regras de segurança.
+
+            O que você aprendeu nesse capítulo?
+                - A arquitetura Cliente-Servidor.
+                - Um protocolo é um conjunto de regras.
+                - HTTP é um protocolo que define as regras de comunicação entre cliente e servidor na internet.
+                - HTTP é o protocolo mais importante da Internet.
+
+
+Aula 02: A web segura - HTTPS -------
+
+    Teoria:
+
+        HTTPS - A versão segura do HTTP:
+
+            Como vimos anteriormente, HTTP é um protocolo que define as regras de comunicação e suas informações trafegam em texto puro, o que faria com que dados sensíveis 
+            como senhas também navegassem a texto puro o que é uma pratica sem segurança nenhuma.
+
+            Outras informações que não queremos que qualquer um acesse também: e-mail, códigos de segurança de bancos, códigos 2FA, CPF etc.
+
+            Temos que ter em mente outra informação importante...Quando acessamos um site, como o da Alura por exemplo, nossa requisição passa por diversos intermediários como:
+            Roteador Wi-Fi (no caso de conexão Wi-Fi), depois modem do provedor, do modem para algum servidor do provedor de Internet, como Oi ou NET.
+
+            Há a possibilidade da existencia de outros servidores no próprio provedor antes que cheguem no servidor da Alura.
+
+            A mesma coisa acontece com a resposta do servidor da Alura.
+
+            Utilizando o protocolo HTTP qualquer um destes servidores intermediários terá acesso à nossa informação, imagine se estas informações forem um dos nossos dados 
+            sensíveis citados logo acima.
+
+            Para este tipo de cenário que existe o HTTPS, que é basicamente o HTTP comum porém com uma camada adicional de segurança/criptografia que antes era o SSL, mas 
+            posteriormente passou a ser também TLS. Hoje em dia é muito comum que estas siglas sejam encontradas juntas "SSL/TLS" por se tratarem da mesma questão de segurança.
+
+            Agora temos dois termos da nossa comunicação entre Client-Server:
+
+                1 - HTTP: HyperText Transfer Protocol.
+                2 - SSL/TLS: Secure Sockets Layer / Transport Layer Security
+
+        Funcionamento do HTTPS:
+
+            Ao acessarmos o site da Alura podemos perceber que ela utiliza o protocolo HTTPS (Na barra de endereços, do lado esquerdo).
+
+            Se quisermos mais informações sobre a nossa conexão HTTPS com o site da Alura basta clicarmos no cadeado.
+
+            O que o HTTPS faz para garantir segurança na comunicação utiliza chaves públicas e privadas, e os únicos que podem gerar estas chaves são as entidades que tem 
+            a identidade garantidas por um certificado digital. Um certificado digital é utilizado para identificar uma determinada entidade e ainda para gerar chaves de 
+            criptografia.
+
+            Precisamos de um órgão, uma autoridade certificadora que nada mais é que um órgão confiável que garante a identidade dos sites que acessamos como também a validade 
+            de seus certificados. Podemos acessar e ver as iformações do certificado digital do site que estamos acessando.
+
+            No navegador (Chrome, neste caso) Opções > Mais ferramentas > Ferramentas do Desenvolvedor > Security > View Certificate
+
+            No caso da Alura o certificado atualmente é emitido pela CloudFlare Inc ECC CA-2.
+
+            Os navegadores em posse da chave pública cirptografam as informações e as enviam para o servidor que as descriptografa com a chave privada.
+
+            Importante lembrar que apenas a chafe privada descriptografa as informações criptografadas com a chave pública. Por isso devemos sempre manter a chave privada 
+            segura.
+
+            O que aprendemos nesse capítulo?
+
+            - Só com HTTPS a web é segura.
+            - HTTPS significa usar um certificado digital no servidor.
+            - O certificado prova a identidade e tem validade
+            - O certificado possui uma chave publica.
+            - A chave é utilizada pelo navegador para criptografar os dados.
+
+        Certificado Digital:
+
+            Quando temos que informar nossos dados para um servidor, queremos confiar em quem estamos fornecendo nossos dados.
+            O certificado digital prova uma identidade para um site, onde temos informaçõs sobre o seu domínio e a data de expiração desse certificado.
+            O certificado guarda a chave pública que é utilizada para criptografrar (cifrar) os dados que são trafegados entre cliente e servidor.
+
+        Para saber mais: As chaves do HTTPS:
+
+            - HTTPS usa uma chave pública e uma privada.
+            - As chaves estão ligadas matematicamente.
+            - Como temos duas chaves diferentes envolvidas, chamamos este método de criptografia assimétrica.
+                Obs: O problema da criptografia assimétrica é que ela é lenta.
+
+                Navegador com a chave pública <--> HTTPS <--> Servidor com a chave privada
+
+            Temos a criptografia simétrica, que ao contrário da primeira utiliza a mesma chave tanto no navegador quanto no servidor.
+                Obs: O problema da criptografia simétrica é que ela não é tão segura.
+
+                Navegador com uma chave <--> HTTPS <--> Servidor com a mesma chave
+
+            O interessante nisto tudo é que o HTTPS pode usar os dois métodos, tanto a criptografia assimétrica quanto a simétrica ao mesmo tempo.
+
+            Isto se dá pelo fato de que no começo da comunicação o cliente utiliza a chave pública do certificado e o servidor está com a chave privada.
+            Porém, como já vimos antes, este método torna a comunicação lenta.
+            Por isso no começo da comunicação o cliente gera uma chave simétrica só para ele e a transfere para o servidor via a primeira comuniação assimétrica criada.
+            E então o resto da comunicação se da com criptografia simétrica que será utilizada nas requisições seguintes.
+
+            Entendemos então que o HTTPS começa com criptografia assimétrica para depois mudar para criptografia simétrica.
+
+            O que você aprendeu nesse capítulo?
+            - Por padrão, os dados são trafegados como texto puro na web.
+            - Apenas com HTTPS a Web é segura
+            - O protocolo HTTPS nada mais é do que o protocolo HTTP mais uma camada adicional de segurança, a TLS/SSL
+            - O tipo de criptografia de chave pública/chave privada
+            - O que são os certificados digitais
+            - Certificados possuem identidade e validade
+            - As chaves públicas estão no certificado, a chave privada fica apenas no servidor
+            - O que é uma autoridade certificadora
+            - O navegador utiliza a chave pública para criptografar os dados
+    
+    Questões Aula 02:
+
+        1 - O que acontece com nossos dados quando usamos HTTP, ou seja sem a letra S ao final?
+
+        Selecione uma alternativa
+
+        R: Os dados são transportados em texto puro para o servidor, visível para qualquer um.
+        Exato, nossos dados são enviados em texto puro, ficando visível para qualquer um que consiga interceptar nossa conexão!
+
+        
+        2 - Sobre as características do HTTPS, selecione todas as opções abaixo que estejam corretas:
+
+        Selecione 3 alternativas
+
+        R1: A chave privada fica apenas no lado do servidor.
+        Exato, a chave privada é utilizada para descriptografar os dados que foram criptografados com a chave pública, por isso ela é importante e deve ficar apenas em posse 
+        do servidor.
+ 
+        R2: O certificado prova a identidade e tem validade.
+        Correto, todo certificado tem uma data validade e serve para provar a identidade entre o cliente e o servidor.
+
+        R3: O certificado guarda a chave pública.
+        Perfeito, é no certificado digital que encontramos a chave pública utilizada para criptografar os nossos dados.
+
+
+        3 - Qual é a finalidade das autoridades certificadoras?
+
+        Selecione uma alternativa
+
+        R: Garantir que podemos confiar naquele certificado (identidade).
+        Exato, a principal função de uma entidade certificadora é garantir que os certificados que estão sendo utilizados podem ser confiados.
+
+
+Aula 03: Endereços sob seu domínio -------
+
+    Teoria:
+
+        Para acessarmos como por exemplo o site da Alura. Vemos os seguintes parâmetros na barra de endereço:
+
+            http ou https dependendo de qual dos dois protocolos iremos utilizar.
+
+            Depois temos :// e então www.alura.com.br que chamamos de domínio.
+
+            O www signifíca world wide web (Rede Mundial de Computadores).
+
+            Agora, da direita para esquerda temos:
+
+            br: Indicando que é um site do Brasil. Está no que chamamos top level domain, está na raiz do domínio.
+
+            com: Indicando que é um site comercial.
+
+            E depois o alura. O alura e o com são sub-domínios.
+
+            Raiz: com, br, org, net, edu...
+
+            Sub-domínios do br: com, gov, mil, edu...
+
+            Sub-domínios do com: alura, caelum, g1....
+
+            O www também representa um sub-domínio, no entando seu uso é opcional. Tanto que www.alura.com.br e alura.com.br funcionam do mesmo jeito e mostram a mesma página.
+
+            A maior parte dos sites utilizam o www, por não ser necessário o consideramos apenas legado.
+
+        Subdomínios -------
+
+            Temos também a ideia de subdominios. Temos este exemplo dentro do google com drive e o gmail (drive.google.com e gmail.google.com), ambos são páginas diferentes e 
+            estão dentro do mesmo domínio.
+            
+        Endereços IP's -------
+
+            Os nomes de domínio e sub-domínios foi algo criado para organizar a internet e para que fosse fácil nos lembrarmos.
+
+            A internet em si, não precisa destes nomes, para ela basta o endereço IP do domínio que você quer acessar.
+
+            Sendo assim, se tivermos o endereço IP do domínio que queremos acessar, não precisamos do seu nome.
+
+            Podemos utilizar o comando: > nslookup NomeDoDomínio
+
+            Que nos será exibido seu endereço IP, podemos utilizar como exemplo o domínio google.com.br e teremos a seguinte saída:
+
+                        nslookup google.com.br
+                            Servidor:  csp3.zte.com.cn
+                            Address:  fe80::7ac1:a7ff:fe1a:3102
+
+                            Não é resposta autoritativa:
+                            Nome:    google.com.br
+                            Addresses:  2800:3f0:4001:800::2003
+                                        172.217.28.67
+
+            Por ultimo vemos qual é o endereço IP do domínio do google. Se colocarmos este endereço na barra de endereços do navegador e dermos enter, veremos a página do 
+            google.
+
+            Este comando (nslookup) procura qual o endereço IP do Google na internet.
+
+            Para quem trabalha com Rede, o endereço IP é mais importante. Normalmente o desenvolvedor não precisa mexer com isso.
+
+                Obs: O endereço IP pode mudar dependendo do servidor concreto onde o Google foi instalado.
+
+        DNS -------
+
+            Porém não acessamos o Google ou a Alura por endereço IP, mas sim por URL.
+
+            A URL é transformada em endereço IP por causa de um serviço chamado DNS (Domain Name System).
+
+            Ele é como um banco de dados e tem a referência da URL do domínio por IP.
+
+            O DNS realiza a tradução do nome de um domínio para o endereço de IP.
+
+            Podemos até mesmo configurar nossos endereços DNS na nossa máquina. Um dos mais utilizados é o do próprio Google:
+
+                8.8.8.8 e 8.8.4.4
+
+                Podemos ler um pouco mais sobre em: https://developers.google.com/speed/public-dns/
+
+        Portas -------
+
+            Para facilitar a compreensão desta parte da teoria, vamos imaginar que o endereço do domínio, como alura.com.br, seja o endereço de uma casa.
+
+            Porém uma casa tem vários comôdos, várias portas.
+
+            Temos a porta padrão, a porta que já é aberta por padrão para que acessemos o nosso domínio.
+
+            A porta reservada por padrão para o protocolo HTTP que é o mais comum de acessarmos é a porta 80, ou seja, se não definirmos outra porta está é a que será usada.
+
+            Novamente temos um número, porém o navegador já conhece esta porta padrão. Por isso quando digitamos um endereço de um site que utiliza o protocolo HTTP não 
+            precisamos indicar qual porta estamos tentando acessar, exemplo:
+
+                http://www.alura.com.br
+
+                O que, do contrário seria: http://www.alura.com.br:80
+
+            Se tentarmos outra porta que não seja a padrão de acesso do protocolo HTTP, por exemplo:
+
+                http://www.alura.com.br:81
+
+                Não irá funcionar, pois esta porta não está aberta no servidor, como não consguiremos uma conexão o tempo para realizar conexão vai se esgotar.
+
+            O mesmo temos para o protocolo HTTPS, porém sua porta padrão é 443, que também pode ser omitida como no caso do protocolo HTTP.
+
+            Podemos realizar o teste como anteriormente, digitando o endereço:
+
+                https://www.alura.com.br:443
+
+        Recursos -------
+
+            Depois do endereço do domínio que queremos acessar temos outras informações, como por exemplo, no caso da Alura:
+
+            .../dashboard, .../careers, .../forum etc
+
+            Estes citados acima são caminhos intermediários para os recursos em si.
+
+            Se acessarmo um curso, de HTML 5 e CSS3 I por exemplo, que é o recurso própriamente dito, teremos o seguinte caminho:
+
+                https://www.alura.com.br/course/html5-css3-primeiros-passos
+
+                ou
+
+                https://cursos.alura.com.br/course/html5-css3-primeiros-passos
+
+            Finalmente, a URL (Uniform Resource Locator ou Localizador Uniforme de Recursos).
+
+                Podemos verificar que estamos utilizando regras bem definidas para descrever a localização de um recurso na WEB.
+
+                Todos os endereços que utilizamos até o momento seguem esse mesmo padrão:
+
+                protocolo://dominio:porta/caminho/recurso, este é o padrão que chamamos de URL.
+
+                Então no endereço https://www.alura.com.br:443/course/html5-css3-primeiros-passos, temos:
+
+                Protocolo: https://
+                    Obs: Que junto com o www indica que estamos na web.
+
+                Domínio: www.alura.com.br ... com indicando que é um site comercial e br indicando que é um site do Brasil.
+
+                Porta: 443 Opcional, é a porta padrão do HTTPS está sendo utilizada de qualquer forma, mas é omitida.
+
+                Recurso: /course/html5-css3-primeiros-passos onde course é basicamente o caminho.
+
+        Para saber mais: URI ou URL? -------
+
+            Muitas vezes desenvolvedores usam a sigla URI (Uniform Resource Identifier) quando falam de endereços web.
+
+            Alguns preferem URL (Uniform Resource Locator), e alguns misturam as duas siglas a vontade.
+            
+            Qual a diferença?
+
+            R1 (Resposta fácil): Uma URL é uma URI. As duas são válidas para falar de endereços web. As siglas são praticamente sinônimos e são utilizadas desta forma.
+
+            R2 (Mais elaborada): Toda URL é uma URI, mas nem todas URI's são URL's. Existem URI's que identificam recurso sem definir endereço nem protocolo.
+                Ou seja, uma URL sempre vai ser o identificador de um recurso através do endereço, mas nem todas as identificações são URL's.
+
+                Para dar um exemplo melhor, falaremos de outro padrão chamado URN (Uniform Resource Name).
+
+                Um URN também é um URI. Um URN segue uma sintaxe bem definida, tipo: urn:cursos:alura:course:html5-css3-primeiros-passos
+                    Obs: Repare que criamos uma outra identificação do curso Introdução ao HTML e CSS da Alura, mas essa identificação não é um endereço.
+
+                Então: Conceitualmente uma URL e uma URN estão dentro de uma URI.
+
+                Isto tudo da segunda resposta vai muito além do que precisamos saber no dia a dia. Normalmente URI e URL são usados como sinonimos.
+
+        O que aprendemos nesse capítulo?
+            - URL são os endereços da Web
+            - Uma URL começa com o protocolo (por exemplo https://) seguido pelo domínio (www.alura.com.br)
+            - Depois do domínio pode vir a porta, se não for definida é utilizada a porta padrão desse protocolo
+            - Após o domínio:porta, é especificado o caminho para um recurso (/course/introducao-html-css)
+            - Um recurso é algo concreto na aplicação que queremos acessar
+
+            
+    Questões Aula 03:
+
+        1 - Falamos bastante sobre o domínio nessa aula, mas o que é um domínio (ou domain name) e qual a sua importância?
+
+        Selecione uma alternativa
+
+        R: O domínio é o nome do site na Web. Ele facilita a navegação do usuário, que não precisa lembrar o IP de cada site.
+
+        Alternativa correta, o domínio é o nome do site na web e serve para facilitar a navegação do usuário, que acaba não precisando lembrar o IP de cada site.
+
+
+        2 - Qual é o objetivo ou a função do DNS (Domain Name System ou servidor de domínios)?
+
+        Selecione uma alternativa
+
+        R: O DNS tem como função realizar a tradução do nome de um domínio para o endereço de IP correspondente.
+
+        O DNS realiza a tradução do nome de um domínio para o endereço de IP. Existem vários servidores DNS no mundo e é fundamental para a nossa web o funcionamento deles.
+
+
+        3 - Veja o endereço abaixo:
+
+        http://www.alura.com.br
+        Qual é a porta utilizada?
+
+        Selecione uma alternativa
+
+        R: 80
+
+        Correto e como ela é o padrão você pode omiti-la no endereço.
+
+        Como as portas padrões são conhecidas pelo navegador, elas podem ser omitidas ao escrevermos uma URL.
+
+        Vários protocolos definem a sua porta padrão como por exemplo o FTP que usa 21 ou SSH que usa 22.
+
+
+        4 - Veja a URL abaixo:
+
+        smb://server/download/videos/http.mp4
+        Nesse exemplo, como se chama o protocolo?
+
+        Selecione uma alternativa
+
+        R: smb
+
+        Correto, o protocolo especificado na URL se chama smb (aquilo que vem antes do ://)
+
+        O protocolo smb realmente existe e é a abreviação de Server Message Block. Ele é utilizado para compartilhar arquivos dentro de uma rede local.
+
+
+        5 - Veja a URL a seguir:
+
+        http://g1.globo.com/index.html
+        Qual é o nome do recurso?
+
+        Selecione uma alternativa
+
+        R: /index.html
+
+        Alternativa correta, o recurso é aquilo que vem depois do domínio/.
+
+
+Aula 04: O cliente pede e o servidor responde -------
+
+    Teoria:
+
+        Modelo Requisição e Resposta:
+
+            A requisição enviada pelo navegador para o servidor é chamada de HTTP REQUEST.
+
+            A resposta é chamada de HTTP RESPONSE.
+
+            Como a comunicação segue sempre este modelo "Cliente requisita (Através do navegador), Servidor responde" a chamamos de REQUEST-RESPONSE.
+
+                Obs: Sempre começa pela requisição, ou seja, sempre a comunicação começa pelo cliente.
+
+            Comunicação sem estado -------
+
+                Ao navegarmos por um site qualquer como http://g1.globo.com, percebemos que a todo momento que navegamos dentro do site, todo o conteúdo da página é trocado.
+                    Obs: Apesar do menu parecer o mesmo ele também foi trocado.
+
+                Esta e a ideia do HTTP, cada recurso é idenpendente do outro e não depende do anterior.
+
+                Isto também vale para as requisições. Cada requisição é independente e precisa enviar todos os dados para que o servidor responda.
+
+                Como exemplificado no curso, cada requisição é como uma carta enviada pelo correio com determinado conteudo.
+
+                Se a enviamos 3 cartas com conteudos diferentes de um mesmo remetente para um mesmo destinatário, todas as vezes a agencia vai nos cobrar que preenchamos os 
+                dados na carta.
+
+                Esta característica de cada requisição ser independente é chamada de stateless.
+
+                O HTTP não mantém estado das requisições.
+
+                Isto significa que não temos como guardar dados das requisições anteriores utilizando apenas o HTTP.
+
+                Por isso que se não tivessemos outros recursos teriamos que, a cada requisição HTTP, enviar todos os dados a cada requisição.
+
+                Isto é muito importante para o desenvolvedor, pois é esta característica stateless do HTTP que o "atrapalha" no dia a dia.
+
+                Ele tem sempre que preparar a aplicação web para que funcione bem sando o protocolo HTTP.
+
+            Lidando com sessões -------
+
+                Podemos reparar nos sites que precisamos efetuar login com nossas credenciais, que independente de quantas requisições enviemos dentro do site sempre, em algum, 
+                lugar da página, estará indicando que estamos logamos como "fulano de tal".
+
+                Isto acontece porque na hora que efetuamos o login em determinado site ele valida nossos dados, garante que é o dono da conta logando, e cria uma identificação 
+                individual praticamente aleatória para o usuário. Essa identificação é um número criado naquele mesmo momento e muito difícil de se adivinhar.
+                Essa identificação é temporária e ela vem junto com a resposta do servidor (RESPONSE).
+
+            Conhecendo cookies -------   
+
+                Estes dados (identificação) que falamos anteriormente são guardados nos famosos cookies que são armazenados no navegador. Cada navegador tem sua forma de 
+                armazenar os cookies.
+
+                Para encontrar as configurações dos cookies, no caso do Google, podemos ir nas configurações do navegador.
+
+                No caso de cookies definidos para determinados sites, basta clicar no icone na esquerda da barra de endereços.
+
+                No caso da Alura, clicar no cadeado do lado do nome, em cookies e depois na treeview expandir clicando na seta.
+
+                Se caso apagarmos os cookies da Alura, por exemplo, nossa sessão é terminada e teremos que realizar login novamente, porque nossa identificação gravada pelo 
+                site após nossa autenticação anterior foi apagada.
+
+                Normalmente o nome do cookie da identificação é algo do tipo: session-id, e dependendo da plataforma de desenvolvimento utilizada ele pode se chamar de 
+                PHPSESSID ou ASP.NET_Session_Id ou JSESSIONID ou outro nome que foi inventado.
+
+                O cookie é criado de forma transparente pela plataforma de desenvolvimento que estivermos utilizando.
+
+                É desta forma que as plataformas gerenciam sessões com o usuário.
+
+                A ideia disto é manter os dados entre as requisições, já que o HTTP de forma pura não consegue nos fornecer este recurso.
+
+                Uma sessão é útil para gaurdar informações sobre o usuário e as ações dele.
+
+                O carrinho de compras é um exemplo clássico.
+
+                    Resumindo teremos:
+
+                        - O HTTP usa sessões para salvar informações do usuário
+                        - Sessões só são possíveis por uso de Cookies
+                        - Cookies são pequenos arquivos que guardam informações no navegador
+                        - O HTTP é stateless, não mantem estado.
+
+            Cookies -------
+
+                Quando dizemos cookies queremos dizer Cookies HTTP ou Cookie web.
+
+                É um pequeno arquivo de texto normalmente criado pela aplicação Web, para guardar algumas informações sobre usuário no navegador.
+
+                Ele pode guardar várias informações, exemplo: Preferências do usuário, identificação, informações sobre compras na loja virtual. Isto tudo depende da aplicação 
+                web.
+
+                Os cookies podem ser manipulados e apagados pelo navegador. Sempre que são salvos ficam associados com um domínio. Ou seja, podemos ter diversos cookies de 
+                dominios diferentes.
+
+            Login e senha -------
+
+                É a ideia que vimos antes da relação de login e cookie. Quando realizamos login em uma determinada página, nossas credenciais são enviadas ao servidor deste 
+                dominio e são validadas. Para que não precisemos, ao navegar pelo site, enviar nossas credenciais todas as vezes uma identificação gerada pela aplicação é 
+                armazenada em forma de cookie no navegador, o que nos permite estar em uma sessão, sem ficar enviando os dados a todo momento.
+
+            
+        O que você aprendeu nesse capítulo?
+            - O protocolo HTTP segue o modelo Requisição-Resposta
+            - Sempre o cliente inicia a comunicação
+            - Uma requisição precisa ter todas as informações para o servidor gerar a resposta
+            - HTTP é stateless, não mantém informações entre requisições
+            - As plataformas de desenvolvimento usam sessões para guardar informações entre requisições
+
+
+
+    Questões Aula 04:
+
+        1 - Qual das informações abaixo é verdadeira?
+
+        Selecione uma alternativa
+
+        R: Uma requisição sempre deve ser enviada com todas as informações necessárias, o que faz uma requisição ser sempre independente das demais.
+
+        Alternativa correta!
+
+
+        2 - O que é uma sessão HTTP?
+
+        Selecione uma alternativa
+
+        R: É o tempo que o cliente utiliza um web app.
+
+        Alternativa correta!
+
+        Uma sessão HTTP nada mais é que um tempo que o cliente permanece ativo no sistema! Isso é parecido com uma sessão no cinema. Uma sessão, nesse contexto, é o tempo que 
+        o cliente usa a sala no cinema para assistir a um filme. Quando você sai da sala, termina a sessão. Ou seja, quando você se desloga, a Alura termina a sua sessão.
+
+
+        3 - Qual dessas alternativas é verdadeira?
+
+        Selecione uma alternativa
+
+        R: Uma comunicação com HTTP sempre é iniciada pelo cliente que manda uma requisição ao servidor esperando por uma resposta.
+
+        Alternativa correta!
+
+        No HTTP: Request -> espera -> Resposta
+
+
+Aula 05: Depurando a requisição HTTP -------
+
+    
+
+
+        
+
+
+
+
+            
+            
+
+
+
+
+
+
+    
+
+
