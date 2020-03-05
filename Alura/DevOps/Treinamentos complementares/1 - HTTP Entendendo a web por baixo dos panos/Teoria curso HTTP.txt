@@ -633,7 +633,277 @@ Aula 04: O cliente pede e o servidor responde -------
 
 Aula 05: Depurando a requisição HTTP -------
 
+    Teoria:
+
+        Depurando o método HTTP -------
+
+            F12 = Abrir o console do desenvolvedor.
+
+            Método GET do HTTP:
+
+                Usaremos o console do desenvolvedor e acessaremos o http://www.alura.com.br.
+
+                No console temos acesso a vários dados como: Código de páginas, cada uma das requisições, tempo de resposta, método HTTP etc.
+
+                Ao clicarmos na requisição para o site www.alura.com.br vemos que o método HTTP foi o GET (Request Method: GET).
+
+                Isto significa que queremos receber informações sem mudar nada no servidor, que é justamente a ideia do método GET.
+
+                No console do desenvolvedor podemos ver os cabeçalhos de requisição e resposta.
+
+                No cabeçalho de resposta (Response Headers), podemos ver que no atributo localização (location) o link foi modificado, agora já utilizando o protocolo HTTPS 
+                (Location: https://www.alura.com.br/).
+
+                Isto porque no GET ele recebeu o código 301 (Moved permantly), ou seja, isto já diz que o link realmente utilizado é outro, então ele procura no atributo 
+                citado acima (Location) um novo link para acessar o domínio.
+
+            Redirecionamento entre sites:
+
+                O redirecionamento de link, trocando os protocolos HTTP por HTTPS é algo comum hoje em dia para garantir que estamos usando o HTTPS sempre.
+
+                Ao receber o código 301 o navegador chama automaticamente a nova URL.
+
+                Isto, no mundo dev, é chamado de Redirecionamento pelo Navegador ou Redirecionamento no lado Cliente.
+
+                A tarefa do desenvolvedor é definir o código de resposta e, caso algum recurso tenha mudado a URL o código 301 será usado com o cabeçalho Location.
+
+            O Código 200:
+
+                Código 200 significa que tudo deu certo na requisição. Não temos o cabeçalho Location trazido pelo outro código para mudança de URL.
+
+                Não deu nenhum outro problema, a requisição foi aceita e processada corretamente.
+
+            Tipos de dados diferentes:
+
+                No console podemos ver que temos muitas outras requisições além das duas primeiras, http://ww.alura.... e https://www.alura..., uma sendo a requisição original 
+                e a segunda um redirecionamento garantindo que estejamos usando o protocolo seguro.
+
+                Isto acontece porque quando recebemos a resposta do servidor Alura, ele nos devolve o conteúdo em um formato especial chamado de HTML.
+
+                O HTML é aquele que define a estrutura da nossa página. Ele define menus, botões, links, rodapé, etc. Porém dentro do HTML não vêm imagens e outros arquivos 
+                necessários para deixar o site da forma que o vemos. Dentro dele vem apenas o endereço dos outros recursos.
+
+                Então ao recebermos o HTML o navegador dispara várias outras requisições para carregar todo o resto do conteúdo que falta.
+
+                Podemos ver todas estas outras requisições porque elas também são requisições HTTP. Podemos ver que na resposta vem o tipo de conteúdo.
+
+                O importante é saber que o HTTP não está engessado em algum formato específico. Podemos trafegar qualquer informação com ele, seja texto ou binário.
+
+        Depurando os códigos de resposta HTTP -------  
+
+            Nos nosso testes de requisições acima, vimos dois códigos de resposta, 200 indicando que está tudo certo e o 301 indicando que o link para acesso é outro,
+            um código de redirecionamento.
+
+            Podemos fazer outro teste e ver um código bem conhecido. Ao tentarmos acessar uma página que não existe, exemplo https://www.alura.com.br/nao-existe
+            nos é exibido o famoso código 404.
+
+            Se caso alguma vez tivermos recebido o código 500, indica que "deu pau no servidor"
+
+            Mas, por quê tanta distância entre estes código?
+
+            Categorias de códigos:
+
+                Existem muitos códigos definidos no protocolo HTTP, existem tabelas na Web disponíveis com estes códigos.
+
+                Podemos consulta-los aqui quando precisarmos: https://www.w3schools.com/tags/ref_httpmessages.asp
+
+                Os mais conhecidos são os iniciados por 2XX, 3XX, 4XX e 5XX.
+
+                    2XX: Indica que a requisição foi executada com sucesso.
+
+                    3XX: Indica que o navegador precisa fazer algo mais, o cliente precisa agir, como um redirecionamento por exemplo.
+
+                    4XX: Indica que temos erro na requisição, como URL errada.
+
+                    5XX: Indica que o problema é no lado do servidor.
+
     
+    Questões Aula 05:
+
+        1 - Abaixo há um exemplo de uma requisição e resposta, usando a ferramenta telnet. Através dele, acessamos www.caelum.com.br na porta padrão 80.
+
+            (imagem)
+
+            O telnet estabelece apenas uma conexão TCP (protocolo de rede que roda abaixo do HTTP) e permite que enviemos dados em cima dessa conexão, através do terminal. Uma vez a conexão estabelecida, basta escrever no terminal e os dados serão enviados automaticamente para o servidor. Para o servidor realmente entender os dados, devemos respeitar a sintaxe do protocolo HTTP!
+
+            Nesse exemplo digitamos no terminal:
+
+                GET / HTTP/1.1
+                HOST: www.caelum.com.br
+
+            E a resposta do servidor segue logo abaixo:
+
+                HTTP/1.1 200 OK
+                Content-Type: text/html; charset=utf-8
+                Vary: Accept-Encoding,User-Agent
+                Content-Language: pt-br
+                Date: Mon, 01 Jun 2015 21:00:20 GMT
+                Server: Google Frontend
+                Cache-Control: private
+
+            Agora, baseado nesses dados, qual foi o método HTTP e código da resposta?
+
+            Selecione uma alternativa
+
+            R: GET e 200
+
+            Alternativa correta!
+
+
+        2 - Qualquer resposta HTTP possui um número que informa sobre o status da requisição.
+
+            Qual dos códigos abaixo indica que a requisição foi bem sucedida?
+
+            Selecione uma alternativa
+
+            R: 200
+
+            Alternativa correta!
+
+            O código 200 significa OK, ou Sucesso, que não houve nenhum problema no processamento da requisição e ela foi bem sucedida.
+
+            Existem mais códigos que começam com 2xx. No entanto 200 é de longe o mais utilizado, principalmente no desenvolvimento de uma aplicação web.
+
+            Na documentação oficial, se diz a respeito da classe de códigos que começam com 2xx:
+
+            2xx - Resposta bem sucedida!
+            Essa classe de códigos de status indica que a ação solicitada pelo cliente foi recebida, compreendida, aceita e processada com êxito.
+
+            A tabela completa de mensagens HTTP pode ser vista em: https://www.w3schools.com/tags/ref_httpmessages.asp.
+
+
+        3 - Vimos que há diversos códigos HTTP. Vendo os códigos abaixo, qual deles representa algum problema gerado no servidor?
+
+            Selecione uma alternativa
+
+            R: 500
+        
+            Alternativa correta!
+
+            A classe 5xx significa que houve algum problema no servidor.
+
+            Por exemplo: 500 - Internal Server Error, ou outro famoso: 503 - Service Unavailable.
+
+            O código 500 acontece com frequência quando estamos desenvolvendo uma aplicação web e, ao testar, percebemos que erramos algo na lógica que gerou um problema 
+            no servidor.
+
+
+        4 - Abra uma nova aba no navegador e tente acessar: http://g1.globo.com/algo-que-nao-existe
+
+            Qual foi o código da resposta?
+
+            Obs: Você precisa depurar a requisição HTTP para descobrir o código da resposta.
+
+            Selecione uma alternativa
+        
+            R: 404
+
+            Alternativa correta!
+
+            404 é o código clássico que indica que o recurso não foi encontrado. Em geral, a classe 4xx indica que o cliente errou algo na requisição.
+
+            Segue um outro exemplo da classe 4xx, tente acessar: https://s3.amazonaws.com/caelum-online-public/http/qq.png
+
+            Nesse caso o código de resposta é 403(não permitido): o cliente não tem a permissão.
+
+
+        5 - Repare os cabeçalhos da requisição e resposta:
+
+            ------->
+
+            GET /treinamento HTTP/1.1
+            HOST: www.caelum.com.br
+
+            <-------
+
+            HTTP/1.1 302 Found
+            Location: http://www.caelum.com.br/cursos/
+            Date: Tue, 02 June 2015 16:23:26 GMT
+            Content-Type: text/html
+            Server: Google Frontend
+            Content-Length: 0
+
+            Seguem 4 afirmações:
+
+            A) O código da resposta é 302.
+
+            B) O recurso solicitado é /cursos/.
+
+            C) O cliente não recebeu a resposta.
+
+            D) O servidor está pedindo um redirecionamento.
+
+            Avalie as afirmações e escolha a resposta correta:
+
+            Selecione uma alternativa
+
+            R: Apenas as afirmativas A e D são verdadeiras.
+
+            Alternativa correta!
+
+            A) O código da resposta é 302.
+            Correto, o código aparece na resposta. O código 302 significa Movido Temporariamente.
+            
+            B) O recurso solicitado é /cursos/.
+            Errado, pois na requisição aparece: GET /treinamento HTTP/1.1.
+            
+            C) O cliente não recebeu a resposta.
+            Errado, pois foi enviada sim uma resposta para o cliente.
+            
+            D) O servidor está pedindo um redirecionamento.
+            Correto, na resposta aparece o cabeçalho Location, que define o redirecionamento para http://www.caelum.com.br/cursos/.
+
+            Portanto, as afirmativas 1 e 4 são verdadeiras.
+
+
+        6 - Já vimos 3 classes do protocolo HTTP: 2xx, 4xx e 5xx.
+
+                2XX - Sucesso
+                3XX - ??
+                4XX - Erro do cliente
+                5XX - Erro do servidor
+
+            Para que existem os códigos 3xx?
+
+            Selecione uma alternativa
+
+            R: Redirecionamento.
+
+            Alternativa correta!
+
+            A classe do código 3xx é relacionada com o redirecionamento.
+
+            Nesse caso, o cliente (navegador) deve tomar medidas extras para concluir o pedido. Normalmente são utilizados os códigos 301 ou 302, junto com o cabeçalho de resposta 
+            Location.
+
+            Por exemplo, veja a requisição, tentando acessar a Alura através do protocolo HTTP (sem S):
+
+                GET / HTTP/1.1
+                HOST: www.alura.com.br
+
+            Na resposta, recebemos o código 301 e o cabeçalho Location para enviar uma nova requisição, usando o protocolo HTTPS:
+
+                HTTP/1.1 301 Moved Permanently
+                Server: nginx/1.6.2
+                Date: Tue, 02 Jun 2015 19:37:44 GMT
+                Content-Type: text/html
+                Content-Length: 184
+                Location: https://www.alura.com.br/
+
+
+    HTTP é o protocolo mais utilizado na internet e há muita documentação disponível. Segue um link que explica os códigos HTTP de forma divertida: https://httpstatusdogs.com/
+    ou se você preferir gatos https://http.cat/
+
+    Além de se aprender de forma divertida com os cachorrinhos, você pode conferir uma documentação mais completa e detalhada neste link: https://httpstatuses.com/
+
+
+Aula 06: Parâmetros da requisição -------
+
+    
+
+
+
+
 
 
         
