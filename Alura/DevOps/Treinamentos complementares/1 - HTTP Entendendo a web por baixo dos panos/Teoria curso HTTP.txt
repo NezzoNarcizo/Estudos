@@ -1149,13 +1149,632 @@ Aula 06: Parâmetros da requisição -------
             Logo, o POST foi utilizado para que se enviasse os valores do formulário no corpo da requisição.
 
 
-Aula 07: Serviços Web-REST -------
+Aula 07: Serviços na web com REST -------
 
     Teoria:
 
-        
+        Serviços web-REST:
 
-    Questões aula 07:
+            Serviços WEB:
+
+                Hoje podemos ver como existem milhões de softwares rodando em linguagens e frameworks diferentes. A maioria delas não tem o seu ciclo de vida de forma isolada. A maioria acaba querendo se
+                comunicar com outras aplicações.
+
+                Um coisa bem comum para exemplificar o que foi dito acima é o login através de rede social que realizamos em outros aplicativos.
+
+                Temos outros momentos que as aplicações conversam entre si sem que nada seja exibido para o usuário final.
+
+                Toda aplicação que disponibiliza serviços para outras são chamadas webservices. E uma API de utilização é documentada para uma integração eficiente entre sistemas.
+
+                Temos diversos serviços web, entre eles: Paypal, muito famoso e muito utilizado, upload de imagens, transformação de CEP em endereços textuais. Tudo isso é feito através do poderoso protocolo
+                HTTP.
+
+            Cenário de trabalho:
+
+                Muitos aplicativos não funcionam sem acesso a rede porque as principais funcionalidades são feitas via requisição HTTP.
+
+                As requisições podem ser implementadas em várias linguagens de programação como: Java, PHP, Javascript etc.
+
+                Vamos supor que temos um aplicativo de pedido de refeições chamado AluraFood
+
+                A AluraFood tem duas equipes, uma que mexe com o aplicativo web (Ou simplesmente API web) e a dos apps mobile (Android e iOS).
+
+                Aqueles que são responsáveis pela tela de listagem de restaurantes vão precisar receber do serviço os detalhes de cada restaurante.
+
+                No caso o pessoal responsável pelo webservice já documentou exatamente o que seria necessário:
+
+                    Listagem de todos os restaurantes --> GET - http://alurafood.com/api/restaurante (exemplo)
+
+                    Como retorno da requisição poderiamos receber o seguinte conteúdo HTML:
+
+                        <!DOCTYPE html>
+                            <html lang="en">
+                            <head> 
+                                <meta charset="UTF-8">
+                                <title>AluraFood</title>
+                                <link rel="stylesheet" type="text/css" href="principal.css">
+                                <script type="text/javascript" src="build.js"></script>
+                            </head>
+                            <body>
+                                <table>
+                                    <tr>
+                                        <td>Bob's</td>
+                                        <td>8</td>
+                                        <td>R. do México 100</td>
+                                        <td><img src="http://alurafoods.com/uploads/logos/bobs.png"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Subway</td>
+                                        <td>8.5</td>
+                                        <td>Av. Rio Branco 202</td>
+                                        <td><img src="http://alurafoods.com/uploads/logos/subway.png"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Experimenta Lanches</td>
+                                        <td>9</td>
+                                        <td>R. do Brasil 545</td>
+                                        <td><img src="http://alurafoods.com/uploads/logos/e-lanches.png"/></td>
+                                    </tr>
+                                </table>
+                            </body>
+                            </html>
+
+                    Podemos perceber que recebemos uma listagem de restaurantes dentro de uma tabela (Elemento table do HTML), e cada linha (elemento tr) possui 4 colunas (elemento td), dentro de cada
+                    coluna temos as informações dos restaurantes: nome, nota de avaliação, endereço e logo.
+
+                Percemos então que os responsáveis precisarão analisar e extrair somente as informações necessárias de todo este conteúdo HTML.
+
+                O ato de analisar o documento é chamado de realizar um parsing do arquivo.
+
+                Além do HTML ser um formato verboso, temos diversas tags e cabeçalhos que para outro formato seria desnecessário. Um outro ponto é estarmos trafegando muito mais informações onerando a banda
+                do usuário.
+
+                Pensando nesta deficiência do HTML que outros formatos de resposta foram criados, como JSON e o XML (eXtensible Markup Language).
+
+                No caso do XML o conteúdo seria assim:
+
+                    <?xml version="1.0"?>
+                    <restaurantes>
+                        <restaurante>
+                            <nome>Bob's</nome>
+                            <avaliacao>8</avaliacao>
+                            <endereco>R. do México 100</endereco>
+                            <logo>http://alurafoods.com/uploads/logos/bobs.png</logo>
+                        </restaurante>
+                        <restaurante>
+                            <nome>Subway</nome>
+                            <avaliacao>8.5</avaliacao>
+                            <endereco>Av. Rio Branco 202</endereco>
+                            <logo>http://alurafoods.com/uploads/logos/subway.png</logo>
+                        </restaurante>
+                        <restaurante>
+                            <nome>Experimenta Lanches</nome>
+                            <avaliacao>9</avaliacao>
+                            <endereco>R. do Brasil 545</endereco>
+                            <logo>http://alurafoods.com/uploads/logos/e-lanches.png</logo>
+                        </restaurante>
+                    </restaurantes>
+
+                O outro famoso formato que onera ainda menos a rede é o JSON (JavaScript Object Notation):
+
+                    [
+                        {
+                            "nome": "Bob's",
+                            "avaliacao": "8",
+                            "endereco": "R. do México 100",
+                            "logo": "http://alurafoods.com/uploads/logos/bobs.png"
+                        },
+                        {
+                            "nome": "Subway",
+                            "avaliacao": "8.5",
+                            "endereco": "Av. Rio Branco 202",
+                            "logo": "http://alurafoods.com/uploads/logos/subway.png"
+                        },
+                        {
+                            "nome": "Experimenta Lanches",
+                            "avaliacao": "9",
+                            "endereco": "R. do Brasil 545",
+                            "logo": "http://alurafoods.com/uploads/logos/e-lanches.png"
+                        }
+                    ]
+                
+                A dúvida que fica agora é como especificar no cabeçalho da requisição HTTP que queremos receber uma resposta JSON?
+
+                Usamos um Accept: application/json como cabeçalho HTTP.
+
+                Já na resposta uma indicação desse conteúdo é especificado pelo cabeçalho Content-Type: application/json
+
+        O que é REST?:
+
+            O app do AluraFood ou outros aplicativos que utilizam webservices não se resumem a listagens.
+
+            Funcionalidades específicas aos responsáveis de um restaurante poderiam ser necessárias no caso do AluraFood.
+
+            Por isso o webservice deve estar preparado também para lidar com esta necessidade.
+
+                Listagem de todos os restaurantes --> GET - /restaurante
+
+                Adicionar um  restaurante --> POST - /restaurante
+
+            As URI são identicas o que muda é o método HTTP (GET - Listagem / POST - Criação).
+
+            A atualização poderia ter um outro endpoint, como por exemplo:
+
+                PUT/PATCH - /restaurante/1
+
+                O número 1 ao final da URI indica o ID de um restaurante específico.
+
+            No caso da remoção de um restaurante o modelo seria o mesmo:
+
+                DELETE - /restaurante/1
+
+            Para a busca do cardápio de um restaurante específico:
+
+                GET - /restaurante/1/cardapio
+
+        O padrão REST:
+
+            Percebemos então que o padrão usado pela equipe do webservice define que uma requisição tem três tipos de componentes importantes (URI), operações (GET, POST, PUT, DELETE, etc) e representação
+            de dados (XML, JSON, ...)
+
+            Estes três componentes em conjunto com algumas práticas são a base para o modelo arquitetural REST (Representational State Transfer) ou Transferência de Estado Representacional.
+
+        Recurso:
+
+            Ao criar URI's devemos levar em conta que elas representam recursos e não ações. 
+            
+            O padrão REST diz que nossas URI's devem conter apenas substantivos que são os recursos.
+
+            No caso /restaurante/adiciona não é uma boa URI, pois contém um verbo que está identificando uma operação e não um recurso.
+
+            Poderiamos representar a adição de um restaurante poderiamos usar a URI /restaurante com o método HTTP POST, que já representa que estamos adicionando alguma informação no sistema.
+
+        Operações:
+
+            Cada método HTTP tem uma semântica diferente e juntando o método à URI deveríamos conseguir representar todas as ações do nosso sistema.
+
+            As semânticas principais são:
+
+                GET - recupera informações sobre o recurso identificado pela URI. Ex: listar restaurante, visualizar o restaurante 1. Uma requisição GET não deve modificar nenhum recurso do seu sistema, 
+                ou seja, não deve ter nenhum efeito colateral, você apenas recupera informações do sistema.
+
+                POST - adiciona informações usando o recurso da URI passada. Ex: adicionar um restaurante. Pode adicionar informações a um recurso ou criar um novo recurso.
+
+                PUT - adiciona (ou modifica) um recurso na URI passada. Ex: atualizar um restaurante.
+
+                DELETE - remove o recurso representado pela URI passada. Ex: remover um restaurante.
+
+        Representação:
+
+            Quando fazemos uma aplicação não trafegamos um recurso pela rede, apenas uma representação dele. E essa representação pode ser feita de diferentes formas como JSON, XML ou HTML.
+
+        Conclusão:
+
+            As URI's devem representar os recursos, o que define as operações são os métodos HTTP e podemos dizer em qual formato que iremos conversar com o servidor com o Content-Type e Accept que são
+            cabeçalhos HTTP.
+
+        O que aprendemos neste capítulo?
+
+            REST é um padrão arquitetural para comunicações entre aplicações
+            Ele aproveita a estrutura do HTTP
+            Recursos são definidos via URI
+            Operações com métodos HTTP(GET/POST/PUT/DELETE)
+            Cabeçalhos(Accept/Content-Type) são usados para especificar as representações(JSON,XML,...)
+
+        Para saber mais: tipos de dados:
+
+            Em alguns cabeçalhos HTTP devemos especificar algum formato. Os formatos são chamados na documentação de MIME types. E na definição do cabelalho usamos a seguinte estrutura tipo/subtipo.
+
+            Tipos conhecidos:
+
+                text, image, application, audio e video.
+
+            Alguns subtipos:
+
+                texte/plain, text/html, text/css, text/javascript.
+
+                image -> image/gif, image/png, image/jpeg
+
+                audio -> audio/midi, audio/mpeg, audio/webm, audio/ogg, audio/wav
+
+                video -> video/mp4
+
+                application -> application/xml, application/pdf
+
+            Para conhecermos outros formatos aceitos: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types
+
+        
+    Questões Aula 07:
+
+        1 - No desenvolvimento Web, para o envio de dados através de formulários, quais são os métodos HTTP que são mais utilizados pelos desenvolvedores no dia a dia?
+
+            Selecione uma alternativa
+
+            R: GET e POST
+
+            Correto, GET e POST são de longe os métodos mais utilizados.
+
+            Os métodos GET e POST são de longe os métodos mais utilizados no desenvolvimento web, mas porque isso?
+
+            A resposta está no próprio HTML. Por padrão, as páginas HTML fazem apenas requisições do tipo GET ou POST. Para o tipo POST especificamente, precisamos fazer uso da tag form, configurando o atributo
+            method como POST, ao invés do seu valor padrão que é GET. O outro caso é quando usamos a tag a que cria um link de uma página para outra, fazendo com o que o navegador execute uma requisição do tipo 
+            GET.
+
+            Para fazer requisições usando métodos como PUT ou DELETE, precisamos fazer com código JavaScript.
+
+        2 - Leia abaixo as afirmações sobre o protocolo.
+
+            Marque todas as afirmações verdadeiras:
+
+            Selecione 3 alternativas
+
+            R1: Requisições HTTP podem ser enviadas através de qualquer aplicativo/software que entenda o protocolo.
+
+                Afirmação correta , o HTTP não depende do navegador. Aliás, o tempo todo o nosso celular usa o HTTP para enviar requisições através de aplicativos!
+
+            R2: HTTP é totalmente independente do formato dos dados.
+
+                Afirmação correta pois HTTP não depende de um formato especifico!
+
+            R3: HTTP pode trafegar tanto dados binários quanto dados textuais.
+
+                Afirmação correta pois HTTP pode trafegar dados binários como imagens e dados textuais como HTML ou CSS!
+
+        3 - O protocolo HTTP envia dados em texto puro e já estudamos sobre as implicações disso em questões de segurança. Vimos inclusive como o HTTPS lida com isso.
+
+            Em alguns momentos se faz necessário avisar na própria requisição um formato específico esperado para a resposta.
+
+            De que forma podemos especificar o formato que esperamos que seja devolvido?
+
+            Selecione uma alternativa
+
+            R: Pelo cabeçalho Accept.
+
+            Através dele podemos usar algum formato específico como:
+
+            Accept: text/html, Accept: text/css, Accept: application/xml, Accept: application/json, Accept:image/jpeg e Accept: image/*
+            Ou até mesmo não definir nenhum formato específico colocando:
+
+            Accept: */*
+
+        4 - Veja a seguinte URL:
+
+            http://alura.com.br/cursos/23/exercicios
+            Supondo que você esteja acessando esse recurso através de uma requisição HTTP GET com o cabeçalho Accept: application/xml, o que se espera que aconteça?
+
+            Selecione uma alternativa
+
+            R: Na resposta recebemos os exercícios do curso 23 no formato XML.
+
+            Correto, pois GET tem a semântica de receber dados e o formato foi definido por meio do cabeçalho Accept.
+
+            Resumindo, ao enviar um HTTP GET:
+
+            http://alura.com.br/cursos/23/exercicios
+            Devemos receber os exercícios do curso 23 no formato XML.
+
+            É importante mencionar que isso é o esperado, mas o que realmente acontece depende da implementação do servidor. O protocolo HTTP define uma semântica, mas o servidor pode ou não obedecê-la! 
+            Também pode ser que o servidor atenda um formato como JSON, mas não trabalhe com XML.
+
+        5 - Sabemos que o domínio da Alura é:
+
+            cursos.alura.com.br
+            Você entrou na equipe de desenvolvedores da Alura e precisa definir o recurso para atualizar uma parte do exercício com a id 3 do curso http. Qual método HTTP e qual URL você escolheria?
+
+            Selecione uma alternativa
+
+            R: PATCH e http://cursos.alura.com.br/cursos/http/exercicios/3
+
+            Correto, PATCH é utilizado para atualização parcial do recurso que foi definido expressivamente: /cursos/http/exercicios/3
+			
+			
+Aula 08: HTTP2 - Dados binários, GZIP ativo e TLS -------
+
+    Teoria:
+
+        Até o momento estavamos realizando requisições HTTP através do browser, mas podemos realizar requisições através do terminal utilizando o programa CURL. No Linux e no MacOS ele já vem instalado
+        por padrão.
+
+        No caso de estarmos utilizando o Windows, podemos realizar o download através do link: https://curl.haxx.se/download.html
+
+        Para realizarmos e depurarmos uma requisição via CURL, basta realizar o seguinte comando: curl -v www.caelum.com.br
+
+        A saída no meu teste foi a seguinte:
+
+             % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+                0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying 104.28.27.98:80...
+                * TCP_NODELAY set
+                * Connected to www.caelum.com.br (104.28.27.98) port 80 (#0)
+                > GET / HTTP/1.1
+                > Host: www.caelum.com.br
+                > User-Agent: curl/7.68.0
+                > Accept: */*
+                >
+                0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* Mark bundle as not supporting multiuse
+                < HTTP/1.1 301 Moved Permanently
+                < Date: Fri, 06 Mar 2020 21:51:09 GMT
+                < Content-Type: text/html
+                < Transfer-Encoding: chunked
+                < Connection: keep-alive
+                < Set-Cookie: __cfduid=d452fa51314cec0ebea44ce5406e7ab9a1583531469; expires=Sun, 05-Apr-20 21:51:09 GMT; path=/; domain=.caelum.com.br; HttpOnly; SameSite=Lax
+                < Location: https://www.caelum.com.br/
+                < X-Cache: Redirect from cloudfront
+                < Via: 1.1 d2d900512286e3d26077b241153e569d.cloudfront.net (CloudFront)
+                < X-Amz-Cf-Pop: JFK51-C1
+                < X-Amz-Cf-Id: By3qjiL4gw2WswvWbz_kRWpWpmtR1NvyUGWX4CMIzfNKr8kIjoNgcw==
+                < CF-Cache-Status: DYNAMIC
+                < Server: cloudflare
+                < CF-RAY: 56ff4be3bbe8cfec-GRU
+                <
+                { [189 bytes data]
+                100   183    0   183    0     0    497      0 --:--:-- --:--:-- --:--:--   495<html>
+                <head><title>301 Moved Permanently</title></head>
+                <body bgcolor="white">
+                <center><h1>301 Moved Permanently</h1></center>
+                <hr><center>CloudFront</center>
+                </body>
+                </html>
+
+                * Connection #0 to host www.caelum.com.br left intact
+
+        As nossas informações de saída no request efetuado:
+
+            > GET / HTTP/1.1
+            > Host: www.caelum.com.br
+            > User-Agent: curl/7.68.0
+            > Accept: */*
+
+
+        E logo após estas informações temos o cabeçalho da resposta obtida pelo servidor:
+
+            (Request)
+            < HTTP/1.1 301 Moved Permanently
+            < Date: Fri, 06 Mar 2020 21:51:09 GMT
+            < Content-Type: text/html
+            < Transfer-Encoding: chunked
+            < Connection: keep-alive
+            < Set-Cookie: __cfduid=d452fa51314cec0ebea44ce5406e7ab9a1583531469; expires=Sun, 05-Apr-20 21:51:09 GMT; path=/; domain=.caelum.com.br; HttpOnly; SameSite=Lax
+            < Location: https://www.caelum.com.br/
+            < X-Cache: Redirect from cloudfront
+            < Via: 1.1 d2d900512286e3d26077b241153e569d.cloudfront.net (CloudFront)
+            < X-Amz-Cf-Pop: JFK51-C1
+            < X-Amz-Cf-Id: By3qjiL4gw2WswvWbz_kRWpWpmtR1NvyUGWX4CMIzfNKr8kIjoNgcw==
+            < CF-Cache-Status: DYNAMIC
+            < Server: cloudflare
+            < CF-RAY: 56ff4be3bbe8cfec-GRU
+
+            (Espera)
+            100   183    0   183    0     0    497      0 --:--:-- --:--:-- --:--:--   495
+            
+            Logo após vem o corpo da resposta (HTML da página requisitada):
+
+            (Response)
+            <html>
+            <head><title>301 Moved Permanently</title></head>
+            <body bgcolor="white">
+            <center><h1>301 Moved Permanently</h1></center>
+            <hr><center>CloudFront</center>
+            </body>
+            </html>
+
+        Em resumo o output apresentado pelo CURL possui esta divisão: Request <-> Espera <-> Response
+
+        HTTP/2:
+
+            O protocolo que usamos até agora, o HTTP, foi criado na década de 90 e muita coisa mudou na forma como utilizamos a internet.
+
+            O mundo mobile nos trouxe novas preocupações e as otimizações se tornaram cada vez mais necessárias.
+
+            Após anos de especificações e reunições em 2015 surgiu o HTTP/2.
+
+            Página principal de documentação e referência: https://http2.github.io/.
+
+            HTTP/2 nos trouxe mudanças fundamentais para Web, como, recursos fantásticos que vão melhorar muito a performance da Web além de simplificar a vida dos desenvolvedores.
+
+            No HTTP 1.1 podemos comprimir os dados das respostas habilitanto o GZIP no servidor para que ele possa comprimi-las.
+
+            É uma execelente prática, mas temos que habilita-la explicitamente.
+
+            Já no HTTP/2 o GZIP é padrão e obrigatório.
+
+            Porém, mesmo que nós adicionassemos o GZIP a resposta, ainda não seria o suficiente, pois ainda existem cabeçalhos na request e response que não são comprimidos no HTTP 1.1 e ainda trafegam em
+            texto puro.
+
+            Já no HTTP/2 os cabeçalhos passam a ser binários.
+
+            Eles também são comprimidos usando um algoritmo chamado HPACK, o que diminui bastante o volume de dados trafegados nos headers.
+
+            Além de todas estas otimizações para melhorar a performance ainda houve preocupação com a segurança tornando TLS por padrão uma exigência.
+
+        HTTP2 - Cabeçalhos Stateful:
+
+            No código abaixo estamos fazendo uma requição através do método GET igual a que fizemos no programa CURL. Esta requisição está sendo feita para a raiz:
+
+                GET      /
+
+                Host: www.caelum.com.br
+                User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:34.0)
+                Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+                Accept-Language: pt-BR,pt;q=0.8,en-US;q=0.5,en;q=0.3
+                Accept-Encoding: gzip, deflate
+
+            Quando realizamos uma requisição para essa URL via Firefox, por exemplo, o navegador envia alguns cabeçalhos padrões.
+            No cabeçalho host temos o domínio para onde estamos realizando a requisição.
+            Como colocamos uma requisição para o diretório raiz (GET /), o caminha da requisição será www.caelum.com.br/
+
+            User-Agent é de onde vem a requisição, no caso acima, o navegador Mozilla. Se tivesse feito pelo CURL, iria aparecer CURL.
+
+            Accept são os formatos do conteúdo que aceitamos.
+
+            Accept-Language são as linguagens que aceitamos.
+
+            Accept-Encoding a codificação que estamos aceitando, no caso GZIP, já que no HTTP 1.1 podemos especificar o tipo de compressão que estamos aceitando.
+
+        
+            Precisamos repetir os cabeçalhos enviados em uma requisição anterior?
+
+                Supondo que na requisição anterior não veio um recurso importante do javascript que era necessário para a página ser exibida, o arquivo principal.js.
+                Faremos uma nova requisição para busca-lo então:
+
+                    GET       /principal.js
+
+                    Host: www.caelum.com.br
+                    User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:34.0)
+                    Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+                    Accept-Language: pt-BR,pt;q=0.8,en-US;q=0.5,en;q=0.3
+                    Accept-Encoding: gzip, deflate
+
+                Nesta próxima requisição todos os dados de Host, User-Agent, Accept ainda são necessários, porém podemos perceber que a única coisa que mudou foi o recurso solicitado.
+                Este envio de informações redundantes onera o usuário, usando mais banda, e deixando a requisição mais lenta.
+
+                Uma das vantagens do HTTP/2 é esta, ele tem o recurso que é chamado de Headers Stateful, onde quando uma segunda requisição tem o mesmo cabeçalho da primeira, os dados deste cabeçalho são
+                ocutados.
+
+            Cabeçalhos diferentes:
+
+                Se tivéssemos que buscar uma imagem, os cabeçalhos mudam um pouco, no caso o Host: image.caelum.com.br, um subdominio dentro da aplicação e também o Accept: image/png,image/*;q=0.8,*/*;q=5
+                já que não quero mais texto, apenas imagem.
+
+                Com o recurso Headers Stateful enviaremos apenas o que estiver diferente.
+
+                Isto é especificação do HTTP/2, para que uma requisição fique mais leve e não onere tanto o usuário.
+
+                Lembrando que no começo do curso vimos que o HTTP 1.1 é stateless, não guarda estado, ou seja, não guarda informações de requisições passadas. Isto continua valendo, mas no caso de cabeçalhos,
+                existe um ambiente que guarda estados.
+
+
+        HTTP/2 - Server Push:
+
+            Temos o seguinte cenário, cliente e servidor, como de costuma com o protocolo HTTP, se comunicam. O cliente faz uma requisição para a páfina index.html, esta requisição vai até o servidor e traz
+            o conteúdo HTML.
+
+                Cliente -->> (Requisição) -->>
+
+                <<-- (Conteúdo HTML) <<-- Servidor
+
+                Imaginemos que esta página index.html requisitada tenha vários conteúdos de vários arquivos diferentes como: *.js, *.css, *.png, etc
+                Após a primeira requisição do cliente (Firefox) várias outras requisições vao sendo feitas para que a página seja renderizada.
+
+                O navegador interpreta o conteúdo HTML de cima pra baixo, verifica os recursos necessários, e vai realizando requisições. O servidor por sua vez, vai respondendo estas requisições na ordem que
+                foram feitas. Nisto temos a espera do cliente até que o servidor responda a todas as requisições.
+
+                A partir do HTTP/2 temos uma conversa mais paralela. Antes tinhamos um conceito de requisições seriais. Faziamos uma requisição e esperavamos, faziamos mais uma requisição e esperavamos.
+                Agora, no HTTP/2, temos a vantagem do servidor responder de uma vez tudo que precisamos para renderizar a página mesmo com apenas a primeira requisição a página index.html.
+
+                Isso é uma outra abordagem que surgiu com o HTTP/2. Mesmo que nosso browser leia de cima para baixo o HTML e uma hora tenha que passar pelo *.css, por exemplo, ele vai verificar que já recebeu
+                este conteúdo.
+
+                Este é o conceito Server Push (Servidor Empurra), ou seja, o server envia dados para o cliente sem que o cliente tenha solicitado, tornando o trafego de dados muito mais otimizado.
+
+
+        HTTP/2 - Multiplexação (Multiplexing):
+
+            Por baixo dos panos, antes de começar as request e response do HTTP através do browser para o server, temos uma conexão chamada TCP, que é um protocolo de transporte. Isto com certeza é mais a
+            nível de infraestrutura e quem tem seu dia a dia na programação deixamos de lado pois trabalhamos uma camada acima do TCP.
+
+            Como temos o conceito de requisição única no HTTP, a cada requisição deveriamos abrir uma conexão TCP, executar e fechar.
+
+            Isto não seria muito interessante pois o TCP é um recurso caro e que demora a ser alocado. A nível computacional é rápido mas é mais um passo antes da requisição HTTP.
+
+            No HTTP 1.1 temos um recurso chamado Keep-Alive (Matenha vivo), que determina quanto tempo nossa conexão TCP pode ficar ativa. Por isso conseguimos realizar várias requisições com a mesma conexão TCP.
+
+            Hoje em dia, na maioria dos browser temos em torno de 4 a 8 conexões simultaneas por domínio. Ou seja, se a página da Caelum tiver mil recursos, o browser tem 4 a 8 conexões TCP ativas para
+            conseguir realizar essas requisições em paralelo, e não serial.
+
+
+            Keep-Alive no HTTP2:
+
+                No HTTP/2 assim que temos uma conexão TCP aberta, realizamos uma requisição, e ao contrário do HTTP 1.1 não precisamos esperar a resposta desta primeira requisição para realizar uma segunda,
+                ou seja, requisições em paralelo ou de maneira assíncrona. Então vamos recebendo estas respostas assim que o servidor for conseguindo processar.
+
+                Requisições e respostas vão chegando a todo tempo, bem similar o que acontece com o servidor no recurso Server Push, só que desta vez do lado do cliente. Este conceito surgiu no HTTP/2 e é
+                chamada de Multiplexing e traz uma performance bastante relevante.
+
+        O que aprendemos?
+
+            - HTTP/2 atua sobre o que já conhecemos de HTTP 1.1.
+            - HPACK: Headers binários e comprimidos.
+            - GZIP: Padrão de resposta HTTP/2.
+            - Headers Stateful: Cabeçalhos que guardam status.
+            - Server Push: Servidor envia conteúdos que ainda não foram pedidos.
+            - HTTP/2 Multiplexing: Requisições paralelas a respostas do lado cliente.
+
+
+    Questões aula 08:
+
+        1 - Dado o que vimos neste capítulo, aponte quais dos motivos abaixo foram importantes quando decidiram criar uma nova versão do protocolo HTTP, que já estava tão concretizado e estabelecido na Web.
+
+            Selecione 2 alternativas
+
+            R1: Com o crescimento do número de dispositivos móveis conectados a Web, é cada vez mais importante que a quantidade de dados trafegada seja a menor possível, afinal este tipo de dispositivo não 
+            costuma ter uma conexão com muita banda larga. O protocolo HTTP/2 traz diversas tecnologias para diminuir o tamanho das requisições.
+
+            Correto, o HTTP/2 possui diversas tecnologias de compactação de sua requisição. Isto acaba sendo muito útil para clientes móveis, visto que a maioria das redes mobile ainda não são de grande 
+            qualidade.
+
+            R2: Por padrão, no protocolo HTTP versão 1.1 não é necessário o uso da camada de segurança TTL/SSL. Como hoje em dia trafegamos muitos dados críticos na Web, como senhas, logins e dados bancários, 
+            um protocolo atualizado que faz uso dessa segurança parece quase uma necessidade.
+
+            Correto, com o HTTP/2 o uso de HTTPS acaba sendo obrigatório, e esta é uma das grandes vantagens do uso desta nova atualização do protocolo.
+
+            Apesar do protocolo HTTP/1.1 ter sido de extrema importância para a Web ao longo de vários anos, como toda boa tecnologia, é necessário um update. A nova versão do HTTP veio para adequar este 
+            protocolo tão famoso a um mundo onde temos muito mais dados sendo trafegados na rede, e a velocidade de acesso e segurança do usuário se tornam bastante importantes.
+
+
+        2 - Para que serve a tecnologia HPACK implementada no protocolo HTTP/2 ?
+
+            Selecione uma alternativa
+
+            R: Para comprimir os Headers da comunicação HTTP, deixando-os mais leves.
+
+            Exato, a tecnologia HPACK é especialista em comprimir os Headers da requisições/respostas HTTP, deixando as mais leves.
+
+            O HPACK é uma tecnologia especializada em comprimir os Headers das comunicações HTTP/2. Como toda requisição HTTP acompanha algum header por padrão, uma tecnologia de compressão embutida no 
+            protocolo é demasiadamente útil para economizar dados trafegados.
+
+
+        3 - Selecione as afirmativas verdadeiras sobre as versões 1.1 e 2.0 do protocolo HTTP:
+
+            Selecione 3 alternativas
+
+            R1: No HTTP/1.1 o Gzip não é nativo do protocolo, no HTTP/2 ele já vem por padrão.
+
+            Correto, o Gzip vem nativamente no protocolo HTTP/2.
+
+            R2: No HTTP/2 o uso do HTTPS é obrigatório, no HTTP/1.1 não.
+
+            Correto, o HTTP/2 reforça bastante o uso do HTTPS, ao contrário do HTTP/1.1 em que isto era opcional. Apesar de não ser obrigatório em sua especificação, os browsers não suportam o HTTP/2 sem 
+            HTTPS, o que acaba fazendo com que o seu uso seja exclusivo em modo criptografado.
+
+            R3: No HTTP/2 os dados são trafegados em binário, no HTTP/1.1 eles são trafegados como texto.
+
+            Correto, uma das principais mudanças é que agora no HTTP/2 os dados são trafegados em binário e não mais em texto puro.
+
+
+        4 - Como a tecnologia de Headers Stateful pode nos ajudar a economizar dados?
+
+            Selecione uma alternativa
+
+            R1: Como trafegamos apenas os headers que mudam de uma requisição para outra, acabamos por economizar uma boa quantidade de dados, pois não precisamos enviar headers que mudam poucas vezes a todo
+            momento, como o Accept.
+
+            Correto, os Headers Stateful permitem que apenas os cabeçalhos que mudem sejam enviados a cada requisição, economizando muita banda que seriam cabeçalhos repetidos.
+
+            Quando estamos utilizando Headers Stateful, simplesmente colocamos nas requisições os cabeçalhos que se alteraram entre uma e outra, trazendo uma enorme economia de dados, visto que toda 
+            requisição HTTP possui um cabeçalho e que, muitas vezes, no HTTP/1.1, cabeçalhos repetidos eram trafegados em todas as requisições.
+
+
+        5 - O que é o Server Push no HTTP/2?
+
+            Selecione uma alternativa
+
+            O servidor pode empurrar para o clientes certos recursos antes mesmo de serem solicitados, pois ele consegue analisar o HTML e ver o que mais é preciso para carregar a página fazendo com que não 
+            seja necessário gastar tempo pedindo todos os outros recursos.
+
+            Correto, o servidor pode empurrar certas respostas para o cliente antes mesmo delas serem requisitadas.
+
+
 
 
 
