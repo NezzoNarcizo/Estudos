@@ -661,7 +661,8 @@ Aula 05: Depurando a requisição HTTP -------
 
                 O redirecionamento de link, trocando os protocolos HTTP por HTTPS é algo comum hoje em dia para garantir que estamos usando o HTTPS sempre.
 
-                Ao receber o código 301 o navegador chama automaticamente a nova URL.
+                Ao receber o código 301 o navegador chama automaticamente a nova URL, em outras palavras, o código retornado indica que devemos fazer um redirecionamento para
+                o endereço específicado no cabeçalho Location.
 
                 Isto, no mundo dev, é chamado de Redirecionamento pelo Navegador ou Redirecionamento no lado Cliente.
 
@@ -899,7 +900,264 @@ Aula 05: Depurando a requisição HTTP -------
 
 Aula 06: Parâmetros da requisição -------
 
-    
+    Teoria:
+
+        Parâmetros na requisição com métodos GET e POST:
+
+            No primeiro exemplo desta aula, fizemos um acesso ao http://www.youtube.com e buscamos por Ayrton Senna.
+
+            Podemos verificar que a URL mudou por estarmos enviando parâmetros de busca, pois estes parâmetros são adicionados a ela mesmo.
+
+            Ao final desta busca nossa URL ficou assim: https://www.youtube.com/results?search_query=Ayrton+Senna.
+
+            O recurso para buscar se chama result que estava após a barra, e nossos parâmetros de busca se chama search_query e, como todo parâmetro ficou após o ?
+            o valor do nosso parâmetro foi Ayrton+Senna.
+
+            Estes parâmetros da URL são normalmente chamados de Query Params.
+
+            se quisessemos adicionar mais um parâmetro de busca, bastava colocar após Ayrton+Senna o & ('E' comercial) e em seguida o novo parâmetro.
+
+            Um exemplo de busca composta é a busca avançada do google, que nos permite refinar a pesquisa por idioma, país, data etc.
+
+            Assim fica a busca avançada do google com vários parâmetros: https://www.google.com.br/?gws_rd=ssl#lr=lang_pt&tbs=lr:lang_1pt&q=neymar
+
+        Parâmetros com GET:
+
+            O método GET envia nos parâmetros de requisição todos na URL. Isto é muito útil caso queiramos em outros momentos realizar a busca ou requisição novamente.
+
+            Mas e no caso de estarmos realizando um login? O usuário e senha na URL não seria tão interessante, não é mesmo?
+
+            Imagina o login do banco: https://www.bb.com.br/login?login=nico&password=supersecreto
+
+            Lembrando que nossa navegação em geral fica gravada no histório do browser.
+
+        O método HTTP POST:
+
+            Se fizermos o login no site da Alura, veremos que a URL para enviar login e senha é https://www.alura.com.br/signin.
+
+            Podemos reparar também que o método HTTP utilizado mudou, agora o método é HTTP POST.
+
+            Usando o POST o navegador envia os dados do formulário no corpo da requisição e não na URL!
+
+            Se fosse o método HTTP GET nosso dados estariam sendo enviados na URL.
+
+        GET para receber, POST para criar?
+
+            Uma outra utilidade para o método POST é criar conteúdo. Uma utilização do método POST na Alura é quando alguém cria uma pergunta no fórum.
+
+            No momento que o usuário submete um formulário com dados para criar um novo recurso na Alura (A pergunta do aluno se torna um recurso).
+
+            A intenção inicial do método POST, era esta, criar algo novo no servidor.
+
+            No entando não é sempre pra isso que o utilizamos, como vimos nos exemplos anteriores, utilizamos o método POST apenas para ocultar parâmetros apenas.
+
+            É claro que tudo que falamos é convenção, a forma que o servidor irá agir na hora que o navegador enviar o método GET ou POST dependerá da lógica implantada por
+            trás no servidor em si.
+
+            Poderemos ver no dia a dia o método GET sendo utilizado para criar, alterar ou remover algo no servidor. A mesma coisa com o método POST.
+
+            Utilizaremos o método POST para criar, alterar ou até mesmo pesquisar algo.
+
+            As aplicações podem adaptar o significado dos métodos HTTP quando for necessário.
+
+        Para saber mais: Parâmetros na URL:
+
+            Podemos enviar uma requisição utilizando o método GET para que nos mostre um perfil específico, como exemplo, perfil do "usuário 2"
+
+            http://meusite.com.br/usuario?id=2
+
+            Se caso os usuários do site que iremos acessar tiver um ID cada, chamamos o recurso usuário e passamos o parâmetro id=2.
+
+            Poderíamos passar tudo na URL, exemplo:
+
+            http://meusite.com.br/usuario/2
+
+            Porém neste caso deveria ser acertado com o desenvolvedor da aplicação que o número na URL se referia ao ID, pois não teria como o lógica por trás saber
+            automaticamente que o número ali se refere a algum usuário.
+
+            Vamos ver um exemplo que passamos uma informação na URL e a aplicação do outro lado já sabe a que se refere.
+
+            Colocamos o seguinte link na barra de endereços do navegador: http://viacep.com.br/ws/20040030/json
+
+            A nossa reposta é:
+
+                {
+                "cep": "20040-030",
+                "logradouro": "Rua do Ouvidor",
+                "complemento": "de 50 ao fim - lado par",
+                "bairro": "Centro",
+                "localidade": "Rio de Janeiro",
+                "uf": "RJ",
+                "unidade": "",
+                "ibge": "3304557",
+                "gia": ""
+                }
+
+            Isto nada mais é que a rua da CAELUM no Rio, a informação "20040030" nada mais é que o CEP daquele local formatado em JSON.
+
+            O Servidor já sabia a que se referia o número que iriamos passar logo após o /ws/.
+
+            Podemos fazer o teste com outros CEP's. :)
+
+        Para saber mais: Outros métodos HTTP e Web Services:
+
+            Apesar de GET e POST serem os dois mais famosos métodos HTTP, temos outros métodos que podem ser utilizados.
+
+            GET foi criado para receber dados, POST para adicionar algo no servidor.
+
+            Temos também o método DELETE para apagar algo no servidor e o método PUT para atualizar.
+
+            Estes dois ultimos não são tão utilizados em aplicações web, mas sim, em Web Services.
+
+                Obs: Existem outros métodos ainda, além de: GET, POST, DELETE e PUT.
+
+            Mas, o que seria Web Services?
+
+            Quando falamos de Web Services sempre usamos o protocolo da web HTTP.
+
+            Sendo assim, Web service nada mais é que uma funcionalidade na web através do protocolo HTTP.
+
+            O que o Web Service vai fazer depende de cada empresa e do negócio dela.
+
+            Como exemplo, a Alura tem um Web Service que traz todas as informações de um curso (nome, capítulos, exercícios, etc).
+
+            O Google ou Facebook possuem muitos Web Services para acessar um usuário, ver os posts dele, interesses, etc.
+
+            Estes serviços muitas vezes são pagos.
+
+            A grande diferença de um aplicativo web e um web service é que os dados não vem em formato HTML, e sim num formato independente de visualização, como XML ou JSON.
+
+            Um exemplo de um web service da Alura que é utilizado em treinamento presenciais: https://argentumws-spring.herokuapp.com/negociacoes
+
+            É tarefa do Cliente ler os dados e apresentar para o usuário final. O cliente não precia ser o navegador (e normalmente não é), pode ser um celular ou uma aplicação
+            Desktop.
+
+
+    Questões Aula 06:
+
+        1 - Com base na família de erros que você aprendeu no curso, marque a alternativa correta:
+
+            Selecione uma alternativa
+
+            R: 200, 203, 207 -> Respostas de Sucesso
+
+            300, 301, 302 -> Mensagem de redirecionamento
+
+            401, 404, 405 -> Respostas de erro do cliente
+
+            500, 502, 503 -> Respostas de erro do servidor
+
+
+            Correto!
+
+        
+        2 - Vamos testar o envio de parâmetros através da requisição, fazendo uma busca no Google pela palavra Alura.
+
+            Para isso, na URI do Google, vamos enviar na requisição o parâmetro q com o valor Alura. Ou seja: google.com.br/search?q=Alura
+
+            Ao entrar nessa URI, qual método HTTP foi usado?
+
+            Selecione uma alternativa
+
+            R: GET.
+
+            Alternativa correta!
+
+            Resposta correta: GET
+
+            Quando passamos os parâmetros da requisição na URL, estamos fazendo uso do método GET. O que é super útil quando precisamos repetir a requisição com os mesmos 
+            parâmetros :)
+
+        
+        3 - Vimos que podemos enviar parâmetros em uma URL. Então, qual é a forma correta de enviá-los?
+
+            Selecione uma alternativa
+
+            R: http://calculadordeimc.com.br/?peso=44&altura=1.50
+
+            Alternativa correta!
+
+            Quando enviamos parâmetros na URL, devemos iniciar pelo ?, o nome do parâmetro e um =, para separar o nome do parâmetro do seu valor:
+
+            ?nome_do_parametro=seu_valor
+            Quando usamos mais do que um parâmetro devemos usar & para separá-los:
+
+            ?nome_do_parametro=seu_valor&nome_do_outro_param=valor
+
+        
+        4 - Veja os dados da requisição:
+
+            ----------------------------------------------------------------------------
+            AQUI /vendas?ano=2014 HTTP/1.1
+            HOST: www.vendasfuturas.com.br
+            ----------------------------------------------------------------------------
+
+            Qual método HTTP devemos colocar no lugar de AQUI para a requisição funcionar corretamente?
+
+            Selecione uma alternativa
+
+            R: GET
+
+            Alternativa correta!
+
+            GET é normalmente usado para pesquisas, mas isso depende um pouco de como a plataforma e o desenvolvedor usam esse método. Na vida real, vocês vão encontrar 
+            muitos exemplos que usam requisições do tipo GET, não só para pesquisas.
+
+            O protocolo HTTP define que o GET deve ser utilizado apenas para acessar os dados, mas HTTP, como protocolo, não pode impedir o desenvolvedor de fazer algo 
+            diferente. Por exemplo, veja a requisição a seguir:
+
+            -----------------------------------------------------------------------------
+            GET /vendas/remove?id=53 HTTP/1.1
+            HOST: www.vendasfuturas.com.br
+            Usamos GET, mas repare que o nome do recurso muda a intenção do método HTTP. O recurso se chama /vendas/remove, ou seja, queremos apagar a venda com a 
+            identificação 53, usando o método GET!
+            ------------------------------------------------------------------------------
+
+            O protocolo HTTP define apenas algumas regras entre cliente e servidor. O que o servidor realmente faz depende da implementação, ok?
+
+            OBS: Se tiver com código 500 na cabeça, abra uma pergunta no fórum :)
+
+        
+        5 - Seguem os dados da requisição para efetuar o login na plataforma Alura:
+
+            -------------------------------------------------------------------------------
+            POST /signin/ HTTP/1.1        
+            HOST: https://www.alura.com.br
+            Content-Type: application/x-www-form-urlencoded
+
+            email=nico.steppat%40caelum.com.br&senha=totalmentesecreta
+            -------------------------------------------------------------------------------
+
+            Por que foi utilizado o método POST?
+
+            Selecione uma alternativa
+
+            R: Usamos POST para incluir os parâmetros no corpo da requisição.
+
+            Alternativa correta!
+
+            Utilizando o método GET, tanto o login quanto a senha seriam passados como parâmetro na URL, coisa que não queremos que aconteça. O método POST deixa os 
+            parâmetros no corpo da requisição, assim evita que informações importantes, como a senha, fiquem explícitas na URL.
+
+            Usando o método GET, a URL ficaria:
+
+            -------------------------------------------------------------------------------
+            GET /signin/?email=nico.steppat@caelum.com.br&senha=totalmentesecreta HTTP/1.1        
+            HOST: https://www.alura.com.br
+            -------------------------------------------------------------------------------
+
+            Logo, o POST foi utilizado para que se enviasse os valores do formulário no corpo da requisição.
+
+
+Aula 07: Serviços Web-REST -------
+
+    Teoria:
+
+        
+
+    Questões aula 07:
+
+
 
 
 
