@@ -1,0 +1,148 @@
+Aula 01: A rede com IP, ping e Traceroute -------
+
+    Teoria:
+
+        Introdução:
+
+            Veremos neste curso...
+
+                - Conexão dos cabos
+                - Equipamentos de hub
+                - Switch
+                - Roteadores
+                - Servidores
+                - DNS e DHCP
+                - IPV4
+                - Segurança da informação dos equipamentos (Básico)
+
+                Iremos montar um projeto usando um software de simulação de rede e faremos testes de acesso e conexão.
+
+        Definindo a rede:
+
+            Quando fazemos uma conexão com o Google, por exemplo, nossa requisição passa por diversos pontos, regiões, equipamentos e computadores intermediários antes de chegar de fato no google.
+            Da mesma forma acontece com a resposta do Google só que fazendo o caminho inverso.
+
+            As diversas máquina e equipamentos interconectados em diferentes pontos, capazes de transportar informações é o que caracterizam a nossa rede. Elas existem em diferentes tamanhos, desde um ambiente
+            doméstico, em que temos dois computadores e uma impressora, até grandes corporações com centenas de usuários, máquinas potentes com servidores, até a mais famosa, a internet.
+
+        Ping:
+
+            No mundo da internet a conexão e entrega de dados é parecida com o mundo real, onde enviamos uma carta que contém em suas informações quem é o destinatário e qual é o endereço. O processo de
+            identificação das máquinas é chamado de endereçamento IP.
+
+            Para ver como ele funciona, abriremos o terminal do S.O que estamos trabalhando e utilizamos o comando ipconfig (ifconfig no Mac).
+
+            A informação que segue o label Endereço IPV4 é o IP da nossa máquina.
+
+            Caso não consigamos uma conexão com determinada máquina na rede, poderemos utilizar o protocolo ping para verificar se ela está ativa ou apta para conexão.
+
+            Podemos utilizar o protocolo ping para verificar se uma máquina está ativa ou apta para conexão. No caso, quando queremos testar a conexão como uma máquina distante, podemos pingar o endereço,
+            no caso do google...www.google.com.br o que nos retornará o seu número IP. Isto é a tradução da URL para o endereçamento IP. O responsável por fazer esta tradução ou mapeamento é o chamado servidor
+            DNS.
+
+                Para realizar o teste, digitamos no nosso terminal o seguinte comando: ping www.google.com.br
+
+                A resposta que obtivemos foi a seguinte:
+
+                    C:\Users\marlon.narcizo>ping www.google.com.br
+
+                    Disparando www.google.com.br [172.217.29.3] com 32 bytes de dados:
+                    Resposta de 172.217.29.3: bytes=32 tempo=33ms TTL=52
+                    Resposta de 172.217.29.3: bytes=32 tempo=39ms TTL=52
+                    Resposta de 172.217.29.3: bytes=32 tempo=35ms TTL=52
+                    Resposta de 172.217.29.3: bytes=32 tempo=41ms TTL=52
+
+                    Estatísticas do Ping para 172.217.29.3:
+                        Pacotes: Enviados = 4, Recebidos = 4, Perdidos = 0 (0% de
+                                perda),
+                    Aproximar um número redondo de vezes em milissegundos:
+                        Mínimo = 33ms, Máximo = 41ms, Média = 37ms
+
+
+            Podemos notar a tradução da URL para o endereçamento IP do Google.
+
+            Dentro da informação do ping existe um protocolo chamado ICMP (Internet Control Message Protocol), este protocolo trabalha de forma semelhante a um telefonema. É como se pegássemos um telefone e
+            ligássemos para a máquina do Google, na esperança de que alguem atenda. Dentro da informação enviada, falaremos algo que será representado pelos 32 bytes que aparecem no retorno.
+
+            A máquina do Google responde, podemos ver pelo IP dela e pelo tempo que a informação levou do nosso computador para passar pela máquina do Google e retornar. Isto é chamado de tempo de Ida e Volta
+            ou RTT (Round Trip Time). Para que seja realizada esta conexão, precisamos passar por diversas máquinas intermediárias, que podem estar configuradas de diversas forma que caracterizam o loop,
+            porque existem várias interconexões. Se a nossa informação enviada ficar trafegando eternamente no loop, consumindo recursos, travaria tudo.
+
+            Por isso que cada pacote de informação tem um tempo de vida útil e a cada passagem entre essas máquinas, ele irá decrementar em uma unidade representado pelo índice TTL (Time to live).
+
+            No nosso exemplo, quando a informação passar por 52 máquinas, o valor será zerado e extinguida.
+
+            Podemos ver também que enviamos 4 pacotes para a máquina do Google e todos eles foram respondidos, isto significa que a conexão está perfeita.
+
+
+    
+    Questões aula 01:
+
+        1 - O que caracteriza uma rede?
+
+            Selecione uma alternativa
+
+            R: Máquinas que estão interligadas, passando informações em diversos pontos
+
+            De acordo com o site do Wikipedia, a melhor definição de redes de computadores seria: “Uma rede de computadores é formada por um conjunto de máquinas eletrônicas com processadores capazes de trocar
+            informações e partilhar recursos”. Ou seja, pelo fato das máquinas estarem interligadas e serem capazes de trocar informações, caracterizaria uma rede.
+
+
+        2 - Qual protocolo está dentro do ping?
+
+            Selecione uma alternativa
+
+            R: ICMP
+
+            Dentro da ferramenta administrativa do ping temos o protocolo ICMP, sendo ele o responsável por mandar uma requisição (Echo Request) para máquina remota e esperar um retorno dessa máquina remota 
+            (Echo Reply).
+
+        
+        3 - Caso o tempo indicado no teste do ping esteja mais elevado em relação ao valor que normalmente apresenta, o que isso quer dizer?
+
+            Selecione uma alternativa
+
+            R: Isso significa que podemos ter um problema tanto na comunicação de ida ou da volta
+
+            Quando temos um alto valor no índice do tempo do teste do ping, isso significa que podemos ter um problema em nossa comunicação. O protocolo ICMP que está dentro do ping manda um Echo request e 
+            aguarda um retorno de resposta da máquina destino (Echo Reply). Dessa forma, o tempo elevado pode indicar um problema na comunicação que pode estar tanto em um trecho como em outro.
+
+        4 - O que seria o TTL que aparece no teste do ping?
+
+            Selecione uma alternativa
+
+            R: TTL indica por quantas máquinas (hops) minha informação pode passar antes de ser extinta
+
+            O TTL seria uma informação dentro do pacote do IP que informa qual é a máxima quantidade de hops que minha informação pode passar antes de ser descartada. É a quantidade de máquinas que ela vai 
+            poder passar no caminho.
+
+        
+        5 - Quando digitamos ping www.google.com no console aparece um número, o que seria esse número?
+
+            Selecione uma alternativa
+
+            R: Endereço de IP
+
+            Ao digitarmos www.google.com, ocorre uma tradução entre o nome e o endereço IP da máquina do google que estamos acessando. As máquinas para serem identificadas na rede devem possuir um 
+            endereçamento IP.
+
+        
+        6 - Qual ferramenta administrativa eu uso para testar conectividade?
+
+            Selecione uma alternativa
+
+            R: ping
+
+            Dentro do ping temos o protocolo ICMP responsável por fazer a requisição até uma máquina remota (Echo Request) e esperar a resposta (Echo Reply). Através desse protocolo ICMP, podemos verificar 
+            se temos uma resposta da máquina remota, sabendo assim se temos conectividade.
+
+            O traceroute seria usado para verificar a rota que minha informação percorreu até chegar o destino.
+
+            O ipconfig seria usado para ver as configurações de IP de minha máquina e o nslookup seria para verificarmos recursos mais avançados de problemas que podemos ter entre a url e o endereço IP.
+
+
+
+        
+
+
+
