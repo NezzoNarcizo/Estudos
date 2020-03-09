@@ -1,0 +1,19 @@
+SCRUM: Metodologia de desenvolvimento ágil (Resumo)
+
+- Product Backlog: Que é todas as tarefas que precisam se desenvolver ao longo da vida do produto.
+
+- Daily Scrum: Reunião diária de no máximo 15 minutos que todos os integrantes falam o que fizeram.
+
+- Scrum Master: Gerencia código, Aprova as versões, Fazer Merge, Deploy.
+
+- P.O - Product Owner: Responsável por tratar com o cliente sobre os requisitos do produto e regras de negócio.
+
+- Ciclos de Desenvolvimento: 
+
+    Sprint: Tem o prazo de 15 dias.
+    
+    Retrospectiva: Tudo o que pode ser melhorado baseado na experiência dos ultimos 15 dias.
+
+    Review: Vamos entregar para o cliente tudo que foi desenvolvido nos ultimos 15 dias.
+
+    Planning: Todas as tarefas para a proxima sprint.
