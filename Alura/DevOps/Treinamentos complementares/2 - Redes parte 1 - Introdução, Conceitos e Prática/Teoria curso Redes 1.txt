@@ -234,9 +234,368 @@ Aula 02: DNS, hubs e as conexões de máquinas -------
 
             Montando uma rede 2pc:
 
-                
+                O ambiente de teste utilizado no curso, são duas máquinas conectadas por um cabo de rede. Vimos que cada máquina tem o seu número IP, e sabemos que ele não pode se repetir na mesma rede.
+                Este número IP não vem direto de fábrica, ele é configurado por nós, através de uma máquina que distribiu os IP's ou manualmente.
+
+                O caminho para configurar o adaptador é: Iniciar > Painel de Controle > Central de Rede e Compartilhamento > Alterar as configurações do adaptador > (Botão direito em Conexão local) >
+                                                                Propriedades > Clicar em IPV4 na lista da popup que aparece > Propriedades.
+
+                                                                ou
+
+                                                         Clicar com o botão direito na conexão de rede perto do relógio > Abrir central de rede e compartilhamento > Então continuar em "Alterar as configurações
+                                                                                                                                                                                            do adaptador"
+
+                As configurações de rede do computador 1 foram:
+
+                    IP: 192.168.3.1
+                    Máscara: 255.255.255.0
+
+                Do computador 2:
+
+                    IP: 192.168.3.2
+                    Máscara: 255.255.255.0
+
+                Foi realizado um teste de ping.
+
+                Testando a conectividade da placa de rede...
+                Temos um endereço IP reservado para que possamos testar a nossa própria placa de rede, este número é: 127.0.0.1
+                Este tipo de endereçamento chamamos de loopback. Ele envia informações para ele mesmo para ver se esta tudo ok internamente.
+
+                Este tipo de endereço é reservado e não podemos usá-lo para atribuir em outra placa de rede.
+                Se formos nas "Propriedades de IP versão 4" ao tentarmos modificar o IP para 127 recebemos a seguinte mensagem:
+
+                    "Endereços IP que começam com 127 não são válidos, pois são reservados para endereços de loopback. Especifique outro valor válido entre 1 e 223."
+
+                Até o momento as traduções que estão sendo mostradas no terminal só possuem números.
+                Podemos verificar como é feita a tradução pelo servidor DNS, entre nome e endereçamento IP.
+                Podemos fazer um teste na nossa própria máquina.
+
+                Procedimento feito foi o seguinte:
+                    Abrir o bloco de notas com privilégios de administrador.
+                    Abriremos o arquivo hosts em "C:>Windows>System32>drivers>etc. Devemos mudar para todos os arquivos para enxergar os arquivos desta pasta.
+
+                    Dentro deste arquivo vemos um mapeamento entre "localhost" e o IP 127.0.0.1. Localhost é o mesmo que usamos na programação Web.
+                    Podemos mudar este nome, localhost, para qualquer outro nome, depois no terminal pingar o nome que escolhemos e ver ele responder o IP: 127.0.0.1.
+
+                        Conteúdo arquivo hosts:
+
+                            # localhost name resolution is handled within DNS itself.
+                            #       127.0.0.1      localhost
+                            #       ::1            localhost
+                                    127.0.0.1      www.cursoderedesdaalura.com
+
+            
+            Nslookup:
+
+                No processo de mapeamento Nome/IP podemos ter problemas em algum momento. Para identificar de qual lado esta o problema, temos uma ferramenta administrativa chamada nslookup.
+                Junto a este comando basta o endereçamento IP que queremos descobrir ou o nome.
+
+                    C:\Users\marlon.narcizo>nslookup www.facebook.com
+                    Servidor:  dcms01.tribunal.tre-ms.gov.br
+                    Address:  10.19.1.6
+
+                    Não é resposta de autorização:
+                    Nome:    star-mini.c10r.facebook.com
+                    Addresses:  2a03:2880:f133:83:face:b00c:0:25de // No retorno podemos ver dois tipos de máquina com identificação:
+                            31.13.74.35 // Este também é uma identificação de máquina
+                    Aliases:  www.facebook.com
+
+                Aqui também nos mostra que o endereçamento de máquina IP não é uma resposta autoritativa. Isto acontece porque já acessamos o facebook antes, então a informação que foi pedida no nslookup
+                foi fornecida pelo servidor interno e não pelo site do facebook em si, pois o servidor já tinha em seu cache qual é o respectivo endereçamento da plataforma. Ficaria muito oneroso se a cada
+                nslookup tivessemos que pegar esta mesma informação. Ou seja, Não é autoritativa porque foi o servidor interno que respondeu e não o facebook.
+
+                Podemos utilizar o nslookup com qualquer nome ou qualquer ip.
+                Caso utilizemos algo que não existe, a seguinte saída será exibida:
+
+                    C:\Users\marlon.narcizo>nslookup teste
+                    Servidor:  dcms01.tribunal.tre-ms.gov.br
+                    Address:  10.19.1.6
+
+                    *** dcms01.tribunal.tre-ms.gov.br não encontrou teste: Non-existent domain
+
+                    C:\Users\marlon.narcizo>
+
+                No caso "teste" não está relacionado a nenhum número IP. Não existe o registro nem na minha rede e nem na internet. O mesmo ocorre com o ping.
+
+                    marlon.narcizo@TREMS0208 MINGW64 /d/Comum/Pessoal/marlon.narcizo/Desktop
+                    $ ping 2.2.2.2
+
+                    Disparando 2.2.2.2 com 32 bytes de dados:
+                    Esgotado o tempo limite do pedido.
+
+                    (Teste realizado no Git Bash)
+
+                Podemos ver que foi esgotado o tempo limite do pedido. Fizemos uma chamada para o endereçamento 2.2.2.2, mas não recebemos uma resposta.
+
+
+            Montando rede 3pc:
+
+                Nesta parte do curso foi montada uma rede com três computadores para fazer testes de conexão. Como cada placa de rede só tem uma interface de conexão RJ-45 utilizamos um Hub.
+
+                A terceira máquina ficou com a seguinte configuração de rede:
+
+                    IP: 192.168.1.3
+                    Máscara: 255.255.255.0
+
+                Também foi realizado teste de ping da máquina IP final 2 para as máquina finais 1 e 3.
+
 
         Questões aula 02:
+
+            1 - Qual a responsabilidade do servidor DNS?
+
+                Selecione uma alternativa
+
+                R: Traduz URLs para endereços IP
+
+                Os servidores DNS são chamados de Domain Name Servers e sua função é realizar o “mapeamento” entre endereço IP e url (ex: www.google.com). Dessa forma, se estamos digitando www.google.com 
+                no browser, o servidor DNS está fazendo a tradução entre o nome da url e o endereço IP.
+
+            
+            2 - Qual o nome que damos quando configuramos um endereço IP manualmente em nosso computador?
+
+                Selecione uma alternativa
+
+                R: Quando inserimos um IP em uma máquina, ela passa a atuar com aquele endereço IP, esse tipo de inserção manual de endereço IP é chamado de IP estático, pois fixamos que ele tenha o valor 
+                que inserimos.
+
+            3 - Qual principal uso do nslookup?
+
+                Selecione uma alternativa
+
+                R: Verificar traduções de nomes de domínios e endereços IP e isolar problemas entre as duas partes
+
+                O Nslookup pode ser usado para descobrirmos o endereço IP de um domínio, bem como saber detalhes mais avançados de DNS, para saber se nosso serviço está sendo direcionado para a máquina de 
+                destino, por exemplo.
+
+                Parabéns, você acertou!
+
+            4 - Ao digitar nslookup www.google.com eu recebo uma mensagem de resposta não autoritativa, por que recebo essa mensagem?
+
+                Selecione uma alternativa
+
+                R: Porque quem respondeu foi uma máquina da minha rede local que guardou a informação do site que havia acessado previamente e ela que está respondendo pela requisição.
+
+                Uma vez que eu já acessei o site antes, essa máquina guarda em sua memória, para não ter que ficar fazendo essas requisições na internet o tempo todo. Dessa forma, a minha máquina que 
+                respondeu não tem autoridade sobre esse domínio, não é minha máquina que possui o registro do www.google.com.
+
+            
+            5 - Como funciona o ping?
+
+                Selecione uma alternativa
+
+                R: Ele manda uma requisição para a máquina que procuramos (Echo Request) e aguarda uma informação de retorno (Echo Reply)
+
+                O ping possui dentro dele um protocolo chamado ICMP, ele vai mandar uma requisição (Echo request) e aguarda uma resposta (Echo reply).
+
+
+            6 - Qual equipamento podemos usar para conectar vários computadores?
+
+                Selecione uma alternativa
+
+                R: Hub
+
+                - O Hub é um equipamento utilizado para interconectar diversos dispositivos finais.
+                - NAT é um método de tradução de endereços privados e públicos.
+                - Servidor é uma máquina centralizada que oferece serviços a um cliente (ex: computador)
+                - Máscara de rede é usado para determinar se dois equipamentos estão na mesma rede
+
+
+Aula 03: Cabos de conexão -------
+
+    Teoria:
+
+        O cabo de rede que compramos, possui 8 fios por dentro, e suas cores representam um padrão que veremos a seguir.
+
+            (T568A)
+
+            1 - "Branco do verde"
+            2 - Verde
+            3 - "Branco do laranja"
+            4 - Azul
+            5 - "Branco do azul"
+            6 - Laranja
+            7 - "Branco do marrom"
+            8 - Marrom
+
+        O conector de plástico no qual encaixamos e crimpamos (Ato de fixar com alicate os fios no conector) os fios menores, é chamado de RJ-45.
+
+        Como já vimos, temos esta combinação de cores acima, esta sequencia de cores e este padrão designado para tal sequencia foi criado pela TIA (Telecomunication industry
+        association). Eles definiram o padrão de cores que devia ser seguido. Agora vamos analisar as conexões que fizemos até agora no curso.
+
+        Quando os fios são crimpados com a sequencia de cores do padrão T568A o cabo é chamado de cabo direto.
+
+            A placa de rede transmite nas posições 1 e 2:
+
+                1 - "Branco do verde"
+                2 - Verde
+
+            E receberá nas posições 3 e 6:
+
+                3 - "Branco do laranja"
+                6 - Laranja
+
+
+            Já o hub por sua vez, transmitirá nas posições:
+
+                3 - "Branco do laranja"
+                6 - Laranja
+
+            E receberá nas posições:
+
+                1 - "Branco do verde"
+                2 - Verde
+
+            Praticamente é como se a placa do hub fosse ao contrário.
+
+        Porém se utilizarmos o mesmo cabo em dois computadores que por convenção terão suas placas "no mesmo sentido", a transmissão e recepção dos dois serão tentadas a partir
+        dos mesmos fios, o que ocasionará a colisão. Pois estão transmitindo pelo mesmo fio (1 - "Branco do verde", 2 - Verde) e tentando receber pelos mesmos fios 
+        (3 - "Branco do laranja", 6 - Laranja).
+
+        Pensando nisto, a TIA criou um outro padrão, chamado T568B.
+
+            (T568B)
+
+            1 - "Branco do laranja"
+            2 - Laranja
+            3 - "Branco do verde"
+            4 - Azul
+            5 - "Branco do azul"
+            6 - Verde
+            7 - "Branco do marrom"
+            8 - Marrom
+
+        Ou seja, uma ponta com o T568A e a outra ponta com o T568B, será o ideal, pois o computador 1 transmite e na posição 3 o computador 2 recebe. E também a posição 2
+        transmitirá e a posição 6 receberá.
+
+            Então percebemos que, nos computadores, o padrão é transmitir nas posições 1 e 2, e receber nas posições 3 e 6.
+            Se invertermos então os cabos Branco do verde e verde, e Branco do laranja e Laranja apenas em uma ponta dos cabos, a comunição funcionará, pois aconteceu um
+            cruzamento interno dos sinais de uma forma que eles não colidam. Por causa deste cruzamento este tipo de cabo recebeu o nome de cabo cruzado ou crossover.
+
+            Então para ligarmos dois hosts sem o auxilio de um hub ou um switch, utilizaremos um cabo cross.
+
+        É importante deixar claro que é o cruzamento dos cabos que permite a comunicação sem a colisão de dados, ou seja, os dois lados no padrão T568B iria ocasionar a colisão
+        do mesmo jeito.
+
+        As placas de rede mais modernas já conseguem detectar esta diferenã e fazem a correção automaticamente via software. Mas nem todas as placas de rede possuem essa
+        configuração. É melhor saber qual tipo de cabo precisamos usar.
+
+        
+    Questões aula 03:
+
+        1 - Quais são os dois tipos de cabos que usamos para conexão?
+
+            Selecione uma alternativa
+
+            R: Cabo direto e cabo cruzado
+
+            Caso tenhamos o mesmo padrão de cores nas duas pontas do cabo, chamamos de cabo direto, pois as mesmas cores estão nas mesmas posições nas duas pontas.
+            Caso tenhamos um padrão de cores diferente em cada ponta do cabo, teremos o que chamamos de cabo cruzado.
+
+        2 - O que caracteriza um cabo cruzado?
+
+            Selecione uma alternativa
+
+            R: Um cabo que possui os fios internos em posições diferentes em cada ponta
+
+            Quando temos um padrão de cores diferente em cada ponta do cabo, teremos o que chamamos de cabo cruzado.
+
+        
+        3 - O que caracteriza um cabo direto?
+
+            Selecione uma alternativa
+
+            R: Um cabo com a mesma sequência de cor nas mesmas posições nas duas pontas do cabo
+
+            Quando temos um padrão de cores iguais nas duas pontas do cabo, teremos o que chamamos de cabo direto
+
+        
+        4 - Quais são os dois padrões feitos pela TIA?
+
+            Selecione uma alternativa
+
+            R: T568A e T568B
+
+            O padrão de cores feitos pela TIA seria T568A e T568B, sendo que a T568A possui a sequência de cores, nesta ordem:
+
+                Branco e verde, verde, branco e laranja, azul, branco e azul, laranja, branco e marrom, marrom
+
+            E a T568B:
+
+                Branco e laranja, laranja, branco e verde, azul, branco e azul, verde, branco e marrom, marrom
+
+        
+        5 - Qual tipo de cabo usamos para fazer a conexão entre dois computadores?
+
+            Selecione uma alternativa
+
+            R: Cabo cruzado
+
+            Pelo fato de termos dois computadores, eles tem o mesmo tipo de placa de rede e vão transmitir os sinais nas mesmas posições. Dessa forma é necessário realizar 
+            essa compatibilidade entre os sinais de transmissão e recepção e isso é obtido através do cabo cruzado.
+
+        
+        6 - Onde é transmitido os sinais nas placas de rede dos computadores por padrão?
+
+            Selecione uma alternativa
+
+            R: Fios 1 e 2
+
+            As placas de rede dos computadores transmitem, por padrão, nas posições 1 e 2.
+
+        
+        7 - Onde é recebido os sinais nas placas de rede dos computadores por padrão?
+
+            Selecione uma alternativa
+
+            Fios 3 e 6
+
+            As placas de rede dos computadores recebem por padrão nas posições 3 e 6.
+
+
+        8 - Onde é transmitido os sinais nas placas de rede dos hubs por padrão?
+
+            Selecione uma alternativa
+
+            R: Fios 3 e 6
+
+            As placas de rede dos hubs transmitem por padrão nas posições 3 e 6
+
+        
+        9 - Onde é recebido os sinais nas placas de rede dos hubs por padrão?
+
+            Selecione uma alternativa
+
+            R: Fios 1 e 2
+
+            As placas de rede dos hubs recebem por padrão nas posições 1 e 2.
+
+        
+        10 - Em um projeto precisei interconectar dois computadores diretamente, pelo fato de não ter cabo cruzado, resolvi fazer o teste com cabo direto e consegui “pingar” o 
+            outro computador. Qual é a provável razão para isso ter acontecido?
+
+            Selecione uma alternativa
+
+            R: Provavelmente as placas de rede possuem um padrão auto-MDIX que é capaz de detectar que colocamos um cabo “errado”, mas consegue realizar a correção das 
+            polaridades via software
+
+            Algumas placas de rede mais modernas possuem o padrão auto-MDIX, dessa forma, se as duas placas de rede estiverem configuradas, elas poderão corrigir essa questão 
+            da polaridade e se comunicarem
+
+
+Aula 04: Montando nossa rede no programa -------
+
+    Teoria:
+
+        
+
+    Questões aula 04:
+
+
+
+
+            
+
 
         
 
