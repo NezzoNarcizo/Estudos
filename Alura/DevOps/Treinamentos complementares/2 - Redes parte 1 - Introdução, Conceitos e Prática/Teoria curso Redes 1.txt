@@ -19,16 +19,17 @@ Aula 01: A rede com IP, ping e Traceroute -------
 
         Definindo a rede:
 
-            Quando fazemos uma conexão com o Google, por exemplo, nossa requisição passa por diversos pontos, regiões, equipamentos e computadores intermediários antes de chegar de fato no google.
-            Da mesma forma acontece com a resposta do Google só que fazendo o caminho inverso.
+            Quando fazemos uma conexão com o Google, por exemplo, nossa requisição passa por diversos pontos, regiões, equipamentos e computadores intermediários antes de chegar de fato 
+            no google. Da mesma forma acontece com a resposta do Google só que fazendo o caminho inverso.
 
-            As diversas máquina e equipamentos interconectados em diferentes pontos, capazes de transportar informações é o que caracterizam a nossa rede. Elas existem em diferentes tamanhos, desde um ambiente
-            doméstico, em que temos dois computadores e uma impressora, até grandes corporações com centenas de usuários, máquinas potentes com servidores, até a mais famosa, a internet.
+            As diversas máquina e equipamentos interconectados em diferentes pontos, capazes de transportar informações é o que caracterizam a nossa rede. Elas existem em diferentes 
+            tamanhos, desde um ambiente doméstico, em que temos dois computadores e uma impressora, até grandes corporações com centenas de usuários, máquinas potentes com servidores, até
+            a mais famosa, a internet.
 
         Ping:
 
-            No mundo da internet a conexão e entrega de dados é parecida com o mundo real, onde enviamos uma carta que contém em suas informações quem é o destinatário e qual é o endereço. O processo de
-            identificação das máquinas é chamado de endereçamento IP.
+            No mundo da internet a conexão e entrega de dados é parecida com o mundo real, onde enviamos uma carta que contém em suas informações quem é o destinatário e qual é o endereço. 
+            O processo de identificação das máquinas é chamado de endereçamento IP.
 
             Para ver como ele funciona, abriremos o terminal do S.O que estamos trabalhando e utilizamos o comando ipconfig (ifconfig no Mac).
 
@@ -36,9 +37,9 @@ Aula 01: A rede com IP, ping e Traceroute -------
 
             Caso não consigamos uma conexão com determinada máquina na rede, poderemos utilizar o protocolo ping para verificar se ela está ativa ou apta para conexão.
 
-            Podemos utilizar o protocolo ping para verificar se uma máquina está ativa ou apta para conexão. No caso, quando queremos testar a conexão como uma máquina distante, podemos pingar o endereço,
-            no caso do google...www.google.com.br o que nos retornará o seu número IP. Isto é a tradução da URL para o endereçamento IP. O responsável por fazer esta tradução ou mapeamento é o chamado servidor
-            DNS.
+            Podemos utilizar o protocolo ping para verificar se uma máquina está ativa ou apta para conexão. No caso, quando queremos testar a conexão como uma máquina distante, podemos 
+            pingar o endereço, no caso do google...www.google.com.br o que nos retornará o seu número IP. Isto é a tradução da URL para o endereçamento IP. O responsável por fazer esta 
+            tradução ou mapeamento é o chamado servidor DNS.
 
                 Para realizar o teste, digitamos no nosso terminal o seguinte comando: ping www.google.com.br
 
@@ -61,19 +62,76 @@ Aula 01: A rede com IP, ping e Traceroute -------
 
             Podemos notar a tradução da URL para o endereçamento IP do Google.
 
-            Dentro da informação do ping existe um protocolo chamado ICMP (Internet Control Message Protocol), este protocolo trabalha de forma semelhante a um telefonema. É como se pegássemos um telefone e
-            ligássemos para a máquina do Google, na esperança de que alguem atenda. Dentro da informação enviada, falaremos algo que será representado pelos 32 bytes que aparecem no retorno.
+            Dentro da informação do ping existe um protocolo chamado ICMP (Internet Control Message Protocol), este protocolo trabalha de forma semelhante a um telefonema. É como se 
+            pegássemos um telefone e ligássemos para a máquina do Google, na esperança de que alguem atenda. Dentro da informação enviada, falaremos algo que será representado pelos 32 
+            bytes que aparecem no retorno.
 
-            A máquina do Google responde, podemos ver pelo IP dela e pelo tempo que a informação levou do nosso computador para passar pela máquina do Google e retornar. Isto é chamado de tempo de Ida e Volta
-            ou RTT (Round Trip Time). Para que seja realizada esta conexão, precisamos passar por diversas máquinas intermediárias, que podem estar configuradas de diversas forma que caracterizam o loop,
-            porque existem várias interconexões. Se a nossa informação enviada ficar trafegando eternamente no loop, consumindo recursos, travaria tudo.
+            A máquina do Google responde, podemos ver pelo IP dela e pelo tempo que a informação levou do nosso computador para passar pela máquina do Google e retornar. Isto é chamado de
+            tempo de Ida e Volta ou RTT (Round Trip Time). Para que seja realizada esta conexão, precisamos passar por diversas máquinas intermediárias, que podem estar configuradas de 
+            diversas forma que caracterizam o loop, porque existem várias interconexões. Se a nossa informação enviada ficar trafegando eternamente no loop, consumindo recursos, travaria 
+            tudo.
 
-            Por isso que cada pacote de informação tem um tempo de vida útil e a cada passagem entre essas máquinas, ele irá decrementar em uma unidade representado pelo índice TTL (Time to live).
+            Por isso que cada pacote de informação tem um tempo de vida útil e a cada passagem entre essas máquinas, ele irá decrementar em uma unidade representado pelo índice 
+            TTL (Time to live).
 
             No nosso exemplo, quando a informação passar por 52 máquinas, o valor será zerado e extinguida.
 
             Podemos ver também que enviamos 4 pacotes para a máquina do Google e todos eles foram respondidos, isto significa que a conexão está perfeita.
 
+        
+        Traceroute:
+
+            O Traceroute através do ICMP faz uma verificação para saber quais são as máquina intermediárias que participam do processo.
+                Obs: No Linux considerar traceroute -n.
+
+            Para testar o tracerout utilizamos o comando: tracert -d www.google.com
+                Obs: O -d (-n no Linux) para que ele não faça a tradução do DNS.
+
+            A minha saída foi:
+
+                C:\Users\nesso>tracert -d www.google.com
+
+                Rastreando a rota para www.google.com [2800:3f0:4001:810::2004]
+                com no máximo 30 saltos:
+
+                1    <1 ms    <1 ms    <1 ms  fe80::7ac1:a7ff:fe1a:3102
+                2     *        *        *     Esgotado o tempo limite do pedido.
+                3     *        *        *     Esgotado o tempo limite do pedido.
+                4    62 ms    63 ms    63 ms  2001:4860:1:1::f74
+                5    74 ms    62 ms    63 ms  2800:3f0:800e::1
+                6    63 ms    64 ms    63 ms  2001:4860:0:1::1eba
+                7     *       74 ms    74 ms  2800:3f0:4001:810::2004
+
+                Rastreamento concluído.
+
+            Podemos observar que foi feita a mesma tradução, por meio do servidor DNS, que no protocolo ping. Mas as informações retornadas foram diferentes.
+
+            Na primeira coluna temos a identificação da máquina, a sequencia praticamente por onde passou a informação da minha máquina. Assim como ela passará por outras 
+            máquinas.
+
+            Observamos também que, temos os 3 intervalos de tempo que são mostrados nas outras máquinas. Eles são os mesmos do ping se referem ao processo de ida do cliente para o servidor
+            e a volta do servidor para o cliente.
+
+            Na vida real temos um caminho em mente que vamos percorrer pra chegar em casa, porém este caminha pode estar congestionado, e assim como na vida real teremos que escolher outro
+            caminho. Desta mesma forma pode acontecer na rede, podemos enviar um pacote com informações, mas pode ser que seja necessário que este pacote encontre outro caminho para chegar
+            no servidor. Para identificar se será necessário enviar numa rota diferente, três pacotes diferentes em intervalos diferentes são enviados para ver se alguma outra máquina
+            poderia atuar como ponto de parada.
+
+            Na primeira coluna podemos perceber que querm recebeu os três pacotes foi o mesmo IP, ou seja, a primeira coluna se refere a mesma rota. Porém a máquina 2 e 3 não retornaram
+            nenhuma informação de tempo. Elas não responderam por dois motivos possíveis. O primeiro é porque o ICMP pode estar desabilitado para evitar sobrecarga, o segundo pode ser questão
+            de segurança, pois um dos primeiros testes de invasão de rede é um teste de conectividade como o que estamos fazendo. Ele começa por uma verificação de qual é o sistema que a 
+            empresa está trabalhando, quais as possíveis portas que estão abertas para conseguir acesso. Mas no nosso caso a máquina está funcionando, pois passaram a informação para a 
+            máquina 4 que continuou passando para a próxima. Então chegou na 7, que é o servidor Google.
+
+                 7     *       74 ms    74 ms  2800:3f0:4001:810::2004
+
+        O que vimos nessa aula
+
+        - O que é Rede de computadores.
+        - O comando ping para teste de conectividade.
+        - O protocolo ICMP utilizado
+        - O (Time to Live) TTL OU tempo de vida útil do pacote.
+        - O comando traceroute para verificar a rota que meu pacote está passando na rede.
 
     
     Questões aula 01:
@@ -84,8 +142,9 @@ Aula 01: A rede com IP, ping e Traceroute -------
 
             R: Máquinas que estão interligadas, passando informações em diversos pontos
 
-            De acordo com o site do Wikipedia, a melhor definição de redes de computadores seria: “Uma rede de computadores é formada por um conjunto de máquinas eletrônicas com processadores capazes de trocar
-            informações e partilhar recursos”. Ou seja, pelo fato das máquinas estarem interligadas e serem capazes de trocar informações, caracterizaria uma rede.
+            De acordo com o site do Wikipedia, a melhor definição de redes de computadores seria: “Uma rede de computadores é formada por um conjunto de máquinas eletrônicas com 
+            processadores capazes de trocar informações e partilhar recursos”. Ou seja, pelo fato das máquinas estarem interligadas e serem capazes de trocar informações, caracterizaria 
+            uma rede.
 
 
         2 - Qual protocolo está dentro do ping?
@@ -94,8 +153,8 @@ Aula 01: A rede com IP, ping e Traceroute -------
 
             R: ICMP
 
-            Dentro da ferramenta administrativa do ping temos o protocolo ICMP, sendo ele o responsável por mandar uma requisição (Echo Request) para máquina remota e esperar um retorno dessa máquina remota 
-            (Echo Reply).
+            Dentro da ferramenta administrativa do ping temos o protocolo ICMP, sendo ele o responsável por mandar uma requisição (Echo Request) para máquina remota e esperar um retorno 
+            dessa máquina remota (Echo Reply).
 
         
         3 - Caso o tempo indicado no teste do ping esteja mais elevado em relação ao valor que normalmente apresenta, o que isso quer dizer?
@@ -104,8 +163,9 @@ Aula 01: A rede com IP, ping e Traceroute -------
 
             R: Isso significa que podemos ter um problema tanto na comunicação de ida ou da volta
 
-            Quando temos um alto valor no índice do tempo do teste do ping, isso significa que podemos ter um problema em nossa comunicação. O protocolo ICMP que está dentro do ping manda um Echo request e 
-            aguarda um retorno de resposta da máquina destino (Echo Reply). Dessa forma, o tempo elevado pode indicar um problema na comunicação que pode estar tanto em um trecho como em outro.
+            Quando temos um alto valor no índice do tempo do teste do ping, isso significa que podemos ter um problema em nossa comunicação. O protocolo ICMP que está dentro do ping manda
+            um Echo request e aguarda um retorno de resposta da máquina destino (Echo Reply). Dessa forma, o tempo elevado pode indicar um problema na comunicação que pode estar tanto em 
+            um trecho como em outro.
 
         4 - O que seria o TTL que aparece no teste do ping?
 
@@ -113,8 +173,8 @@ Aula 01: A rede com IP, ping e Traceroute -------
 
             R: TTL indica por quantas máquinas (hops) minha informação pode passar antes de ser extinta
 
-            O TTL seria uma informação dentro do pacote do IP que informa qual é a máxima quantidade de hops que minha informação pode passar antes de ser descartada. É a quantidade de máquinas que ela vai 
-            poder passar no caminho.
+            O TTL seria uma informação dentro do pacote do IP que informa qual é a máxima quantidade de hops que minha informação pode passar antes de ser descartada. É a quantidade de 
+            máquinas que ela vai poder passar no caminho.
 
         
         5 - Quando digitamos ping www.google.com no console aparece um número, o que seria esse número?
@@ -123,8 +183,8 @@ Aula 01: A rede com IP, ping e Traceroute -------
 
             R: Endereço de IP
 
-            Ao digitarmos www.google.com, ocorre uma tradução entre o nome e o endereço IP da máquina do google que estamos acessando. As máquinas para serem identificadas na rede devem possuir um 
-            endereçamento IP.
+            Ao digitarmos www.google.com, ocorre uma tradução entre o nome e o endereço IP da máquina do google que estamos acessando. As máquinas para serem identificadas na rede devem 
+            possuir um endereçamento IP.
 
         
         6 - Qual ferramenta administrativa eu uso para testar conectividade?
@@ -133,12 +193,52 @@ Aula 01: A rede com IP, ping e Traceroute -------
 
             R: ping
 
-            Dentro do ping temos o protocolo ICMP responsável por fazer a requisição até uma máquina remota (Echo Request) e esperar a resposta (Echo Reply). Através desse protocolo ICMP, podemos verificar 
-            se temos uma resposta da máquina remota, sabendo assim se temos conectividade.
+            Dentro do ping temos o protocolo ICMP responsável por fazer a requisição até uma máquina remota (Echo Request) e esperar a resposta (Echo Reply). Através desse protocolo ICMP, 
+            podemos verificar se temos uma resposta da máquina remota, sabendo assim se temos conectividade.
 
             O traceroute seria usado para verificar a rota que minha informação percorreu até chegar o destino.
 
-            O ipconfig seria usado para ver as configurações de IP de minha máquina e o nslookup seria para verificarmos recursos mais avançados de problemas que podemos ter entre a url e o endereço IP.
+            O ipconfig seria usado para ver as configurações de IP de minha máquina e o nslookup seria para verificarmos recursos mais avançados de problemas que podemos ter entre a url e 
+            o endereço IP.
+            
+        
+        7 - Qual o principal uso do traceroute?
+
+            Selecione uma alternativa
+
+            R: Verificar a rota que a minha informação está passando na rede
+
+            A principal funcionalidade do traceroute é verificar a rota que a minha informação levou para chegar até a máquina de destino. Isso porque, em redes de computadores temos o 
+            que chamamos de rede não determinística, ou seja, não necessariamente um pacote de informação vai ser transferido pela mesma rota do anterior com o mesmo intervalo de tempo. 
+            Isto se deve a muitos fatores, por exemplo, uma máquina que pode estar congestionada ou um problema no link de comunicação, etc.
+
+            Pense como se a rede fosse uma cidade com várias ruas, nem sempre pegaremos a mesma rota para chegar até a nossa casa ou ir para o trabalho, depende de muitos fatores, por 
+            exemplo, trânsito, obras e outros aspectos. Nas redes de computadores não é tão diferente. :)
+
+        
+        8 - Quando eu digito tracert e vemos que uma máquina retornou a informação (*), o que isso quer dizer?
+
+            Selecione uma alternativa
+
+            R: Provavelmente o administrador da máquina desabilitou a resposta ao nosso chamado, para evitar um grande volume de tráfego na máquina bem como por questões de segurança.
+
+            Quando nós temos uma máquina que retornou (*) e passou a informação para uma próxima máquina, isso provavelmente indica que o administrador dessa máquina desabilitou a 
+            resposta ao nosso chamado. O que acontece seria que esse tipo de teste pode ser interpretado como uma tentativa de “scanear” possíveis portas abertas e vulnerabilidades que 
+            possam existir, caso seja usado por um usuário malicioso, pode ser usada como uma forma de reconhecimento da rede dessa possível vítima para que assim possa explorar possíveis
+            falhas.
+
+
+Aula 02: DNS, hubs e as conexões de máquinas -------
+
+        Teoria:
+
+            Montando uma rede 2pc:
+
+                
+
+        Questões aula 02:
+
+        
 
 
 
