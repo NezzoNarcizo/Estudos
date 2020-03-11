@@ -587,12 +587,79 @@ Aula 04: Montando nossa rede no programa -------
 
     Teoria:
 
-        O programa que utilizaremos agora para que possamos simular a nossa rede é o Packet Tracer, software criado pela Cisco.
+        Instalando o Packet Tracer:
 
-        Podemos realizar o dowload do programa no seguinte link: https://www.netacad.com/courses/packet-tracer/introduction-packet-tracer
+            O programa que utilizaremos agora para que possamos simular a nossa rede é o Packet Tracer, software criado pela Cisco.
+
+            Podemos realizar o dowload do programa no seguinte link: https://www.netacad.com/courses/packet-tracer/introduction-packet-tracer
+
+            Se estivermos utilizando o Mac, teremos também que utilizar um emulador pois o PacketTracer foi feito somente para Linux e Windows.
+            Podemos utilizar o mesmo que foi utilizado no curso, o Wineskin Winery: https://drive.google.com/file/d/0BzmYQVmw4W7nTVpIWDlXSS11RVE/view
+            Então à partir deste emulador executaremos o arquivo de instalação do PacketTracer.
+
+
+        Limitação do Hub:
+
+            Recriamos o cenário estudado anteriormente no Packet Tracer.
+
+            Definimos 3 computadores, sendo 1 laptop e 2 desktops e mais 1 hub.
+
+            Ligamos cada um dos computadores ao hub através de cabo direto (Cooper Straight Through).
+
+            Mudamos o modo de operação do Packet Tracer de "Realtime" para "Simulation"
+
+            Utilzamos o Desktop (Computador 2) e realizamos um ping para o Laptop (Computador 1), então observamos o painel de simulação.
+
+            Podemos observar pequenos envelopes que aparecem no computador que realizamos o comando ping.
+
+            Eles também aparecerão na tela de simulação e seus respectivos protocolos.
+
+            Temos o protocolo ICMP e temos o protocolo ARP. O que seria este protocolo ARP?
+
+            A primeira vez que o computador quer se comunicar com o IP, ele não sabe onde estará localizado. É preciso perguntar para todos os dispositivos que estão na nossa
+            rede.
+
+            Como o hub não tem informação aonde está conectado o equipamento com o IP do laptop, então, ele passará pelas outras portas perguntando quem é o computador que tem
+            o IP que receberá a informação. Ele enviará o protocolo ARP para descobrir.
+
+            O terceiro computador recebe a requisição e descarta a informação. Isto aconteceu porque o terceiro computador não tem o IP que estamos procurando. Estamos procurando
+            o IP 192.168.3.1, e como já vimos e nós próprios já configuramos, o computador 3 tem o IP 192.168.3.3.
+
+            Como o primeiro computador tem o IP que o Hub está procurando, terá que devolver enviando sua informação.
+
+            Este é o problema do Hub, ele não guarda informação sobre as máquinas conectadas em si mesmo. Esta é sua limitação.
+
+            Mesmo que a mesma máquina (2ª) envie dados para a primeira novamente, ele continuará a cada pacote, perguntando se não é a terceira a destinatária dos pacotes.
+
+            Resumindamente, ele passará sempre todas as informações para todos os dispositivos conectados em suas portas com exceção do que enviou.
+
+            O nome deste modo de operação é Broadcast. Imagine fazermos download de 500 mb através de um hub na rede e todos os outros dispositivos conectados a ele recebendo
+            a todo momento esta informação....Isto causaria uma lentidão na rede.
+
+            Isto nos leva a outra questão....Segurança da informação. Pelo nosso hub enviar a informação para todas as portas, em outras palavras, para todo mundo que estiver 
+            conectado, podemos ter um usuário malicioso no terceiro computador, por exemplo, e ele pode fazer o que chamamos de análise de protocolo e decifrar o que está sendo 
+            enviado pelo segundo computador. Além de lentidão, o hub representa vulnerabilidade da segurança.
+            
+
+
+            
         
 
     Questões aula 04:
+
+        1 - Qual seria duas das principais limitações do Hub?
+
+            Selecione uma alternativa
+
+            R: Segurança e lentidão
+
+            Os hubs não conseguem aprender onde está localizado cada máquina, dessa forma, ele repassa a informação para todas as demais máquinas conectadas. Isso quer dizer 
+            que caso ocorra um fluxo intenso de tráfego na rede, teremos essa informação sendo encaminhada para todos os demais usuários causando lentidão na rede. Além disso, 
+            quando usuários mandam a informação destinada para um usuário específico, os demais usuários recebem essa informação, causando assim uma vulnerabilidade de segurança.
+
+
+
+
 
 
 
