@@ -587,6 +587,9 @@ Aula 04: Montando nossa rede no programa -------
 
     Teoria:
 
+        O programa que utilizaremos agora para que possamos simular a nossa rede é o Packet Tracer, software criado pela Cisco.
+
+        Podemos realizar o dowload do programa no seguinte link: https://www.netacad.com/courses/packet-tracer/introduction-packet-tracer
         
 
     Questões aula 04:
