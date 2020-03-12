@@ -641,7 +641,7 @@ Aula 04: Montando nossa rede no programa -------
             enviado pelo segundo computador. Além de lentidão, o hub representa vulnerabilidade da segurança.
             
 
-        Wireshark https final:
+        Wireshark http final:
 
             Para que possamos ver a vulnerabilidade do hub que falamos no tópico anterior, utilizaremos o Wireshark, um programa de análise de protocolos.
 
@@ -715,7 +715,32 @@ Aula 04: Montando nossa rede no programa -------
 
             Temos que procurar um site que ainda use HTTP para realizar o teste.
 
-            
+        
+        Wireshark https final:
+
+            Realmente, assistindo a outra aula foi confirmado que o Buscapé agora usa o sistema de criptografia. Na época que foi gravada a aula ele ainda não utilizava.
+            Por isso era possível ver com análise de protocolo o que o usuário estava digitando.
+
+            Teriamos que procurar um site que não usa o SSL (Secure Sockets Layer) para que podermos testar.
+
+            Vimo então que se tentarmos ver análisar o protocolo de um site que está utilizando a camada de segurança, veremos uma página toda criptografada.
+
+
+        Para saber mais: Camadas de protocolos:
+
+            Vimos que o protocolo TCP está acima da camada do protocolo IP. Os protocolos em redes seguem uma hierarquia e cada um é responsável por determinada função na
+            comunicação.
+
+            Antigamente cada fabricante de equipamento de redes desenvolvia protocolos proprietários tornando impossível a comunicação de rede com equipamentos feitos por outros
+            fabricantes, criando assim o chamado "vendor lock-in".
+
+            Desta forma foi criado um modelo de protocolo que faria com que qualquer hardware ou software pudesse se comunicar mesmo que um equipamento possuísse mais recursos
+            que outro. Para isso foi definido que esses protocolos de comunicação seriam divididos em 7 camadas de comunicação, o chamado modelo OSI (Open System Interconnection).
+            O protocolo TCP se encontra na camada 4, que é a camada de transporte. Já o protocolo IP se encontra na camada 3, que é a camada de rede.
+
+            A parte de protocolos é muito extensa e não será abordada, porém é interessante estudar o modelo OSI.
+
+
     Questões aula 04:
 
         1 - Qual seria duas das principais limitações do Hub?
@@ -727,6 +752,160 @@ Aula 04: Montando nossa rede no programa -------
             Os hubs não conseguem aprender onde está localizado cada máquina, dessa forma, ele repassa a informação para todas as demais máquinas conectadas. Isso quer dizer 
             que caso ocorra um fluxo intenso de tráfego na rede, teremos essa informação sendo encaminhada para todos os demais usuários causando lentidão na rede. Além disso, 
             quando usuários mandam a informação destinada para um usuário específico, os demais usuários recebem essa informação, causando assim uma vulnerabilidade de segurança.
+
+
+        2 - Qual a principal utilização do programa Wireshark?
+
+            Selecione uma alternativa
+
+            R: Analisar protocolos para resolver problemas em redes
+
+            O Wireshark tem como principal utilização analisar protocolos que trafegam na rede com o intuito de verificar problemas que possam existir.
+
+        
+        3 - Qual desses é um protocolo utilizado para criptografar minha informação?
+
+            Selecione uma alternativa
+
+            R: TLS
+
+            TLS (Transport Layer Security) seria um protocolo de criptografia utilizado para segurança da informação. Ele seria a evolução do protocolo SSL (Secure Sockets Layer).
+
+        
+        4 - Qual seria a responsabilidade do protocolo TCP?
+
+            Selecione uma alternativa
+
+            R: Transportar minha informação
+
+            O protocolo TCP encontra-se acima da camada onde o IP está localizado e ele é responsável por realizar o transporte da minha informação. Além do protocolo TCP, 
+            essa camada possui também outro protocolo bastante conhecido, o UDP.
+
+        
+        5 - Porque não foi possível visualizar a informação que o usuário (vítima) digitou na página do youtube?
+
+            Selecione uma alternativa
+
+            R: A informação estava criptografada
+
+            O youtube usa em seu site um sistema de criptografia das informações, onde o protocolo TLS é responsável por essa atividade. Pelo fato das informações, estarem
+            criptografadas não foi possível reconstruir a informação e visualizar o que o usuário estava digitando.
+
+
+Aula 05: Switches e seus avanços -------
+
+    Teoria:
+
+        Nós vimos que os hub's são limitados, não conseguem gravar qual é a porta de determinado computador mandando as informações para todas as portas gerando lentidão e
+        falta de segurança na rede.
+
+        Foi com a intenção de resolver as limitações do hub que criaram outros equipamentos de rede, um deles é o Switch.
+
+        Criamos o mesmo ambiente de rede da outra aula no Packet Tracer, com uma única diferença, trocamos o hub pelo Switch.
+
+        A forma do Switch trabalhar é parecida com o hub, ele recebe informações nas portas 1 e 2, e transmite informações nas portas 3 e 6.
+        Utilizamos cabos diretos também para ligar os 3 computadores ao Switch.
+
+        O Switch precisa de um tempo para habilitar a porta de comunicação após o cabo direto estar conectado. O processo demora alguns segundo e é retratado na simulação do 
+        Packet tracer. A medida que as portas vão sendo habilitadas elas ficam verdes. 
+
+        Mudamos o ambiente de realtime para simulation novamente, para que possamos verificar passo a passo o que está acontecendo.
+
+        Realizamos o ping da mesma forma que anteriormente, do computador 2 para o computador 1.
+
+        Aqui também o protocolo ICMP está dentro do ping e o ARP, que não sabe onde está localizado o IP, perguntara para todos na rede.
+
+        Da mesma forma que o hub, o Switch irá disparar a informação para todos na primeira comunicação, com exceção da máquina de onde foi orifinada a informação.
+
+        A máquina 3 descartará a informação pois seu IP é diferente daquele para o qual enviamos o pacote, mas o laptop responderá com outra informação.
+
+        Nesta parte o hub continuaria enviando as informações para os dois computadores. Porém o Switch vai aprender quem é quem nesta primeira comunicação e vai registrar
+        estas informações internamente. Nas próximas vezes que tentarmos enviar informações ele já saberá para quem enviar.
+
+        Quando enviamos o protocolo ARP estamos perguntando quem tem determinado endereço IP, estamos na verdade pergutnando qual é o endereço mac com aquele número IP.
+
+        Endereço Mac é o endereço físico de nossa máquina, ou mais objetivamente, da nossa placa de rede. Exemplo de endereço Mac: 81-E7-51-17-35-77
+        Podemos verificá-lo com o comando: 
+        
+            > ipconfig /all
+
+        Este é um número único que vem direto do fabricante.
+
+        Uma vulnerabilidade do Switch que os hackers podem se aproveitar é de sua "tabela de memória". Se encher ela de endereços falsos, lotando sua memóriao aparelho
+        já não poderá mais decifrar o endereço de cada computador e voltará a enviar informações para todas as máquina, atuando da mesma forma que um hub.
+
+        O Switch trouxe grandes melhorias, mas ainda possui suas fragilidades que podem ser exploradas por hackers.
+
+        Algo que podemos fazer com prevenção a este tipo de ataque é o que chamamos de segurança da porta. Em que cada porta tem o número máximo de endereços mac que pode 
+        aceitar pré-definido. Caso haja um ataque, tentando enviar mais endereços mac para determinada porta, ela fica desabilitada.
+
+
+    Questões aula 05:
+
+        1 - O que é o protocolo ARP?
+
+            Selecione uma alternativa
+
+            R: Quando eu não conheço um dispositivo eu lanço esse protocolo para procurar o IP que eu quero me comunicar. A máquina buscada por sua vez vai retornar 
+            informando seu endereço MAC
+
+            O ARP é o protocolo utilizado para fazer o mapeamento entre o endereço IP e o endereço MAC de um dispositivo. Isso é necessário porque o MAC encontra-se 
+            um nível abaixo do IP e eu preciso dele para poder transmitir as informações.
+
+            Em redes de computadores, temos protocolos que possuem hierarquias diferentes. Para poder chegar até o IP que está na camada 3, eu preciso passar pelo MAC que está
+            na camada 2, pense como se fosse escalar uma pirâmide, não dá pra chegar ao topo sem passar pelo meio dela!
+
+
+        2 - Qual equipamento veio para substituir os hubs?
+
+            Selecione uma alternativa
+
+            R: Switches
+
+
+        3 - Qual é a principal diferença entre os Hubs e os Switches?
+
+            Selecione uma alternativa
+
+            R: O Hub não consegue aprender onde um equipamento está localizado, o Switch sim
+
+            Os hubs não conseguem aprender o endereço MAC das máquinas, já os Switches possuem essa função.
+
+
+        4 - Como o Switch aprende onde um equipamento está localizado?
+
+            Selecione uma alternativa
+
+            R: Quando um dispositivo quer se comunicar com outro, ele vai necessitar passar pelo Switch e ele informa dentro do pacote qual é seu endereço MAC e o Switch grava 
+            essa informação em sua memória.
+
+            Os dispositivos ao se comunicarem passam pelo Switch e ao passar pelo Switch ele grava em sua memória quem está conectado em qual porta.
+
+        
+        5 - Qual é uma forma de ataque usada para conseguir informações passadas no Switch destinadas a outro usuário?
+
+            Selecione uma alternativa
+
+            R: Colocar vários endereços MAC falsos para “lotar” a memória do Switch e fazer com que ele atue como um Hub.
+
+            Métodos usados por usuários maliciosos seria de inserir vários endereços MAC falsos para “lotar” a memória do Switch, uma vez que a memória esteja cheia, o Switch 
+            não vai conseguir definir quem está onde e ele passa a atuar como um Hub.
+
+        
+        6 - Como podemos nos prevenir contra esse ataque?
+
+            Selecione uma alternativa
+
+            R: Configurar a opção de segurança na porta, para que assim fique limitada a receber uma quantidade máxima de endereços MAC, caso ultrapasse, a porta é desabilitada
+
+            Podemos configurar a porta do Switch para aceitar um número máximo de endereços MAC, ao ultrapassar esse limite a porta é desligada e o ataque não teria sucesso.
+
+        
+
+
+
+
+
 
 
 
