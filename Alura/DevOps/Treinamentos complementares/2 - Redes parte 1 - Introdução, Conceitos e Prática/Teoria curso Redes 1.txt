@@ -641,10 +641,81 @@ Aula 04: Montando nossa rede no programa -------
             enviado pelo segundo computador. Além de lentidão, o hub representa vulnerabilidade da segurança.
             
 
+        Wireshark https final:
+
+            Para que possamos ver a vulnerabilidade do hub que falamos no tópico anterior, utilizaremos o Wireshark, um programa de análise de protocolos.
+
+            Para realizarmos download deste programa para Windows ou Mac, utilizaremos o seguinte link:
+
+                https://www.wireshark.org/#download
+
+                Caso a instalação for feita para Linux:
+
+                    https://drive.google.com/file/d/0BzmYQVmw4W7nTVVfeURTV2hySk0/view
+
+                    E então descompactar e realizar a instalação, depois ir até o terminal e digitar:
+                        
+                        - sudo apt-get install libcap2-bin wireshark
+                        - sudo chgrp (#seu usuario#) /usr/bin/dumpcap
+                        - sudo chmod 750 /usr/bin/dumpcap
+                        - sudo setcap cap_net_raw,cap_net_admin+eip /usr/bin/dumpcap
+                        - wireshark
+
+            Iremos simular dois papéis, da vitima e do usuário malicioso.
+
+            Após abrirmos o programa Wireshark, ele irá analisar o nosso computador e verificar quais são as conexões de rede.
+
+            Devemos escolher a conexão de rede que estamos utilizando, será uma das conexões que tem atividade, normalmente com o nome ethernet.
+
+            Depois que dermos dois cliques nesta conexão veremos que temos alguns protocolos passando pela rede.
+
+            Como a intenção aqui é somente demonstrar a vulnerabilidade do hub, não nos aprofundaremos na ferramenta Wireshark.
+
+            Nosso laboratório aqui teria um cenário onde o usuário malicioso conectou seu laptop ou desktop na porta do hub e começará a análisar o tráfego da rede.
+            A vítima, por sua vez, irá acessar um site, no exemplo do curso foi acessado o site do buscapé onde foi feita a busca de câmeras da marca Canon.
+
+            O usuário malicioso quer descobrir qual foi o último termo de busca pesquisado pelo usuário no Buscapé.
+            Primeiramente ele filtra os protocolos referentes ao site Buscapé por meio do IP do servidor do site www.buscape.com.br
+            Como vimos na outra aula, é possível fazer isso com o comando:
+
+                > nslookup www.buscape.com.br
+
+            Será retornado o endereço ip da máquina do Buscapé.
+            No meu caso a saída foi:
+
+                > nslookup www.buscape.com.br
+
+                    Servidor:  csp3.zte.com.cn
+                    Address:  192.168.1.1
+
+                    Não é resposta autoritativa:
+                    Nome:    dh8bafpwuwdxw.cloudfront.net
+                    Addresses:  2600:9000:21e8:ce00:19:3c2f:2500:93a1
+                            2600:9000:21e8:1c00:19:3c2f:2500:93a1
+                            2600:9000:21e8:4c00:19:3c2f:2500:93a1
+                            2600:9000:21e8:c000:19:3c2f:2500:93a1
+                            2600:9000:21e8:4e00:19:3c2f:2500:93a1
+                            2600:9000:21e8:9800:19:3c2f:2500:93a1
+                            2600:9000:21e8:6600:19:3c2f:2500:93a1
+                            2600:9000:21e8:f800:19:3c2f:2500:93a1
+                            13.227.101.81
+                            13.227.101.56
+                            13.227.101.114
+                            13.227.101.21
+                    Aliases:  www.buscape.com.br
+                            buscape_company_ptr.zst.com.br
+
+            Então, o IP (Padrão IPv6) que encontramos foi: 2600:9000:21e8:ce00:19:3c2f:2500:93a1
+            Voltamos ao Wireshark e fazemos o seguinte busca: ipv6.addr == 2600:9000:21e8:ce00:19:3c2f:2500:93a1
+
+            Podemos observar que na coluna de protocolo aparece diversas vezes TCP. O protocolo TCP está uma camada acima do IP, e será responsável por indicar como a comunicação
+            será estabelecida e será transportada a informação. Se conseguirmos reconstruir o protocolo TCP, podemos ver eventualmente os header do HTTP e descobrir algumas informações.
+
+            Obs: Pelo que parece, este tipo de testes nao pode ser feito por causa do HTTPS/2...
+
+            Temos que procurar um site que ainda use HTTP para realizar o teste.
 
             
-        
-
     Questões aula 04:
 
         1 - Qual seria duas das principais limitações do Hub?
