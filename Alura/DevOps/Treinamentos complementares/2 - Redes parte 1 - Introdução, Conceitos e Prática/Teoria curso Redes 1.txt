@@ -901,9 +901,119 @@ Aula 05: Switches e seus avanços -------
             Podemos configurar a porta do Switch para aceitar um número máximo de endereços MAC, ao ultrapassar esse limite a porta é desligada e o ataque não teria sucesso.
 
         
+Aula 06: Roteadores e a comunicação externa -------
+
+    Teoria:
+
+        Máscaras de rede:
+
+            Mesmo que os computadores estejam conectados no mesmo switch ou no mesmo hub, não significa que eles estão na mesma rede.
+
+            Nós podemos fazer uma separação lógica de endereçamento e colocar cada computador em uma rede diferente.
+            Precisamos as vezes segmentar uma rede em duas ou mais para atender vários tipos de necessidades. Separar setores de uma mesma empresa, por exemplo.
+
+            Primeiro ponto a se considerar é: como saberemos se o computador está na mesma rede?
+
+            Quando entramos nas propriedades da nossa conexão de rede para configurar o nosso número IP de forma manual, vemos um campo chamado: "Subnet Mask" ou Máscara de 
+            sub-rede.
+
+            No caso do laboratório que utilizamos, deixamos este campo configurado com 255.255.255.0
+            Esta é uma informação importante para saber se os computadores estão na mesma rede.
+            Façamos uma analise...
+
+                Endereço IP: 192.168.3.2
+                Máscara de rede: 255.255.255.0
+
+            A máscara de rede dividi o endereço IP do computador em dois grandes grupos: um referente às redes e outro às máquinas.
+
+                255 = Rede
+                0 = Máquina (Host)
+
+            Tudo o que for 255 será referente à rede, e o que for 0 será referente ao host. Então, ele analisará o primeiro intervalo:
+
+            Então, definimos que, para outro dispositivo estar na mesma rede do nosso computador configurado logo acima, ele precisará começar com o mesmo intervalo de octeto.
+            Logo, ele deverá começar por 192.
+
+            Então ele passará para o outro intervalo: Se este dispositivo quiser estar na mesma rede, deverá ter o segundo octeto 168. E o mesmo no terceiro octeto: O computador
+            deverá ser igual a 3.
+
+            Ou seja, sobrou só o ultimo octeto para o número de máquinas. Então para qualquer outro computador esta na mesma rede do computador acima, terá que ter o início:
+
+                192.168.3
+
+            O ultimo octeto fica livre, e qualquer numero que outros pc's configurem neste grupo, conseguirá se comunicar com nosso computador.
+
+            Exemplo: 192.168.3.1
+
+                        ou
+
+                     192.168.3.3
+
+                     ou até mesmo
+
+                     192.168.3.77
+
+            O que realmente importa é que para estar na mesma rede o endereço IP deve começar por 192.168.3.
+
+            Por isso que no nosso laboratório todas as máquinas foram configuradas com o ínicio 192.168.3. Qualquer um dos três intervalos que tivessem sido mudados em nossa
+            configuração e qualquer uma das máquinas, iria impedir esta mesma máquina de se comunicar na rede.
+
+            O teste realizado nesta aula foi mudar o primeiro intervalo para 191, deixando o IP da primeira máquina assim:
+
+                191.168.3.1
+
+            Ao realizar novamente o teste de ping da máquina 2 para a máquina 1 ele não conseguiu enviar os pacotes perdendo todos os 4.
+            A conexão não foi estabelecida e a máquina não respondeu.
+            Ou seja, com o Hub e com o Switch só conseguimos nos conectar com computadores que estão na mesma rede.
+
+        
+        Roteadores:
+
+            
+
+    
+    Questões aula 06:
+
+        1 - Qual a função da máscara de rede?
+
+            Selecione uma alternativa
+
+            R: Dividir o endereço IP em dois grupos (rede e máquina) e a partir daí poder definir quando outro dispositivo estará na mesma rede que eu.
+
+            A máscara de rede é usada como forma de comparação para determinar se dois equipamentos estão na mesma rede. Para isso ela vai dividir o endereço IP em dois grupos,
+            de rede e hosts (máquinas).
+
+
+        2 - Esses dois dispositivos:
+
+            1- IP: 192.168.0.3 ; Máscara: 255.255.255.0
+
+            2- IP: 192.169.0.4 ; Máscara: 255.255.255.0
+
+            Estão na mesma rede?
+
+            Selecione uma alternativa
+
+            R: Não
+            
+            Lembre-se, a máscara de rede está dizendo que para dois equipamentos estarem na mesma rede, os 3 primeiros octetos do IP devem ser iguais, uma vez que suas 
+            máscaras são 255.255.255.0.
+
+        
+        3 - Se eu tenho um endereço IP: 33.44.55.66 e máscara de rede: 255.0.0.0, qual desses endereços abaixo vai caracterizar que outro dispositivo está na mesma rede que eu?
+
+            Lembre-se: - 255 = Rede - 0 = Host
+
+            Selecione uma alternativa
+
+            R: IP: 33.255.4.3 ; Máscara: 255.0.0.0
+
+            O 1° octeto do endereço IP é 33, logo só ele me importa para analisar se outro dispositivo está na mesma rede que eu, os demais são números da máquina. As outras 
+            opções começam com número diferente de 33, o que caracteriza que a máquina está em outra rede.
 
 
 
+        
 
 
 
