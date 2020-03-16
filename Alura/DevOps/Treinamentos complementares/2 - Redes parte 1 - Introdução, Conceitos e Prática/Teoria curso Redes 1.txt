@@ -971,6 +971,282 @@ Aula 06: Roteadores e a comunicação externa -------
 
             
 
+        Configurando roteador:
+
+            Vimos uma imagem de um roteador doméstico no curso, com 4 portas amarelas e 1 porta azul.
+            As portas amarelas são do "Switch" embutido no aparelho. Isto acontece nos equipamentos domésticos para economizar espaço.
+
+            Os equipamentos que temos no simulador Packet Tracer da Cisco são focados para empresa. E em uma empresa estes equipamentos (Switch e Router) ficam separados.
+            Switch para conectar computadores e usuários na mesma rede, Roteador para conectar redes.
+
+            Por isso só teremos duas portas no roteador do projeto que estamos fazendo.
+
+            Para conseguirmos realizar a configuração do Roteador precisaremos de um cabo chamado, cabo console.
+            Ele é um cabo azul, que em uma das pontas é RJ45 e na outra ponta o conector Rs232, referente a uma porta serial (que transmite os bits um por vez).
+
+            O RJ-45 é conectado na porta do roteador e o Rs232 em um computador onde iremos definir as configurações. Porém, a maioria dos computadores não vem mais com a 
+            porta serial, então precisamos usar um adaptador.
+
+            Um programa que podemos utilizar para realizar a configuração do equipamento da Cisco é o PuTTy.
+
+            O PuTTY é muito útil quando queremos acessar remotamente um equipamento. Podemos remotamente configurar um aparelho. Caso tenha alguém na outra cidade para nos
+            auxiliar com o atendimento remoto não precisaremos nos deslocar para realizar a configuração. A interface gráfica dele é amigável.
+
+            No nosso laboratório desta aula, mantemos dois computadores e um roteador, conectados por cabo cross over.
+            Adicionamos apenas um computador com a conexão do cabo Rs232 na porta console do roteador para simular a configuração do roteador.
+
+            Porém isto é na prática, já no nosso simulador da Cisco as coisas são um pouco mais simples, pois podemos clicar no roteaodr e ir até a aba CLI 
+            (Command Line Interface).
+
+            Na prática precisaríamos fazer a conexão via computador. Para isto clicaremos no computador e utilizaremos o terminal.
+
+            No terminal nos será perguntado como queremos conectar com o roteador. Nós deixaremos as velocidades padrões. A partir de agora, faremos as configurações clicando
+            diretamente no roteador. Se quisermos podemos fazer a configuração do roteador clicando no computador do simulador.
+
+            Podemos escolher apagar o computador para configuração do roteador se quisermos, pois no ambiente virtual temos a opção de configurar clicando direto no roteador.
+
+            Configuramos as cores e tamanho de nossa preferência para utilizar o CLI do roteador em: Options > Preferences > Font.
+
+            Na aba CLI é possível fazer as configurações do equipamento da Cisco. O objetivo é estabelecer a conexão entre o setor Financeiro e o Marketing.
+
+            Manteremos o mesmo IP da outra aula, o Financeiro ficará com o IP 191.168.3.1 e o Marketing, 192.168.3.2.
+
+            Por ora, as conexões com o router aparecem em vermelho porque estão desabilitadas por padrão.
+
+            A primeira coisa que temos que fazer é habilitar as portas do router:
+
+                Caso apareça a mensagem: Continue with configuration dialog? Responderemos: "no", pois este modo é muito demorado.
+
+                Então, teremos o modo livre de entrada: Router> (Que chamamos de modo usuário).
+
+            Quem acessa este modo só poderá fazer algumas configurações básicas da plataforma. Ele não poderá configurar nada efetivamente, por uma questão de segurança.
+
+            Para sabermos quais configurações são possíveis de serem realizadas no modo usuário, digitaremos o "?":
+
+                Router>?
+
+                Então apertamos "ENTER"...
+
+            Podemos utilizar este comando em qualquer terminal da Cisco. Podemos usá-lo com qualquer comando para verificarmos quais são os complementos do comando:
+
+                Router>enable?
+
+            Ele retornará tudo que ainda pode ser feito com o enable.
+            Podemos usar o "?" em todas as etapas da escrita do código.
+
+            Falamos sobre estarmos no modo usuário e podermos fazer apenas configurações básicas na plataforma. O que fazemos então para poder aumentar os privilégios?
+
+            Digitaremos "enable" apenas:
+
+                Router>enable
+
+                a saída:
+
+                Router#
+
+            Ainda não poderemos configurar o equipamento, mas se usarmos novamente a ?, ele nos retornará uma lista de visualizações do que chamamos de "repardo de problemas".
+
+                Router#?
+                    Exec commands:
+                    <1-99>      Session number to resume
+                    auto        Exec level Automation
+                    clear       Reset functions
+                    clock       Manage the system clock
+                    configure   Enter configuration mode
+                    connect     Open a terminal connection
+                    copy        Copy from one file to another
+                    debug       Debugging functions (see also 'undebug')
+                    delete      Delete a file
+                    dir         List files on a filesystem
+                    disable     Turn off privileged commands
+                    disconnect  Disconnect an existing network connection
+                    enable      Turn on privileged commands
+                    erase       Erase a filesystem
+                    exit        Exit from the EXEC
+                    logout      Exit from the EXEC
+                    mkdir       Create new directory
+                    more        Display the contents of a file
+                    no          Disable debugging informations
+                    ping        Send echo messages
+                    reload      Halt and perform a cold restart
+
+                    --More-- (Após está linha os comando continuam, devemos apertar "ENTER" para verifica-los)
+                                (Precionar a barra de espaço irá mostrá-los todos de uma só vez)
+
+                    resume      Resume an active network connection
+                    rmdir       Remove existing directory
+                    send        Send a message to other tty lines
+                    setup       Run the SETUP command facility
+                    show        Show running system information
+                    ssh         Open a secure shell client connection
+                    telnet      Open a telnet connection
+                    terminal    Set terminal line parameters
+                    traceroute  Trace route to destination
+                    undebug     Disable debugging functions (see also 'debug')
+                    vlan        Configure VLAN parameters
+                    write       Write running configuration to memory, network, or terminal
+
+                Router#
+
+            Agora que estamos no modo de privilégios avançados entraremos na aba de configuração.
+            Digitaremos:
+
+                Router#configure terminal
+
+                Nossa saída:
+
+                Enter configuration commands, one per line.  
+                End with CNTL/Z.
+                Router(config)#
+
+            Agora o modo de operação mudou para configurarmos o computador.
+
+            Iremos então configurar habilitar as portas.
+            Habilitaremos a porta "FastEthernet 0/0". Escrevemos isso na aba CLI:
+
+                Router(config)#interface gigabitehternet 0/0/0
+
+                Ele pode completar o nome se quisermos. Ao precionarmos "ENTER" ele já subirá o privilégio:
+
+                Router(config-if)#
+
+            Agora, nós estamos configurando a interface. Nós iremos habilitá-la adicionando "no shutdown":
+
+                Router(config-if)#no shutdown
+
+                    Router(config-if)#
+                    %LINK-5-CHANGED: Interface GigabitEthernet0/0/0, changed state to up
+
+                    %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0/0, changed state to up
+
+                    A porta está habilitada!
+
+                Podemos reparar que a luz da conexão ficou verde.
+
+                Para sairmos da configuração desta porta digitamos:
+
+                    Router(config-if)#exit
+
+                Agora começamos a configurar a segunda porta, a porta da setor de Marketing:
+
+                    Router(config)#interface gigabitethernet 0/0/1
+                    Router(config)#no shutdown
+
+                Agora temos as duas portas habilitadas.
+
+            Precisamos então, configurar o endereçamento IP que cada uma das portas receberá, para podermos fazer está transição da rede do Financeiro para a rede do Marketing
+                Para isto, digitaremos:
+
+                    Router(config-if)#ip ?
+
+                Nossa saída:
+                    
+                    access-group     Specify access control for packets
+                    address          Set the IP address of an interface
+                    authentication   authentication subcommands
+                    flow             NetFlow Related commands
+                    hello-interval   Configures IP-EIGRP hello interval
+                    helper-address   Specify a destination address for UDP broadcasts
+                    inspect          Apply inspect name
+                    ips              Create IPS rule
+                    mtu              Set IP Maximum Transmission Unit
+                    nat              NAT interface commands
+                    ospf             OSPF interface commands
+                    proxy-arp        Enable proxy ARP
+                    split-horizon    Perform split horizon
+                    summary-address  Perform address summarization
+
+                Vemos quais opções ele nos da, e em seguida digitaremos:
+
+                    Router(config-if)#ip address ?
+                    
+                Nossa saída:
+
+                    A.B.C.D  IP address
+                    dhcp     IP Address negotiated via DHCP
+
+                Aqui somos informados se queremos definir um IP estático ou a configuração por DHCP vinda de uma máquina que nos entregará os IPs. Como nós não temos a máquina,
+                iremos adicionar o estático manualmente.
+
+                Lembrando que o IP do Marketing é: 192.168.3.2, mas para o roteador, iremos configurar um IP que terá o último octeto com o valor diferente.
+
+                    192.168.3.5
+
+                    Se digitarmos mais uma vez o "?", ele dirá que falta informar a máscara de rede relacionada ao IP. Por isso, adicionaremos 255.255.255.0.
+
+                        Router(config-if)#ip address 192.168.3.5 255.255.255.0
+
+                Saímos então das configurações de IP do roteador.
+
+            Iremos agora realizar o ping para verificar se conexão está funcionando:
+
+                Router#ping 192.168.3.2
+
+            Nossa saída:
+                
+                Type escape sequence to abort.
+                Sending 5, 100-byte ICMP Echos to 192.168.3.2, timeout is 2 seconds:
+                !!!!!
+                Success rate is 100 percent (5/5), round-trip min/avg/max = 0/2/12 ms
+
+            A requisição teve sucesso, de cinco pacotes enviados, quatro retornaram. Isto significa que conseguimos nos comunicar com o computador da rede de Marketing.
+
+            Faremos o mesmo processo de configuração para o computador do Financeiro. Entraremos na configuração do terminal:
+
+                Router#configure terminal
+
+            Saída:
+
+                Enter configuration commands, one per line.  End with CNTL/Z.
+                Router(config)#
+
+            Então iremos para a interface do computador do financeiro:
+
+                Router(config)#interface gigabitEthernet 0/0/0
+
+            Saída:
+
+                Router(config-if)#
+
+            Aqui veremos o que acontece se caso colocarmos somente o IP:
+
+                Router(config-if)#ip address 191.168.3.7
+                % Incomplete command.
+
+                Adicionamos o "?" depois do IP para verificarmos o que está faltando:
+
+                    Router(config-if)#ip address 191.168.3.7 ?
+                    A.B.C.D  IP subnet mask
+
+                    Então colocamos o que faltou:
+
+                        Router(config-if)#ip address 191.168.3.7 255.255.255.0
+            
+            Control+Z para voltarmos ao modo inciial. E logo, testamos a conectividade usando o ping.
+
+                Router#ping 191.168.3.1
+
+            Nossa saída:
+
+                Type escape sequence to abort.
+                Sending 5, 100-byte ICMP Echos to 191.168.3.1, timeout is 2 seconds:
+                .!!!!
+                Success rate is 80 percent (4/5), round-trip min/avg/max = 0/0/0 ms
+
+
+            Nosso roteador consegue pingar tanto a rede do Financeiro quanto do Marketing. Isto significa que os dois computadores podem se comunicar diretamente.
+            Agora realizaremos o teste de ping do computador do Financeiro com o computador do Marketing.
+
+            Nossa saída: 
+
+                C:\>ping 192.168.3.2
+
+                Pinging 192.168.3.2 with 32 bytes of data:
+
+                Request timed out.
+
+            Porque a requisição não foi respondida, já que os dois computadores agora se comunicam com o roteador?
+
     
     Questões aula 06:
 
