@@ -1262,7 +1262,95 @@ Aula 06: Roteadores e a comunicação externa -------
 
             Porque a requisição não foi respondida, já que os dois computadores agora se comunicam com o roteador?
 
-    
+        
+        Portão de saída:
+
+            Nós tentamos fazer o teste de comunicação entre o Financeiro e o Marketing, mas ainda não tivemos sucesso.
+
+            Configuramos no Financeiro o IP: 191.168.3.1 e no Marketing o IP: 192.168.3.2, configuramos as mascaras que ficaram: 255.255.255.0. Sendo assim, os dois computadores sabem
+            através dos três primeiros octetos que a outra máquina não está na mesma rede. Nós configuramos o roteador, e já conseguimos com que os dois computadores se comuniquem com
+            este roteador. Porém agora precisamos indicar por onde queremos que a informação seja enviada.
+
+            O que dizemos para o computador é: "Caso você precise se comunicar com um computador em uma rede diferente, você enviará para o roteador"
+            Afinal, a função do roteador é conectar redes diferentes. Então o computador passa o problema para o roteador, que terá que encontrar uma forma de enviar a informação adiante.
+
+            Por isso é necessário configurar um novo campo no nosso adaptador, que é: Default Gateway ou Portão Padrão.
+            Trata-se do portão de saída da rede, que no caso é o roteador. Utilizaremos aquele IP que configuramos em cada porta do roteador.
+            Para o computador do Financeiro: 191.168.3.7 e para o computador do Marketing: 192.168.3.5.
+
+            Para que possamos confirmar os IP's que já configuramos, usamos o seguinte comando no CLI do router:
+
+                Router>enable
+
+                e então...
+
+                Router#show ip interface brief
+
+                a nossa saída:
+
+                Interface              IP-Address      OK? Method Status                Protocol 
+                GigabitEthernet0/0/0   191.168.3.7     YES manual up                    up 
+                GigabitEthernet0/0/1   192.168.3.5     YES manual up                    up 
+                GigabitEthernet0/0/2   unassigned      YES unset  administratively down down 
+                Vlan1                  unassigned      YES unset  administratively down down
+
+            O brief nada mais é que um resumo das configurações das interfaces do nosso roteador.
+
+            Fazemos um novo teste de ping entra a máquina do financeiro e do marketing.
+                Obs: Lembrando que precisamos do Gateway configurado nas duas máquinas para que a informação saiba por onde entrar ou sair nos dois micros.
+
+                Saída:
+
+                    (Ping do computador do Financeiro (191.168.3.1) para o computador do Marketing (192.168.3.2))
+
+                    C:\>ping 192.168.3.2
+
+                        Pinging 192.168.3.2 with 32 bytes of data:
+
+                        Reply from 192.168.3.2: bytes=32 time<1ms TTL=127
+                        Reply from 192.168.3.2: bytes=32 time<1ms TTL=127
+                        Reply from 192.168.3.2: bytes=32 time<1ms TTL=127
+                        Reply from 192.168.3.2: bytes=32 time<1ms TTL=127
+
+                        Ping statistics for 192.168.3.2:
+                            Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
+                        Approximate round trip times in milli-seconds:
+                            Minimum = 0ms, Maximum = 0ms, Average = 0ms
+
+
+            Podemos observar no novo teste que agora o TTL aparece igual a 127 e não mais como 128, isto porque agora o roteador decrementa 1 a cada vez que a informação pass por ele.   
+
+            Temos duas opções nas configurações de portas do roteador que não trabalhamos nos exercícios anteriores:
+
+        
+        Roteador doméstico:
+
+            Por ora, apenas verificamos o Gateway padrão da nossa casa, no nosso roteador doméstico.
+
+                No terminal digitamos:
+
+                    > ipconfig ou ipconfig /all
+
+                        Pegamos o nosso Gateway padrão 192.168.1.1 e colamos este endereço no browse, onde vimos a tela de login para as configurações do roteador.
+
+
+                Duplex:
+
+                    Opção: # duplex auto
+
+                    Quando a porta tem a opção de operar em modo full duplex, quer dizer que ela é capaz de enviar e receber dados ao mesmo tempo, enquanto que half duples não consegue
+                    realizar tal operação simultaneamente, somente em um sentido de operação.
+
+                Speed:
+
+                    Opção: # speed auto
+
+                    Seria a velocidade de transmissão. Inicialmente as placas de rede eram capazes de transmitir em velocidades de somente 10Mbps (padrão Ethernet). Porém outras
+                    velocidades foram especificadas posteriormente como a FastEthernet 100Mbps, Gigabit Ethernet 1.000 Mbps, etc.
+                    Auto seria de auto negociação, isso quer dizer que as placas de rede interconectadas vão negociar para utilizarem parâmetros de transmissão suportados pelas duas 
+                    placas de rede, como a forma de comunicação e velocidade de transmissão.
+
+
     Questões aula 06:
 
         1 - Qual a função da máscara de rede?
@@ -1326,6 +1414,19 @@ Aula 06: Roteadores e a comunicação externa -------
             feito para interconectar redes, se eu coloco somente um dispositivo, não terei como inserir outros dispositivos para o roteador encaminhar os pacotes e então a totalidade
             de sua função não está sendo explora. Devemos usar cabo crossover.
 
+
+        6 - Para que serve o default gateway?
+
+            Selecione uma alternativa
+
+            R: Ele é o "portão de saída" da minha rede
+
+            O default gateway é o endereço IP o qual será responsável por encaminhar pacotes para redes externas, é o IP do meu roteador.
+
+
+Aula 07: Entendendo os endereços IP -------
+
+    
 
 
 
