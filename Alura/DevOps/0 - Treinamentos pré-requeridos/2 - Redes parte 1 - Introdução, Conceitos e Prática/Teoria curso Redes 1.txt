@@ -969,6 +969,27 @@ Aula 06: Roteadores e a comunicação externa -------
         
         Roteadores:
 
+            Para fazer com que dois computadores de redes diferentes se comuniquem, precisaremos de um roteador.
+
+            Nesta aula deletamos o Switch e um dos computadores (3), e adicionamos um Router e deixamos os outros dois computadores.
+
+            Primeiro verificamos se estamos conectando equipamentos com placas de rede semelhantes, como estamos conectando os dois computadores ao Router, não estamos conectando
+            equipamentos semelhantes.
+
+            Neste exemplo o Router não esta sendo usado de forma eficiente pois estamos conectando apenas dois computadores a ele, enquanto ele poderia conectar redes inteiras de 
+            setores diferentes.
+
+            Por isso, utilizamos cabo cruzado no projeto desta aula. Pois o roteador não estará conectando redes diferentes, mas sim, apenas duas máquinas.
+
+            Conectamos a porta fast ethernet dos dois computadores as portas disponíveis do roteador.
+
+            Criamos também a segmentação por setores da empresa, de ínicio, financeiro e marketing.
+
+        
+        Configuração do roteador:
+
+            
+
             
 
     
@@ -1010,6 +1031,39 @@ Aula 06: Roteadores e a comunicação externa -------
 
             O 1° octeto do endereço IP é 33, logo só ele me importa para analisar se outro dispositivo está na mesma rede que eu, os demais são números da máquina. As outras 
             opções começam com número diferente de 33, o que caracteriza que a máquina está em outra rede.
+
+        
+        4 - Qual equipamento é usado para comunicar com redes externas?
+
+            Selecione uma alternativa
+
+            R: Roteador
+
+            A função do roteador é interconectar redes encaminhando e seus pacotes de dados, os Switches e hubs são usados somente para conexão na minha rede local.
+
+        
+        5 - Para conectar um computador com um roteador, qual tipo de cabo eu uso?
+
+            Selecione uma alternativa
+
+            R: Cabo cruzado
+
+            Lembre-se da regra: - Dois equipamentos iguais estão interconectados? Se sim, eles tem o mesmo tipo de placa, então devo usar o cabo crossover. Se não, faço a pergunta abaixo
+            - Dois equipamentos diferentes estão conectados? Essa conexão representa o que naturalmente o equipamento foi desenvolvido para fazer?
+
+            Por exemplo ao interconectar o computador ao hub e o computador ao switch, o computador foi feito para se comunicar com várias máquinas e o hub e switch foram feitos para
+            interconectar diversas máquinas. Dessa forma ao conectarmos os dois, vamos estar explorando o que os dois foram fabricados para fazer naturalmente. Porém o roteador foi 
+            feito para interconectar redes, se eu coloco somente um dispositivo, não terei como inserir outros dispositivos para o roteador encaminhar os pacotes e então a totalidade
+            de sua função não está sendo explora. Devemos usar cabo crossover.
+
+
+
+
+
+
+
+
+
 
 
 
