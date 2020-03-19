@@ -1406,13 +1406,14 @@ Aula 06: Roteadores e a comunicação externa -------
 
             R: Cabo cruzado
 
-            Lembre-se da regra: - Dois equipamentos iguais estão interconectados? Se sim, eles tem o mesmo tipo de placa, então devo usar o cabo crossover. Se não, faço a pergunta abaixo
+            Lembre-se da regra: - Dois equipamentos iguais estão interconectados? Se sim, eles tem o mesmo tipo de placa, então devo usar o cabo crossover. Se não, faço a 
+            pergunta abaixo
             - Dois equipamentos diferentes estão conectados? Essa conexão representa o que naturalmente o equipamento foi desenvolvido para fazer?
 
-            Por exemplo ao interconectar o computador ao hub e o computador ao switch, o computador foi feito para se comunicar com várias máquinas e o hub e switch foram feitos para
-            interconectar diversas máquinas. Dessa forma ao conectarmos os dois, vamos estar explorando o que os dois foram fabricados para fazer naturalmente. Porém o roteador foi 
-            feito para interconectar redes, se eu coloco somente um dispositivo, não terei como inserir outros dispositivos para o roteador encaminhar os pacotes e então a totalidade
-            de sua função não está sendo explora. Devemos usar cabo crossover.
+            Por exemplo ao interconectar o computador ao hub e o computador ao switch, o computador foi feito para se comunicar com várias máquinas e o hub e switch foram feitos
+            para interconectar diversas máquinas. Dessa forma ao conectarmos os dois, vamos estar explorando o que os dois foram fabricados para fazer naturalmente. Porém o 
+            roteador foi feito para interconectar redes, se eu coloco somente um dispositivo, não terei como inserir outros dispositivos para o roteador encaminhar os pacotes
+            e então a totalidade de sua função não está sendo explora. Devemos usar cabo crossover.
 
 
         6 - Para que serve o default gateway?
@@ -1425,6 +1426,338 @@ Aula 06: Roteadores e a comunicação externa -------
 
 
 Aula 07: Entendendo os endereços IP -------
+
+    Teoria:
+
+        Classes IP:
+
+            Precisamos configurar IP's nas máquinas para que elas se comuniquem, mas não podemos criar qualquer valor em qualquer intervalod de endereço. Por isso existe um 
+            órgão internacional que regulamenta os IP's colocando em classes que podem ser utilizadas.
+
+            Classe A:
+
+                Classe de endereçamento: A
+                Intervalo 1º octeto: 1 - 126
+                Máscara de rede: 255.0.0.0
+
+                Para que um endereço IP esteja dentro da classe A, o primeiro octeto tem que estar entre 1-126 e a máscara de rede padrão 255.0.0.0
+
+                O que for 255 é parte da rede e o que for 0 estará reservado para os host's.
+
+                A máscara faz a análise o IP e para cada octeto seu que for 255 ela verificará no respectivo octeto do IP é igual ao outro ip que esta sendo comparado.
+
+                Ex:
+
+                Se a máscara for 255.0.0.0 e o IP da máquina for 124.4.7.9 o IP da outra máquina na mesma rede deverá ter obrigatoriamente o primeiro octeto igual, que é: 124
+
+            Classe B:
+
+                Classe de endereçamento: B
+                Intervalo do 1º octeto: 128-191
+                Máscara de rede: 255.255.0.0
+
+                Neste caso da Classe B, como a máscara é 255.255.0.0 os dois primeiros octetos dos IP's que estiverem na mesma rede tem que ser igual.
+
+                Ex:
+
+                    172.161.X.X, então os dois octetos seguintes são reservados para host, não importante seu valor para que os computadores se comuniquem.
+
+            
+            Classe C:
+
+                Classe de endereçamento: C
+                Intervalo do 1º octeto: 192-223
+                Máscara de rede: 255.255.255.0
+
+                Nesta classe o primeiro Octeto deve estar entre 192 e 223 e a máscara padrão é 255.255.255.0, assim como nosso laboratório funcionou.
+
+                Na classe C os dois octetos seguintes, segundo e terceiro, tem que ser o mesmo para IP's que ficarão na mesma rede.
+
+            
+            Classe D: 
+
+                Classe de endereçamento: D
+                Intervalo do 1º octeto: 224-239
+                Máscara de rede: -------
+
+                Primeiro octeto nesta classe tem que estar entre 224-239.
+
+                É uma classe reservada para multicast (caso em que queremos fazer a comunicação somente com alguns dispositivos que estão na nossa rede).
+                Ela não é atribuida para máquinas.
+
+            Classe E:
+
+                Classe de endereçamento: E
+                Intervalo do 1º octeto: 240-255
+                Máscara de rede: -------
+
+                Assim como a classe D esta classe também é reservada, não sendo utilizada para atribuir endereços IP's para máquinas.
+
+
+        IP privado:
+
+            Dentro de cada uma das classes de IP, teremos faixas que são chamadas privadas. Elas recebem este nome porque só conseguem se comunicar na rede local, não podendo
+            ser utilizados na comunicação na internet.
+
+            Intervalo para endereços IP privados na classe de endereços A:
+
+                10.X.X.X
+
+                Todo o IP da rede que começar com 10, não poderá se comunicar com a internet diretamente.
+
+
+            Intervalo para IP's privados de classe B:
+
+                172.16.X.X a 172.31.X.X
+
+            Intervalo para IP's privados de classe C:
+
+                192.168.X.X
+
+            No computador de nossa casa podemos utilizar o comando "ipconfig" no terminal e verificar qual é nosso endereço IP, em que classe está e se é privado ou não.
+            Se for privado, como se conecta com a internet?
+
+                Conseguimos porque o nosso roteador traduz o nosso IP privado para um IP público usando o NAT (Network Address Translation) em que é feita a tradução de um
+                endereço privado para o público.
+
+
+        IPv6:
+
+            Se analisarmos com o comando "ipconfig" o nosso endereço IP, veremos que se trata de um protocolo IPv4.
+
+            O v4, que significa "versão 4", chegou ao fim devido a grande popularidade da internet. Por isso tiveram que criar o IPv6, que possui uma série de novos componentes
+            e funcionalidades mais avançadas.
+
+            Ao usarmos o comando "nslookup uol.com.br" veremos a seguinte saída:
+
+                $ nslookup uol.com.br
+                    N▒o ▒ resposta de autoriza▒▒o:
+                    Servidor:  dcms01.tribunal.tre-ms.gov.br
+                    Address:  10.19.1.6
+
+                    Nome:    uol.com.br
+                    Addresses:  2804:49c:3102:401:ffff:ffff:ffff:36
+                            2804:49c:3101:401:ffff:ffff:ffff:45
+                            200.147.3.157
+
+            Vemos aqui um exemplo de IP versão 6:
+
+                2804:49c:3102:401:ffff:ffff:ffff:36
+
+            O site do UOL no caso, ainda possuí um endereço IPv4 (200.147.3.157) para atender diferentes tipos de acesso que tenhamos na máquina deles.
+            Podemos perceber que a versão 6 possui muito mais informações que a versão 4. Lembrando que atualmente o IPv4 não possui endereços IP's disponíveis.
+            O IPv6 já é o padrão utilizado.
+
+        
+        Endereços reservados classe A:
+
+            Temos um range de IP para utilizarmos? Qual seria este range?
+
+            Como um exemplo de endereço que não podemos utilizar temos: 2000.2.4.5. Isto porque nem um dos 4 octetos podem passar de 255.
+
+            Existe tanto um número mínimo e máximo que um endereço IP pode ter. No caso, o mínimo é 0 e o máximo é 255. Estes números, porém, não podem estar em qualquer ordem.
+            Todo endereço IP deve estar inserido dentro de uma rede pré-definida, que terá um número de identificação e ainda, terá o endereço de rede e o endereço que serve 
+            para comunicar com todos os dispositivos da rede chamado broadcast.
+
+            Exemplo de como descobrimos qual é o endereço de rede e o de broadcast:
+
+                Endereço IP: 124.4.7.9
+
+                Máscara de rede: 255.0.0.0
+
+                Lembrando que a quantidade de redes é representada pelos 255 e os hosts pelo 0.
+
+                Como nosso primeiro octeto do endereço IP está entre 1 e 126, se trata de um endereço IP de classe A. Por isso a máscara de rede é: 255.0.0.0.
+
+                Para descobrirmos o endereço de rede cortaremos o 255 da máscara de rede.
+
+                    255.0.0.0
+
+                        .0.0.0
+
+                Verificamos que ficaram os 3 zeros dos octetos seguintes.
+
+                Comparamos com o nosso endereço IP.
+
+                    124.4.7.9
+                        .0.0.0
+
+                Basta então mover os grupos de cima que ficaram vazios para completar os octetos que foram recortados embaixo.
+                Ficará assim:
+
+                    124.0.0.0 = Este é o endereço de rede!
+
+                Agora para descobrirmos o endereço de broadcast faremos o trabalho ao contrário. Cortaremos os 0 do endereço de rede.
+                Ficaremos assim:
+
+                    124...
+
+                Agora adicionamos o 255 nos espaços recortados. Teremos o seguinte resultado:
+
+                    124.255.255.255
+
+                Este então, é o endereço de broadcast: 124.255.255.255
+                Este endereço também não poderá ser usado em nenhuma máquina.
+
+                Criamos um novo projeto no Packet Tracer colocando dois micros e um switch.
+                O primeiro micro com IP 124.0.0.255 e o segundo micro com IP 124.1.0.0.
+
+                Os dois endereços IP's são válidos e irão se comunicar, podemos realizar o teste com o protocolo ping.
+                Isso porque o padrão está correto, IP's de classe A com máscara 255.0.0.0 precisam obrigatoriamente ter apenas o primeiro grupo igual.
+
+        
+        Endereços reservados classe B:
+
+            Seguindo o mesmo exemplo anterior, vamos descobrir qual é o endereço de rede e o endereço de broadcast do IP proposto:
+
+                Endereço IP: 172.161.7.9
+
+                Máscara de rede: 255.255.0.0
+
+                255 =  Rede
+                0 = Host
+
+                Sabendo que em endereços de classe B o primeiro octeto vai de 128 a 191, percebemos que o nosso endereço IP logo acima é de classe B.
+
+                Recortamos os 255 da mascara e substituimos pelos os valores dos octetos correspondentes:
+
+                    255.255.0.0 fica ..0.0
+
+                    Então, substituindo valores:
+
+                    172.161.0.0 = Este é o nosso endereço de rede.
+
+                    Agora para descobrirmos o broadcast substituimos os zeros por 255, teremos o seguinte valor:
+
+                    172.161.255.255 = Endereço de broadcast
+
+                    Lambrando que os endereços 172.161.0.0 e 172.161.255.255 não podem ser atribuidos a nenhuma outra máquina na rede.
+
+                    No laboratório criamos mais um ambiente, mais duas máquina e mais um switch.
+                    A primeira máquina com endereço 172.161.0.255 e a segunda máquina com endereço 172.161.1.0.
+                    Realizamos testes de ping novamente.
+
+                                       
+    Questões aula 07:
+
+        1 - Quais são as classes de endereços IP que podem ser endereçadas para máquinas?
+
+            Selecione uma alternativa
+
+            R: Classe A,B e C
+
+            A IETF (Internet Engineering Task Force) determinou que existiriam ao todo 5 classes de endereços IP, indo de ordem alfabética da classe A até a classe E. 
+            Porém as duas últimas classes não são usadas para serem endereçadas as máquinas. A classe D seria usada para multicast (termo usado quando queremos nos comunicar 
+            com somente algumas máquinas de nossa rede) e a classe E seria uma classe experimental. Portanto as classes de IP que podem ser endereçadas para máquinas seriam a 
+            classe A, B e C.
+
+
+        2 - Como eu identifico que um endereço IP está em uma classe?
+
+            Selecione uma alternativa
+
+            R: Pelo valor do primeiro intervalo (octeto)
+
+            Para sabermos em qual classe um endereço IP se encontra, temos que analisar o primeiro octeto e ver dentro de qual range ele estaria. (Classe A, B ou C).
+
+
+        3 - O endereço IP 187.77.45.8 estaria dentro de qual classe, considerando que usa máscara de rede padrão?
+
+            Selecione uma alternativa
+
+            R: Classe B. 
+            
+            A classe "A" possui o primeiro octeto variando de 1 a 127, a classe "B" possui o primeiro octeto variando de 128 a 191 e a classe "C" possui o primeiro octeto 
+            variando de 192 a 223. Dessa forma pelo fato do número 187 se encontrar dentro de 128 a 191, sabemos que é um endereço da classe "B".
+
+        
+        4 - O que seria o endereço 127.0.0.1? Como ele é conhecido?
+
+            Selecione uma alternativa
+
+            R: É um endereço interno da placa de rede, usado para testar se os protocolos TCP/IP estão funcionando. Ele é conhecido como endereço de loopback, pois o sinal
+            é enviado e recebido por ele mesmo.
+
+            O endereço 127.0.0.1 seria uma faixa de endereço IP reservada, esse seria um endereço interno da placa de rede para realizar testes e verificar se ela está de 
+            fato validando os protocolos TCP/IP.
+
+        
+        5 - O que são IPs privados?
+
+            Selecione uma alternativa
+
+            R: São IPs que são usados somente para comunicação na rede local, não posso acessar a internet
+
+            Os endereços IP privados são usados para comunicação somente em minha rede local, de acordo com
+            a especificação, eles não podem ser usados para comunicação na internet por exemplo.
+
+        
+        6 - Se eu tenho IP privado na minha máquina, como posso acessar a internet?
+
+            Selecione uma alternativa
+
+            R: Através do método de tradução de endereços IPs privados para públicos, chamado de NAT
+
+            Isso acontece porque nosso roteador possui a configuração chamada NAT, essa configuração
+            vai converter o endereço IP privado que temos em nossas máquinas para IP públicos que nosso provedor de serviços nos fornece.
+
+        7 - Qual foi a evolução do IPv4?
+
+            Selecione uma alternativa
+
+            R: IPv6
+
+            A evolução do IPv4 seria a versão 6 do protocolo, que seria conhecida como IPv6.
+
+        
+        8 - Por que foi necessário o IPv6?
+
+            Selecione uma alternativa
+
+            R: Porque os endereços públicos do IPv4 chegaram a um fim
+
+            O endereço IPv6 foi necessário porque os endereços IPv4 públicos chegaram a um fim por conta da grande popularidade da internet, smartphones, tablets, etc.
+
+        
+        9 - Dado que o endereço IP da máquina 7.8.7.8 possui máscara de rede 255.0.0.0, determine seu endereço de rede e broadcast (Lembre-se da regra, endereço de rede e 
+            broadcast):
+
+            Selecione uma alternativa
+
+            R: Rede: 7.0.0.0 ; Broadcast: 7.255.255.255
+
+            Descobrir endereço de rede que esse endereço IP está inserido:
+            Se recortarmos o 255 da máscara de rede e inserirmos o octeto correspondente do endereço IP, teremos: 7.0.0.0 :)
+            
+            Descobrir o endereço de broadcast da rede:
+            Pegamos o endereço de rede e recortamos os 0’s (originais da máscara) e colocamos 255 no lugar, teremos então: 7.255.255.255
+            Dessa forma, por exemplo o endereço IP: 7.0.0.255 é válido porque é maior que o endereço de rede (7.0.0.0) e menor que o de broadcast (7.255.255.255)
+
+        
+        10 - Dado que o endereço IP da máquina 135.44.3.21 possui máscara de rede 255.255.0.0, determine seu endereço de rede e broadcast (Lembre-se da regra, endereço de rede
+            e broadcast):
+
+            Selecione uma alternativa
+
+            R: Rede: 135.44.0.0 ; Broadcast: 135.44.255.255
+
+            Descobrir endereço de rede que esse endereço IP está inserido:
+                Se recortarmos o 255 da máscara de rede e inserirmos os octetos correspondentes do endereço IP, teremos: 135.44.0.0 :)
+            
+            Descobrir o endereço de broadcast da rede:
+                Pegamos o endereço de rede e recortamos os 0’s (originais da máscara) e colocamos 255 no lugar, teremos então: 135.44.255.255
+
+            Dessa forma, por exemplo o endereço IP: 135.44.0.255 é válido por que é maior que o endereço de rede (135.44.0.0) e menor que o de broadcast (135.44.255.255)
+
+        
+
+
+
+
+        
+
+
+
 
     
 
