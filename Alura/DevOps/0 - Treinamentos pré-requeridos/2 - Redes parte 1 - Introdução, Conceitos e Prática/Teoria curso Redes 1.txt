@@ -1637,6 +1637,11 @@ Aula 07: Entendendo os endereços IP -------
                     A primeira máquina com endereço 172.161.0.255 e a segunda máquina com endereço 172.161.1.0.
                     Realizamos testes de ping novamente.
 
+        
+        Endereços reservados classe C:
+
+            
+
                                        
     Questões aula 07:
 
@@ -1748,48 +1753,3 @@ Aula 07: Entendendo os endereços IP -------
                 Pegamos o endereço de rede e recortamos os 0’s (originais da máscara) e colocamos 255 no lugar, teremos então: 135.44.255.255
 
             Dessa forma, por exemplo o endereço IP: 135.44.0.255 é válido por que é maior que o endereço de rede (135.44.0.0) e menor que o de broadcast (135.44.255.255)
-
-        
-
-
-
-
-        
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-        
-
-
-
-
-
-
-
-
-
-
-            
-
-
-        
-
-
-
-        
-
-
-
