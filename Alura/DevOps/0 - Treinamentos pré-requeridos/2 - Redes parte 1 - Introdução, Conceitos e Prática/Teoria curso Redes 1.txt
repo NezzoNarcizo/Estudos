@@ -1619,7 +1619,7 @@ Aula 07: Entendendo os endereços IP -------
 
                 Sabendo que em endereços de classe B o primeiro octeto vai de 128 a 191, percebemos que o nosso endereço IP logo acima é de classe B.
 
-                Recortamos os 255 da mascara e substituimos pelos os valores dos octetos correspondentes:
+                Recortamos os 255's da mascara e substituimos pelos os valores dos octetos correspondentes:
 
                     255.255.0.0 fica ..0.0
 
@@ -1640,9 +1640,44 @@ Aula 07: Entendendo os endereços IP -------
         
         Endereços reservados classe C:
 
-            
+            Vamos ver qual é o endereço de rede e o endereço de broadcast dos IP's da classe C:
 
-                                       
+                O IP que nos foi dado é o seguinte:
+
+                    Endereço IP: 192.168.0.9
+
+                    Máscara de rede: 255.255.255.0
+
+                    255 = Rede
+                    0 = Máquina (Host)
+
+                    O intervalo da classe C se dá entre 192-223, como nosso endereço IP acima começa com 192 já sabemos a qual classe ele pertence.
+
+                    A máscara padrão da classe C é 255.255.255.0, sendo assim os 3 primeiros grupos do nosso IP devem ser presevados caso outro computador queira estar na mesma rede e 
+                    para que possamos encontrar o endereço de rede e o de Broadcast.
+
+                    Repetindo o procedimento para que possamos encontrar o endereço de rede, recortaremos os três primeiros octetos da máscara e adicionaremos os respectivos grupos do
+                    nosso IP, que no caso é:
+
+                        Para: 255.255.255.0
+
+                        deixamos: ...0
+
+                        Completamos os octetos que ficaram vazios: 192.168.0.0 (Este é o endereço de rede)
+
+                    Agora encontraremos o endereço de broadcast.
+
+                        Devemos agora remover os 0's adicionados no procedimento para encontrar o endereço de rede. Como adicionamos apenas 1 zero, removeremos apenas seu octeto.
+
+                        Ficando: 192.168.0.
+
+                        Agora neste octeto que ficou vazio, iremos adicionar o 255.
+
+                        Então: 192.168.0.255 (Endereço de broadcast)    
+
+                Porém não podemos nos prender a ideia de que não podemos ter o final de um IP com 0 ou 255. O que definirá serão os números de endereço de rede e de broadcast.
+
+                                     
     Questões aula 07:
 
         1 - Quais são as classes de endereços IP que podem ser endereçadas para máquinas?
@@ -1753,3 +1788,412 @@ Aula 07: Entendendo os endereços IP -------
                 Pegamos o endereço de rede e recortamos os 0’s (originais da máscara) e colocamos 255 no lugar, teremos então: 135.44.255.255
 
             Dessa forma, por exemplo o endereço IP: 135.44.0.255 é válido por que é maior que o endereço de rede (135.44.0.0) e menor que o de broadcast (135.44.255.255)
+
+        
+        11 - O que caracteriza uma comunicação broadcast?
+
+            Selecione uma alternativa
+
+            R: Comunicação com todos os dispositivos da minha rede
+
+            Broadcast seria um termo usado quando a comunicação é feita para todos os dispositivos que estão na mesma rede.
+
+
+Aula 08: Endereçamento IP com DHCP -------
+
+    Teoria:
+
+        DHCP:
+
+            Até o momento temos feito a configuração manual de todos os endereços IP.
+
+            Numa empresa com 40, 50 ou mais computadores isto se tornaria muito trabalhoso.
+
+            Uma forma de resolver este problema de forma automática é o servidor DHCP.
+
+            Criamos um projeto com 4 computadores ligados a um Switch e este Switch ligado a um Router.
+
+            O roteador da Cisco que irá atuar como servidor5 DHCP.
+
+            Ele fornecerá automaticamente endereços IP's para os computadores.
+
+            Vemos então neste cenário um pequeno modelo de rede natural onde o Switch conecta vários computadores (Conexão de micros na rede local) e o nosso roteador está conectado ao
+            Switch (Conectando a rede). Lembrando que temos outras portas no roteador que poderia conectar outras redes simultaneamente.
+
+            Para configurar o Roteador conectamos ele a um notebook utilizando o cabo console. Como vimos antes o Packet Tracer nos permite usar o CLI diretamente no roteador não sendo
+            necessária a conexão com o notebook.
+
+            Configurando o roteador:
+
+                Primeira coisa a se fazer é habilitar a porta.
+
+                O CLI nos perguntará se queremos o diálogo para configurar o roteador, digitamos "no".
+
+                Após apertar "return" para continuar com a operação estaremos no modo usuário que apenas nos permite verificar algumas coisas, como reparos e testes, mas não podemos
+                configurar o equipamento. Teremos que aumentar os privilégios:
+
+                    Router>enable
+
+                    Saída:
+
+                        Router#
+
+                Até aqui só poderemos ver todas as visualizações que poderemos fazer no equipamento. Seguiremos para o configure terminal:
+
+                    Router#configure terminal
+
+                    Saída:
+                        
+                        Enter configuration commands, one per line.  End with CNTL/Z.
+                        Router(config)#
+
+                Agora estamos efetivamente na parte de configurações.
+
+                Vamos iniciar efetivamente a configuração da porta na qual conectamos o Switch.
+
+                    Router(config)#interface GigabitEthernet 0/0/0
+                    
+                    Saída:
+
+                        Router(config-if)#
+
+
+                Iremos inserir o comando para ligar a porta:
+
+                Router(config-if)#no shutdown
+
+                Saída:
+
+                    Router(config-if)#
+                    %LINK-5-CHANGED: Interface GigabitEthernet0/0/0, changed state to up
+
+                    %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0/0, changed state to up
+
+                Agora as portas estão habilitadas e as luzes devem ficar verdes. O CLI nos informa que o estado da porta foi mudado para "up". A porta já está ativa.
+
+                Iremos então começar a configuração para que ele trabalhe com DHCP. Primeiro temos que sair da configuração que estamos:
+
+                Router(config-if)#exit
+                
+                Sáida:
+                
+                    Router(config)#
+
+                Utilizamos o comando:
+
+                    Router(config)#ip dhcp
+
+                    Porém somos informados que o comando está incompleto.
+
+                    Precisamos criar um pool de endereços para que o nosso servidor DHCP utilize, aqueles que serão atribuídos para os computadores. Daremos o nome de cursoRedes para
+                    esse pool.
+
+                        Router(config)#ip dhcp pool cursoRedes
+
+                        Saída:
+
+                            Router(dhcp-config)#
+
+                    Iremos inserir "?" e digitaremos enter para ver quais comando faltam (ou parâmetros) para terminar de configurar nosso servidor DHCP.
+
+                        Router(dhcp-config)#?
+
+                        Saída:
+
+                            default-router  Default routers
+                            dns-server      Set name server
+                            domain-name     Domain name
+                            exit            Exit from DHCP pool configuration mode
+                            network         Network number and mask
+                            no              Negate a command or set its defaults
+                            option          Raw DHCP options
+
+                    Utilizaremos o comando "network" para informar a rede que queremos trabalhar.
+
+                        Router(dhcp-config)#network 192.168.0.0
+
+                        Seremos informados que o comando está incompleto:
+
+                            % Incomplete command.
+
+                    Precisamos verificar quais parâmetros faltam para que possamos terminar de configurar.
+
+                    Router(dhcp-config)#network 192.168.0.0 ?
+                    
+                    Saída:
+
+                        A.B.C.D  Network mask
+
+                    Ficou faltando a máscara de rede, que será: 255.255.255.0
+
+                    Então nosso comando completo ficará:
+
+                        Router(dhcp-config)#network 192.168.0.0 255.255.255.0
+
+                        Se quisermos podemos adicionar o "?" no comando acima para ver se falta algo antes de apertar "Enter".
+
+                            Router(dhcp-config)#network 192.168.0.0 255.255.255.0 ?
+
+                            Saída:
+
+                                <cr> 
+
+                                <cr> = Signífica "Caracter return", que não existe mais nada a ser adicionado a este comando.
+
+                        Já informamos qual é a rede que o pool de conexões estará trabalhando.
+
+                    Será importante indicar qual será o gateway para os computadores, ou seja, para onde as máquinas devem enviar informações caso eles precisarem se comunicar com alguém
+                    externamente. Utilizaremos o comando:
+
+                        Router(dhcp-config)#default-router ?
+                        
+                        Saída:
+                        
+                            A.B.C.D  Router's IP address
+
+                            Veremos que falta apenas o endereço IP do default router, que é o endereço da porta que estamos utilizando no roteador. Utilizaremos o IP: 192.168.0.1.
+
+                                Router(dhcp-config)#default-router 192.168.0.1
+
+                                    Obs: Mesmo que já tenhamos definido qual é o endereço IP e a porta do Roteador que estamos utilizando, é necessário o comando "default-router" para
+                                    mostrar qual é a porta do Gateway e assim fazendo que ela seja preenchida automaticamente na distribuição de IP via DHCP.
+
+                            Lembrando que pelo fato de estarmos utilizando a máscara: 255.255.255.0 temos que utilizar os 3 primeiros octetos que definimos.
+
+                                Router(config)#interface gigabitEthernet 0/0/0
+
+                                Saída:
+
+                                    Router(config-if)#
+
+                            Agora iremos inserir o IP que utilizaremos nesta porta:
+
+                                Router(config-if)#ip address 192.168.0.1 255.255.255.0
+
+                                Lembrando que podemos utilizar o "?" todas vez que acharmos que falta um parâmetro do comando.
+
+                    Vamos verificar se a configuração DHCP funcionou. Colocaremos todos os computadores para receber o IP de forma DHCP.
+
+                    Podemos observar que a partir do momento que mudamos a configuraçãos dos Host's para DHCP eles fazem uma requisição de IP para o servidor DHCP do servidor.
+
+                    O procedimento de requisição e reposta é o seguinte. No primeiro momento ele não tem IP algum e saíra perguntando quem irá fornece-lo.
+                    Este é um final broadcast. O roteador que configuramos irá receber a requisição e dirá: "Estou configurado para oferecer endereços IP's".O computador aceitará o IP
+                    fornecido e irá informar que recebeu um IP. A mensagem será entregue para o roteador também, que por sua vez, irá dar um "OK".
+
+                    O processo é o mesmo para qualquer máquina que for conectada a rede, mudamos em sua placa de rede de "Static IP" para "DHCP". Tanto o IP é configurado automaticamente
+                    quanto a máscara e o gatway.
+
+                    Quando finalizamos os 4 computadores receberam IP de forma automática e dinâmica sem que conflitem. Não precisamos mais configurá-los manualmente.
+
+    
+    Questões aula 08:
+
+        1 - Para que serve um servidor DHCP?
+
+            Selecione uma alternativa
+
+            R: Para atribuir IP a máquinas (clientes) de forma dinâmica
+
+            Os servidores DHCP (Dynamic Host Configuration Protocol) alocam dinamicamente endereços IPs a clientes (máquinas).
+
+        
+        2 - Como é conhecida essa forma de atribuição de IP pelo DHCP?
+
+            Selecione uma alternativa
+
+            R: IP dinâmico
+
+            Quando um endereço IP é atribuído a uma máquina (cliente), dizemos que a configuração foi dinamicamente alocado. Os servidores DHCP normalmente possuem o que chamamos de
+            “lease time”, ou seja possui um tempo de alocação de um endereço IP a uma máquina, quando esse tempo é expirado é preciso ocorrer uma renovação de endereço IP. Por isso ele 
+            é dinamicamente alocado :)
+
+        
+        3 - Quando um cliente não possui um endereço IP e está configurado para receber IP dinâmico, como ele faz a requisição para que alguém forneça um endereço IP?
+
+            Selecione uma alternativa
+
+            R: Broadcast
+
+            Quando um cliente não possui endereço IP ele não sabe a quem perguntar, então ele precisa sair perguntando para todo mundo que está na mesma rede quem poderá fornecer um 
+            endereço IP. Quando essa comunicação é feita para todos os dispositivos, chamamos isso de Broadcast.
+
+
+Aula 09: Acessando o site em nossa simulação -------
+
+    Teoria:
+
+        Acessando o Google:
+
+            Agora nossa missão é permitir que os usuários acessem o site do Google ou pelo menos uma simulação disto.
+            Devemos lembrar que estamos usando o software de simulação da Cisco então eles não acessarão a Web de verdade.
+            Configuramos o servidor e uma página Http: para simular esta conexão.
+            Estamos usando no projeto 4 PC's, 1 Switch e 1 Router da aula 8.
+            Acicionaremos mais 1 Switch e 1 Server e conectaremos ao nosso roteador DHCP.
+
+            Assim como tivemos que ativar a porta do Router GigabitEthernet 0/0/0 teremos que ativar a GigabitEthernet 0/0/1 para se comunicar com o Switch que sai para a Web até o servidor.
+
+            Voltando para o CLI do nosso roteador utilizamos os seguintes comandos em sequência para adiantar o trabalho:
+
+                Router>enable //Elevando permissões para executarmos comandos
+
+                Router#configure terminal //Entrando em modo de configuração
+
+                Saída:
+                    
+                    Enter configuration commands, one per line.  End with CNTL/Z.
+                
+                Router(config)#interface gigabitethernet 0/0/1 //Escolhendo a porta que iremos configurar
+
+                Router(config-if)#no shutdown //Ativando a porta
+
+                Saída:
+
+                    Router(config-if)#
+                    %LINK-5-CHANGED: Interface GigabitEthernet0/0/1, changed state to up
+
+                    '%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0/1, changed state to up
+
+            Já está escolhida a porta que configuraremos para a saída para a internet e a ativamos.
+
+            Definiremos agora um endereço IP para esta porta:
+
+                Router(config-if)#ip address ? //Para verificar o que precisamos para configurar o IP
+                
+                Saída:
+
+                    A.B.C.D  IP address
+                    dhcp     IP Address negotiated via DHCP
+
+                    Logo acima a informação de que precisamos de um endereço IP e uma máscara de subrede.
+
+            Definimos então o que é necessário:
+
+                Router(config-if)#ip address 8.8.8.1 255.0.0.0
+
+                Lembrando que, como escolhemos um endereço IP de classe A, nossa máscara de subrede por padrão também deve ser de classe A.
+
+            Feita a configuração no nosso Router, iremos agora configurar o nosso servidor para realizar a simulação.
+            Definiremos qualquer IP que esteja entre 8.0.0.0 e 8.255.255.255, pois será válido.
+
+                No software Packet Tracer, no nosso Servidor Web definiremos:
+
+                    Endereço IP: 8.0.255.255
+                    Máscara de subrede: 255.0.0.0
+                    Default Gateway: 8.8.8.1
+
+            Editaremos uma página para representar a página que queremos acessar. Não precisamos de muito design pois é apenas uma simulação.
+            No nosso servidor web iremos até services e depois em HTTP.
+
+                Colocaremos o seguinte conteúdo como index.html:
+
+                    <html>
+                        <h1>GOOGLE</h1>
+                        <input type="search">
+                        <input type="button" value="Buscar">
+                    </html>  
+
+            Agora temos configurado o nosso roteador para atuar como DHCP para a nossa rede privada e um IP estático.
+
+            Agora as duas redes já sabem qual é o portão de saída e podem se comunicar entre si. Faremos um teste.
+
+            Podemos ver que o IP definido para o nosso roteador é o mesmo gateway do nosso servidor Web.
+
+            Digitaremos no Web Browser de um dos computadores da nossa rede privada o IP do servidor do "Google" que criamos.
+
+                http://8.0.255.255
+
+            No próximo passo aprenderemos a configurar o servidor DNS para que ao invés de colocarmos o endereço IP na barra de endereços do browser, digitemos apenas a URL que será traduzida
+            para o endereço IP.
+
+
+        Configurando DNS:
+
+            Vamos colocar o servidor DNS para fazer a tradução entre a URL www.google.com e o endereço IP máquina do Google. Adicionaremos o servidor DNS ao projeto
+
+            Conectamos o novo servidor (DNS) ao Switch, aquele mesmo que o nosso servidor web já está conectado.
+
+            Assim como nosso servidor web está configurado, também configuraremos o nosso servidor DNS com um endereço IP de classe A:
+
+                Endereço IP: 8.1.0.0
+                Máscara de subrede: 255.0.0.0
+                Default Gateway: 8.8.8.1 (Endereço da porta de saída do nosso roteador)
+                
+            Agora vamos criar o mapeamento do nosso servidor DNS para o servidor Web.
+
+            Em "Services" -> "DNS" digitaremos a URL do site que para qual o endereço IP do servidor web nos envia (www.google.com) e relacionaremos ao endereço IP deste servidor web
+            (8.0.255.255).
+
+            Habilitamos o servidor DNS clicando em "On" e depois em adicionar.
+
+            Fazemos um teste indo até um dos micros e digitando no Web Browser o endereço que acabamos de mapear no servidor DNS.
+
+            Porém pordemos perceber que não deu certo, isto porque não indicamos qual é o servidor DNS no nosso roteador. O computador não sabe qual é o servidor DNS que ele deve procurar.
+            Como estamos usando o DHCP, pediremos que ele informe aos usuário squal o servidor DNS será utilizado.
+
+            Voltamos a área CLI do nosso roteador.
+
+                Router>enable //Elevando permissões
+
+                Router#configure terminal //Entrando no modo de configuração
+                Enter configuration commands, one per line.  End with CNTL/Z.
+
+                Router(config)#ip dhcp pool cursoRedes //Entrando nas configurações de DHCP do nosso servidor DHCP
+
+                Router(dhcp-config)#? //Olhando lista de comandos para verificar o comando daquilo que queremos configurar.
+                default-router  Default routers
+                dns-server      Set name server
+                domain-name     Domain name
+                exit            Exit from DHCP pool configuration mode
+                network         Network number and mask
+                no              Negate a command or set its defaults
+                option          Raw DHCP options
+
+                Router(dhcp-config)#dns-server 8.1.0.0 //Informando ao servidor DHCP o endereço IP do nosso servidor DNS
+
+                Router(dhcp-config)#
+
+            Como a distribuição de IP e as configurações já foram realizadas ao ligar a nossa rede, devemos realizar um "refresh" nos micros.
+            Basta clicar na opção "Static IP" e voltar para "DHCP" ou realizar o comando:
+
+                ipconfig /renew
+
+            Agora nossos computadores sabem qual é o servidor DNS.
+            
+            Fazemos um novo teste digitando o endereço www.google.com no web browser de qualquer computador que realizamos o refresh.
+            Verificamos agora que conseguimos visualizar a página do Google.
+
+            Projeto finalizado!!!
+
+
+    Questões aula 09:
+
+        1 - Que configurações fizemos no projeto para que fosse possível que os computadores digitassem www.google.com no browser e tivéssemos a página do google na tela?
+
+            Selecione uma alternativa
+
+            R: Tivemos que configurar o servidor DNS no DHCP do roteador para atribuir esse endereço do DNS para as máquinas (clientes).
+
+            Os computadores não sabem quem é o servidor DNS, nós precisamos informar para eles quem é o servidor que eles devem procurar.
+
+
+
+
+
+
+
+
+
+
+
+
+                        
+
+
+
+
+
+
+
+
+
+
