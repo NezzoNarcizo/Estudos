@@ -1,0 +1,54 @@
+Aula 01: Primeiros passos na AWS -------
+
+    Teoria:
+
+        Introdução:
+
+            Este curso é voltado para quem quer aprender a dispolnibilizar aplicações em um provedor de serviços na nuvem como a AWS.
+            Vamos aprender a utilizar as instâncias EC2 que são um recurso computacional que a AWS disponibiliza para que possamos criar nossa infraestrutura.
+            Também aprenderemos a deixar nossa aplicação em alta disponibilidade e alta escalabilidade para que tenhamos um ambiente de produção profissional.
+
+        Ciração de uma conta na AWS:
+
+            - Não existe diferença de contas.
+            - Temos o direito de uso gratuito por um ano desde que não estrapolemos o limite dos recursos disponibilizados no free tier.
+            - Exige cadastro de um cartão de crédito internacional.
+
+        Uso gratuito e recomendações iniciais:
+
+            - Algumas coisas são sempre gratuitas
+
+                - AWS Lambda - Não somos cobrados pelo hardware, mas sim por tempo e quantidade de memória
+
+            - O que tem limite
+
+                - Temos 12 meses de uso gratuito a partir da data do cadastramento
+                - Amazon EC2 - 750 horas por mês
+                - Amazon S3 - 5 gb de armazenamento
+                - Amazon RDS - 750 horas por mês de uso do banco de dados.
+
+            Ativar 2FA para que tenha mais segurança, já que temos em nossa conta um cartão de crédito cadastrado e os serviços da AWS não são baratos.
+
+        Criando a primeira instância EC2:
+
+            
+
+
+
+    Questões aula 01:
+
+        1 - Dentre as alternativas abaixo, quais são características do nível gratuito da AWS?
+
+            Selecione 2 alternativas
+
+            A - Alguns serviços são sempre gratuitos, mesmo após os 12 primeiros meses
+
+                Alternativa correta! Limitado a um determinado escopo (capacidade/tempo de uso), o serviço é gratuito mesmo após os 12 meses (free tier).
+
+            B - Alguns serviços são categorizados como testes, ou seja, tem um tempo limitado para uso gratuito
+
+                Alternativa correta! Mesmo no período gratuito, alguns serviços estão disponíveis na forma de teste, e após este período são cobrados.
+
+        
+
+        
