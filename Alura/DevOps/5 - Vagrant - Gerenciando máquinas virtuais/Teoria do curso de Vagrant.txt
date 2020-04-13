@@ -2,35 +2,39 @@ Nosso ambiente de trabalho: "D:\ambiente_dev"
 
 Throubleshooting:
 
- - Caso com o comando comando "sudo apt-get update" esteja aparecendo o erro "Temporary failure resolving 'archive.ubuntu.com" use o comando "echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf > /dev/null"
+- Caso com o comando comando "sudo apt-get update" esteja aparecendo o erro "Temporary failure resolving 'archive.ubuntu.com" use o comando:
+    "echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf > /dev/null"
 
- - Caso precisemos editar a sources.list =  $ sudo nano /etc/apt/sources.list
+- Caso precisemos editar a sources.list =  $ sudo nano /etc/apt/sources.list
 
- - Podemos receber alertas de configurações identicas quando estivermos subindo máquinas virtuais, isso pode estar acontecendo porque modificamos o arquivo "VagrantFile" para criar novas máquinas virtuais
-    mas não destruímos as máquinas antigas.
+- Podemos receber alertas de configurações identicas quando estivermos subindo máquinas virtuais, isso pode estar acontecendo porque modificamos o arquivo "VagrantFile" 
+    para criar novas máquinas virtuais mas não destruímos as máquinas antigas.
 
- - Se for criar máquinas apenas com funções específicas, cuidado para não deixar configurações para a máquina default que estão sendo usadas para outras máquinas como IP's e portas.
+- Se for criar máquinas apenas com funções específicas, cuidado para não deixar configurações para a máquina default que estão sendo usadas para outras máquinas como IP's e 
+    portas.
 
- - Se tiver problemas com o erro "No module named 'distutils.spawn'" ao utilizar o python ou rodar um playbook.yml do ansible, basta instalar este pacote: $ apt-get install python3-distutils
+- Se tiver problemas com o erro "No module named 'distutils.spawn'" ao utilizar o python ou rodar um playbook.yml do ansible, basta instalar este pacote: $ apt-get install 
+    python3-distutils
 
- - Se este erro estiver acontecendo:
+- Se este erro estiver acontecendo:
 
-        A VirtualBox machine with the name 'ubuntu_bionic64_phpweb' already exists.
-        Please use another name or delete the machine with the existing
-        name, and try again.
+    A VirtualBox machine with the name 'ubuntu_bionic64_phpweb' already exists.
+    Please use another name or delete the machine with the existing
+    name, and try again.
 
-        Pode ser porque outra box está tentando atribuir o mesmo nome no Hypervisor.
-        Este problema não ocorre quando executamos o comando $ vagrant up com o mesmo box, mesmo ele já estando criado, porque automaticamente o Vagrant verifica, ve que é o mesmo id e box que já estavam usando
-        aquele nome e provisiona só o que falta. No caso de ser box diferente ele tem que avisar pois considera um erro no VagrantFile.
+    Pode ser porque outra box está tentando atribuir o mesmo nome no Hypervisor.
+    Este problema não ocorre quando executamos o comando $ vagrant up com o mesmo box, mesmo ele já estando criado, porque automaticamente o Vagrant verifica, ve que é o mesmo id e box que já estavam usando
+    aquele nome e provisiona só o que falta. No caso de ser box diferente ele tem que avisar pois considera um erro no VagrantFile.
 
 
 
 Aula 01 - A primeira máquina virtual -------
 
 	
-	Numa empresa muitas vezes precisamos de diversos ambientes diferentes e ter muitos programas em um só sistema operacional o torna "sujo" mais lent
+	Numa empresa muitas vezes precisamos de diversos ambientes diferentes e ter muitos programas em um só sistema operacional o torna "sujo" mais lento
 	
-	Ter várias máquinas virtuais facilita a manutenção e configuração alem de todo o hardware nas estar todo disponivel para todos os projetos ao mesmo tempo, fazendo assim que ele não seja subutilizado nem superutilizado.
+	Ter várias máquinas virtuais facilita a manutenção e configuração alem de todo o hardware estar todo disponivel para todos os projetos ao mesmo tempo, fazendo assim que 
+    ele não seja subutilizado nem superutilizado.
 	
 	É preferível que as aplicações rodem nos mesmos ambientes de suas produções.
 	
@@ -38,7 +42,9 @@ Aula 01 - A primeira máquina virtual -------
 	
 	Por isso a opção mais viável é a vitualização.
 	
-	O Vagrant é o leitor e controlador por linha de comando do Hypervisor (Hyper-V, Virtualbox, VMware, vSphere, Parallels), e o Hypervisor (Também conhecido como monitor) emula o hardware do computador, é aquela camada que fica entre o Sistema Operacional do hardware servidor e os outros sistemas operacionais virtualizados, ou seja, ele criar as máquinas virtuais e permite que estas máquinas utilize virtualmente os recursos do Hardware.
+	O Vagrant é o leitor e controlador por linha de comando do Hypervisor (Hyper-V, Virtualbox, VMware, vSphere, Parallels), e o Hypervisor (Também conhecido como monitor) 
+    emula o hardware do computador, é aquela camada que fica entre o Sistema Operacional do hardware servidor e os outros sistemas operacionais virtualizados, ou seja, ele 
+    criar as máquinas virtuais e permite que estas máquinas utilizem virtualmente os recursos do Hardware.
 	
 		Obs: O Vagrant não pode funcionar sozinho por isso ele precisa de um destes provedores.
 	
@@ -50,10 +56,32 @@ Aula 01 - A primeira máquina virtual -------
 	
 	Neste curso utilizaremos o Virtualbox como hypervisor.
 	
-	O Vagrant, através de arquivo de texto consegue definir quais ferramentas e metodologias para que o projeto funcione. Ou seja, através dele definimos a infraestrura como código. 
+	O Vagrant, através de arquivo de texto consegue definir quais ferramentas e metodologias para que o projeto funcione. Ou seja, através dele definimos a infraestrura como 
+    código. 
 	
 
 	Comandos e Teoria:
+
+        Obs: Não foi colocado na época do curso, mas é necessário, obviamente, baixar e instalar o Vagrant.
+        
+        Obs2: Caso não queiramos iniciar uma máquina virtual ubuntu 64 bits ($ vagrant init hashicorp/bionic64), podemos apenas utilizar o comando $ vagrant init no diretório 
+                que queremos trabalhar para aparecer somente o arquivo base da máquina virtual.
+
+        Obs3: Precisamos definir qual é a imagem que iremos utilizar em "config.vm.box = "base"", porque se não, ocorrerá a saída abaixo:
+
+            Bringing machine 'default' up with 'virtualbox' provider...
+            ==> default: Box 'base' could not be found. Attempting to find and install...
+                default: Box Provider: virtualbox
+                default: Box Version: >= 0
+            ==> default: Box file was not detected as metadata. Adding it directly...
+            ==> default: Adding box 'base' (v0) for provider: virtualbox
+                default: Downloading: base
+                default:
+            An error occurred while downloading the remote file. The error
+            message, if any, is reproduced below. Please fix this error and try
+            again.
+
+            Couldn't open file D:/vagrantVMs/base
 	
 		$ mkdir vagrant_getting_started (Nós utilizamos "mkdir ambiente_dev" na unidade D:\)
 		
