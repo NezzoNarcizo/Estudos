@@ -23,8 +23,8 @@ Throubleshooting:
     name, and try again.
 
     Pode ser porque outra box está tentando atribuir o mesmo nome no Hypervisor.
-    Este problema não ocorre quando executamos o comando $ vagrant up com o mesmo box, mesmo ele já estando criado, porque automaticamente o Vagrant verifica, ve que é o mesmo id e box que já estavam usando
-    aquele nome e provisiona só o que falta. No caso de ser box diferente ele tem que avisar pois considera um erro no VagrantFile.
+    Este problema não ocorre quando executamos o comando $ vagrant up com o mesmo box, mesmo ele já estando criado, porque automaticamente o Vagrant verifica, ve que é o mesmo id 
+    e box que já estavam usando aquele nome e provisiona só o que falta. No caso de ser box diferente ele tem que avisar pois considera um erro no VagrantFile.
 
 
 
@@ -87,13 +87,15 @@ Aula 01 - A primeira máquina virtual -------
 		
 		$ cd vagrant_getting_started (Entramos no diretório com cd ambiente_dev)
 		
-		$ vagrant init hashicorp/bionic64 (Hashicorp é a empresa por traz do Vagrant, Packer, Terraform etc) (bionic64 é a versão do box, a cada versão mais nova ele pode rodar máquinas virtuais com S.O's mais atualizados).
-			Este comando cria o arquivo VagrantFile com informações de recursos e configurações da máquina virtual que o Virtualbox irá rodar.
+		$ vagrant init hashicorp/bionic64 (Hashicorp é a empresa por traz do Vagrant, Packer, Terraform etc) (bionic64 é a versão do box, a cada versão mais nova ele pode rodar 
+        máquinas virtuais com S.O's mais atualizados). Este comando cria o arquivo VagrantFile com informações de recursos e configurações da máquina virtual que o Virtualbox irá 
+        rodar.
 		
 			Obs: bionic64, utilizado no momento deste curso, aceita o S.O standard ubuntu 18.04 LTS.
 					Este é um pacote que contém as informações necessárias para rodar uma máquina virtual.
-					Praticamente é um pacote básico, a grosso modo, está substituindo aquela imagem pronta do Windows ou Linux que instalavamos no Virtualbox para servidores que precisavam de outro ambiente de trabalho.
-					Porém lá, instalavamos todos os programas que eram utilizados para trabalhar sem o intuito de servirem como servidores, mas sim, apenas mais uma máquina para o dia a dia.
+					Praticamente é um pacote básico, a grosso modo, está substituindo aquela imagem pronta do Windows ou Linux que instalavamos no Virtualbox para servidores que 
+                    precisavam de outro ambiente de trabalho. Porém lá, instalavamos todos os programas que eram utilizados para trabalhar sem o intuito de servirem como 
+                    servidores, mas sim, apenas mais uma máquina para o dia a dia.
 		
 		$ vagrant up (Para subir a máquina virtual com o pacote básico já definido no arquivo VagrantFile).
 		
@@ -103,11 +105,13 @@ Aula 01 - A primeira máquina virtual -------
 		
 		$ vagrant status = Para verificar o status da nossa máquina virtual.
 		
-		Em resumo: Basicamente conhecemos o gerenciador de Hypervisor que é o Vagrant. Criamos um arquivo VagrantFile através do comando "vagrant init hashicorp/bionic64". E depois através do comando "vagrant up" ele baixou o pacote básico definido no arquivo criado para rodarmos uma máquina virtual do Virtualbox.
+		Em resumo: Basicamente conhecemos o gerenciador de Hypervisor que é o Vagrant. Criamos um arquivo VagrantFile através do comando "vagrant init hashicorp/bionic64". 
+        E depois através do comando "vagrant up" ele baixou o pacote básico definido no arquivo criado para rodarmos uma máquina virtual do Virtualbox.
 		
 		Após estes passos podemos abrir o programa do Virtualbox e verificar que a nossa máquina virtual foi criada e está rodando.
 		
-		Precisamos nos conectar a máquina Linux agora utilizando o protocolo SSH (Secure SHell) que permite que acessemos virtualmente o servidor como se estivessemos em um terminal. Basicamente, um computador controlando outro computador. É um protocolo que faz um computador conversar com outro através de criptografia.
+		Precisamos nos conectar a máquina Linux agora utilizando o protocolo SSH (Secure SHell) que permite que acessemos virtualmente o servidor como se estivessemos em um 
+        terminal. Basicamente, um computador controlando outro computador. É um protocolo que faz um computador conversar com outro através de criptografia.
 		
 		Para que possamos nos conectar realizamos o seguinte comando:
 		
@@ -139,11 +143,12 @@ Aula 01 - A primeira máquina virtual -------
 				
 				 Obs: Usuário e senha são os mesmos citados acima.
 				 
-				Obs: Após o comando vagrant ssh-config a informação de que não estamos usando autenticação de senha pode ser exibida, isto porque a conexão SSH oferece suporte à várias formas de autenticação.
-					A principal delas é a chave pública ou privada, a qual é apresentada na linha "IdentityFile" criada automaticamente.
+				Obs: Após o comando vagrant ssh-config a informação de que não estamos usando autenticação de senha pode ser exibida, isto porque a conexão SSH oferece suporte à 
+                várias formas de autenticação. A principal delas é a chave pública ou privada, a qual é apresentada na linha "IdentityFile" criada automaticamente.
 					
-			Se for o caso de utilizar chaves, temos que abrir o programa PuTTYgem (Que veio junto com o pacote do programa PuTTY) e na caixa de dialogo "PuTTY Key Generator" carregar a chave pública/privada
-				clicando no botão "Generate" e indo na pasta "ambiente_dev>.vagrant>machines>default>virtualbox, escolhendo a opção "Todos os arquivos(.)" e selecionando o arquivo "private_key" e clicando em abrir.
+			Se for o caso de utilizar chaves, temos que abrir o programa PuTTYgem (Que veio junto com o pacote do programa PuTTY) e na caixa de dialogo "PuTTY Key Generator" 
+            carregar a chave pública/privada clicando no botão "Generate" e indo na pasta "ambiente_dev>.vagrant>machines>default>virtualbox, escolhendo a opção:
+            "Todos os arquivos(.)" e selecionando o arquivo "private_key" e clicando em abrir.
 				
 				Obs: Este caminho não é padrão.
 			
@@ -153,9 +158,11 @@ Aula 01 - A primeira máquina virtual -------
 			
 			Abra novamente o aplicativo PuTTY e confirme se os dados foram carregados automaticamente.
 			
-			Na lista de categorias, vá no item "SSH > Auth" para definir a nova chave "chave-precise" (Ou aquele com o nome que tivermos criado) Salve as alterações na sessão principal e clique em "Open".
+			Na lista de categorias, vá no item "SSH > Auth" para definir a nova chave "chave-precise" (Ou aquele com o nome que tivermos criado) Salve as alterações na sessão 
+            principal e clique em "Open".
 			
-			Pode aparecer uma mensagem de alerta informando que houve mudança de chave e a conexão com outro sistema, se aparecer, somente clique em "Sim" para prosseguir e feche a sessão.
+			Pode aparecer uma mensagem de alerta informando que houve mudança de chave e a conexão com outro sistema, se aparecer, somente clique em "Sim" para prosseguir e feche 
+            a sessão.
 			
 			
 			Nesta aula, aprendemos que:
@@ -229,7 +236,8 @@ Aula 02 - Configuração da rede -------
 		
 		Relembrando: Parar uma máquina virtual, "$ vagrant halt", para verificar "$ vagrant status".
 		
-		Caso queiramos criar o arquivo da máquina virtual na mão (VagrantFile) podemos verificar como é o código no próprio site do Vagrant Cloud (https://app.vagrantup.com/ubuntu).
+		Caso queiramos criar o arquivo da máquina virtual na mão (VagrantFile) podemos verificar como é o código no próprio site do Vagrant Cloud:
+        (https://app.vagrantup.com/ubuntu).
 		
 		Código de exemplo de uma máquina virtual Ubuntu LTS 64bits
 		
@@ -251,9 +259,11 @@ Aula 02 - Configuração da rede -------
 			
 			$ curl http://localhost/ = Para receber em HTML as informações.
 			
-			Na documentação do Vagrant (docs - Fowarded Ports) verificamos que podemos usar uma porta específica em Windows o qual recebe a requisição e acessa a máquina virtual automaticamente através do processo de Port Fowarding na rede.
+			Na documentação do Vagrant (docs - Fowarded Ports) verificamos que podemos usar uma porta específica em Windows o qual recebe a requisição e acessa a máquina virtual 
+            automaticamente através do processo de Port Fowarding na rede.
 		
-			A linha fornecida na página acima deve ser adicionada ao arquivo VagrantFile (De preferência embaixo do comentário correto, se é que o seu arquivo foi criado automaticamente a partir do comando "$ vagrant init").
+			A linha fornecida na página acima deve ser adicionada ao arquivo VagrantFile (De preferência embaixo do comentário correto, se é que o seu arquivo foi criado 
+            automaticamente a partir do comando "$ vagrant init").
 			
 			Exemplo: 
 			
@@ -265,7 +275,8 @@ Aula 02 - Configuração da rede -------
 			
 			Se quisermos conferir que a configuração deu certo, basta abrirmos o navegador e digitarmos http://locahost:8089/
 			
-			Se clicarmos com o botão direito e pedirmos para exibir o código fonte desta páginal html veremos o mesmo código exibido quando executamos o comando "$ curl http://localhost/" dentro da máquina virtual.
+			Se clicarmos com o botão direito e pedirmos para exibir o código fonte desta páginal html veremos o mesmo código exibido quando executamos o comando: 
+            "$ curl http://localhost/" dentro da máquina virtual.
 			
 			Isto serve para configurar qualquer porta para qualquer aplicação, como um banco de dados.
 			Fazemos isso informando a porta do programa e a porta do Windows que irá utilizar para rodar a aplicação.
@@ -290,13 +301,17 @@ Aula 02 - Configuração da rede -------
             Ou seja, conseguimos mudar o S.O e podemos verificar com o comando "ipconfig", assim verificamos as duas interfaces.
                 Obs: Não podemos confundir estas com os adaptadores da máquina virtual mostrados anteriormente.
 
-            O primeiro "VirtualBox Host-Only Network" foi criado pelo VirtualBox para definir a rede da MV, e possui uma mascara relacionada com os números do IP da configuração retirada da documentação.
+            O primeiro "VirtualBox Host-Only Network" foi criado pelo VirtualBox para definir a rede da MV, e possui uma mascara relacionada com os números do IP da configuração 
+            retirada da documentação.
 
-            Podemos abrir outro prompt NO WINDOWS (Fora da máquina virtual) e utilizarmos o comando "ping" para 192.168.50.4 para que vejamos a máquina virtual responder ao envio de pacotes.
+            Podemos abrir outro prompt NO WINDOWS (Fora da máquina virtual) e utilizarmos o comando "ping" para 192.168.50.4 para que vejamos a máquina virtual responder ao envio
+            de pacotes.
 
-            Se utilizarmos agora este IP no navegador acessaremos a máquina virtual e o servidor web Nginx ao mesmo tempo que usamos o Port Forwarding com "localhost:8089" na aba anterior.
+            Se utilizarmos agora este IP no navegador acessaremos a máquina virtual e o servidor web Nginx ao mesmo tempo que usamos o Port Forwarding com "localhost:8089" na aba 
+            anterior.
 
-	        Também podemos verificar os dois adaptadores que foram criados para a máquina virtual acessando a interface "Oracle VM VirtualBox" (Hypervisor) e clicando na máquina virtual que estamos utilizando > Rede.
+	        Também podemos verificar os dois adaptadores que foram criados para a máquina virtual acessando a interface "Oracle VM VirtualBox" (Hypervisor) e clicando na máquina 
+            virtual que estamos utilizando > Rede.
 
 	        Podemos verificar se as informações batem com as informações exibidas com o comando "ipconfig" no prompt do windows (Mac Address é uma delas).
 
@@ -322,15 +337,17 @@ Aula 02 - Configuração da rede -------
                     (Encontrado também na parte de documentação do vagrant)
 
             Obs: O ideal é que para que façamos certas alterações na máquina virtual, destruamos ela antes.
-                Não precisamos nos preocupar com a destruição de máquinas virtuais pois nosso arquivo VagrantFile vai continuar existindo o que cria a máquina virtual com as mesmas configurações em pouco tempo
-                com o comando "vagrant up". É importante lembrar sempre que este arquivo representa nossa infraestrutura da máquina virtual como código, a reprodução do ambiente é facilitada.
+                Não precisamos nos preocupar com a destruição de máquinas virtuais pois nosso arquivo VagrantFile vai continuar existindo o que cria a máquina virtual com as 
+                mesmas configurações em pouco tempo com o comando "vagrant up". É importante lembrar sempre que este arquivo representa nossa infraestrutura da máquina virtual 
+                como código, a reprodução do ambiente é facilitada.
 
                 O comando para destruirmos a máquina virtual é:
 
                     $ vagrant destroy (Dentro da pasta onde se encontra nossa máquina virtual).
                         (Podemos verificar sua destruição na interface do programa VirtualBox)
 
-            Após as alterações podemos realizar o comando "vagrant up" mais uma vez para que possamos subir nossa máquina virtual com as mesma configurações, porém agora com IP dinâmico.
+            Após as alterações podemos realizar o comando "vagrant up" mais uma vez para que possamos subir nossa máquina virtual com as mesma configurações, porém agora com IP 
+            dinâmico.
                 (Podemos novamente verificar no VirtualBox que a nosa máquina foi recriada)
                 (Normalmente são solicitadas confirmações do programa VirtualBox no computador, responda sim sempre)
 
@@ -342,12 +359,13 @@ Aula 02 - Configuração da rede -------
 
                 $ sudo apt-get update && sudo apt-get install -y nginx
 
-            Observamos assim que o Vagrant por si só, não constrói toda a infraestrutura como código. Por isso é necessário a utilização para realizarmos por completo o que chamamos de provisionamento.
+            Observamos assim que o Vagrant por si só, não constrói toda a infraestrutura como código. Por isso é necessário a utilização para realizarmos por completo o que 
+            chamamos de provisionamento.
 
             $ netstat -tlnp = Para verificarmos o funcionamento do Nginx pela porta 80.
 
-            No caso de múltiplas máquinas virtuais, fez sentido que o VirtualBox administrasse os IP's delas. Mas em uma situação de empresa com vários computadores, nossas configurações permitem o acesso somente pelo host
-            do Windows que usamos.
+            No caso de múltiplas máquinas virtuais, fez sentido que o VirtualBox administrasse os IP's delas. Mas em uma situação de empresa com vários computadores, nossas 
+            configurações permitem o acesso somente pelo host do Windows que usamos.
 
             Para utilizarmos a rede como pública devemos mudar a parte do código onde está:
 
@@ -363,7 +381,8 @@ Aula 02 - Configuração da rede -------
 
                 Obs: No caso até o terceiro grupo o ip deve ser o mesmo da sua máquina física.
 
-            Podemos verificar na inteface do VirtualBox, na nossa máquina virtual bionic64, nas configurações de rede que a placa está em modo bridge. Para que outros computadores possam acessá-la.
+            Podemos verificar na inteface do VirtualBox, na nossa máquina virtual bionic64, nas configurações de rede que a placa está em modo bridge. Para que outros computadores 
+            possam acessá-la.
 
             Isto nos possibilita instalar um banco de dados como o Oracle por exemplo de modo a ser acessado pelos desenvolvedores usando os computadores conectados à chave públic.
 
@@ -377,9 +396,9 @@ Aula 02 - Configuração da rede -------
 
             Explicando melhor o Port Forwarding:
 
-            Port forwarding, ou, em Português, redirecionamento de portas, é o ato de direcionar uma porta da rede (network port) de um nó de rede para outro. Esta técnica pode permitir que um usuário alcance uma porta
-            em um endereço de IP privado (como o de uma LAN) mesmo estando fora dessa rede, através de um roteador com NAT habilitado. Desta forma é possível disponibilizar na rede pública serviços internos, minimizando
-            as probabilidades de compromisso das máquinas internas.
+            Port forwarding, ou, em Português, redirecionamento de portas, é o ato de direcionar uma porta da rede (network port) de um nó de rede para outro. Esta técnica pode 
+            permitir que um usuário alcance uma porta em um endereço de IP privado (como o de uma LAN) mesmo estando fora dessa rede, através de um roteador com NAT habilitado. 
+            Desta forma é possível disponibilizar na rede pública serviços internos, minimizando as probabilidades de compromisso das máquinas internas.
 
                 guest: 80 and host: 8089
 
@@ -431,7 +450,8 @@ Aula 03 - Lidando com o SSH -------
 
     Comandos e teoria:
 
-        Já vimos que uma das vantagens de se ter máquina virtual que comportem banco de dados e outras aplicações através do Vagrant é ter nosso S.O limpo, facilitando recriação e exclusão.
+        Já vimos que uma das vantagens de se ter máquina virtual que comportem banco de dados e outras aplicações através do Vagrant é ter nosso S.O limpo, facilitando recriação 
+        e exclusão.
 
         Vimos também como disponibiliza-la em uma rede empresarial através de uma Public Network para uso coletivo. Desta forma é importante estabelecer este acesso remotamente.
 
@@ -439,7 +459,8 @@ Aula 03 - Lidando com o SSH -------
 
         $ ssh vagrant@"IP da máquina virtual" = Para testarmos a conexão, pois será desta forma que outros micros acessarão remotamente (IP fixo de preferência).
 
-       Se tentarmos de outro computador uma mensagem de erro é apresentada porque o SSH automaticamente guarda a identificação das máquinas usadas para nos conectarmos em um arquivo chamado "known_hosts".
+       Se tentarmos de outro computador uma mensagem de erro é apresentada porque o SSH automaticamente guarda a identificação das máquinas usadas para nos conectarmos em um 
+       arquivo chamado "known_hosts".
 
        $ cat c:\users\nesso\.ssh\known_hosts = Para ler o arquivo (Repare que o arquivo guarda o IP e uma identificação específica).
 
@@ -500,7 +521,7 @@ Aula 03 - Lidando com o SSH -------
 
         Finalize com $ exit retornando ao Windows.
 
-        Desta vez executaremos o mesmo comando para acessar com chave privada, porém utilizando a nossa chave privada.
+        Desta vez executaremos o mesmo comando para acessar com chave privada, porém utilizando a nossa chave privada criada.
 
             $ ssh -i id_bionic vagrant@"IP da máquina virtual"
 
@@ -554,7 +575,8 @@ Aula 04 - Provisionando a máquina -------
 
         Utilizaremos agora o "Shell Provisioner"
 
-        Já vimos no curso de Linux que o Shell é onde podemos executar qualquer comando no Linux, executando assim qualquer tarefa, desde manipulação de pastas, arquivos e usuários como a instalação de endings.
+        Já vimos no curso de Linux que o Shell é onde podemos executar qualquer comando no Linux, executando assim qualquer tarefa, desde manipulação de pastas, arquivos e 
+        usuários como a instalação de endings.
 
         Na final do conteúdo da guia "Provisioning" da documentação do Vagrant, encontramos o seguinte código de exemplo:
 
@@ -598,7 +620,8 @@ Aula 04 - Provisionando a máquina -------
 
         Vemos que o trecho de código inserido no nosso "VagrantFile" foi executado dentro da máquina virtual.
 
-        Entendemos então que podemos executar comandos Batch-Shell através destas configurações nos possibilitando fazer algumas coisas extra-Vagrant como instalação de programas, por exemplo.
+        Entendemos então que podemos executar comandos Batch-Shell através destas configurações nos possibilitando fazer algumas coisas extra-Vagrant como instalação de programas, 
+        por exemplo.
 
         Synced Folders
 
@@ -657,8 +680,9 @@ Aula 04 - Provisionando a máquina -------
 
               Se observarmos a documentação do Vagrant, veremos que temos outra forma de fazer isto.
 
-              Em "Shell Provisioner", dentro de "Provisioning" temos a variável $script, que é definida para ser adicionada e alterada no início do nosso arquivo "VagrantFile", antes de (Vagrant.configure("2") do |config|).
-              Também vemos no código seguinte como adicionar um usuário que pode acessar a máquina virtual a partir de qualquer host com %.
+              Em "Shell Provisioner", dentro de "Provisioning" temos a variável $script, que é definida para ser adicionada e alterada no início do nosso arquivo "VagrantFile", 
+              antes de (Vagrant.configure("2") do |config|). Também vemos no código seguinte como adicionar um usuário que pode acessar a máquina virtual a partir de qualquer host 
+              com %.
 
                 $script_mysql = <<-SCRIPT
                     apt-get update && \
@@ -695,7 +719,8 @@ Aula 04 - Provisionando a máquina -------
 
                     cat /etc/mysql/mysql.conf.d/mysqld.cnf > /configs/mysqld.cnf
 
-              Abra o arquivo mysqld.conf que foi compartilhada na pasta configs que é comum a nossa máquina real, e edite a linha "bind-address" para 0.0.0.0, para que aceite a conexão de outros IP's.
+              Abra o arquivo mysqld.conf que foi compartilhada na pasta configs que é comum a nossa máquina real, e edite a linha "bind-address" para 0.0.0.0, para que aceite a 
+              conexão de outros IP's.
 
               Salvar e retornar para o arquivo "VagrantFile"
 
@@ -711,9 +736,11 @@ Aula 04 - Provisionando a máquina -------
 
               Pronto! Este é um exemplo básico de como provisionar para a máquina virtual um banco como MySQL, obviamente existem milhares de opções e adições a serem exploradas.
 
-              O comando $ vagrant provision poderá apresentar erros, mas isto iremos trabalhando aos poucos e ajustando nosso provisionamento, aprimorando os scripts e ganhando experiência.
+              O comando $ vagrant provision poderá apresentar erros, mas isto iremos trabalhando aos poucos e ajustando nosso provisionamento, aprimorando os scripts e ganhando 
+              experiência.
 
-              Se já atuamos como administradores podemos utilizar um recurso chamado "External Script" que está na documentação para adicionar no "VagrantFile" ou no próprio repositório de códigos.
+              Se já atuamos como administradores podemos utilizar um recurso chamado "External Script" que está na documentação para adicionar no "VagrantFile" ou no próprio 
+              repositório de códigos.
 
 
               Nesta aula, aprendemos que:
@@ -755,8 +782,8 @@ Aula 04 - Provisionando a máquina -------
 
               R: Significa providenciar tudo que for preciso para executar um serviço
 
-              Alternativa correta! Provisionar significa fornecer a rede, CPU, memória, espaço, mas também o sistema operacional e pacotes, além da implantação em si. Tudo o que for preciso para rodar/executar o serviço.
-              Melhor ainda, fica automatizado e pode ser repetido a qualquer momento.
+              Alternativa correta! Provisionar significa fornecer a rede, CPU, memória, espaço, mas também o sistema operacional e pacotes, além da implantação em si. Tudo o que 
+              for preciso para rodar/executar o serviço. Melhor ainda, fica automatizado e pode ser repetido a qualquer momento.
 
 
            2 - Qual é o mapeamento padrão da pasta compartilhada?
@@ -814,8 +841,8 @@ Aula 05 - Conhecendo o Puppet -------
 
             Tiramos o forwarded port do exemplo anterior e deixamos esta configuração na máquina virtual phpweb
 
-                Obs: Temos que destruir a máquina default, antes de mudar toda a configuração do "VagrantFile" pois ela continuará existindo no VirtualBox e por consequência, utilizando todas as portas configuradas
-                        Por nós anteriormente.
+                Obs: Temos que destruir a máquina default, antes de mudar toda a configuração do "VagrantFile" pois ela continuará existindo no VirtualBox e por consequência, utilizando 
+                todas as portas configuradas por nós anteriormente.
 
                 Obs2: É importante saber que, para utilizar os comandos do vagrant, como $ vagrant status, $ vagrant halt ou $ vagrant destroy -f em uma determinada máquina, precisamos ter seu código no VagrantFile,
                     se não ela ficará no limbo, existindo sem a possibilidade de ser manipulada.
@@ -848,7 +875,8 @@ Aula 05 - Conhecendo o Puppet -------
 
         PUPPET APPLY PROVISIONER
 
-            Nesta página podemos encontrar modelos básicos de configurações, que nos ajudam muito com o Puppet -> http://www.digitalocean.com/community/tutorials/getting-started-with-puppet-code-manifests-and-modules
+            Nesta página podemos encontrar modelos básicos de configurações, que nos ajudam muito com o Puppet:
+            http://www.digitalocean.com/community/tutorials/getting-started-with-puppet-code-manifests-and-modules
 
             Para utilizar esta aplicação criamos "manifests files" em um novo diretório que podemos deixar em comum com nossa máquina virtual como o "configs", porém esta chamamos de "manifest".
                 Obs: Nas nossas atividades deixamos a pasta manifest dentro de configs, pois ela já estava sendo criada automaticamente na máquina virtual em nosso "VagrantFile".
@@ -894,7 +922,8 @@ Aula 05 - Conhecendo o Puppet -------
 
         INTEGRANDO O PUPPET COM O VAGRANT
 
-            Podemos no "VagrantFile" adicionar a instalação do Puppet através do Shell, dentro da máquina virtual phpweb. Também adicionamos o arquivo de configuração (Manifest) phpweb.pp.
+            Podemos no "VagrantFile" adicionar a instalação do Puppet através do Shell, dentro da máquina virtual phpweb. Também adicionamos o arquivo de configuração (Manifest) 
+            phpweb.pp.
 
                 phpweb.vm.provision "shell",
                             inline: "apt-get update && apt-get install -y puppet"
@@ -942,7 +971,8 @@ Aula 05 - Conhecendo o Puppet -------
 
                     Para ver se funcionou
 
-            Para que possamos integrar/testar também o MySQL da nossa outra máquina criada com o arquivo index.php, vamos adicionar uma lógica básica onde realizamos um teste simples de conexão.
+            Para que possamos integrar/testar também o MySQL da nossa outra máquina criada com o arquivo index.php, vamos adicionar uma lógica básica onde realizamos um teste 
+            simples de conexão.
 
                 <?php
                     echo "Testando conexao <br /> <br />";
@@ -967,10 +997,10 @@ Aula 05 - Conhecendo o Puppet -------
         Obs2: Para não esquecer, a extensão ".pp" se refere somente ao puppet, pois são seus "Manifests Files".
 
         Obs3: Na documentação do Vagrant encontramos todas as variáveis e comandos necessários para utilizar os "provisionadores" como o puppet.
-                No caso do Puppet basta, além da declaração de sua referência no arquivo "VagrantFile", definir seu caminho (manifest_path) e o arquivo de configuração (manifest_file)
+            No caso do Puppet basta, além da declaração de sua referência no arquivo "VagrantFile", definir seu caminho (manifest_path) e o arquivo de configuração (manifest_file)
 
-        Obs4: Temos que sempre prestar atenção nas camadas, nos parâmetros e variáveis que a documentação nos ensina a usar, principalmente a abertura do arquivo "VagrantFile", suas "Máquinas virtuais" e
-                suas subconfigurações.
+        Obs4: Temos que sempre prestar atenção nas camadas, nos parâmetros e variáveis que a documentação nos ensina a usar, principalmente a abertura do arquivo "VagrantFile", 
+            suas "Máquinas virtuais" e suas subconfigurações.
 
 
         Nesta aula, aprendemos que:
@@ -1061,11 +1091,12 @@ Aula 06 - Usando o Ansible -------
             Iniciamos o modulo utilizando Shell Provisioner para enviar comandos para a máquina virtual, como foi no caso em que instalamos o MySQL.
             Porém, ficou claro que existem Provisionadores mais eficazes.
 
-            Com isso vimos o Puppet, que através de um arquivo que chamaos de manifest, podemos provisionar a máquina virtual, o problema é que está é uma ferramenta que precisa estar instalada no guest.
+            Com isso vimos o Puppet, que através de um arquivo que chamaos de manifest, podemos provisionar a máquina virtual, o problema é que está é uma ferramenta que precisa 
+            estar instalada no guest.
             Ex.: Queriamos somente o PHP instalado, mas como estavamos utilizando o Puppet para fazer isso, tivemos que utilizar o VagrantFile para realizar esta instalação.
 
-            Já no caso do Ansible, utilizamos ele instalando apenas no host, assim como o Vagrant, e definimos todo o processo em um documento que chamamos de playbook.yml análogo aos arquivo do puppet (.pp) o qual envia
-            os comandos para a máquina virtual.
+            Já no caso do Ansible, utilizamos ele instalando apenas no host, assim como o Vagrant, e definimos todo o processo em um documento que chamamos de playbook.yml análogo 
+            aos arquivo do puppet (.pp) o qual envia os comandos para a máquina virtual.
 
             Além desta distinção, precisamos ter o Python instalado nesta máquina, porém é uma ferramenta comum em sistemas linux, bem provávelmente não precisamos instala-la.
 
@@ -1135,6 +1166,11 @@ Aula 06 - Usando o Ansible -------
                        inline: "cp /vagrant/id_bionic64 >> /home/vagrant && \
                                chmod 600 /home/vagrant/id_bionic64"
 
+            Obs: Sobre >> e > 
+                echo "teste" > /path/arquivo : Vai sobrescrever todo arquivo pela palavra teste
+
+                echo "teste" >> /path/arquivo : Vai acrescentar no final do arquivo a palavra teste
+
             Testamos o código do "VagrantFile" para o ansible:
 
                 $ vagrant provision ansible
@@ -1149,8 +1185,8 @@ Aula 06 - Usando o Ansible -------
 
         TESTANDO O PLAYBOOK
 
-            Devemos criar uma nova pasta ansible, onde estarão os arquivos de Hosts que define as máquinas que serão configuradas com uma lista de IP's e algumas configurações de usuário.
-                Carrega também configurações de usuário, conexão, chave privada, permissões e padrão Python.
+            Devemos criar uma nova pasta ansible, onde estarão os arquivos de Hosts que define as máquinas que serão configuradas com uma lista de IP's e algumas configurações de 
+            usuário. Carrega também configurações de usuário, conexão, chave privada, permissões e padrão Python.
 
             ------>
                 [mysqlserver]
@@ -1218,8 +1254,8 @@ Aula 06 - Usando o Ansible -------
 
                 Obs: Lembrando sempre que todo caminho depende de onde nossos arquivos estão.
 
-                Obs2: Devemos sempre nos atentar aos erros. Erros de permissões à determinadas pastas ou arquivos devem ser sanados com cuidado, pois determinados niveis de acesso não podem ser concedidos
-                        a qualquer usuário.
+                Obs2: Devemos sempre nos atentar aos erros. Erros de permissões à determinadas pastas ou arquivos devem ser sanados com cuidado, pois determinados niveis de acesso 
+                não podem ser concedidos a qualquer usuário.
 
             No caso do curso podemos mudar o proprietário do arquivo/diretório com o comando chown:
 
@@ -1241,7 +1277,8 @@ Aula 06 - Usando o Ansible -------
 
                 Obs: No meu caso em particular não houve erro de permissões, apenas um probleminha com o Python
 
-                Obs2: A identação é importantissima nos arquivos .yml, sua identação tem que estar exata, respeitando sempre os dois espaços da margem ou o bloco de código no qual o parâmetro esta inserido.
+                Obs2: A identação é importantissima nos arquivos .yml, sua identação tem que estar exata, respeitando sempre os dois espaços da margem ou o bloco de código no qual 
+                o parâmetro esta inserido.
 
                 Obs3: O parâmetro "-i" significa inventario
 
@@ -1331,8 +1368,8 @@ Aula 06 - Usando o Ansible -------
 
             R:  É o inventário que define quais máquinas queremos provisionar
 
-                Alternativa correta! O arquivo hosts possui os endereços das máquinas onde queremos aplicar o provisionamento. Podemos definir grupos de máquinas e definir detalhes da conexão SSH, como a chave ou
-                usuário.
+                Alternativa correta! O arquivo hosts possui os endereços das máquinas onde queremos aplicar o provisionamento. Podemos definir grupos de máquinas e definir 
+                detalhes da conexão SSH, como a chave ou usuário.
 
 
         4 - Novamente, você foi chamado para ajudar uma equipe que usa o Vagrant, mas agora também tem o Ansible envolvido. Você encontrou o Vagrantfile abaixo:
@@ -1363,13 +1400,13 @@ Aula 07 - Configurações do Provedor -------
 
         CONFIGURAÇÕES DO PROVIDER:
 
-            Com o VagrantFile criamos algumas máquinas virtuais e se olharmos na interface do Oracle Virtual Box vemos que cada uma delas usam recursos do sistema (Memória e CPU) com definições padrões na hora da
-            criação.
+            Com o VagrantFile criamos algumas máquinas virtuais e se olharmos na interface do Oracle Virtual Box vemos que cada uma delas usam recursos do sistema (Memória e CPU) 
+            com definições padrões na hora da criação.
 
                 Obs: No momento do curso, as máquinas estão sendo criadas por padrão com 1024 de memória e 2 cpu's.
 
-            Se olharmos a documentação do Vagrant poderemos ver na parte "Configuration" do "Provider" "Virtual Box" que é possível definir os recurso de nossa máquina que serão utilizados na criação de cada máquina
-            virtual
+            Se olharmos a documentação do Vagrant poderemos ver na parte "Configuration" do "Provider" "Virtual Box" que é possível definir os recurso de nossa máquina que serão 
+            utilizados na criação de cada máquina virtual.
 
             A documentação nos da o seguinte trecho de código para ser inserido no nosso VagrantFile:
 
@@ -1381,7 +1418,8 @@ Aula 07 - Configurações do Provedor -------
                     vb.cpus = 1
                 end
 
-            Executando o comando $ vagrant up agora com este trecho de código, poderemos ver na interface do Oracle Virtual Box que nossas máquinas foram criadas com os recursos definidos por nós.
+            Executando o comando $ vagrant up agora com este trecho de código, poderemos ver na interface do Oracle Virtual Box que nossas máquinas foram criadas com os recursos 
+            definidos por nós.
 
             Estas configurações podem ser setadas de forma individual para cada máquina virtual, inserindo dentro do trecho de código no VagrantFile da máquina desejada.
 
@@ -1418,7 +1456,8 @@ Aula 07 - Configurações do Provedor -------
 
             Devemos observar que o comando $ vagrant status só funciona em ambientes que temos o "VagrantFile"
 
-            Porém se utilizarmos este comando em lugares que não temos o "VagrantFile" ele nos dará a dica de que outro comando poderá nos mostrar as máquinas ativas no nosso sistema, o:
+            Porém se utilizarmos este comando em lugares que não temos o "VagrantFile" ele nos dará a dica de que outro comando poderá nos mostrar as máquinas ativas no nosso 
+            sistema, o:
 
                 $ vagrant global-status
 
@@ -1525,8 +1564,8 @@ Aula 08 - Virtualização vs Container -------
 
         Não temos simulações de outros sistemas operacionais para rodar as ferramentas.
 
-        Ou seja, teremos uma biblioteca de dados carregada no sistema operacional, por isso não é preciso que os programas possuam sua própria máquina, pois se conecta diretamente à fonte através dos containers,
-        tornando-os mais leves e rápidos.
+        Ou seja, teremos uma biblioteca de dados carregada no sistema operacional, por isso não é preciso que os programas possuam sua própria máquina, pois se conecta 
+        diretamente à fonte através dos containers, tornando-os mais leves e rápidos.
 
         Esta técnica se tornou popular por ser eficiente e prática.
 
@@ -1534,8 +1573,8 @@ Aula 08 - Virtualização vs Container -------
 
             Existem poucas versões do Windows que comportam os containers automaticamente, tornando pouco acessível.
 
-                Nesta página https://docs.docker.com/docker-for-windows/install/, encontramos o link para baixar o Docker Hub, porém ele informa que há a necessidade de ter instalado o Hyper-V, o qual é compativel
-                com todas as versões do Windows.
+                Nesta página https://docs.docker.com/docker-for-windows/install/, encontramos o link para baixar o Docker Hub, porém ele informa que há a necessidade de ter 
+                instalado o Hyper-V, o qual é compativel com todas as versões do Windows.
 
         Criando um ambiente com o Vagrant para provisionar o Docker no Windows.
 
@@ -1583,8 +1622,9 @@ Aula 08 - Virtualização vs Container -------
 
     Questões:
 
-        1 - Com a virtualização através dos Hypervisors, podemos diminuir os recursos físicos na empresa. Podemos aproveitar melhor cada hardware, instalando vários sistemas operacionais na mesma infraestrutura,
-            reduzindo assim os custos de luz e rede, já que não teremos mais vários servidores físicos, e teremos menos ociosidade do hardware.
+        1 - Com a virtualização através dos Hypervisors, podemos diminuir os recursos físicos na empresa. Podemos aproveitar melhor cada hardware, instalando vários sistemas 
+            operacionais na mesma infraestrutura, reduzindo assim os custos de luz e rede, já que não teremos mais vários servidores físicos, e teremos menos ociosidade do 
+            hardware.
 
             Mas as máquinas virtuais também possuem problemas e desvantagens. Quais identificamos no último vídeo?
 
@@ -1609,6 +1649,6 @@ Aula 08 - Virtualização vs Container -------
 
             R2: Ambos fazem parte do mundo DevOps
 
-                Alternativa correta! A virtualização foi um passo fundamental e importante para facilitar a criação do recursos (diminuindo o tempo e gasto, aumentando confiabilidade, etc) e os containers agilizam
-                ainda mais o deploy de aplicações. Ambos são pilares do mundo DevOps.
+                Alternativa correta! A virtualização foi um passo fundamental e importante para facilitar a criação do recursos (diminuindo o tempo e gasto, aumentando 
+                confiabilidade, etc) e os containers agilizam ainda mais o deploy de aplicações. Ambos são pilares do mundo DevOps.
 
