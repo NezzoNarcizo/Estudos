@@ -1,0 +1,40 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+Vagrant.configure("2") do |config|
+  
+  config.vm.box = "hashicorp/bionic64"
+
+  config.vm.network "private_network", ip: "127.0.0.2"
+
+  config.vm.provider "virtualbox" do |vb|
+    # Configurando nome e memória ram
+    vb.name = "ubuntuAmazon"
+    vb.memory = 512
+
+    # Display the VirtualBox GUI when booting the machine
+    vb.gui = false
+    
+    # Customizando a memória de vídeo da máquina virtual ***Documentação Virtual Box
+    vb.customize ["modifyvm", :id, "--vram", 32]
+
+    # Configuração para utilizar a placa de rede em modo bridge ***Documentação Virtual Box
+    vb.customize ["modifyvm", :id, "--nictype2", "82540EM"]
+    vb.customize ["modifyvm", :id, "--nic2", "bridged"]
+    vb.customize ["modifyvm", :id, "--bridgeadapter2", "Intel(R) Ethernet Connection I217-LM"]
+  end
+
+  # Provisionamento para utilizar a máquina virtual com chave pública/privada SSH
+  config.vm.provision "shell", inline: "cat /vagrant/configs/id_ubuntuAmazon.pub >> .ssh/authorized_keys"
+  
+  # Criação do ambiente de desenvolvimento da Amazon AWS na máquina virtual ... Não deu certo por causa da comunicação com a máquina da AWS
+  # config.vm.provision "shell", inline: "mkdir /home/ambiente-dev-amazon"
+  # config.vm.provision "shell", inline: "cp /vagrant/aws-marlon.pem /home/ambiente-dev-amazon/"
+  # config.vm.provision "shell", inline: "chown vagrant:vagrant /home/ambiente-dev-amazon/"
+  # config.vm.provision "shell", inline: "chmod 500 /home/ambiente-dev-amazon"
+  # config.vm.provision "shell", inline: "chmod 400 /home/ambiente-dev-amazon/aws-marlon.pem"
+end
