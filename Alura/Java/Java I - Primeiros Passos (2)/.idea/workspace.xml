@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="04401616-5a8b-4f6c-aa94-74fd7a579b1f" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../../DevOps/4 - Git e Github Estratégias de ramificação, Conflitos e Pull Requests/Teoria do curso Git e Github 2.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../DevOps/4 - Git e Github Estratégias de ramificação, Conflitos e Pull Requests/Visualizing Git - Exemplo de Cherry-Pick.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../DevOps/4 - Git e Github Estratégias de ramificação, Conflitos e Pull Requests/git-flow-exemplo.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../DevOps/4 - Git e Github Estratégias de ramificação, Conflitos e Pull Requests/git-flow-exemplo2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -20,27 +17,23 @@
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showExcludedFiles" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="HTML" />
     <property name="ignore.virus.scanning.warn.message" value="true" />
     <property name="jdk.selected.JAVA_MODULE" value="1.8" />
-    <property name="last_opened_file_path" value="D:/ambiente_dev" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../IntelliJ/Atalhos IntelliJ.txt" />
   </component>
-  <component name="ServiceViewManager">
-    <option name="viewStates">
-      <list>
-        <serviceView>
-          <treeState>
-            <expand />
-            <select />
-          </treeState>
-        </serviceView>
-      </list>
-    </option>
+  <component name="RunManager">
+    <configuration name="Unnamed" type="Application" factoryName="Application" nameIsGenerated="true">
+      <module name="Java I - Primeiros Passos (2)" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -56,21 +49,46 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
+    <state x="657" y="138" key="#Unnamed" timestamp="1587160510957">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="657" y="138" key="#Unnamed/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1587160510957" />
+    <state x="414" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1587160454133">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="414" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1587160454133" />
     <state x="808" y="410" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog" timestamp="1578781691229">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="808" y="410" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1578781691229" />
-    <state x="740" y="274" key="FileChooserDialogImpl" timestamp="1578782691484">
+    <state x="740" y="274" key="FileChooserDialogImpl" timestamp="1587159809151">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="740" y="274" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1578782691484" />
+    <state x="740" y="274" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1587159809151" />
+    <state width="1876" height="277" key="GridCell.Tab.0.bottom" timestamp="1587160534349">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1876" height="277" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1587160534349" />
+    <state width="1876" height="277" key="GridCell.Tab.0.center" timestamp="1587160534349">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1876" height="277" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1587160534349" />
+    <state width="1876" height="277" key="GridCell.Tab.0.left" timestamp="1587160534349">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1876" height="277" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1587160534349" />
+    <state width="1876" height="277" key="GridCell.Tab.0.right" timestamp="1587160534349">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1876" height="277" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1587160534349" />
     <state x="931" y="341" key="com.intellij.ide.util.TipDialog" timestamp="1578782661170">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="931" y="341" key="com.intellij.ide.util.TipDialog/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1578782661170" />
-    <state x="342" y="244" key="new project wizard" timestamp="1575334510618">
+    <state x="342" y="139" key="new project wizard" timestamp="1587158947767">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="342" y="244" key="new project wizard/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1575334510618" />
+    <state x="342" y="139" key="new project wizard/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1587158947767" />
   </component>
 </project>
