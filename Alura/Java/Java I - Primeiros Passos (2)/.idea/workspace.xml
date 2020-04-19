@@ -1,35 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="04401616-5a8b-4f6c-aa94-74fd7a579b1f" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sintaxeBasica/src/ProgramaSB.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../DevOps/5 - Vagrant - Gerenciando máquinas virtuais/ambiente_dev/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../DevOps/5 - Vagrant - Gerenciando máquinas virtuais/ambiente_dev/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Java I - Primeiros Passos (2).iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Java I - Primeiros Passos (2).iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Programa.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Teoria.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Teoria.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sintaxe-basica/.idea/$PRODUCT_WORKSPACE_FILE$" beforeDir="false" afterPath="$PROJECT_DIR$/sintaxeBasica/.idea/$PRODUCT_WORKSPACE_FILE$" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sintaxe-basica/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/sintaxeBasica/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sintaxe-basica/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/sintaxeBasica/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sintaxe-basica/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/sintaxeBasica/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sintaxe-basica/out/production/sintaxe-basica/Programa.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/sintaxe-basica/sintaxe-basica.iml" beforeDir="false" afterPath="$PROJECT_DIR$/sintaxeBasica/sintaxeBasica.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sintaxe-basica/src/Programa.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/sintaxe-variaveis-e-fluxo/.idea/$PRODUCT_WORKSPACE_FILE$" beforeDir="false" afterPath="$PROJECT_DIR$/sintaxeVariaveisEFluxo/.idea/$PRODUCT_WORKSPACE_FILE$" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sintaxe-variaveis-e-fluxo/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/sintaxeVariaveisEFluxo/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sintaxe-variaveis-e-fluxo/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/sintaxeVariaveisEFluxo/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sintaxe-variaveis-e-fluxo/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/sintaxeVariaveisEFluxo/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sintaxe-variaveis-e-fluxo/out/production/sintaxe-variaveis-e-fluxo/TestaConversao.class" beforeDir="false" afterPath="$PROJECT_DIR$/sintaxeVariaveisEFluxo/out/production/sintaxe-variaveis-e-fluxo/TestaConversao.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sintaxe-variaveis-e-fluxo/out/production/sintaxe-variaveis-e-fluxo/TestaPontoFlutuante.class" beforeDir="false" afterPath="$PROJECT_DIR$/sintaxeVariaveisEFluxo/out/production/sintaxe-variaveis-e-fluxo/TestaPontoFlutuante.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sintaxe-variaveis-e-fluxo/out/production/sintaxe-variaveis-e-fluxo/TestaVariaveis.class" beforeDir="false" afterPath="$PROJECT_DIR$/sintaxeVariaveisEFluxo/out/production/sintaxe-variaveis-e-fluxo/TestaVariaveis.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sintaxe-variaveis-e-fluxo/sintaxe-variaveis-e-fluxo.iml" beforeDir="false" afterPath="$PROJECT_DIR$/sintaxeVariaveisEFluxo/sintaxe-variaveis-e-fluxo.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sintaxe-variaveis-e-fluxo/src/TestaConversao.java" beforeDir="false" afterPath="$PROJECT_DIR$/sintaxeVariaveisEFluxo/src/TestaConversao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sintaxe-variaveis-e-fluxo/src/TestaPontoFlutuante.java" beforeDir="false" afterPath="$PROJECT_DIR$/sintaxeVariaveisEFluxo/src/TestaPontoFlutuante.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sintaxe-variaveis-e-fluxo/src/TestaVariaveis.java" beforeDir="false" afterPath="$PROJECT_DIR$/sintaxeVariaveisEFluxo/src/TestaVariaveis.java" afterDir="false" />
-    </list>
+    <list default="true" id="04401616-5a8b-4f6c-aa94-74fd7a579b1f" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
