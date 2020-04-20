@@ -19,10 +19,17 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="HTML" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="JAVA&#10;HTML" />
     <property name="ignore.virus.scanning.warn.message" value="true" />
     <property name="jdk.selected.JAVA_MODULE" value="1.8" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../IntelliJ/Atalhos IntelliJ.txt" />
+    <property name="kotlin.migration.detection.enabled" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="project.structure.last.edited" value="SDKs" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RunManager">
     <configuration name="Unnamed" type="Application" factoryName="Application" nameIsGenerated="true">
@@ -31,6 +38,18 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -46,6 +65,38 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
+    <state x="552" y="179" key="#Inspections" timestamp="1587186056830">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="552" y="179" key="#Inspections/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587186056830" />
+    <state x="677" y="179" key="#Java" timestamp="1587180479088">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="677" y="179" key="#Java/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587180479088" />
+    <state x="552" y="179" key="#Project_Structure" timestamp="1587181600579">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="552" y="179" key="#Project_Structure/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587181600579" />
+    <state x="679" y="179" key="#Scratch" timestamp="1587165152844">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="679" y="179" key="#Scratch/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587165152844" />
+    <state x="677" y="179" key="#Unnamed" timestamp="1587165875769">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="677" y="179" key="#Unnamed/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587165875769" />
+    <state x="575" y="182" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1587185339542">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="575" y="182" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587185339542" />
+    <state x="719" y="324" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1587169132888">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="719" y="324" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587169132888" />
+    <state x="689" y="305" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1587184143331">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="689" y="305" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587184143331" />
     <state x="657" y="138" key="#Unnamed" timestamp="1587160510957">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -58,6 +109,66 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="808" y="410" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1578781691229" />
+    <state x="640" y="249" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1587165171108">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="640" y="249" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587165171108" />
+    <state x="707" y="377" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1587186237589">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="707" y="377" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587186237589" />
+    <state x="740" y="274" key="FileChooserDialogImpl" timestamp="1587183174723">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="740" y="274" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587183174723" />
+    <state width="1899" height="348" key="GridCell.Tab.0.bottom" timestamp="1587186400915">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="348" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587186400915" />
+    <state width="1899" height="348" key="GridCell.Tab.0.center" timestamp="1587186400915">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="348" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587186400915" />
+    <state width="1899" height="348" key="GridCell.Tab.0.left" timestamp="1587186400915">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="348" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587186400915" />
+    <state width="1899" height="348" key="GridCell.Tab.0.right" timestamp="1587186400915">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="348" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587186400915" />
+    <state width="1899" height="348" key="GridCell.Tab.1.bottom" timestamp="1587186400916">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="348" key="GridCell.Tab.1.bottom/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587186400916" />
+    <state width="1899" height="348" key="GridCell.Tab.1.center" timestamp="1587186400916">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="348" key="GridCell.Tab.1.center/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587186400916" />
+    <state width="1899" height="348" key="GridCell.Tab.1.left" timestamp="1587186400915">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="348" key="GridCell.Tab.1.left/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587186400915" />
+    <state width="1899" height="348" key="GridCell.Tab.1.right" timestamp="1587186400916">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="348" key="GridCell.Tab.1.right/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587186400916" />
+    <state x="573" y="243" key="RollbackChangesDialog" timestamp="1587168055690">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="573" y="243" key="RollbackChangesDialog/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587168055690" />
+    <state x="461" y="163" key="SettingsEditor" timestamp="1587185797475">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="461" y="163" key="SettingsEditor/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587185797475" />
+    <state x="931" y="341" key="com.intellij.ide.util.TipDialog" timestamp="1587182776942">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="931" y="341" key="com.intellij.ide.util.TipDialog/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587182776942" />
+    <state x="342" y="245" key="new project wizard" timestamp="1587166037512">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="342" y="245" key="new project wizard/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587166037512" />
     <state x="740" y="274" key="FileChooserDialogImpl" timestamp="1587159809151">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

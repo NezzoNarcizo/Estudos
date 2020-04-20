@@ -1,3 +1,5 @@
+package sintaxeVariaveisEFluxo.src;
+
 public class TestaPontoFlutuante {
     public static void main(String[] args) {
 
@@ -19,7 +21,7 @@ public class TestaPontoFlutuante {
         int outraDivisao = 5 / 2;
         System.out.println("Divisão ignorando a dízima periódica: " + outraDivisao);
 
-        double novaTentativa = 5 / 2;
+        double novaTentativa = 5 / 2; //Temos um warning aqui, é normal, estamos tentando dividir dois inteiro e colocar em um ponto flutuante.
         System.out.println("Divisão de números inteiros armazenando num ponto flutuante: " + novaTentativa);
         /*
             O Java realiza a operação da direita para a esquerda depois ele verifica se pode armazenar o valor na várival da operação.

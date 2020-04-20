@@ -152,14 +152,14 @@ R: Todas!
 
 9 - Quais comandos ele deve usar para compilar e rodar esse código Java?
 
-R: javac Programa.java
-   java Programa
+R: javac Programa2.java
+   java Programa2
 
 Correto! Repare que passamos a extensão do arquivo (.java) para o comando javac:
-javac Programa.java
+javac Programa2.java
 
 E para chamar a JVM usamos apenas o nome da classe (sem extensão):
-java Programa
+java Programa2
 
 
 10 - Podemos programar em Java utilizando editores de textos e IDEs. Nesse contexto, temos as seguintes afirmativas:

@@ -1,3 +1,5 @@
+package sintaxeVariaveisEFluxo.src;
+
 public class TestaConversao {
     public static void main(String[] args) {
 
@@ -48,7 +50,7 @@ public class TestaConversao {
             No Java existem outros tipos que servem melhor para esta finalidade
          */
 
-        float outroPontoFlutuante = (float) 3.14 ;
+        float outroPontoFlutuante = (float) 3.14;
         System.out.println("Casting de ponto flutuante de 64 bits para 32: " + outroPontoFlutuante);
 
         float pontoFlutuanteIndicadoComoFloat = 3.14f;
