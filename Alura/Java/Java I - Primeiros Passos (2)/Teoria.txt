@@ -68,7 +68,33 @@ Variáveis de Usuário: JAVA_HOME = C:\Program Files\Java\jdk-13\
 Variáveis do Sistema: CLASSPATH = .;%JAVA_HOME%\lib;%JAVA_HOME%\lib\tools.jar;%JAVA_HOME%\lib\dt.jar;%JAVA_HOME%\lib\htmlconverter.jar;%JAVA_HOME%\jre\lib;%JAVA_HOME%\jre\lib\rt.jar
 					  Path = C:\Program Files\Java\jdk-13\bin
 
+Obs: No IntelliJ - O nome da Pasta do Projeto é na verdade todo o local do Projeto, ele não cria uma nova pasta mesmo que você coloque o nome do projeto
+                    diferente. Por isso se atentar em indicar o local do projeto e criar uma nova pasta para o projeto desejado.
 
+
+IDE = Integrated Development Environment
+
+Curiosidade: A Microsoft, quando lançou o Visual Studio, foi atrás dos recursos apresentados pelo Eclipse, com o ReSharper, contratando o Erich Gamma, autor de Design Patterns: Elements of Reusable Object-Oriented Software, para trabalhar com o IDE deles. O Eclipse foi uma inspiração para muitos, e é considerado uma ferramenta incrível.
+
+Java é Estaticamente Tipada (Precisa declarar todas as variáveis que vão ser utilizadas), e também fortemente tipada num todo.
+
+CamelCase =  É a denominação em inglês para a prática de escrever as palavras compostas ou frases, onde cada palavra é iniciada com maiúsculas e unidas. (Wikipédia)
+
+No Java, um statment (ou instrução) não funciona fora dos métodos, portanto precisaremos no mínimo do ponto inicial, o "public static void main".
+
+evaluation = Resultado da expressão.
+
+No Java não há costume de se abreviar palavras, como é o caso de variáveis.
+
+Operadores aritméticos:
+
++ para Soma
+
+- para Subtração
+
+* para Multiplicação
+
+/ para Divisão
 
 
 
@@ -245,30 +271,41 @@ System.out.println("A idade de Marcos é " + idade + "!");
 
 Opção correta!
 
-Obs: No IntelliJ - O nome da Pasta do Projeto é na verdade todo o local do Projeto, ele não cria uma nova pasta mesmo que você coloque o nome do projeto diferente.
-					Por isso se atentar em indicar o local do projeto e criar uma nova pasta para o projeto desejado.
-					
-					
-IDE = Integrated Development Environment
 
-Curiosidade: A Microsoft, quando lançou o Visual Studio, foi atrás dos recursos apresentados pelo Eclipse, com o ReSharper, contratando o Erich Gamma, autor de Design Patterns: Elements of Reusable Object-Oriented Software, para trabalhar com o IDE deles. O Eclipse foi uma inspiração para muitos, e é considerado uma ferramenta incrível.
+17 - Rômulo é um grande entusiasta da linguagem Java e está sempre disposto a aprender novas coisas. A última coisa que Rômulo resolveu aprender são Strings
+        e chars em Java, porém ele ainda não tem certeza de como deve declarar cada um dos tipos. Qual das alternativas têm a resposta correta para Rômulo?
 
-Java é Estaticamente Tipada (Precisa declarar todas as variáveis que vão ser utilizadas), e também fortemente tipada num todo.
+C - String frase = "Estou sempre disposto a aprender novas tecnologias";
+    char letra = 'a';
 
-CamelCase =  É a denominação em inglês para a prática de escrever as palavras compostas ou frases, onde cada palavra é iniciada com maiúsculas e unidas. (Wikipédia)
+Correto! Lembre-se, uma String é declarada com aspas duplas " e pode ter zero ou mais caracteres. Um char é declarado com aspas simples ' e pode usar apenas
+            um caractere!
 
-No Java, um statment (ou instrução) não funciona fora dos métodos, portanto precisaremos no mínimo do ponto inicial, o "public static void main".
 
-evaluation = Resultado da expressão.
+18 - Rômulo, depois de assistir aos vídeos deste capítulo, resolveu testar o que foi dito em aula e fez um código para somar dois valores quaisquer.
 
-No Java não há costume de se abreviar palavras, como é o caso de variáveis.
+String parcela1 = "10";
+String parcela2 = "20";
 
-Operadores aritméticos:
+System.out.println(parcela1 + parcela2);
 
-+ para Soma
+Não, o resultado será 1020.
 
-- para Subtração
+Correto. O resultado será a concatenação das duas parcelas.
 
-* para Multiplicação
 
-/ para Divisão
+19 - Paulo, vendo que Rômulo continuava com algumas dificuldades com Java, resolveu elaborar um desafio para seu amigo utilizando conceitos de concatenação de
+        Strings, vistos neste capítulo. O desafio continha o seguinte trecho de código:
+
+     String saudacao = "Olá, meu nome é ";
+     String nome = "Rômulo ";
+     String continuacao = "e minha idade é ";
+     int idade = 100;
+     System.out.println(saudacao+nome+continuacao+idade);
+
+     O código de Paulo para Rômulo possui algum problema?
+
+     C = Não há problemas, a concatenação pode ser feita sem problemas.
+
+     Correto!
+

@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="04401616-5a8b-4f6c-aa94-74fd7a579b1f" name="Default Changelist" comment="" />
+    <list default="true" id="04401616-5a8b-4f6c-aa94-74fd7a579b1f" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Teoria.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Teoria.txt" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../.." />
@@ -25,31 +36,64 @@
     <property name="jdk.selected.JAVA_MODULE" value="1.8" />
     <property name="kotlin.migration.detection.enabled" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="project.structure.last.edited" value="SDKs" />
+    <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
-  <component name="RunManager">
-    <configuration name="Unnamed" type="Application" factoryName="Application" nameIsGenerated="true">
+  <component name="RunManager" selected="Application.TestaValores">
+    <configuration name="ProgramaSB" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="sintaxeBasica.src.ProgramaSB" />
       <module name="Java I - Primeiros Passos (2)" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="sintaxeBasica.src.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-  </component>
-  <component name="ServiceViewManager">
-    <option name="viewStates">
+    <configuration name="TestaCaracteres" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="sintaxeVariaveisEFluxo.src.TestaCaracteres" />
+      <module name="Java I - Primeiros Passos (2)" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="sintaxeVariaveisEFluxo.src.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TestaValores" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="sintaxeVariaveisEFluxo.src.TestaValores" />
+      <module name="Java I - Primeiros Passos (2)" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="sintaxeVariaveisEFluxo.src.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.ProgramaSB" />
+      <item itemvalue="Application.TestaCaracteres" />
+      <item itemvalue="Application.TestaValores" />
+    </list>
+    <recent_temporary>
       <list>
-        <serviceView>
-          <treeState>
-            <expand />
-            <select />
-          </treeState>
-        </serviceView>
+        <item itemvalue="Application.TestaValores" />
+        <item itemvalue="Application.TestaCaracteres" />
+        <item itemvalue="Application.ProgramaSB" />
       </list>
-    </option>
+    </recent_temporary>
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -86,11 +130,19 @@
     </state>
     <state x="677" y="179" key="#Unnamed/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587165875769" />
     <state x="657" y="138" key="#Unnamed/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1587160510957" />
+<<<<<<< HEAD
     <state x="414" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1587160454133">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="575" y="182" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587185339542" />
     <state x="414" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1587160454133" />
+=======
+    <state x="414" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1587404311113">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="575" y="182" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587185339542" />
+    <state x="414" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1587404311113" />
+>>>>>>> 270b558004a8aece7e7e3b4e402afef67ceb2488
     <state x="719" y="324" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1587169132888">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -99,6 +151,13 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="689" y="305" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587184143331" />
+<<<<<<< HEAD
+=======
+    <state x="808" y="410" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog" timestamp="1578781691229">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="808" y="410" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1578781691229" />
+>>>>>>> 270b558004a8aece7e7e3b4e402afef67ceb2488
     <state x="640" y="249" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1587165171108">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -110,6 +169,7 @@
     <state x="740" y="274" key="FileChooserDialogImpl" timestamp="1587159809151">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
+<<<<<<< HEAD
     <state x="740" y="274" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587183174723" />
     <state x="740" y="274" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1587159809151" />
     <state width="1876" height="277" key="GridCell.Tab.0.bottom" timestamp="1587160534349">
@@ -132,6 +192,30 @@
     </state>
     <state width="1899" height="348" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587186400915" />
     <state width="1876" height="277" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1587160534349" />
+=======
+    <state x="740" y="274" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1578782691484" />
+    <state x="740" y="274" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1587159809151" />
+    <state width="1876" height="277" key="GridCell.Tab.0.bottom" timestamp="1587410821451">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="348" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587186400915" />
+    <state width="1876" height="277" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1587410821451" />
+    <state width="1876" height="277" key="GridCell.Tab.0.center" timestamp="1587410821451">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="348" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587186400915" />
+    <state width="1876" height="277" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1587410821451" />
+    <state width="1876" height="277" key="GridCell.Tab.0.left" timestamp="1587410821451">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="348" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587186400915" />
+    <state width="1876" height="277" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1587410821451" />
+    <state width="1876" height="277" key="GridCell.Tab.0.right" timestamp="1587410821451">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="348" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587186400915" />
+    <state width="1876" height="277" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1587410821451" />
+>>>>>>> 270b558004a8aece7e7e3b4e402afef67ceb2488
     <state width="1899" height="348" key="GridCell.Tab.1.bottom" timestamp="1587186400916">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -152,14 +236,22 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="573" y="243" key="RollbackChangesDialog/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587168055690" />
-    <state x="461" y="163" key="SettingsEditor" timestamp="1587185797475">
+    <state x="461" y="163" key="SettingsEditor" timestamp="1587404302504">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="461" y="163" key="SettingsEditor/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587185797475" />
+<<<<<<< HEAD
     <state x="931" y="341" key="com.intellij.ide.util.TipDialog" timestamp="1587512959910">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="931" y="341" key="com.intellij.ide.util.TipDialog/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1587512959910" />
+=======
+    <state x="461" y="163" key="SettingsEditor/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1587404302504" />
+    <state x="931" y="341" key="com.intellij.ide.util.TipDialog" timestamp="1578782661170">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="931" y="341" key="com.intellij.ide.util.TipDialog/0.0.1920.1040/1920.0.1366.768@0.0.1920.1040" timestamp="1578782661170" />
+>>>>>>> 270b558004a8aece7e7e3b4e402afef67ceb2488
     <state x="342" y="139" key="new project wizard" timestamp="1587158947767">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
