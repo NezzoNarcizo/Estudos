@@ -309,3 +309,79 @@ Correto. O resultado será a concatenação das duas parcelas.
 
      Correto!
 
+20 - João está criando uma aplicação para calcular o IR a partir do salário. Ele olhou na tabela de IRPF e implementou as regras para 15% e 22.5%:
+
+     public class TesteIR {
+
+         public static void main(String[] args) {
+
+             double salario = 3300.0;
+
+             if(salario < 2600.0)
+                 System.out.println("A sua aliquota é de 15%");
+                 System.out.println("Você pode deduzir até R$ 350");
+
+             if(salario < 3750.0)
+                 System.out.println("A sua aliquota é de 22,5%");
+                 System.out.println("Você pode deduzir até R$ 636");
+         }
+     }
+
+     Porém o programa tem um comportamento estranho. Ao compilar e rodar, é impresso:
+
+     Você pode deduzir até R$ 350
+     A sua aliquota é de 22,5%
+     Você pode deduzir até R$ 636
+     Repare que o programa indica que podemos deduzir R$350 E R$636! Como corrigir o problema?
+
+     Selecione uma alternativa
+
+     c: O problema é que faltam as chaves na condicional. Sem as chaves, o if apenas executará a primeira instrução depois dele.
+
+
+        Correto, devemos usar as chaves (sempre boa prática):
+
+                if(salario < 2600.0) {
+                    System.out.println("A sua aliquota é de 15%");
+                    System.out.println("Você pode deduzir R$ 350");
+                }
+
+                if(salario < 3750.0) {
+                    System.out.println("A sua aliquota é de 22,5%");
+                    System.out.println("Você pode deduzir R$ 636");
+                }
+
+21 - Veja o código abaixo:
+
+     int idade = 68;
+     boolean ehIdoso = idade >= 65;
+     Executando esse código corretamente dentro de um método main, qual será o valor da variável ehIdoso?
+
+     Obs: Se tiver com dúvida, faça o teste e imprima a variável: System.out.println(ehIdoso);
+
+     Selecione uma alternativa
+
+     d: true (Em letra minúscula)
+
+        Correto, o valor será true.
+
+
+22 - Abaixo há afirmações referentes às operações lógicas na linguagem Java. Quais delas são verdadeiras?
+
+     Selecione 2 alternativas
+
+     a: Os operadores lógicos devem ter no lado esquerdo e direito uma expressão booleana.
+
+
+        Correto, por exemplo:
+
+        if (idade > 18 && idade < 65) {
+
+        }
+        Repare que temos duas expressões booleanas, na esquerda e na direita do operador lógico &&.
+
+
+     b: O operador lógico AND é representado pelos caracteres && e o OR pelo ||.
+
+        Correto! AND é representado pelo && e OR pelo ||.
+
