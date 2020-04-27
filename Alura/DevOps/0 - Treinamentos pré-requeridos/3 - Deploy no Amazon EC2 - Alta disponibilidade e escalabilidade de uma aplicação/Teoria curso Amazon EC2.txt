@@ -910,19 +910,481 @@ Aula 07: Escalabilidade e alta disponibilidade -------
 
         Diagrama da solução e Load Balancing:
 
+            Agora é o momento que vamos juntar todos os conceitos que vimos até o momento.
+            Vimos no vídeo um imagem onde da pra ter uma noção de como é a estrutura da AWS. Claro que, se usássemos uma lupa cada serviço teria mais detalhes, mas
+            como o que foi exibido, da pra gerar um bom entendimento.
+
+            Cloud AWS_______________________
+            |  _______________    |         |
+            |   Load Balance   <->| Internet| <-> 80/443 - Users (Para que os usuários ingressem no Load Balance)
+            |        ↓ 80/443     |   GTW   | <-> 22 - DevOps
+            | ____________________|_________| 
+            | App Server Instances|         
+            |        ↓ 3306       |         
+            |  ___________________|         
+            |       RDS         |           
+            |___________________|
+
+            Load Balance: É um serviço que ativamos que recebe todo o tráfego que chega e redistribui para as instâncias...
+                            As instâncias que nos referimos nada mais são que cópias da imagem que criamos para escalonamento como já vimos anteriormente.
+
+                            Iremos configurar as instâncias para que façam a escala automática, por exemplo:
+                            Começamos com duas instãncias, caso o tráfego suba, sobe mais uma instância automáticamente. Podemos fazer diversas configurações.
+
+                            Por fim, todas as instâncias apontam para o mesmo RDS (Base de dados).
+
+                            Podemos realizar o acesso de duas formas, porta 22 ou pelo dashboard.
+
+            Vamos realizar a configuração do Load Balance...
+
+                - Começamos desligando todas as instâncias que estiverem ligadas.
+
+                - Vamos até o menu lateral (esquerdo) e na treeview Load Balancing escolhemos Load Balancers.
+                    Dentro da tela que aparecer, clicar no botão "Create Load Balancer".
+                
+                - Temos três tipos de Load Balancer:
+                    
+                    - Application Load Balancer: Como o nome diz: Para aplicações...Basicamente ele fica "ouvindo" as portas HTTP e HTTPs
+                        e fica distribuindo o tráfego.
+
+                    - Network Load Balancer: Específico por protocolo....TCP, TLS, UDP.
+
+                    - Classic Load Balancer: Que abrangia os dois acima mas que provavelmente logo será exinto.
+
+                    Obs: Escolhemos HTTP/HTTPS
+
+                - Step 1: Configure Load Balancer
+
+                    * Name: LB-webCadastro
+                    * Scheme: internet-facing
+                        Obs: interessante notar que neste atributo temos a opção de criar um Load Balancer interno, para testes.
+                                Um Load Balancer com IP interno, onde a aplicação acessa ele e utiliza da mesma forma.
+
+                    * IP address type: IPv4
+
+                    * Load Balancer Protocol: HTTP/HTTPS
+                        Basicamente o acesso que ele irá "ouvir". Podemos adicionar o HTTPS.
+
+                    * Availability Zones
+                        ' VPC: A VPC default que estamos
+                        ' Availability Zones: temos que escolher pelo menos duas zonas. Como orientado no curso, escolhi as zonas: us-east-1a e us-east-1b
+
+                - Step 2: Configure Security Settings
+                    Nos é avisado que não estamos utilizando HTTPS.
+
+                - Step 3: Configure Security Groups
+                    Aqui temos que escolher o security group...Sim, já temos o acesso-web, mas no caso do Load Balancer é interessante criar um grupo exclusivo.
+
+                        * Security group name: LB-acesso-web
+                        * Description: Security Group do Load Balancer
+
+                        Type        Protocol        Port Range      Source      
+                        HTTP        TCP             80              0.0.0.0/0
+
+                - Step 4: Configure Routing
+
+                    * Target group: Para onde o Load Balancer olha...
+                        Obs: Podemos lembrar o diagrama e pensar: Mas ele não olha para as instâncias? Sim! Mas estas instâncias precisam estar agrupadas no que 
+                                ele chama de "Target Group"
+
+                        ' Targe Group: New target group    
+                        ' Name: TG-cadastroWeb
+
+                    * Health checks: Ele pega o "root" (/) de onde estamos apontando e checa para ver se ele traz alguma resposta.
+                        ' Protocol: HTTP
+                        ' Path: /
+
+                    *  Advanced health check settings: Detalhes de como irá trabalhar o "Health checks"
+                        ' Healthy Threshold: 5 (Uma instância antes ruim, que depois de 5 tentativas consecutivas responde todas, passa a ser considerada boa)
+                        ' Unhealthy threshold: 2 (Uma instância boa que não responde depois de 2 tentativas consecutivas de comunicação, passa a ser considerada ruim)
+                        ' Timeout: 5 (seconds) (Se não responder em 5 segundos ele considera falha)
+                        ' Interval: 30 (seconds) (Tempo de intervalo entre os "checks") Se a instância estiver boa ele disponibiliza, se não, descarta. 
+                        ' Success codes: 200 (Retorno de sucesso do HTTP)
+
+                - Step 5: Register Targets
+
+                    Já vimos antes que precisamos associar nossas instâncias ao nosso Target Group.
+                    Porém neste passo, um erro é normalmente cometido...O administrador já tem instâncias rodando e nesta parte já relacionam com o grupo.
+                    Mais a frente faremos este trabalho em ordem inversa. Criaremos o grupo e então o grupo irá gerenciar as nossas instâncias.
+                    Voltaremos para esta parte e veremos que ele registrou sozinho o grupo que criamos.
+
+                    Em outras palavras, não apontamos para a instância pronta, mas para o serviço que escala as máquinas.
+
+                    Nesta parte poderíamos sim fazer o load balance sem o serviço de auto-scaling, bastaria pegar nossas instâncias e apontar direto aqui.
+                    Mas não é isto que queremos, queremos os dois serviços juntos.
+
+                - Step 6: Review
+
+                    Apenas o review das nossas configurações.
+
+        
+        Configurando o Auto Scaling Group:
+
+            Agora que já criamos o Load Balance vamos realizar as configurações do Launch do Auto Scaling.
+
+            As configurações de lançamento do Auto Scaling estão no menu na lateral esquerda logo abaixo dos menus do Load Balancer.
+
+                Auto Scaling > Launch Configurations...
+
+                - No primeiro menu já clicamos no botão: "Create Launch Configurations"
+
+                    - Escolhemos "My AMIs" para ver os templates que já criamos.
+
+                        - Escolhemos então o tipo de micro (Configuração que já vimos muitas vezes antes, escolhemos sempre o livre do free tier)
+
+                            - Na "Configuração dos detalhes" em "Create Launch Configuration" escolhemos o nome: AS-config-webCadastro
+
+                                - Storage: Mesmo tamanho de disco que já estavamos usando: 8gb
+
+                                    - Security Group: Aqui podemos amarrar o grupo que já utilizamos na imagem. Lembrando que a imagem vai precisar receber acesso na
+                                        porta 80 pois o Load Balance vai "falar" com ela na porta 80.
+
+                                            Por isso adicionamos os grupos:
+                                                *acesso-web: Para que o Load Balancer acesse ela através da porta 80 
+                                                *default: Para acesso ao banco (RDS)(Comunicação na mesma rede) 
+                                                *acesso-remoto (Para gerenciarmos a máquina)
+
+                                        - Verificar o resumo das configurações...
+
+                                            - E finalmente botão: "Create launch configuration"
+
+                Por fim escolhemos a chave que estamos utilizando. Vai criar a nossa "Launch config", clicamos em close...
+
+                Próximo passo é criar o "Auto Scaling Group"
+
+                    - Novamente no menu do lado esquerdo clicamos em "Grupos Auto Scaling"
+
+                        - Agora "Create Auto Scaling Group"
+
+                            - Nest menu podemos notar que temos uma nova opção: "Launch Template" por ora, iremos pelo padrão: "Launch Configuration" e escolhemos,
+                                é claro, a configuração que acabamos de criar. Clicamos em "next"...
+
+                                - Neste menu escolheremos o "Group Name", que será: AS-Group-cadastroWeb
+                                                                                    * Group size: Queremos que o nosso escalonamento comece com duas máquinas, podemos
+                                                                                        ir alterando este atributo depois conforme a necessidade.
+                                                                                    * Network: Escolhemos a nossa rede default
+                                                                                    * Subnet: Aquelas duas que escolhemos do Load Balancer, por isso restringimos o 
+                                                                                        grupo a elas: 1a e 1b.
+
+                                        **Advanced Details: Esta parte é bem importante e não pode ser ignorada...
+                                            A opção: 
+                                            * Load Balancing: Receive traffic from one or more load balancers, deve ficar marcada.
+                                                Este grupo, receberá tráfego do Load Balancer, temos que marcar está opção para que na hora que retornaremos para o 
+                                                Load Balancer possamos associar um grupo ao Load Balancer. Caso esta opção não esteja marcada, teremos somente a 
+                                                possibilidade de relacionar o Load Balancer as instâncias.
+
+                                            * Classic Load Balancers: Deixamos este campo vazio pois não estamos usando o Load Balancer Clássico.
+
+                                            * Target Groups: Escolhemos o que já está disponível, estamos apenas fazendo "amarração"
+                                                Obs: Está opção não apareceu pra mim na época que eu estava fazendo o curso 03/2020...
+
+                                            * Health Check Type: ELB (Elastic Load Balancer) ou EC2. Vamos associar ao ELB.
+                                                O EB verifica a integridade da máquina,  se está running, stop, ligando ou desligando.
+                                                Obs: Está opção não apareceu pra mim na época que eu estava fazendo o curso 03/2020...
+
+                                            * Health Check Grace Period: Modificamos de 300 para 30 segundos apenas para efeito de testes.
+
+                                            * subnet 
+                            
+                            Menu de Politicas de escalonamento do grupo...
+
+                                Deixamos a opção "Keep this group at its initial size" (Para manter o grupo com o tamanho inicial, 2 máquina como vimos antes)
+
+                            Próximo menu, menu de notificações, se queremos que o grupo gere alguma. Não veremos isto neste momento.
+
+                            Menu para ver se queremos criar alguma tag...Também não mudaremos isso neste momento.
+
+                            Por ultimo, o resumos das nossas configurações...
+                                Obs: Depois poderemos ajustar as opções, por ora, iremos entender como realizamos a criação do grupo de auto scaling.
+
+                            Finalmente..."Create Auto Scaling Group"...
+
+                            Ele começa a subir as instâncias e no próximo vídeo veremos como será feita a ultima amarração...
+
+        
+        Testando ambiente de produção:
+
+            Em "Auto Scaling Groups", temos na tela do lado direito a área "Auto Scaling Group: AS-Group-cadastroWeb". Podemos ver na aba "Instances" que subiram 
+            duas instâncias e estão com o "Health Status" em "Healthy", ou seja, status saldável. Ele subiu estas duas instâncias baseadas na nossa imagem. Podemos
+            verificar que estão ativas na tree view do lado esquerdo no menu "Instances".
+
+            Temos também em "Auto Scaling Group" a guia "Monitoring" que nos mostra os dados detalhados sobre a instâncias, como ainda não temos fluxo de dados não
+            podemos ainda visualizar a utilidade real deste painel.
+
+            Vamos agora testar o Auto Scaling:
+
+                O IP de chegada agora não é mais o IP da instância, mas sim do Load Balancer.
+
+                Utilizaremos o DNS name: LB-webCadastro-976530896.us-east-1.elb.amazonaws.com
+                Obs: Podemos mudar este endereço, mas isto não é assunto para esta aula.
+
+                Verificamos que aparece a mesma página de cadastro de antes. Realizamos um cadastro pra testar.
+                Quando a requisição chega no link do Load Balancer, ele manda para uma das instâncias. Não interessa para o usuário final que instância é esta.
+
+                É bem legal isso porque a ideia de criar uma estrutura assim é realmente disponibilizar algo pronto para produção, com escalabilidade e com alta
+                disponibilidade combinando o serviço.
+                Podemos realizar outros testes. Como por exemplo, terminar uma das instâncias.
+
+                Obs: Tomar cuidado sempre com o Free Tier, por causa dele não da pra testar em grande escala estes recursos.
+
+        Domínio e politicas de Auto Scaling:
+        
+            Mais duas coisas antes de irmos pro próximo vídeo...
+
+                A primeira: Alterar nosso DNS name para que não seja um nome tão esquisito para colocar na barra de endereço do browser...
+
+                    -  Criar uma conta no Freenom: Domínio Web gratuito para estudos...É lento, mas é gratuito rsrsrs
+                        Obs: Não consegui, nas tentativas que fiz, um domínio para testar. Não consegui nem ao menos fazer o cadastro, estava dando erro.
+                    
+                    - Auto Scaling Group: No nosso grupo de auto scaling temos a definição de quantas instâncias estão rodando, minimas instâncias, máximas, etc.
+                        Da forma que configuramos, caso tenhamos um problema com a porta 80, pois podemos estar com a máquina funcionando, mas a porta 80 não,
+                        então, ele mantém o cenário, duas máquinas. 
+                        
+                        Se caso, por exemplo, tenhamos um evento como o Black Fraude se aproximando, é interessante que aumentemos o número de instâncias rodando.
+
+                        Podemos fazer as alterações em Scaling Polices, como o instrutor do curso disse: Ali que fazemos a mágica acontecer...rsrsrsr
+                        Neste menu temos várias opções e combinações que podemos fazer.
+
+                        Para exemplo, criamos uma "Scaling policy"
+
+                            *Name: CPU
+                            *Metric type: Average CPU Utilization (O tipo de métrica que estaremos utilizando)
+                            *Target value: 60 (Em porcentagem) (Como o "Metric type" é "CPU Utilization" então aqui diz que será criada uma nova instância quando
+                                                                        60% do CPU da instância estiver utilizado).
+                                
+                            *Intances need: 60 (seconds to warm up after scaling) (Tempo para subir após escalonamento)
+
+                            Politica criada...agora dependendo da utilização da CPU baseada nos 60% que definimos ele vai criar ou remover uma instância.
+                                Ou seja, assim como ele subiu uma instância esta politica também tem a capacidade de derrubar.
+
+                            Mas ainda temos que clicar sobre nosso scaling group, ir em actions > edit e verificar nossa capacidade desejada (Desired Capacity).
+                            Verificamos que ele continuará trabalhando normalmente com duas, caso aconteça uma carga inesperada de CPU que aumentará o número de 
+                            instâncias. Para permitir isso, colocaremos que a capacidade máxima é 6.
+                                
+                            É interessante fazer o "tuning" (afinação) conforme nosso ambiente de produção e trabalhar nele conforme a sazonalidade, e nada melhor
+                            do que a coleta de dados para fazer isso.
             
+            Obs: Detalhe interessante da deleção do Auto Scaling Group...Quando estavam sendo deletado as instâncias que subiram por causa de sua configuração
+                    foram terminadas automaticamente.
+
+            Nesta aula, aprendemos:
+
+                - Um pouco do funcionamento do Load Balancing
+                - O que é e como criar um Application Load Balancer
+                - O que é e como criar Target Groups
+                - O que é e como criar uma Launch Configuration
+                - Com a Launch Configuration criada, como criar e configurar um Auto Scaling Group
+                - A testar o ambiente com o Load Balancing e Auto Scaling
+                - Como associar um domínio ao nosso Load Balancer, com o Freenom
+                - Políticas de Auto Scaling
+
 
     Questões:
 
-            
+        1 - O serviço ELB (Elastic Load Balance) apresenta as seguintes particularidades:
+
+            a) Distribuição de tráfego entre diferentes destinos
+
+            b) É possível utilizar o ELB para balancear tráfego TCP (por exemplo, portas diferentes da 80 e 443)
+
+            Qual(is) está(ão) correta(s)?
+
+            Selecione uma alternativa
+
+            R: As particularidades 1 e 2 estão corretas
+
+            Alternativa correta! Tanto pode ser criado o modelo baseado em aplicação (HTTP e HTTPS), como o modelo baseado em rede (TCP, UDP e TLS).
+
+        
+        2 - Para criarmos grupos de auto scaling para as instâncias EC2, é necessário:
+
+            Selecione 2 alternativas
+
+            a) Definir pelo menos duas sub-redes
+
+            Alternativa correta! É necessário selecionar pelo menos duas sub-redes. Lembrando ainda que as sub-redes devem coincidir com o ELB.
+
+            b) Criar primeiro um template configuração
+
+            Alternativa correta! Antes da criação do grupo de auto scaling, o serviço exige que seja criado um template de configuração (launch config).
+
+        
+        3 - Para adicionar ou remover instâncias dentro do grupo de auto scaling, são utilizados como referência:
+
+            a) Estado da EC2 (stopping, terminated, etc)
+
+            b) Aplicação, por exemplo se a porta 80 (HTTP) está respondendo
+
+            Qual(is) está(ão) correta(s)?
+
+            Selecione uma alternativa
+
+            As referências a e b estão corretas
+
+            Alternativa correta! Nas configurações do grupo, você pode definir ELB (teste da aplicação) ou EC2 (estado da instância).
+
+
+Aula 08: AWS Command Line Interface -------
+
+    Teoria:
+
+        Instalando a AWS CLI:
+
+            Primeiro passo é instalar o AWS CLI. Podemos fazer isso pelo seguinte link:
+
+                https://docs.aws.amazon.com/pt_br/cli/latest/userguide/cli-chap-install.html
+
+            Ou podemos seguir como ensina o curso, instalando via "pip".
+            Obs: Estamos instalando a versão 1 do AWS CLI, hoje temos a opção da versão 2, mas para não ficarmos presos a problemas que teremos que pesquisar fora
+            do material do curso, seguiremos a risca o que está sendo ensinado.
+
+                1 - Ir no link: https://docs.aws.amazon.com/pt_br/cli/latest/userguide/install-cliv1.html#install-tool-pip (Instalação da versão CLI 1).
+                2 - Ir até a parte: "Instalar a AWS CLI usando o pip".
+                3 - Copiamos a referência: $ pip3 install awscli --upgrade --user
+
+                    Obs: Caso ainda não tenhamos o Python 3 instalado ou o pip, deveremos utilizar os seguintes comandos antes:
+
+                        a) # apt-get update
+                        b) # apt install python3-pip
+
+                4 - Depois de feita a instalação deveremos colocar a ferramenta no nosso path:
+
+                    Obs: Quando fazemos esta instalação no nosso usuário ele instala em \home\usuario\.local\bin...
+                    Podemos adiciona-la ao path, mas para não perder tempo, trabalharemos com ela a partir do seu local de instalação mesmo.
+
+                5 - Primeiro comando a ser executado: ./aws configure
+
+                6 - Precisamos agora, através do console da AWS criar um usuário para trabalhar com a AWS CLI.
+
+                    Vamos até o menu IAM do console da AWS.
+
+                    a) Users
+                    b) Add user: Demos o nome de aws-cli
+                        Obs: Nesta parte podemos escolher que recurso este usuário irá utilizar.
+
+                            Acesso ao console ou Um access key ID e secret access key para trabalhar com AWS API, CLI, SDK, e outras ferramentas de desenvolvimento.
+                            O primeiro é chamdo de "AWS Management Console access" e o segundo "Programmatic access"
+
+                            Criaremos o segundo...(Programmatic access)
+
+                    c) Avançamos para criar o grupo do nosso usuário...
+                        Obs: Caso ainda não tenhamos um grupo, poderemos criar um.
+
+                            No meu caso, eu não tinha, clicamos em "Create Group"
+
+                            a) Devemos dar um nome para o nosso grupo, no caso do curso utilizei o sugerido pelo professor: admin
+                            b) Devemos vincular uma política a este grupo. No caso vinculei a politica: AdministratorAccess
+                            c) Criamos o grupo e avançamos até finalizar e fazemos o download do arquivo .csv, e então fechar.
+
+                            Obs: A príncipio, criamos um grupo com políticas administrativas que da acesso a qualquer serviço da AWS.
+                                    Isto foi feito para conhecermos o AWS CLI e por ser o curso. No dia a dia de trabalho, quando as coisas requerem mais segurança
+                                    Podemos criar usuários e colocálos em grupos com políticas bem mais restritivas, por exemplo:
+
+                                        Um grupo com políticas para mexer apenas com EC2.
+                                        Um grupo com políticas apenas para os administradores de banco de dados RDS.
+
+                    d) Agora partimos para o shell do nosso sistema operacional para terminar a parte da configuração do AWS CLI:
+
+                        AWS Access Key ID: aws-cli
+                        AWS Secret Access Key: "senha"
+                        Default region name: us-east-1 (Isto depende da região que estamos trabalhando)
+                        Default output format: json (O formato que as informações serão imprimidas na tela)
+
+            7 - Agora com o nosso AWS CLI instalado e configurado podemos fazer algumas coisas.
+
+        
+        Utilizando a AWS CLI com os serviços EC2:
+
+            Obs: O instrutor não mostrou na ultima aula como alterar o .local/bin porque dependendo do que estivermos utilizando ele muda.
+
+            Podemos adiciona-la agora:
+
+                1 - Executamos no diretório raiz o comando: cat .profile (Para ver como estão os caminhos do PATH)
+
+                2 - Adicionamos o PATH com o seguinte comando: # export PATH=$PATH:/home/nezzonarcizo/.local/bin
+                    Obs: Este método funcionará somente na seção atual, é temporário...
+                            Para deixar em modo permanente temos que inserir o PATH no arquivo: etc/profile ... PATH= export PATH=/home/nezzonarcizo/.local/bin
+
+                3 - Caso tenhamos configurado o PATH corretamente em qualquer lugar que digitarmos o comando: aws teremos a seguinte saída:
+
+                    usage: aws [options] <command> <subcommand> [<subcommand> ...] [parameters]
+                    To see help text, you can run:
+
+                    aws help
+                    aws <command> help
+                    aws <command> <subcommand> help
+                    aws: error: the following arguments are required: command
+
+                4 - É importante termos sempre como referência a documentação, então segue a documentação do AWS CLI: https://docs.aws.amazon.com/cli/index.html
+                        A parte da referência é a mais importante para nós: https://docs.aws.amazon.com/pt_br/cli/latest/reference/
+                        Obs: Para cada serviço da Amazon AWS teremos um link aqui, no corpo desta página, exemplo: ec2, dynamodb, rds etc
+
+                        Ou seja, podemos notar que devemos usar de inicio, por exemplo, os comandos: # aws ec2 describe-instances
+                        Este comando vai descrever as instâncias que temos...
+
+                        Para detalhar mais: # aws ec2 describe-instances | more
+
+                        Aqui teremos todas as informações das nossas instâncias, o tipo de máquina (t2.micro), security groups, regras, redes etc
+                        Basta criarmos um script com estes comandos aws para fazermos o que quisermos na administração da nuvem.
+                
+                        O atributo "State" é o status da máquina, se está rodando, se não, etc: 80 parada, 16 rodando etc
+
+                        # aws ec2 describe-instances | grep PublicDnsName: Nos mostra o IP das máquinas.
+
+                        # aws ec2 describe-instances --query "Reservations[*].Instances[*]: Para definirmos que instâncias queremos detalhar.
+
+                        # aws ec2 describe-instances --query "Reservation[*].Instances[*].{Instance:[InstanceId, State]}"
+                            Nos trás o id da instância, o código do status, no caso veio o 16, e o status de forma nominal ("running").
+
+                            Obs: Caso a query esteja com a sintaxe errada teremos o retorno "null" 
+
+                        # aws ec2 describe-instances --instance-id i-XXXXXXXXXX
+                            Nos trás todas as informações da instância com o ID indicado.
+
+        Controlando a instância com a AWS CLI:
+
+            Podemos ligar ou desligar instâncias baseados no id ou outro atributo das máquinas:
+
+                # aws ec2 stop-instances --instance-id i-XXXXXXXXXX : Para a instância
+
+                # aws ec2 start-instances --instance-id i-XXXXXXXXXX : Inicia a instância
+
+        
+        Nesta aula, aprendemos:
+
+            - Como instalar a AWS CLI
+            - Como criar e configurar um usuário para a AWS CLI
+            - Como utilizar a AWS CLI com os serviços EC2, inclusive parando e iniciando instâncias
+
+
+    Questões aula 08:
+
+        1 - Sobre o uso e as características da AWS CLI, podemos dizer que:
+
+            Selecione uma alternativa
+
+            b) É uma ferramenta integrada, para gerenciamento de todos os serviços da AWS
+
+            Alternativa correta! A partir dela, você pode gerenciar todo o seu ambiente AWS, inclusive, em muitos casos, ela tem mais opções do que as apresentadas 
+            no console de gerenciamento (Dashboard).
+
+        
+        2 - Ao executar o seguinte comando:
+
+            aws ec2 describe-instances
+            O que ele apresentará?
+
+            Selecione uma alternativa
+
+            c) As instâncias em um região específica
+
+            Alternativa correta! Quando utilizamos a CLI, ela baseia-se nas configurações (aws configure) pré-definidas, sendo assim, será exibido um informe somente desta 
+            região. Para alterar a região, basta utilizar o parâmetro --region.
+
 
             
-            
 
             
-
-
-
 
 
 
