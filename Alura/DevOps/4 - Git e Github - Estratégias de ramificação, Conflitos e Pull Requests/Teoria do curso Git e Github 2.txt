@@ -220,7 +220,7 @@ Aula 03 - Estratégias de Branching -------
 		
 			Obs: Caso haja algum conflito como o branch a ser deletado estar à frente do branch atual teremos que utilizar ao invés de -d utilizar -D (Em maiúsculo).
 			
-			Relembrando: Para criar uma tag = git tag - "Nome da tag" (Depois devemos adicionar uma mensagem dentro do arquivo da Tag).
+			Relembrando: Para criar uma tag = git tag -a "Nome da tag" (Depois devemos adicionar uma mensagem dentro do arquivo da Tag).
 			
 							Sair do Git (Terminal) = exit ou logout.
 							
