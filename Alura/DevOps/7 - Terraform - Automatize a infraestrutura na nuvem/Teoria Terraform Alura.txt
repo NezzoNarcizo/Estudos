@@ -1,0 +1,25 @@
+Curso "Terraform - Automatize a infraestrutura na nuvem" ------- Professor: Ricardo Mercês
+
+Aula 01: Provisionando a primeira infraestrutura com o Terraform -------
+
+    Teoria:
+
+        Introdução:
+
+            Terraform é uma ferramenta que te ajuda a administrar sua infraestrutura de uma forma simples.
+            Pelo fato de criar muitos scripts ser uma coisa comum na cultura DevOps, é interessante migrar para esta ferramenta te auxilia neste processo.
+
+            A ideia do curso é esta, estudar o Terraform que é uma ferramenta legal e muito popular no mundo DevOps. Ela nos ajudará a criar, administrar e tomar
+            conta da nossa infraestrutura de um jeito simples.
+
+            É uma ferramenta Open source e, o mais importante, não está presa a nenhum servidor. Ou seja, com ela você consegue administrar um ambiente na AWS, no
+            Google Cloud, não importa, ela é uma ferramenta multiplataforma.
+
+        
+        Preparando o Ambiente na AWS:
+
+            
+
+
+
+    Questões:
