@@ -18,7 +18,80 @@ Aula 01: Provisionando a primeira infraestrutura com o Terraform -------
         
         Preparando o Ambiente na AWS:
 
-            
+            Pré requisitos:
+
+                - Conhecer o nosso provedor...No caso utilizaremos a Amazon AWS.
+                    Saber como funciona as instâncias, bucket, banco de dados, etc. Cada provedor terá suas particularidades.
+                    O que o Terraform faz é nos permitir fazer as tarefas nos nossos provedores de uma forma mais simples.
+
+                    Se vamos, por exemplo, criar uma instância EC2. Para acessarmos teremos que ter um Security Group. Isto não é uma exigência do Terraform,
+                    isto é uma exigência da AWS.
+
+                    Obs: Tentar fazer todos os cursos da Amazon AWS da Alura.
+
+                    Como já dito antes, utilizaremos a Amazon AWS para provisionar nossa infraestrutura utilizando o Terraform.
+
+                    Poderíamos sim utilizar o Cloud Formation, que é uma ferramenta nativa da Amazon AWS, porém a intenção do Terraform é justamente nos libertar
+                    de ferramentas nativas. Aprendendo o Terraform, podemos trabalhar com Google Cloud, Digital Ocean, etc, não importa a plataforma.
+
+                - Realizamos o download do arquivo Terraform:
+
+                    Podemos utilizar o Terraform em qualquer distribuição: Windows, Mac, Linux.
+                    Como a intenção é fortalecer os conhecimentos em Linux, baixarei e instalarei o Terraform na minha máquina WSL Ubuntu 64 bits.
+
+                    Dentro do diretório: ./local/bin que se encontra na nossa pasta de usuário em HOME, executamos o seguinte comando:
+
+                        # wget https://releases.hashicorp.com/terraform/0.12.24/terraform_0.12.24_linux_amd64.zip
+
+                        Depois de feito o download, realizaremos o unzip no arquivo:
+
+                            # unzip terraform_0.12.24_linux_amd64.zip
+
+                                Obs: As vezes iremos precisar instalar o unzip, caso não tenhamos este app:
+
+                                    # apt install unzip
+
+                - Incluir o caminho do executável no PATH:
+
+                    Adicionamos as seguintes linhas no arquivo .profile do usuário que iremos trabalhar...
+
+                        PATH="$HOME/.local/bin:${PATH}"
+                        export PATH
+                        
+                        Obs: Utilizei o editor VI para editar o arquivo...
+
+                        vi .profile
+
+                        Para tornarmos ativas as modificações sem precisar fechar e abrir novamente o shell podemos utilizar o seguinte comando:
+
+                            $ source .profile
+
+                            Obs: Isto irá configurar seu $PATH temporariamente, para que assim que abra o terminal tudo já esteja pronto, adicione o seguinte trecho ao final do .bashrc
+
+                                # set PATH so it includes user's private bin if it exists
+                                if [ -d "$HOME/.local/bin" ] ; then
+                                    PATH="$HOME/.local/bin:$PATH"
+                                fi
+
+                        Para verificarmos se deu certo:
+
+                            $ echo $PATH
+
+                            Verificamos então que de fato o .local/bin foi adicionado ao nosso $PATH
+
+                - Configurações AWS:
+
+                    Vamos criar um chave igual já fizemos antes no curso introdutório da Amazon AWS...
+
+                        Entramos no serviço IAM (Identity and Access Management) da AWS e criamos um usuário com o nome "terraform-aws"
+
+
+
+
+                
+
+
+                        
 
 
 
