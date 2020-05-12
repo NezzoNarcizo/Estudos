@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f75d12f9-c0ab-4942-ba2a-97daa14a209e" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/sintaxeVariaveisEFluxo/src/TestaCondicional.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sintaxeVariaveisEFluxo/src/TestaCondicional2.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sintaxeVariaveisEFluxo/src/AliquotaComIfs.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sintaxeVariaveisEFluxo/src/TestaEscopo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sintaxeVariaveisEFluxo/src/TestaSwitch.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Teoria.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Teoria.txt" afterDir="false" />
     </list>
@@ -22,13 +23,33 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../.." />
   </component>
+  <component name="ProjectId" id="1bdkm7bQNlsjWP383ALoKm0PCwx" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="full.screen.before.presentation.mode" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/Teoria.txt" />
     <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
   </component>
-  <component name="RunManager" selected="Application.TestaCondicional2">
+  <component name="RunManager" selected="Application.TestaSwitch">
+    <configuration name="AliquotaComIfs" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="sintaxeVariaveisEFluxo.src.AliquotaComIfs" />
+      <module name="Java I - Primeiros Passos (2)" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="sintaxeVariaveisEFluxo.src.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="TestaCondicional" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="sintaxeVariaveisEFluxo.src.TestaCondicional" />
       <module name="Java I - Primeiros Passos (2)" />
@@ -55,12 +76,44 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="TestaEscopo" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="sintaxeVariaveisEFluxo.src.TestaEscopo" />
+      <module name="Java I - Primeiros Passos (2)" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="sintaxeVariaveisEFluxo.src.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TestaSwitch" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="sintaxeVariaveisEFluxo.src.TestaSwitch" />
+      <module name="Java I - Primeiros Passos (2)" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="sintaxeVariaveisEFluxo.src.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <list>
       <item itemvalue="Application.TestaCondicional" />
       <item itemvalue="Application.TestaCondicional2" />
+      <item itemvalue="Application.TestaEscopo" />
+      <item itemvalue="Application.AliquotaComIfs" />
+      <item itemvalue="Application.TestaSwitch" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.TestaSwitch" />
+        <item itemvalue="Application.AliquotaComIfs" />
+        <item itemvalue="Application.TestaEscopo" />
         <item itemvalue="Application.TestaCondicional2" />
         <item itemvalue="Application.TestaCondicional" />
       </list>
@@ -70,6 +123,13 @@
     <configuration />
   </component>
   <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f75d12f9-c0ab-4942-ba2a-97daa14a209e" name="Default Changelist" comment="" />
+      <created>1588969514081</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1588969514081</updated>
+    </task>
     <servers />
   </component>
   <component name="WindowStateProjectService">
@@ -77,41 +137,45 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="740" y="274" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1587674977564" />
-    <state width="1876" height="246" key="GridCell.Tab.0.bottom" timestamp="1587679225392">
+    <state width="1876" height="277" key="GridCell.Tab.0.bottom" timestamp="1589320370656">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1876" height="247" key="GridCell.Tab.0.bottom.inPresentationMode" timestamp="1587671946553">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1876" height="247" key="GridCell.Tab.0.bottom.inPresentationMode/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1587671946553" />
-    <state width="1876" height="246" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1587679225392" />
-    <state width="1876" height="246" key="GridCell.Tab.0.center" timestamp="1587679225392">
+    <state width="1876" height="277" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1589320370656" />
+    <state width="1876" height="277" key="GridCell.Tab.0.center" timestamp="1589320370656">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1876" height="247" key="GridCell.Tab.0.center.inPresentationMode" timestamp="1587671946552">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1876" height="247" key="GridCell.Tab.0.center.inPresentationMode/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1587671946552" />
-    <state width="1876" height="246" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1587679225392" />
-    <state width="1876" height="246" key="GridCell.Tab.0.left" timestamp="1587679225392">
+    <state width="1876" height="277" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1589320370656" />
+    <state width="1876" height="277" key="GridCell.Tab.0.left" timestamp="1589320370656">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1876" height="247" key="GridCell.Tab.0.left.inPresentationMode" timestamp="1587671946552">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1876" height="247" key="GridCell.Tab.0.left.inPresentationMode/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1587671946552" />
-    <state width="1876" height="246" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1587679225392" />
-    <state width="1876" height="246" key="GridCell.Tab.0.right" timestamp="1587679225392">
+    <state width="1876" height="277" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1589320370656" />
+    <state width="1876" height="277" key="GridCell.Tab.0.right" timestamp="1589320370656">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1876" height="247" key="GridCell.Tab.0.right.inPresentationMode" timestamp="1587671946553">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1876" height="247" key="GridCell.Tab.0.right.inPresentationMode/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1587671946553" />
-    <state width="1876" height="246" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1587679225392" />
+    <state width="1876" height="277" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1589320370656" />
     <state x="685" y="152" key="SettingsEditor" timestamp="1587672506931">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="685" y="152" key="SettingsEditor/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1587672506931" />
+    <state x="667" y="119" width="585" height="801" key="find.popup" timestamp="1589297951993">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="667" y="119" width="585" height="801" key="find.popup/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1589297951993" />
   </component>
 </project>
