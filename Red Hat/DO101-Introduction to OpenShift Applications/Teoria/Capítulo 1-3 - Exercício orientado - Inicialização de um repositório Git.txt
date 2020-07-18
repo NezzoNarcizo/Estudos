@@ -1,0 +1,211 @@
+
+Exercício orientado: Inicialização de um repositório Git
+
+Neste exercício, você usará o VS Code para enviar por push o código-fonte do projeto para um repositório Git remoto.
+
+Resultados
+
+Você deverá ser capaz de:
+
+Instalar o Git.
+
+Inicializar uma pasta local como um repositório Git.
+
+Preparar um arquivo em um repositório Git.
+
+Fazer commit dos arquivos preparados no repositório Git local.
+
+Publicar commits de um repositório Git local em um repositório remoto.
+
+Você tem acesso a um sistema Linux (baseado em Debian ou Fedora), macOS ou Windows e as permissões necessárias para instalar software nesse sistema.
+
+O Visual Studio Code (VS Code) está instalado no seu sistema.
+
+Procedimento 1.2. Etapas
+
+Faça download e instale o Git.
+
+Instalação no Linux.
+
+Abra um novo terminal de linha de comando.
+
+Para instalar o Git nos sistemas Ubuntu e Debian, use o seguinte comando:
+
+yourname@yourhost:~$ sudo apt install git
+O comando pode solicitar sua senha para instalar o pacote.
+
+Para instalar o Git nos sistemas Fedora e Red Hat Enterprise Linux 8, use o seguinte comando:
+
+[yourname@yourhost ~]$ sudo dnf install git
+O comando pode solicitar sua senha para instalar o pacote.
+
+Instalação no macOS.
+
+O Git é instalado por padrão nas versões mais recentes do macOS. Para verificar a instalação do Git, abra um novo terminal de linha de comando e digite o seguinte comando:
+
+$ git --version
+git version 2.22.0
+Instalação no Windows.
+
+Em um navegador do sistema Windows, navegue até https://git-scm.com/download/win e salve o arquivo executável em seu sistema.
+
+No Windows Explorer, acesse o arquivo baixado. Clique duas vezes no arquivo para iniciar o assistente de instalação. Se for solicitado, clique em Yes para permitir que o instalador faça alterações no sistema.
+
+Clique em Next para aceitar o contrato de licença.
+
+Clique em Next para aceitar o local de instalação padrão do Git. Se uma janela exibir um aviso sobre o local de instalação, clique em Yes para continuar a instalação do Git nesse local.
+
+Clique em Next para aceitar a instalação do conjunto padrão de componentes.
+
+Clique em Next para aceitar a pasta padrão do menu inicial.
+
+Selecione Use Visual Studio Code as Git’s default editor na lista de editores para usar o VS Code como editor padrão. Clique em Next.
+
+No prompt Adjusting your PATH environment, clique em Next.
+
+Faça uma escolha apropriada para o back-end do transporte HTTPS. Se não tiver certeza de qual opção escolher, aceite a seleção padrão. Clique em Next.
+
+No prompt Configuring the line-ending conversions, aceite a seleção padrão e clique em Next.
+
+Clique em Next para aceitar as configurações padrão do emulador do terminal.
+
+No prompt Configuring extra options, clique em Next para aceitar os padrões.
+
+Clique em Install para aceitar os recursos experimentais padrão e iniciar a instalação. Aguarde a conclusão da instalação e prossiga para a próxima etapa.
+
+Clique em Finish para sair do assistente de instalação.
+
+Use o VS Code para testar a instalação do Git. Configure sua identidade de instalação do Git com suas credenciais do GitHub.
+
+Abra o VS Code.
+
+Clique em Terminal → New Terminal para abrir um terminal integrado.
+
+Execute git --version no terminal integrado a fim de testar a instalação do Git. O comando imprime a versão da instalação do Git em seu sistema.
+
+NOTA
+O VS Code depende das opções de configuração selecionadas durante o processo de instalação do Git. Se o comando git --version falhar no terminal integrado, tente reiniciar o VS Code. Em seguida, repita esta etapa para verificar a instalação do Git.
+
+Em um navegador, acesse https://github.com. Se você ainda não tiver uma conta no GitHub, crie uma. Faça login no GitHub.
+
+No terminal integrado do VS Code, execute git config --global user.name seu_usuário_do_git, substituindo seu_usuário_do_git por seu nome de usuário no GitHub.
+
+No terminal integrado do VS Code, execute git config --global user.email usuário@example.com, substituindo usuário@example.com pelo endereço de e-mail associado à sua conta do GitHub.
+
+
+Figura 1.22: Terminal integrado do VS Code.
+NOTA
+O Git exige seu nome de usuário e senha do GitHub para determinadas operações nos repositórios remotos.
+
+Nos sistemas Windows, o Git gerencia essas credenciais por padrão. Você só será solicitado a fornecer as credenciais na primeira vez em que se conectar a um repositório remoto.
+
+Por padrão, nos sistemas Linux e macOS, o Git não gerencia suas credenciais do repositório remoto. O Git solicitará as credenciais toda vez que você se conectar ao GitHub.
+
+Para armazenar as credenciais em cache nos sistemas Linux e macOS, execute o seguinte comando em um terminal do sistema:
+
+$> git config --global credential.helper cache
+Ative a opção de gerenciamento de controle do código-fonte Always Show Providers no VS Code.
+
+Acesse a paleta de comandos (View → Command Palette…​) e digite settings. Selecione Preferences: Open Settings (UI) na lista de opções.
+
+Quando a janela Settings for exibida, clique em User → Features → SCM.
+
+As opções do gerenciamento de controle do código-fonte (SCM) para o VS Code são exibidas. Selecione Always Show Providers.
+
+
+Figura 1.23: Opção para sempre exibir a lista de provedores de controle do código-fonte na visualização de controle do código-fonte do VS Code.
+Feche a guia Settings.
+
+Verifique se a pasta do projeto hello-nodejs existe no seu workspace do VS Code. Se você já tiver a pasta do projeto hello-nodejs por um exercício anterior, ignore esta etapa.
+
+Baixe o seguinte arquivo zip no sistema:
+
+https://github.com/RedHatTraining/DO101-apps/releases/download/v0.1/hello-nodejs.zip.
+
+Descompacte o arquivo, que criará a pasta hello-nodejs no sistema. A pasta hello-nodejs contém um arquivo, app.js. Anote o local da pasta hello-nodejs. Você usará essa pasta em uma etapa posterior.
+
+Clique em File → Add Folder to Workspace…​
+
+Na janela do arquivo, navegue até o local da pasta hello-nodejs descompactada. Selecione a pasta hello-nodejs e clique em Add.
+
+Inicialize o projeto hello-nodejs como um repositório Git.
+
+Acesse a paleta de comandos do VS Code (View → Command Palette…​).
+
+Digite initialize. O VS Code fornece uma lista de comandos possíveis que correspondem ao que você digitou. Selecione Git: Initialize Repository na lista de opções da paleta de comandos.
+
+
+Figura 1.24: Inicialização do repositório Git usando a paleta de comandos.
+Selecione hello-nodejs na lista de pastas do workspace.
+
+
+Figura 1.25: Prompt de seleção para inicializar um repositório Git local.
+Crie uma commit do arquivo app.js.
+
+Clique em View → SCM para acessar a visualização Source Control na barra de atividades.
+
+Passe o mouse sobre a entrada app.js em CHANGES. O VS Code exibe uma mensagem informando que o arquivo app.js não está sendo rastreado. Clique no sinal de mais da entrada app.js para adicionar o arquivo ao repositório.
+
+
+Figura 1.26: Lista de arquivos alterados.
+Isso prepara o arquivo app.js para a próxima commit. O arquivo agora é exibido sob STAGED CHANGES.
+
+Clique no campo Message (press Ctrl+Enter to commit). Digite add initial app.js code no campo de mensagem. Clique no ícone da marca de seleção para fazer commit das alterações.
+
+
+Figura 1.27: Caixa de mensagem de commit do VS Code.
+Crie um novo repositório do GitHub para hospedar seus arquivos de projeto. Adicione o repositório do GitHub como um repositório remoto no projeto hello-nodejs local. Publique o repositório local no GitHub.
+
+Em um navegador, acesse https://github.com. Se você não estiver conectado ao GitHub, faça login.
+
+Clique em + no canto superior direito e selecione New repository na lista.
+
+
+Figura 1.28: Criação de um novo repositório Git no GitHub.
+Digite hello-nodejs no campo Repository name. Por padrão, o repositório pode ser acessado publicamente. Se você precisar de um repositório privado, marque a caixa de seleção Private.
+
+ATENÇÃO
+Não selecione Initialize the repository with a README. Além disso, não adicione um arquivo .gitignore nem uma licença ao seu repositório.
+
+Crie um repositório vazio para evitar um conflito por mesclagem em uma etapa posterior.
+
+Clique em Create Repository para criar o novo repositório do GitHub. Uma página de resumo fornece comandos Git para diversos cenários de inicialização do projeto:
+
+
+Figura 1.29: Página de resumo de um novo repositório do GitHub.
+Adicione o novo repositório do GitHub como um repositório remoto no projeto hello-nodejs remoto.
+
+No VS Code, digite Git: Add na paleta de comandos (View → Command Palette…​). Depois, selecione Git: Add Remote na lista de opções.
+
+
+Figura 1.30: Prompt da URL remota para adicionar um repositório Git remoto.
+Se você tiver mais de um repositório Git local no VS Code, selecione hello-nodejs na lista de opções.
+
+Quando solicitado a fornecer um nome remoto, digite origin.
+
+NOTA
+Um repositório Git pode interagir com vários repositórios remotos. O nome remoto origin é uma convenção do Git para indicar o repositório de origem de um repositório Git local.
+
+No prompt seguinte, insira a URL HTTPS de seu repositório hello-nodejs do GitHub. O formato da URL é: https://github.com/seu_usuário_do_git/hello-nodejs.
+
+Publique as commits do repositório local no repositório do GitHub.
+
+Localize a entrada hello-nodejs na seção SOURCE CONTROL PROVIDERS e clique no ícone "Publish Changes".
+
+
+Figura 1.31: Visualização de controle do código-fonte com vários repositórios Git no workspace.
+Na primeira vez em que o VS Code se conecta ao GitHub, é exibido um prompt para suas credenciais do GitHub. Quando solicitado, forneça seu nome de usuário e senha do GitHub.
+
+Se esta for a primeira vez que você publicar commits no VS Code, um prompt adicional será exibido:
+
+
+Figura 1.32: Prompt do VS Code para buscar periodicamente novas commits.
+Clique em Yes para configurar o VS Code de modo a verificar periodicamente o repositório remoto em busca de novas commits.
+
+Em um navegador, acesse https://github.com/seu_usuário_do_git/hello-nodejs, substituindo seu_usuário_do_git por seu nome de usuário do GitHub. Verifique se o código-fonte está presente no repositório do GitHub.
+
+
+Figura 1.33: Os arquivos do projeto local estão no GitHub.
+Para limpar seu trabalho, clique no ícone Kill Terminal para fechar a janela de terminal integrado.
+
+Isso conclui o exercício orientado.
