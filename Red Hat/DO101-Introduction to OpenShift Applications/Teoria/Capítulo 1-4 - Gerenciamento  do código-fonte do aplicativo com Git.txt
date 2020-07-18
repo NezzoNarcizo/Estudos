@@ -1,0 +1,165 @@
+
+Gerenciamento do código-fonte do aplicativo com Git
+
+Objetivos
+Depois de concluir esta seção, você deverá ser capaz de usar o controle de versão para colaborar e gerenciar o código-fonte do aplicativo.
+
+Visão geral da ramificação do Git
+O controle de versão do Git contém um modelo de ramificação para rastrear as alterações do código. Uma ramificação é uma referência nomeada a uma sequência específica de commits.
+
+Todos os repositórios Git têm uma ramificação base denominada master. Por padrão, quando você cria uma commit no repositório, a ramificação master é atualizada com a nova commit.
+
+
+Figura 1.34: Commits da ramificação master de um repositório Git.
+Por convenção, a ramificação master de um repositório Git contém a versão mais recente e estável do código-fonte do aplicativo. Para implementar um novo recurso ou funcionalidade, crie uma nova ramificação a partir da ramificação master. Essa nova ramificação, chamada de ramificação de recursos, contém commits correspondentes às alterações de código feitas no novo recurso. A ramificação master não é afetada por commits na ramificação de recursos.
+
+
+Figura 1.35: Commits da ramificação de recursos em um repositório Git.
+Ao usar uma ramificação para o desenvolvimento de recursos, você pode fazer commit e compartilhar seu código com frequência sem afetar a estabilidade do código na ramificação master. Depois de garantir que o código da ramificação de recursos esteja completo e tenha sido testado e revisado, você estará pronto para mesclar essa ramificação em outra ramificação, como a ramificação master. Mesclar é o processo de combinar os históricos de commit de duas ramificações separadas em uma única ramificação.
+
+
+Figura 1.36: Mesclagem de uma ramificação de recursos na ramificação master.
+Conflitos de mesclagem
+O Git tem mecanismos sofisticados para mesclar alterações de código de uma ramificação em outra ramificação. No entanto, se houver alterações no mesmo arquivo em ambas as ramificações, poderá ocorrer um conflito de mesclagem.
+
+O conflito de mesclagem indica que o Git não pode determinar automaticamente como integrar as alterações das duas ramificações. Quando isso acontece, o Git rotula cada arquivo afetado como um conflito. O VS Code exibe uma entrada para cada arquivo com um conflito de mesclagem na visualização de controle do código-fonte, abaixo da opção MERGE CHANGES. Cada arquivo com uma entrada de conflito de mesclagem contém um C à direita.
+
+
+Figura 1.37: Conflito de mesclagem na visualização de controle do código-fonte do VS Code.
+O Git também insere marcadores em cada arquivo afetado para indicar as seções que contêm conflitos de conteúdo nas duas ramificações. Se você clicar na entrada com conflito de mesclagem na visualização de controle do código-fonte do VS Code, a guia do editor exibirá e realçará as seções do arquivo que estão em conflito.
+
+
+Figura 1.38: O VS Code realça os conflitos em um arquivo de conflito de mesclagem.
+Na figura anterior, a seção realçada em verde contém conteúdo da ramificação atual, neste caso, a ramificação master. O texto realçado em azul contém as alterações da ramificação update-readme, que está sendo mesclada com a ramificação master.
+
+Existem muitas formas de resolver os conflitos de mesclagem que acontecem como resultado do processo de mesclagem normal.
+
+Para cada conflito em um arquivo com conflito, substitua todo o conteúdo entre os marcadores de conflito de mesclagem (<<<<<<<< e >>>>>>>> inclusive) pelo conteúdo correto de uma ramificação ou da outra, ou uma combinação apropriada do conteúdo das duas ramificações.
+
+Por exemplo, a figura a seguir mostra que a seção em conflito do exemplo anterior foi substituída pelo conteúdo das ramificações master e update-readme.
+
+
+Figura 1.39: Resolução de um conflito de mesclagem no VS Code.
+Depois de reconciliar o conteúdo de cada conflito em um arquivo, salve, teste e faça commit das alterações do arquivo.
+
+NOTA
+O gerenciamento de conflitos de mesclagem está fora do escopo deste curso. Para obter mais informações sobre conflitos de mesclagem, consulte Conflitos básicos de mesclagem em https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging
+
+Estratégias de colaboração usando Git
+O Git fornece às equipes de desenvolvimento a flexibilidade necessária para implementar processos de colaboração no código e estratégias de ramificação que se encaixam no tamanho e na dinâmica de cada equipe. Quando uma equipe concorda em usar determinado fluxo de trabalho Git, as alterações do código são gerenciadas de maneira consistente e a produtividade da equipe aumenta.
+
+Fluxo de trabalho centralizado
+Um fluxo de trabalho Git centralizado usa um repositório Git central como a única fonte de registro do código do aplicativo. Normalmente, o repositório central é hospedado em uma plataforma de hospedagem de repositórios, como o GitHub. Neste fluxo de trabalho, a equipe de desenvolvimento concorda que o repositório central conterá apenas uma ramificação, master. Os desenvolvedores enviam alterações de código por push diretamente para a ramificação master e não enviam commits por push de outras ramificações para o repositório central.
+
+Os desenvolvedores clonam a repositório central, criando uma cópia local do repositório para cada desenvolvedor. Os desenvolvedores fazem alterações no código e commits na ramificação principal do repositório local. Os desenvolvedores mesclam as alterações mais recentes do repositório remoto antes de enviar novas alterações por push ao repositório remoto.
+
+Como o fluxo de trabalho resulta em fazer commits em uma única ramificação, os membros da equipe estão sujeitos a conflitos de mesclagem. Os conflitos de mesclagem são mitigados quando as equipes identificam claramente as alterações de código de cada membro da equipe que podem ser implementadas em arquivos distintos.
+
+Além de conflitos de mesclagem, esse fluxo de trabalho permite que você faça commit de alterações de código parciais ou incompletas na ramificação master. Quando é feito commit de alterações de código incompleto, a estabilidade do código na ramificação master é comprometida. As equipes que usam um fluxo de trabalho centralizado devem adotar processos e estratégias de comunicação adicionais para reduzir os riscos à estabilidade do código do projeto na ramificação master.
+
+Uma maneira de reduzir os problemas de estabilidade do código com um fluxo de trabalho centralizado é implementar tags do Git no repositório do código. Uma tag é uma referência legível a uma determinada commit em um repositório Git, independentemente de qualquer ramificação. As equipes podem implementar uma nomenclatura de tags para identificar as commits que correspondem às versões estáveis do código-fonte do projeto.
+
+NOTA
+As tags do Git estão fora do escopo deste curso. Consulte Marcação na documentação do Git em https://git-scm.com/book/en/v2/Git-Basics-Tagging.
+
+O fluxo de trabalho Git centralizado funciona bem em equipes pequenas que colaboram em um pequeno projeto com alterações de código pouco frequentes, mas se tornam difíceis de gerenciar em equipes maiores e projetos com código muito grande.
+
+Fluxo de trabalho da ramificação de recursos
+O fluxo de trabalho da ramificação de recursos implementa mecanismos de segurança para proteger a estabilidade do código na ramificação master. O objetivo desse fluxo de trabalho é sempre ter código estável, que pode ser implantado, em cada commit da ramificação master, mas ainda permitir que os membros da equipe desenvolvam e contribuam com novos recursos para o projeto.
+
+Em um fluxo de trabalho da ramificação de recursos, cada novo recurso é implementado em uma ramificação separada. Vários colaboradores contribuem para o recurso fazendo commit de código na ramificação de recursos. Depois que um recurso estiver completo e tiver sido testado e revisado na ramificação de recursos, o recurso será mesclado com a ramificação master.
+
+O fluxo de trabalho da ramificação de recursos é uma extensão do fluxo de trabalho centralizado. Um repositório central é a fonte de registro de todos os arquivos do projeto, incluindo as ramificações de recursos.
+
+Quando um desenvolvedor está pronto para mesclar uma ramificação de recurso com a ramificação master, ele envia por push a ramificação do recurso local para o repositório remoto. Em seguida, o desenvolvedor envia uma solicitação para a equipe, como uma solicitação de pull ou uma solicitação de mesclagem, para que as alterações do código na ramificação do recurso sejam revisadas por um membro da equipe. Depois que um membro da equipe aprovar a solicitação, a plataforma de hospedagem do repositório mesclará a ramificação do recurso com a ramificação master.
+
+NOTA
+A solicitação de pull é um recurso oferecido por várias plataformas de hospedagem de repositório, incluindo GitHub e BitBucket.
+
+A solicitação de pull permite que você envie código para inclusão em uma base de código do projeto. Geralmente, as solicitações de pull são uma forma para que os membros da equipe forneçam comentários, perguntas e sugestões sobre as alterações de código enviadas. As solicitações de pull também fornecem um mecanismo para aprovar a mesclagem das alterações de código em outra ramificação, como a master.
+
+Em outras plataformas, como GitLab e SourceForge, esse recurso de revisão de código é chamado de solicitação de mesclagem.
+
+Por exemplo, a figura a seguir mostra a interface de usuário do GitHub depois de enviar a ramificação feature1 por push. O GitHub exibe a notificação de que você enviou por push a ramificação feature1 recentemente. Para enviar uma solicitação de pull para a ramificação feature1, clique em Compare & pull request na notificação.
+
+
+Figura 1.40: Interface de usuário do GitHub depois de enviar uma ramificação do recurso.
+O GitHub exibe um formulário que você deve preencher para enviar a solicitação de pull.
+
+Por padrão, você solicita que a ramificação feature1 seja mesclada (ou extraída) com a ramificação master. Se quiser mesclar a ramificação do recurso com outra ramificação, selecione a ramificação base correta na lista de opções. O GitHub exibe uma mensagem para indicar se a operação de mesclagem causará conflitos. Na figura a seguir, o GitHub indica que as duas ramificações serão mescladas sem conflitos e podem ser mescladas automaticamente.
+
+O formulário de solicitação de pull do GitHub permite que você forneça um título e uma descrição à solicitação de pull. O formulário também permite atribuir um usuário do GitHub à solicitação, além de especificar um conjunto de usuários do GitHub para analisar as alterações do código na solicitação de pull.
+
+Depois de preencher o formulário, clique em Create pull request para criar a solicitação de pull.
+
+
+Figura 1.41: Formulário de GitHub para enviar uma solicitação de pull.
+Quando um revisor aprovar as alterações, você poderá mesclar a solicitação de pull.
+
+Clique em Pull requests do repositório do GitHub para exibir a lista de solicitações de pull. Selecione sua solicitação de pull na lista. O GitHub exibe informações sobre a solicitação de pull, incluindo comentários, perguntas ou sugestões de outros revisores. Quando estiver pronto para mesclar as alterações na ramificação master, clique em Merge pull request.
+
+
+Figura 1.42: Solicitação de pull do GitHub.
+O GitHub exibe uma mensagem para a operação de mesclagem. Clique em Confirm merge para mesclar a ramificação feature1 com a ramificação master. O GitHub exibe o botão Delete branch.
+
+Por fim, no fluxo de trabalho da ramificação de recursos, você excluirá uma ramificação de recurso depois que ela for mesclada com a ramificação master. Clique em Delete branch para excluir a ramificação.
+
+Fluxo de trabalho do repositório bifurcado
+O fluxo de trabalho do repositório bifurcado (com forks) costuma ser usado em projetos grandes de open source. Com um grande número de colaboradores, é difícil gerenciar as ramificações de recursos em um repositório central. Além disso, talvez o proprietário do projeto não queira permitir que os colaboradores criem ramificações no repositório do código. Nesse cenário, a criação de ramificações no repositório central é limitada a um pequeno número de integrantes da equipe. O fluxo de trabalho de repositório bifurcado permite que um grande número de desenvolvedores contribua para o projeto sem prejudicar a estabilidade do código.
+
+Em um fluxo de trabalho do repositório bifurcado, crie um fork do repositório central, que se tornará sua cópia pessoal do repositório na mesma plataforma de hospedagem.
+
+Depois de criar um fork do repositório, clone o fork. Em seguida, use o fluxo de trabalho da ramificação de recurso para implementar alterações no código e enviar uma nova ramificação de recurso para seu fork do repositório oficial.
+
+Em seguida, abra uma solicitação de pull para a nova ramificação de recursos do fork. Depois que um representante do repositório oficial aprovar a solicitação de pull, a ramificação de recurso do seu fork será mesclada com o repositório original.
+
+Veja um exemplo do fluxo de trabalho de repositório do GitHub no OpenShift Origin.
+
+
+Figura 1.43: Repositório do GitHub no OpenShift Origin.
+Existem mais solicitações de pull do que ramificações do repositório do GitHub no OpenShift Origin. Muitas das solicitações de pull (se não todas) contêm código de um dos forks do repositório, em vez de código de uma ramificação do repositório.
+
+Ramificação Git no VS Code
+No VS Code, use a visualização de controle do código-fonte (View → SCM) para acessar os recursos de ramificação no Git. A seção SOURCE CONTROL PROVIDERS contém uma entrada para cada repositório Git no seu workspace do VS Code. Cada entrada exibe a ramificação atual do repositório.
+
+
+Figura 1.44: A visualização de controle do código-fonte mostra a ramificação atual de cada workspace do repositório Git.
+Para alternar para outra ramificação em um repositório, clique no nome da ramificação atual da entrada do repositório abaixo de SOURCE CONTROL PROVIDERS. O VS Code exibe duas opções para criar uma nova ramificação, além de uma lista de ramificações e tags existentes no repositório:
+
+
+Figura 1.45: Checkout de uma ramificação na visualização de controle do código-fonte.
+Quando você seleciona uma das duas opções para criar uma nova ramificação, o VS Code solicita que você informe um nome a ser atribuído à nova ramificação. Se você selecionar a opção Create new branch..., o VS Code criará uma nova ramificação a partir da ramificação do repositório atual.
+
+Se selecionar Create a new branch from..., o VS Code também fornecerá a lista de tags e ramificações existentes no repositório. Depois que você escolher um item, o VS Code criará uma nova ramificação que começa a partir da tag ou ramificação selecionada.
+
+NOTA
+Geralmente, os projetos de software adotam convenções ou padrões de nomenclatura de ramificação. Os padrões de nomenclatura de ramificação ajudam você a resumir as alterações de código realizadas em uma ramificação.
+
+Veja a seguir exemplos de modelos de nome de ramificação para um padrão de nomenclatura de ramificação:
+
+feature/id-do-recurso/descrição
+
+hotfix/número-do-problema/descrição
+
+release/string-versão
+
+O padrão de nomenclatura de ramificação também define o conjunto de caracteres permitidos. Os nomes das ramificações geralmente são restritos a caracteres alfanuméricos e separadores de campo (como os caracteres /, _ e -).
+
+Depois que o VS Code criar a nova ramificação local, a visualização de controle do código-fonte atualizará a entrada do repositório com o nome da nova ramificação. Quando você clicar no ícone Publish Changes, o VS Code publicará a nova ramificação local no repositório remoto.
+
+Toda commit de código que você fizer será adicionada à nova ramificação local. Quando estiver pronto para enviar por push suas commits locais para o repositório remoto, clique no ícone Synchronize Changes na visualização de controle do código-fonte. O ícone Synchronize Changes exibe:
+
+o número de commits no repositório local a serem carregadas;
+
+o número de commits no repositório remoto a serem baixadas.
+
+Antes de baixar commits de um repositório remoto, o VS Code obtém as commits remotas e as mescla com o repositório local. Em seguida, o VS Code envia por push suas commits locais para o repositório remoto.
+
+
+Figura 1.46: Envio por push de uma commit local para o repositório remoto.
+REFERÊNCIAS
+Para obter mais informações sobre ramificações do Git, consulte a documentação do Git em https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell
+
+Para obter mais informações sobre como mesclar, consulte a documentação do Git em https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging
+
+Para obter mais informações sobre como usar o Git e o controle de versão no VS Code, consulte a documentação do VS Code em https://code.visualstudio.com/docs/editor/versioncontrol
