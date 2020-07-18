@@ -1,0 +1,29 @@
+Introduction to OpenShift Applications
+
+Orientação para o ambiente de sala de aula
+
+Para este curso, o Treinamento Red Hat provisionou uma conta para você em um cluster compartilhado do Red Hat OpenShift 4. Quando você provisiona seu ambiente na interface do Red Hat Online Learning, o sistema fornece as informações do cluster. A interface oferece a URL do console da web do OpenShift, seu nome de usuário e sua senha.
+
+DO101 é uma aula do tipo "traga seu próprio dispositivo" (BYOD), em que você usa seu sistema habilitado para Internet para acessar o cluster compartilhado do OpenShift. Os seguintes sistemas operacionais são compatíveis:
+
+Red Hat Enterprise Linux 8 ou Fedora Workstation 30 ou posterior
+
+Ubuntu 18.04 LTS ou posterior
+
+Microsoft Windows 10
+
+macOS 10.13 ou posterior
+
+Você deve ter permissões para instalar software adicional no seu sistema. Algumas atividades de aprendizagem prática do DO101 dão instruções para instalar os seguintes programas:
+
+Visual Studio Code
+
+Node.js
+
+Git
+
+A CLI do OpenShift (oc)
+
+Não instale essas ferramentas antes do dia ou do curso se você ainda não as tiver, para garantir uma experiência consistente no curso.
+
+As atividades práticas também exigem que você tenha uma conta pessoal no GitHub, um serviço de Internet público e gratuito. Uma das primeiras atividades práticas solicita que você crie essa conta se ainda não tiver uma.

@@ -1,0 +1,206 @@
+
+Inicialização de um repositório Git
+
+Objetivos
+Depois de concluir esta seção, você deverá ser capaz de criar um repositório Git.
+
+Controle de versão de software
+Um sistema de controle de versão (VCS) permite gerenciar e colaborar de forma eficiente em alterações de código com outras pessoas. Os sistemas de controle de versão oferecem muitos benefícios, que incluem:
+
+A capacidade de revisar e restaurar versões antigas dos arquivos.
+
+A capacidade de comparar duas versões do mesmo arquivo para identificar alterações.
+
+Um registro ou log de quem fez alterações em um determinado momento.
+
+Mecanismos para vários usuários modificarem arquivos de forma colaborativa, resolver alterações conflitantes e mesclar as alterações.
+
+Há vários sistemas de controle de versão open source disponíveis, inclusive:
+
+CVS
+
+SVN
+
+Git
+
+Mercurial
+
+Introdução ao Git
+Git é o sistema de controle de versão mais usado. Por esse motivo, você usará o Git como sistema de controle de versão em todos os exercícios deste curso.
+
+O Git pode converter qualquer pasta do sistema local em um repositório Git. Embora ofereça muitos dos benefícios do controle de versão, seu repositório Git existe somente no sistema local.
+
+Para compartilhar seu repositório com outro colaborador, é necessário hospedar o repositório em uma plataforma de repositório de código.
+
+Existem muitas plataformas gratuitas de repositório de código, como:
+
+GitHub
+
+GitLab
+
+BitBucket
+
+SourceForge
+
+Neste curso, você usará o GitHub para hospedar e compartilhar seus repositórios Git.
+
+Visão geral do fluxo de trabalho do Git
+Para recuperar os arquivos de projeto de um projeto de software existente com o Git, clone o repositório Git do projeto.
+
+Quando você clona um projeto, uma cópia completa do repositório remoto original é criada localmente no sistema. A cópia local do repositório contém todo o histórico dos arquivos do projeto, não apenas a versão mais recente dos arquivos. Você pode alternar para versões diferentes do aplicativo, ou comparar duas versões de um arquivo, sem se conectar ao repositório remoto. Assim, você continuará implementando alterações de código quando o repositório remoto não estiver disponível.
+
+O Git não sincroniza automaticamente as alterações do repositório local com o repositório remoto, nem faz o download automático de novas alterações remotas em sua cópia local do repositório. Você controla quando o Git faz downloads de commits do repositório remoto e quando as commits locais são carregadas no repositório remoto. O Git oferece vários mecanismos para sincronizar com segurança o repositório local com o repositório remoto do projeto.
+
+Para rastrear as alterações de arquivos no Git, você cria uma série de snapshots do projeto enquanto faz as alterações. Cada snapshot é chamado de commit. Ao fazer commit das alterações do código no seu repositório, você cria um novo snapshot do código no repositório Git.
+
+Cada commit contém metadados que ajudam a encontrar e carregar esse snapshot posteriormente:
+
+fazer commit da mensagem: um resumo de alto nível das alterações do arquivo na commit.
+
+carimbo de data/hora: a data e a hora em que a commit foi criada.
+
+autor: um campo que descreve quem criou a commit.
+
+hash de commit: um identificador exclusivo da commit. Um hash de commit consiste em 40 números hexadecimais. Se um comando Git exigir que um hash de commit realize uma operação, você poderá abreviar a commit para sete caracteres.
+
+Depois de criar commits em um repositório local no sistema, você deve enviar por push suas alterações para o repositório remoto. Quando envia alterações por push a um repositório Git remoto, você carrega commits locais no repositório remoto. Depois de um envio, suas commits estarão disponíveis para que outras pessoas façam download.
+
+Quando outros colaboradores enviam commits por push para um repositório remoto, essas commits não estão presentes no repositório local. Para fazer o download de novas commits de outros colaboradores, extraia as alterações do repositório Git remoto.
+
+Instalação do Git
+O Git é um sistema de controle de versão open source disponível para sistemas Linux, macOS e Windows. Antes de usar o Git, você deve instalá-lo.
+
+Em um navegador, vá para https://git-scm.com/downloads e siga as orientações para seu sistema operacional.
+
+Depois de instalar o Git no sistema, você poderá usar o VS Code para gerenciar seus repositórios Git de código-fonte.
+
+Para testar a instalação, abra o VS Code e acesse o terminal integrado (View → Terminal). No prompt do terminal, execute git --version. Se o Git estiver instalado corretamente, um número de versão será impresso no terminal:
+
+
+Figura 1.9: Teste da instalação do Git no VS Code
+Configurar visualização de controle do código-fonte no VS Code
+Use a paleta de comandos do VS Code (View → Command Palette...) e a visualização de controle de código-fonte (View → SCM) para executar operações git, como clonar um repositório ou fazer commit das alterações do código.
+
+Por padrão, a visualização de controle do código-fonte do VS Code é diferente quando existe um repositório Git no workspace e quando há vários repositórios Git no workspace.
+
+Quando há vários repositórios Git, a visualização de controle do código-fonte exibe a lista SOURCE CONTROL PROVIDERS:
+
+
+Figura 1.10: Lista de provedores de controle do código-fonte na visualização de controle do código-fonte do VS Code.
+Por padrão, quando há apenas um repositório Git no workspace, a visualização de controle do código-fonte não exibe a lista SOURCE CONTROL PROVIDERS
+
+
+Figura 1.11: Visualização de controle do código-fonte para um repositório Git.
+Para ter uma interface de usuário consistente, independentemente do número de repositórios Git do workspace, você deve ativar a opção de gerenciamento de controle do código-fonte Always Show Providers.
+
+Para ativá-la, acesse a paleta de comandos (View → Command Palette...) e digite settings. Selecione Preferences: Open Settings (UI) na lista de opções. O VS Code exibe uma janela de configurações:
+
+
+Figura 1.12: Janela de configurações do VS Code.
+Clique em User e em Features → SCM. As opções do gerenciamento de controle do código-fonte (SCM) para o VS Code são exibidas. Selecione Always Show Providers.
+
+
+Figura 1.13: Opção para sempre exibir a lista de provedores de controle do código-fonte na visualização de controle do código-fonte do VS Code.
+Quando você ativa essa opção, o VS Code exibe a lista SOURCE CONTROL PROVIDERS na visualização de controle do código-fonte para qualquer número de repositórios Git no workspace, até mesmo para um só repositório.
+
+Clonagem de repositório Git
+Use a paleta de comandos do VS Code (View → Command Palette...) e a visualização de controle de código-fonte (View → SCM) para executar operações Git, como clonar um repositório ou fazer commit das alterações do código.
+
+Para clonar um repositório Git remoto no VS Code, acesse a paleta de comandos (View → Command Palette..). Digite clone no prompt e selecione Git: Clone na lista de opções.
+
+
+Figura 1.14: Uso da paleta de comandos para clonar um repositório.
+O VS Code solicita que você informe a URL do repositório remoto e depois solicita o local desejado do repositório local no sistema de arquivos.
+
+Depois que o VS Code clonar o repositório, adicione a pasta do repositório clonado ao seu workspace do VS Code.
+
+Commit das alterações do código
+Depois de adicionar um repositório clonado ao seu workspace do VS Code, você pode editar arquivos do projeto como qualquer outro arquivo do workspace. Conforme você edita os arquivos do projeto, o Git atribui um status a cada arquivo:
+
+modificado: o arquivo contém diferenças salvas da versão mais recente. A adição ou commit de arquivos modificados ao repositório Git não é feita automaticamente.
+
+preparado: um arquivo preparado é um arquivo modificado que você sinaliza para ser incluído na próxima commit de código no repositório.
+
+Quando você faz commit de código no repositório, somente os arquivos com status preparado são incluídos. Se o projeto contiver arquivos modificados que não estão preparados, esses arquivos não serão incluídos na commit. Esse recurso permite que você controle as alterações de arquivo incluídas em cada commit.
+
+No VS Code, a visualização de controle de código-fonte (View → SCM) exibe todos os arquivos modificados e preparados do repositório. Depois que você salvar edições em um arquivo, o nome do arquivo será exibido na lista CHANGES.
+
+Para adicionar um arquivo modificado à próxima commit de código, clique no arquivo modificado na lista CHANGES, na visualização de controle de código-fonte. O VS Code exibe uma nova guia para realçar as alterações do arquivo:
+
+
+Figura 1.15: Revise as alterações do arquivo antes de prepará-lo.
+Se as alterações do arquivo estiverem corretas e completas, clique em Stage Changes para adicionar as alterações à próxima commit de código.
+
+Depois que todas as alterações desejadas do arquivo forem preparadas, forneça uma mensagem de commit na visualização de controle de código-fonte. Em seguida, marque a caixa de seleção para fazer commit de todas as alterações de arquivos preparados no repositório local.
+
+
+Figura 1.16: Faça commit dos arquivos preparados no VS Code.
+Uso do repositório remoto
+Ao fazer commit das alterações do código, a commit do código só é realizada no repositório local. Nenhuma alteração é feita no repositório remoto.
+
+Quando estiver pronto para compartilhar seu trabalho, sincronize o repositório local com o repositório remoto. Para recuperar as commits do repositório remoto, o Git realiza uma operação de extração. Para publicar commits locais no repositório remoto, o Git realiza uma operação de envio por push. O VS Code controla as operações de extração e envio por push do Git quando você sincroniza o repositório local com o remoto.
+
+A visualização de controle do código-fonte compara o repositório local com o repositório remoto correspondente. Se houver commits para baixar de um repositório remoto, o número de commits será exibido com um ícone de seta de download. Se houver commits locais que você não publicou no repositório remoto, o número de commits será exibido ao lado de um ícone de seta de upload.
+
+Na figura a seguir, não há commits para baixar e há uma commit para carregar no repositório remoto:
+
+
+Figura 1.17: Status do repositório Git na visualização de controle do código-fonte e na barra de status.
+Clique em Synchronize Changes para publicar suas commits de código locais no repositório remoto. Como alternativa, clique no mesmo ícone na barra de status para publicar as commits de código.
+
+IMPORTANTE
+Se a visualização de controle do código-fonte (View → SCM) não incluir o título SOURCE CONTROL PROVIDERS, você não verá o ícone Synchronize Changes.
+
+Para ativá-lo, clique com o botão direito do mouse em SOURCE CONTROL: GIT. Se uma marca de seleção não for exibida à esquerda de Source Control Providers, clique em Source Control Providers.
+
+
+Figura 1.18: Ative a listagem de provedores de controle do código-fonte.
+Inicialização de um novo repositório Git
+Se você tiver um projeto de software que precisa de controle de versão, poderá convertê-lo em um repositório Git.
+
+Para converter qualquer pasta do sistema de arquivos em um repositório Git, acesse a paleta de comandos do VS Code (View → Command Palette...). Digite initialize no prompt e selecione Git: Initialize Repository na lista de opções.
+
+O VS Code exibe a lista de pastas do projeto no workspace.
+
+
+Figura 1.19: Uso do VS Code para inicializar um repositório Git.
+Depois que você selecionar uma pasta do projeto, o Git inicializará a pasta como um repositório Git vazio. A visualização de controle do código-fonte exibe uma entrada para o novo repositório. Como a pasta é inicializada como um repositório vazio, cada arquivo da pasta do projeto é marcado como um arquivo não rastreado.
+
+
+Figura 1.20: Arquivos não controlados em um repositório Git.
+Para qualquer arquivo de projeto que exija controle de versão, clique no ícone de mais para adicionar o arquivo ao repositório local. Todo arquivo adicionado é exibido na lista STAGED CHANGES da visualização de controle do código-fonte. Depois de preparar todos os arquivos do projeto, forneça uma mensagem de commit e clique no ícone de marca de seleção para criar a primeira commit no repositório.
+
+Quando você cria um novo repositório a partir de uma pasta do sistema de arquivos local, o novo repositório não é associado a um repositório remoto. Se você precisar compartilhar seu repositório:
+
+Crie um novo repositório Git em uma plataforma de hospedagem de código, como o GitHub.
+
+Associe o repositório local ao novo repositório remoto e sincronize as alterações.
+
+Adição de um repositório remoto a um repositório local
+Depois que você criar um novo repositório em uma plataforma de hospedagem de código, a plataforma fornecerá uma URL HTTPS e SSH para acessar o repositório. Use essa URL para adicionar esse repositório hospedado como um repositório remoto ao repositório local.
+
+NOTA
+Neste curso, você só usa URLs HTTPS para acessar repositórios remotos de código. O acesso HTTPS a um repositório Git requer muito pouca configuração adicional, mas exige que você forneça credenciais para a plataforma de hospedagem de código.
+
+Você pode configurar sua instalação Git para armazenar suas credenciais em cache. Isso ajuda a evitar a reinserção das credenciais toda vez que você se conectar ao repositório remota.
+
+O acesso SSH ao repositório Git requer a configuração das suas chaves SSH na plataforma de hospedagem de código.
+
+A configuração de chaves SSH está fora do escopo deste curso.
+
+Acesse a paleta de comandos do VS Code para adicionar um repositório remoto ao repositório local. Digite add remote no prompt e selecione Git: Add Remote na lista de opções. Se for solicitado que você selecione um repositório local, faça uma seleção apropriada.
+
+No prompt, digite origin como nome remoto; origin é o nome convencional dado ao repositório remoto designado como repositório central de códigos.
+
+No prompt, insira a URL HTTPS em seu repositório remoto. Se houver commits no repositório local, o ícone Publish Changes será exibido na lista SOURCE CONTROL PROVIDERS.
+
+
+Figura 1.21: Publique um repositório Git local em um repositório remoto.
+Clique em Publish Changes para enviar por push suas commits de código locais para o repositório remoto. Se for solicitado, forneça as credenciais necessárias para o repositório remotas.
+
+REFERÊNCIAS
+Para obter mais informações sobre como instalar o Git, consulte a documentação do Git em https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
+
+Noções básicas do Git
+
+Para obter mais informações sobre como usar o Git e o controle de versão no VS Code, consulte a documentação do VS Code em https://code.visualstudio.com/docs/editor/versioncontrol

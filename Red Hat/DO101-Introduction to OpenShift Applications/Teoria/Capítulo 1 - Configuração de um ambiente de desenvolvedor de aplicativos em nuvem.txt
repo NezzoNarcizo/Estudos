@@ -1,0 +1,261 @@
+Capítulo 1. Configuração de um ambiente de desenvolvedor de aplicativos em nuvem
+
+Desenvolvimento de aplicativos com o Visual Studio Code
+Exercício orientado: Desenvolvimento de aplicativos com o Visual Studio Code
+Inicialização de um repositório Git
+Exercício orientado: Inicialização de um repositório Git
+Gerenciamento do código-fonte do aplicativo com Git
+Exercício orientado: Gerenciamento do código-fonte do aplicativo com Git
+Resumo
+Resumo
+
+Meta	Configurar um ambiente de desenvolvedor com um moderno ambiente de desenvolvedor integrado e controle de versão.
+Objetivos	
+Editar o código-fonte do aplicativo com o Visual Studio Code (VS Code).
+
+Criar um novo repositório Git.
+
+Usar o controle de versão para colaborar e gerenciar o código-fonte do aplicativo.
+
+Seções	
+Desenvolvimento de aplicativos com o Visual Studio Code (e exercício orientado)
+
+Inicialização de um repositório Git (e exercício orientado)
+
+Gerenciamento do código-fonte do aplicativo com Git (e exercício orientado)
+
+Desenvolvimento de aplicativos com o Visual Studio Code
+Objetivos
+Depois de concluir esta seção, você deverá ser capaz de editar o código-fonte do aplicativo com o Virtual Studio Code (VS Code).
+
+Ambientes integrados de desenvolvimento
+Os desenvolvedores de software executam muitos tipos diferentes de tarefa durante o ciclo de vida de desenvolvimento de software de um aplicativo:
+
+compilar e criar o código-fonte;
+
+corrigir erros de sintaxe;
+
+depurar erros de tempo de execução;
+
+manter o controle de versão das alterações no código-fonte;
+
+refatorar o código-fonte;
+
+executar testes no código-fonte.
+
+No passado, os desenvolvedores usavam uma série de ferramentas separadas, como editores, compiladores, interpretadores e depuradores, para desenvolver aplicativos de software. Com o uso de ferramentas separadas, surgiram ineficiências, o que levou à criação de ambientes integrados de desenvolvimento, ou IDEs. Os IDEs aumentam a produtividade do desenvolvedor, pois integram ferramentas comuns de desenvolvimento de software em um aplicativo. Os IDEs geralmente integram:
+
+editores específicos a uma linguagem;
+
+recursos de preenchimento de código;
+
+realce de sintaxe;
+
+documentação da linguagem de programação;
+
+depuração de código;
+
+ferramentas de gerenciamento de controle do código-fonte, como Git, SVN ou Mercurial.
+
+Muitos IDEs modernos são compatíveis com várias linguagens de programação. Usando esses IDEs, os desenvolvedores criam aplicativos em uma variedade de linguagens diferentes, sem precisar aprender ferramentas específicas a uma linguagem, como compiladores e interpretadores.
+
+Desenvolvimento de software com VS Code
+O VS Code é um IDE de open source popular compatível com várias linguagens, incluindo JavaScript, Python, Go, C#, TypeScript e muito mais. Ele fornece recursos de realce de sintaxe, preenchimento de código, depuração e trechos de código, juntamente com uma estrutura de plugin que permite instalar funcionalidades adicionais de um marketplace de plugins.
+
+Neste curso, você usa o VS Code para criar, editar e gerenciar projetos de código-fonte.
+
+Visão geral da interface do VS Code
+A interface do VS Code contém cinco componentes principais:
+
+
+1
+
+Barra de atividades. Localizada na extrema esquerda, ela contém atalhos para alterar a visualização da barra lateral. Por padrão, a barra de atividades contém atalhos para as visualizações de explorador, pesquisa, controle do código-fonte, depuração e extensões. Você também pode acessar essas visualizações de atividades no menu View.
+
+2
+
+Barra lateral. Localizada imediatamente à direita da barra de atividades, essa área exibe a visualização da atividade selecionada, como a visualização do explorador.
+
+3
+
+Grupos de editores. A área superior direita do VS Code contém um ou mais grupos de editores.
+
+Por padrão, há apenas um grupo de editores. O editor ativo ocupa toda a área do grupo de editores.
+
+Clique no ícone Split Editor Right no canto superior direito para criar um segundo grupo de editores. Com dois grupos de editores, você pode editar dois arquivos diferentes lado a lado.
+
+4
+
+Painéis. Localizados abaixo dos editores, painéis individuais fornecem diferentes informações de saída ou depuração sobre as atividades do VS Code. Por padrão, são fornecidos quatro painéis:
+
+Problems
+
+Output
+
+Debug Console
+
+Terminal
+
+5
+
+Barra de status. Localizada na parte inferior, esta área fornece informações sobre o projeto aberto e os arquivos conforme você edita.
+
+Workspace do VS Code
+O VS Code organiza um conjunto de projetos de software relacionados e definições de configuração em um workspace. Os dados de configuração de cada workspace são armazenados em um arquivo com a extensão .code-workspace.
+
+No menu File, você pode fechar, salvar e abrir um workspace.
+
+Por exemplo, temos um aplicativo web, chamado myapp, com os seguintes componentes:
+
+Código JavaScript para a interface de usuário do front-end do aplicativo.
+
+Código Python para a lógica de aplicativos de back-end.
+
+Configuração e scripts do banco de dados do aplicativo.
+
+Arquivos AsciiDoc para a documentação do aplicativo.
+
+Se você mantiver cada um desses componentes em pastas ou repositórios de código separados, poderá adicionar cada pasta a um workspace myapp do VS Code que você dedicar para o aplicativo:
+
+
+Figura 1.1: Workspace do VS Code com várias pastas de código-fonte
+Para adicionar uma pasta de código-fonte a um workspace, clique em File → Add Folder to Workspace...
+
+Para remover uma pasta de código-fonte de um workspace, acesse a visualização do explorador (View → Explorer). Clique com o botão direito do mouse em uma pasta selecionada de nível superior do workspace e escolha Remove Folder from Workspace para remover a pasta do seu workspace.
+
+Terminal integrado ao VS Code
+Embora o VS Code integre muitas ferramentas de desenvolvimento, você pode precisar de acesso a ferramentas de desenvolvimento ou aplicativos externos. O VS Code integra o terminal do seu sistema operacional, permitindo que você execute comandos de terminal arbitrários no VS Code. Para visualizar o terminal integrado, clique em View → Terminal.
+
+Você pode abrir vários terminais no painel de terminal do VS Code. O painel de terminal contém a lista dos terminais abertos. Para exibir um terminal, selecione-o na lista. Para fechar um terminal, clique em Kill Terminal.
+
+
+Figura 1.2: O terminal integrado ao VS Code
+Extensões do VS Code
+Embora o terminal integrado do VS Code auxilie na execução arbitrária de comandos, você deve instalar e aprender a usar os comandos externos necessários. Além disso, os comandos de terminal não aproveitam os padrões comuns de uso no VS Code.
+
+O VS Code fornece uma estrutura de extensões para impulsionar a integração de recursos de desenvolvimento de software ao VS Code. Qualquer usuário ou organização pode contribuir com extensões para o VS Code. Depois que uma extensão é desenvolvida, ela é anunciada e publicada no marketplace do VS Code.
+
+Você pode pesquisar, fazer download e instalar extensões do marketplace do VS Code no VS Code. Clique em View → Extensions para acessar a visualização de extensões na barra lateral.
+
+NOTA
+Neste curso, você não instala extensões adicionais do VS Code.
+
+Desenvolvimento de um aplicativo Node.js usando o VS Code
+Muitos dos exemplos de aplicativos web nos exercícios do curso são aplicativos Node.js. Se um exercício deste curso exigir que você edite códigos, use o VS Code para fazer as alterações.
+
+Node.js é um mecanismo de tempo de execução open source que executa JavaScript fora de um navegador. Ele foi projetado para controlar, de forma eficiente, muitas conexões simultâneas para aplicativos de rede. Além disso, o Node.js permite que você escreva o código de front-end e de back-end em uma linguagem: JavaScript. Por esses motivos, o Node.js é um mecanismo de tempo de execução popular para o desenvolvimento de aplicativos web.
+
+Instalação do Node.js
+Para instalar o Node.js, navegue até https://nodejs.org/en/download em um navegador. Clique no link apropriado do seu sistema operacional e siga as instruções.
+
+Depois de instalar o Node.js, use o comando node para executar aplicativos Node.js.
+
+Módulos Node.js
+Todas as linguagens de programação modernas dão suporte à reutilização de código por meio de bibliotecas compartilhadas, pacotes e módulos.
+
+Os módulos são a menor unidade de código reutilizável do Node.js. O Node.js fornece vários módulos integrados. Você também pode baixar e usar módulos Node.js de terceiros.
+
+Ao criar um aplicativo Node.js complexo, grave módulos Node.js personalizados para agrupar códigos lógicos relacionados. Seus módulos Node.js personalizados são definidos em arquivos de texto JavaScript.
+
+Use a palavra-chave require para carregar um módulo Node.js. Considere este exemplo:
+
+var http = require('http');
+var mymodule = require('./mymodule');
+A variável http contém uma referência ao módulo http integrado, enquanto a variável mymodule contém uma referência ao módulo definido no arquivo mymodule.js.
+
+Pacotes Node.js
+Assim como outras linguagens de programação, o Node.js oferece uma maneira de definir e gerenciar dependências de aplicativos. Uma dependência de aplicativo Node.js é chamada de pacote. Um pacote é um conjunto de um ou mais módulos Node.js, ou código do aplicativo, que você baixa de um repositório de pacotes Node.js.
+
+As dependências de aplicativos são definidas no arquivo packages.json, localizado na raiz da pasta do projeto Node.js. Este é um exemplo de arquivo packages.json:
+
+{
+    "name": "hello",
+    "version": "0.1.0",
+    "description": "An example package.json",
+    "author": "Student <student@example.com>",
+    scripts: {
+        "start": "node app.js"
+    },
+    "dependencies": {
+        "cookie-parser": "1.4.*",
+        "http-errors": ">=1.6.3",
+    },
+    "license": "MIT"
+}
+No exemplo, o aplicativo hello requer versões específicas dos pacotes cookie-parser e http-errors.
+
+O arquivo packages.json também define outros metadados para o aplicativo Node.js, como nome, versão e autor.
+
+Gerenciador de pacotes do nó
+O Gerenciador de pacotes do nó (NPM) é uma ferramenta de linha de comando usada para criar, instalar e publicar pacotes Node.js. Para a maioria dos sistemas operacionais, o comando npm (Gerenciador de pacotes do nó, na sigla em inglês) é instalado como parte do processo de instalação do Node.js.
+
+Para instalar as dependências de um aplicativo Node.js, use o comando de npm install.
+
+Para inicializar um diretório vazio como um projeto Node.js, use o comando npm init para criar um arquivo packages.json para um novo aplicativo Node.js.
+
+Para gerenciar o ciclo de vida do aplicativo, use o comando npm a fim de iniciar, parar ou reiniciar o aplicativo.
+
+Estrutura Express de aplicativo web
+Express é uma estrutura comum do Node.js que visa simplificar a criação de serviços web. Como Express é um pacote do Node.js, use o comando npm install para instalar o Express:
+
+$> npm install express
+Depois de instalar o pacote express do Node.js, o comando express estará disponível no sistema. Use o comando express para criar o conjunto de arquivos de projeto iniciais de um novo aplicativo Express.
+
+Considere este exemplo:
+
+$> express /path/to/project/folder/myapp
+O comando cria a pasta myapp que contém um arquivo packages.json:
+
+{
+  "name": "myapp",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "http-errors": "~1.6.3",
+    "jade": "~1.11.0",
+    "morgan": "~1.9.1"
+  }
+}
+O pacote express é uma dependência do aplicativo myapp do Node.js. Inicie o aplicativo myapp usando o comando node ./bin/www.
+
+O código-fonte no arquivo ./bin/www carrega o módulo app do Node.js:
+
+...output omitted...
+/**
+ * Module dependencies.
+ */
+
+var app = require('../app');
+...output omitted...
+O código-fonte do módulo app está no arquivo app.js, localizado na raiz do diretório do projeto myapp. O arquivo app.js contém a lógica primária do aplicativo.
+
+O arquivo app.js de um simples aplicativo Express "Hello, World!" contém:
+
+var express = require('express');
+var app = express();
+
+app.get('/', function (req, res) {
+  res.send('Hello, World!\n');
+});
+
+app.listen(8080, function () {
+  console.log('Example app listening on port 8080!');
+});
+
+module.exports = app;
+A variável app faz referência a uma instância de um aplicativo Express. O aplicativo está configurado para escutar solicitações na porta 8080. Quando você acessa o ponto de extremidade do aplicativo, o aplicativo envia a resposta: Hello, World!.
+
+REFERÊNCIAS
+Ambiente integrado de desenvolvimento – Wikipedia
+
+Para obter mais informações sobre os workspaces e pastas de projeto do Visual Studio Code, consulte a documentação do Visual Studio Code em
+
+Para obter mais informações sobre o terminal integrado ao Visual Studio Code, consulte a documentação do Visual Studio Code em https://code.visualstudio.com/docs/editor/integrated-terminal
+
+Para obter mais informações sobre módulos Node.js, consulte a documentação do Node.js em https://nodejs.org/api/modules.html#modules_modules

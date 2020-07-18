@@ -1,0 +1,166 @@
+
+Exercício orientado: Desenvolvimento de aplicativos com o Visual Studio Code
+
+Neste exercício, você usará o Visual Studio Code (VS Code) para criar um aplicativo Node.js simples.
+
+Resultados
+
+Você deverá ser capaz de:
+
+Fazer download e instalar o Node.js.
+
+Fazer download e instalar o VS Code.
+
+Criar um workspace no VS Code.
+
+Adicionar uma pasta de projeto a um workspace do VS Code.
+
+Para realizar este exercício, verifique se você tem acesso a um sistema Linux (baseado em Debian ou Fedora), macOS ou Windows, incluindo as permissões necessárias para instalar software nesse sistema.
+
+Procedimento 1.1. Etapas
+
+Faça download e instale o Node.js.
+
+Instalação no Windows.
+
+Em um navegador, acesse https://nodejs.org/en/download. Clique em Windows Installer para fazer o download do instalador do Node.js para Windows. Clique em Save File para abrir uma janela do arquivo. Clique em Save na janela do arquivo para aceitar o nome de arquivo e local padrão para o arquivo.
+
+Navegue até o arquivo baixado e abra-o para exibir uma janela do assistente de configuração. Clique em Next na tela de boas-vindas para iniciar a instalação.
+
+Marque I accept the terms in the License Agreement e clique em Next.
+
+Clique em Next para aceitar o local de instalação padrão.
+
+Clique em Next para aceitar as configurações padrão na tela Custom Setup.
+
+Clique em Next para ignorar a instalação das ferramentas que você deve usar para compilar módulos nativos.
+
+Clique em Install para iniciar a instalação. Clique em Yes para permitir que o aplicativo faça alterações no sistema. Aguarde o término da instalação.
+
+Clique em Finish para sair do assistente de instalação.
+
+Instalação no Linux.
+
+Abra um novo terminal de linha de comando.
+
+Para instalar o Node.js nos sistemas Ubuntu e Debian, use o seguinte comando:
+
+yourname@yourhost:~$ sudo apt install nodejs
+O comando pode solicitar sua senha para instalar o pacote.
+
+Um exercício posterior exige o Gerenciador de pacotes do nó (NPM). Instale o pacote:
+
+yourname@yourhost:~$ sudo apt install npm
+O pacote npm do Ubuntu instala vários pacotes de desenvolvimento de software diferentes. Você poderá ignorar essa instalação do npm se precisar diminuir o número de pacotes no seu sistema Ubuntu.
+
+Para instalar o Node.js nos sistemas Fedora e Red Hat Enterprise Linux 8, use o seguinte comando:
+
+[yourname@yourhost ~]$ sudo dnf install nodejs
+O comando pode solicitar sua senha para instalar o pacote.
+
+Instalação no macOS.
+
+Vá até https://nodejs.org/en/download/ em um navegador.
+
+Faça o download do instalador estável de 64 bits do Node.js (.pkg) de suporte de longo prazo (LTS) para macOS.
+
+Execute o instalador .pkg. Nas versões recentes do macOS (10.14 e posterior), o software instalado de fontes que não sejam a App Store é bloqueado por padrão.
+
+Abra System Preferences → Security & Privacy e, na guia General, clique em Open anyway para continuar. Reinicie o instalador do Node.js se for solicitado.
+
+Clique em Continue. O instalador instalará node, o pacote de tempo de execução do Node.js, e npm, o Gerenciador de pacotes do Node.js, em /usr/local/bin.
+
+Clique em Continue na janela Software License Agreement.
+
+Clique em Agree para aceitar os termos da licença.
+
+Por fim, clique em Install para iniciar a instalação. Talvez seja solicitada sua senha do macOS. Digite a senha do macOS para continuar.
+
+Faça download e instale o VS Code.
+
+ATENÇÃO
+Este curso foi criado para o VS Code versão v1.39, mas as instruções a seguir mostram como instalar a versão mais recente do VS Code.
+
+Se quiser corresponder à versão do VS Code deste curso, acesse https://code.visualstudio.com/updates/v1_39 e siga as instruções de instalação do sistema operacional.
+
+Instalação no Windows.
+
+Em um navegador do sistema Windows, vá para https://code.visualstudio.com/download
+
+Clique em Windows para fazer download do VS Code para Windows.
+
+Clique em Save File para salvar o arquivo. Na janela exibida, clique em Save para aceitar o nome de arquivo e o local de download padrão.
+
+Navegue até o arquivo baixado e abra-o para exibir o assistente de configuração do VS Code. Selecione I accept the agreement e clique em Next.
+
+Clique em Next para aceitar o local padrão da instalação. Se a pasta já existir, clique em Yes para instalar na pasta assim mesmo.
+
+Clique em Next para adicionar a pasta do menu Iniciar ao VS Code. Se não precisar da pasta do menu Iniciar para o VS Code, selecione Don’t create a Start Menu folder antes de clicar em Next.
+
+Revise a lista de tarefas adicionais a serem executadas durante a instalação do VS Code. Selecione todas as tarefas necessárias para o sistema e clique em Next.
+
+Clique em Install para instalar o VS Code.
+
+Clique em Finish para fechar o assistente de configuração.
+
+Instalação no Linux.
+
+Em um navegador, acesse: https://code.visualstudio.com/download
+
+Nos sistemas Ubuntu e Debian, clique em .deb. Nos sistemas Fedora e Red Hat Enterprise Linux, clique em .rpm.
+
+Selecione Open with e marque Software Install (default). Clique em OK.
+
+Na janela de instalação, clique em Install.
+
+Na janela Authentication Required, digite sua senha e clique em Authenticate.
+
+Quando a instalação for concluída, feche a janela.
+
+Instalação no macOS.
+
+Vá até https://code.visualstudio.com/download em um navegador.
+
+Clique no ícone da Apple (Mac) para fazer o download do arquivo .zip do Visual Studio Code.
+
+Descompacte o arquivo .zip e copie o binário executável do Visual Studio Code na pasta Applications usando o Finder do macOS.
+
+Clique duas vezes no binário do Visual Studio Code para iniciar o Visual Studio Code.
+
+Abra o VS Code e crie um workspace para hospedar seus projetos.
+
+Abra o aplicativo VS Code conforme o sistema operacional em uso. Clique em View → Explorer para exibir a visualização do explorador.
+
+Se você instalou e usou o VS Code no sistema antes deste curso, clique em File → Close Workspace. Se File → Close Workspace não estiver disponível, ignore esta etapa.
+
+
+Figura 1.3: Aplicativo VS Code
+Clique em File → Save Workspace As …​. Na janela exibida, vá para seu diretório pessoal. Digite My Projects no nome do arquivo e clique em Save. A visualização do explorador exibe o botão Add Folder para adicionar pastas de projeto ao seu workspace.
+
+
+Figura 1.4: Workspace do VS Code.
+Crie a pasta do projeto hello-nodejs e adicione-a ao seu workspace.
+
+No VS Code, clique em File → Add Folder to Workspace…​. Na janela exibida, vá para seu diretório pessoal. Crie uma nova pasta chamada de hello-nodejs. Clique em Add para adicionar essa nova pasta ao workspace.
+
+
+Figura 1.5: Adição de uma pasta ao workspace do VS Code.
+Crie um arquivo app.js no projeto. Salve o arquivo com o seguinte conteúdo:
+
+Clique com o botão direito do mouse em hello-nodejs no workspace e selecione New File. Digite app.js no nome do arquivo para abrir uma guia do VS Code para o novo arquivo.
+
+Adicione o texto console.log("Hello World!\n"); à guia do editor app.js e salve o arquivo (File → Save).
+
+Clique com o botão direito do mouse em hello-nodejs no workspace e selecione Open in Terminal para acessar o projeto hello-nodejs no terminal integrado do VS Code.
+
+
+Figura 1.6: Abertura de uma pasta do projeto no terminal integrado do VS Code.
+No terminal integrado, execute node app.js para testar seu exemplo de código e a instalação do Node.js.
+
+
+Figura 1.7: Execução de um aplicativo Node.js no terminal integrado do VS Code.
+Para limpar seu trabalho, clique no ícone Kill Terminal para fechar a janela de terminal integrado.
+
+
+Figura 1.8: Fechamento da janela de terminal integrado no VS Code.
+Isso conclui o exercício orientado.
