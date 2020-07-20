@@ -1,0 +1,12 @@
+
+Resumo
+
+Neste capítulo, você aprendeu que:
+
+O Red Hat OpenShift Container Platform adapta o aplicativo à demanda do usuário, aumentando ou diminuindo o número de pods.
+
+O OpenShift configura automaticamente o recurso de rota para balancear a carga das solicitações do usuário entre os pods.
+
+É possível usar o console da web do OpenShift para dimensionar os aplicativos manualmente.
+
+Quando configurado, o Horizontal Pod Autoscaler (HPA) dimensiona automaticamente os aplicativos de acordo com a utilização da CPU.

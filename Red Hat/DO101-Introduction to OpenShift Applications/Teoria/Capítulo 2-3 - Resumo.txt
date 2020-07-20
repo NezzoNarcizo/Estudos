@@ -1,0 +1,11 @@
+Resumo
+
+Neste capítulo, você aprendeu que:
+
+O OpenShift compila e executa aplicativos em pods isolados.
+
+O OpenShift dá suporte à compilação e implantação de aplicativos a partir do código-fonte em um repositório Git.
+
+O console da web oferece uma perspectiva de desenvolvedor para que os desenvolvedores criem e gerenciem seus aplicativos.
+
+O recurso de rota associa um nome de host DNS a um aplicativo em execução no OpenShift.

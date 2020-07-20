@@ -1,0 +1,12 @@
+
+Resumo
+
+Neste capítulo, você aprendeu que:
+
+A página Topology do console da web do OpenShift é usada para identificar a etapa de implantação com erro.
+
+O OpenShift armazena logs para os processos de compilação, implantação e execução.
+
+Para solução de problemas avançada, você pode usar o console para executar comandos dentro de um pod em execução.
+
+Os eventos do OpenShift registram ações significativas, como a inicialização de um pod ou a falha de um processo de compilação.

@@ -1,0 +1,292 @@
+Exercício orientado: Conexão com um banco de dados
+
+Neste exercício, você implantará um aplicativo Node.js que se conecte a um banco de dados PostgreSQL no OpenShift.
+
+Resultados
+
+Você deverá ser capaz de:
+
+Armazenar as informações de conexão do banco de dados em um segredo.
+
+Integrar o aplicativo Node.js ao banco de dados PostgreSQL usando os serviços do OpenShift.
+
+Preencher e buscar dados do banco de dados PostgreSQL usando o aplicativo Node.js.
+
+Para realizar este exercício, verifique se você tem acesso:
+
+A um cluster do Red Hat OpenShift Container Platform em execução.
+
+Ao código-fonte do aplicativo contacts no repositório Git DO101-apps em seu sistema local.
+
+Procedimento 3.3. Etapas
+
+Inspecione o código-fonte do aplicativo contacts.
+
+Inicie o editor do Visual Studio Code (VS Code) e abra a pasta DO101-apps no workspace My Projects. O código-fonte do aplicativo contacts está no diretório contacts.
+
+Inspecione o arquivo DO101-apps/contacts/package.json para exibir as dependências do pacote para esse aplicativo Node.js. O aplicativo contacts usa a conhecida estrutura de aplicativos web Express.js, além de armazenar e buscar informações de contato em um banco de dados PostgreSQL.
+
+...output omitted...
+"dependencies": {
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "dotenv": "^8.1.0",
+    "express": "~4.16.1",
+    "http-errors": "~1.6.3",
+    "morgan": "~1.9.1",
+    "pg": "^7.12.1",
+    "pug": "2.0.0-beta11"
+  },
+...output omitted...
+Inspecione o arquivo DO101-apps/contacts/app.js, que é o principal ponto de entrada para o aplicativo. Há uma única definição de rota do Express.js chamada indexRouter:
+
+app.use('/', indexRouter);
+O código da rota indexRouter está definido no arquivo DO101-apps/contacts/routes/index.js. Abra esse arquivo no VS Code. O arquivo contém o código para inserir e buscar informações de contato em um banco de dados PostgreSQL.
+
+O primeiro método controla as solicitações HTTP GET para a URL '/'. Esse método verifica a existência da tabela contacts no banco de dados. Se a tabela não existir, ela mostrará uma página HTML com um botão para propagar dados no banco de dados.
+
+Se a tabela contacts existir, a lista de contatos será buscada como uma matriz JSON e passada para a camada de visualização de front-end, que exibe os contatos em uma tabela HTML.
+
+O código de front-end em HTML está no arquivo DO101-apps/contacts/views/index.pug.
+
+...output omitted...
+router.get('/', function(req, res) {
+...output omitted...
+  res.render('index', { error: null, contacts: contacts, title: 'Contact List' });
+});
+...output omitted...
+O segundo método controla as solicitações HTTP POST à URL /seed. Esse método cria a tabela contacts e a preenche com uma lista de contatos. Depois que os dados são armazenados no PostgreSQL, o método redireciona a solicitação para a URL /, que processa a tabela HTML com os contatos.
+
+...output omitted...
+router.post('/seed', function(req,res) {
+  pgconn.query("drop table if exists contacts; create table contacts ...output omitted...
+
+    // redirect to the index page
+    else {
+      res.redirect('/');
+    }
+...output omitted...
+As informações de conexão com o banco de dados são configuradas no arquivo DO101-apps/contacts/db/config.js. A URL do banco de dados, que consiste no nome do host, porta, nome do banco de dados, nome de usuário e senha, é inserida como uma variável de ambiente (DB_CONFIG) no tempo de execução. Você criará um segredo do OpenShift para armazenar a URL do banco de dados:
+
+...output omitted...
+const DB_CONFIG = process.env.DB_CONFIG
+...output omitted...
+const { Pool } = require('pg');
+
+const pgconn = new Pool({
+    connectionString: DB_CONFIG,
+    ssl: false,
+});
+...output omitted...
+Crie uma nova ramificação no repositório Git para o aplicativo contacts.
+
+No VS Code, na visualização de controle do código-fonte (View → SCM), garanta que a entrada DO101-apps abaixo da opção SOURCE CONTROL PROVIDERS mostre a ramificação master. Se estiver trabalhando com outra ramificação em um exercício diferente, clique na ramificação atual e selecione master na janela Select a ref to checkout para alternar para a ramificação master.
+
+ATENÇÃO
+Cada exercício usa uma ramificação exclusiva. Sempre crie uma nova ramificação usando master como base.
+
+Clique em master na entrada DO101-apps, para SOURCE CONTROL PROVIDERS.
+
+Selecione Create new branch…​ na lista de opções.
+
+No prompt, digite contacts no nome da ramificação. A visualização de controle do código-fonte é atualizada para a entrada DO101-apps com o nome da nova ramificação.
+
+Envie por push a ramificação contacts para seu repositório DO101-apps do GitHub.
+
+Clique no ícone de nuvem da ramificação contacts para enviar por push a ramificação local para o repositório Git remoto. Quando solicitado, forneça seu nome de usuário e senha do GitHub.
+
+Crie um novo projeto para o aplicativo contacts.
+
+Faça login no console da web do OpenShift usando sua conta de desenvolvedor. Selecione a perspectiva Developer.
+
+Crie um novo projeto chamado de seu_usuário-contacts. Substitua seu_usuário pelo seu nome de usuário.
+
+Implante um banco de dados PostgreSQL no projeto seu_usuário-contacts.
+
+Clique em +Add e verifique se o projeto atual está definido como seu_usuário-contacts.
+
+Clique em Database.
+
+
+Figura 3.45: Adicionar banco de dados
+Na página Developer Catalog, clique em Databases → Postgres.
+
+Clique na segunda opção PostgreSQL (Ephemeral).
+
+
+Figura 3.46: Adicionar banco de dados PostgreSQL
+Clique em Instantiate Template e preencha o formulário conforme a seguinte tabela:
+
+Tabela 3.3. Formulário do novo banco de dados
+
+Campo do formulário	Valor
+Database Service Name
+
+contactsdb
+
+PostgreSQL Connection Username
+
+contacts
+
+PostgreSQL Connection Password
+
+contacts
+
+PostgreSQL Database Name
+
+contactsdb
+
+
+Deixe todos os outros campos com os valores padrão.
+
+
+Figura 3.47: Formulário do novo banco de dados PostgreSQL
+Clique em Create para iniciar a implantação do banco de dados.
+
+Clique em Topology e clique na implantação contactsdb. Clique em Resources e verifique se um único pod do banco de dados PostgreSQL está em execução.
+
+
+Figura 3.48: Implantação do banco de dados PostgreSQL
+Crie um segredo para armazenar as informações de conexão com o banco de dados.
+
+Clique em Advanced → Search.
+
+Clique em Service e procure secret. Selecione a opção Secret.
+
+
+Figura 3.49: Procurar segredos
+Verifique se o projeto atual é seu_usuário-contacts.
+
+Clique em Create → Key/Value Secret para criar um novo segredo.
+
+
+Figura 3.50: Criar segredo
+Na página Create Key/Value Secret, digite contactsdb-secret no campo Secret Name, DB_CONFIG no campo Key e postgresql://contacts:contacts@contactsdb:5432/contactsdb no campo Value.
+
+
+Figura 3.51: Detalhes do segredo
+Lembre-se de que a variável de ambiente DB_CONFIG está mapeada para o atributo connectionString no arquivo DO101-apps/contacts/db/config.js. O módulo do driver do banco de dados PostgreSQL para o Node.js espera que o formato da URL do banco de dados seja:
+
+postgresql://<nome_de_usuário>:<senha>@<host>:<porta>/<banco_de_dados>
+
+Clique em Create para criar o segredo.
+
+Implante o aplicativo contacts no OpenShift.
+
+Selecione Add e clique em From Catalog.
+
+
+Figura 3.52: Adicionar a partir do catálogo
+Selecione Languages → JavaScript e clique na primeira opção, Node.js. Clique em Create Application para inserir os detalhes do aplicativo.
+
+Preencha o formulário de acordo com a tabela a seguir. Para acessar os parâmetros Git, clique em Show Advanced Git Options.
+
+Tabela 3.4. Parâmetros do novo aplicativo
+
+Campo do formulário	Valor
+Git Repo URL
+
+https://github.com/seu_usuário_do_git/DO101-apps
+
+Git Reference
+
+contacts
+
+Context Dir
+
+/contacts
+
+Application Name
+
+contacts
+
+Name
+
+contacts
+
+
+Não clique em Create ainda. Primeiro, você deve personalizar a configuração de implantação para que o aplicativo use o segredo que você criou em uma etapa anterior.
+
+Clique em Deployment Configuration para personalizar a configuração da implantação. Faça referência ao segredo que você criou anteriormente.
+
+
+Figura 3.53: Configuração de implantação do aplicativo de contatos
+Clique em Add from Config Map or Secret.
+
+
+Figura 3.54: Adicionar variáveis de ambiente a partir do mapa de configuração ou do segredo
+Uma nova linha é adicionada à tabela Environment Variables. Digite DB_CONFIG no campo NAME na nova linha. Clique na lista Select a resource, procure contacts e selecione o segredo contacts-secret.
+
+
+Figura 3.55: Selecionar segredo
+Clique na lista Select a Key e selecione DB_CONFIG.
+
+
+Figura 3.56: Selecionar a chave DB_CONFIG no segredo
+Clique no símbolo de menos (-) na primeira linha da tabela Environment Variables (Runtime only) para excluir a variável de ambiente não utilizada.
+
+
+Figura 3.57: Excluir linha
+Para evitar erros de implantação nas etapas a seguir, revise os valores que você digitou no formulário antes de continuar. Clique em Create para iniciar os processos de compilação e implantação.
+
+Teste o aplicativo.
+
+Aguarde alguns minutos enquanto a imagem de contêiner do aplicativo é compilada e implantada. Você verá uma marca de seleção verde para a implantação de contacts na página Topology.
+
+
+Figura 3.58: Aplicativo de contatos criado com êxito
+Clique em Open URL para abrir a URL da rota para o aplicativo contacts.
+
+
+Figura 3.59: URL da rota do aplicativo de contatos
+A página inicial do aplicativo contacts é exibida.
+
+
+Figura 3.60: Página inicial do aplicativo de contatos
+Clique em Seed Data para preencher o banco de dados com amostras de contatos.
+
+É exibida uma tabela com cinco amostras de contatos obtidos do banco de dados.
+
+
+Figura 3.61: Amostras de contatos
+Feche a guia do navegador.
+
+Verifique os dados dos contatos no banco de dados PostgreSQL usando o console da web do OpenShift.
+
+Clique em Topology.
+
+Clique na implantação contactsdb e em Resources.
+
+Clique no pod contactsdb, listado na seção Pods. O nome do pod será diferente deste exemplo.
+
+
+Figura 3.62: Clicar no pod contactsdb
+Na página de detalhes do pod, clique em Terminal para abrir uma sessão do terminal da linha de comando dentro do pod do banco de dados PostgreSQL em execução.
+
+
+Figura 3.63: Clicar na guia Terminal
+O programa do cliente do banco de dados PostgreSQL psql está disponível para acessar o banco de dados. Execute os seguintes comandos no terminal para verificar se a tabela contacts existe no banco de dados contactsdb e contém cinco linhas.
+
+Primeiro, conecte-se ao banco de dados contactsdb.
+
+Em seguida, liste as tabelas do banco de dados e verifique se a tabela chamada contacts é exibida.
+
+Por fim, execute uma consulta select para listar os dados na tabela contacts.
+
+A saída a seguir é exibida.
+
+
+Figura 3.64: Saída do banco de dados
+
+sh-4.2$ psql -U contacts contactsdb
+contactsdb=> \dt
+contactsdb=> select * from contacts;
+
+Faça a limpeza. Exclua o projeto seu_usuário-contacts.
+
+No console da web do OpenShift, clique em Advanced → Projects para visualizar a lista de projetos e exclua o projeto seu_usuário-contacts. Um prompt para confirmar a exclusão é exibido.
+
+Digite seu_usuário-contacts na janela de confirmação e exclua o projeto.
+
+Isso conclui o exercício orientado.

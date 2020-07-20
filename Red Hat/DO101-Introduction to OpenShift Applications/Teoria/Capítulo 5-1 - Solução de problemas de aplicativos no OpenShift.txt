@@ -1,0 +1,115 @@
+Capítulo 5. Solução de problemas de aplicativos no OpenShift
+
+Solução e correção de problemas de um aplicativo
+Exercício orientado: Solução de problemas de um aplicativo
+Resumo
+
+
+
+Resumo
+
+Meta	Identificar e resolver problemas comuns no Red Hat OpenShift Container Platform.
+Objetivos	
+Solucionar os problemas de um aplicativo observando os logs e eventos do OpenShift.
+
+Seções	Solução e correção de problemas de um aplicativo (e exercício orientado)
+Solução e correção de problemas de um aplicativo
+Objetivos
+Depois de concluir esta seção, você deverá ser capaz de solucionar os problemas de um aplicativo observando os logs e eventos do OpenShift.
+
+Solução de problemas de aplicativos com o console da web do OpenShift
+O processo Source-to-Image (S2I) é uma maneira simples de compilar e implantar automaticamente um aplicativo pelo seu código-fonte.
+
+Normalmente, esse processo é uma maneira prática de implantar aplicativos com rapidez. No entanto, se a operação de compilação ou de implantação falhar, você deverá solucionar e corrigir todos os problemas antes que o processo S2I seja executado com êxito.
+
+Para identificar e solucionar o erro, é útil entender que o processo S2I é composto por duas etapas principais:
+
+Etapa de compilação: compilar o código-fonte, baixar dependências de biblioteca e empacotar o aplicativo como uma imagem de contêiner. O Red Hat OpenShift Container Platform usa o recurso BuildConfig para a etapa de compilação.
+
+Etapa de implantação: iniciar um pod e tornar o aplicativo disponível. Se a etapa de compilação for bem-sucedida, esta etapa será executada.
+
+O OpenShift usa o recurso DeploymentConfig na etapa de implantação.
+
+Se identificar qual etapa apresentou falha, você identificará mais facilmente por que o aplicativo não está disponível como esperado.
+
+Inspeção dos logs com o console da web do OpenShift
+Quando ocorrem falhas em um aplicativo, o console da web ajuda os desenvolvedores a identificar a parte do processo de implantação que gerou o erro. Em cada etapa, o OpenShift armazena logs que os desenvolvedores podem consultar para solucionar problemas.
+
+É possível consultar o status de cada aplicativo na página Topology. O ícone do aplicativo fornece uma visão geral do estado.
+
+Uma marca próxima ao ícone indica o status da compilação, como mostrado na captura de tela a seguir. O ícone à esquerda indica uma compilação bem-sucedida. O ícone à direita indica uma falha na compilação.
+
+
+Figura 5.1: Compilações bem-sucedida e com falha
+Se a compilação for bem-sucedida, o OpenShift implantará o aplicativo. Na captura de tela a seguir, o ícone à esquerda mostra uma implantação bem-sucedida. O ícone à direita mostra uma implantação com falha.
+
+
+Figura 5.2: Implantações bem-sucedida e com falha
+Para obter mais detalhes e acessar os logs, clique no ícone e acesse a guia Resources.
+
+
+Figura 5.3: Detalhes de uma compilação com falha
+Para identificar qualquer problema de compilação, avalie e analise os logs da compilação clicando em View Logs.
+
+A página de detalhes também fornece acesso aos logs de implantação.
+
+
+Figura 5.4: Detalhes de uma implantação com falha
+Acesso a um pod em execução
+Às vezes, o OpenShift compila e implanta o aplicativo com êxito, mas devido a bugs no código-fonte, o aplicativo não se comporta como esperado. Nessa situação, os desenvolvedores podem acessar os logs do pod em execução. Para solução de problemas avançada, existe um console no pod para executar comandos e acessar o ambiente de tempo de execução dentro do pod.
+
+Na página Topology, clique no nome do pod para acessar todos os seus parâmetros.
+
+
+Figura 5.5: Acesso aos detalhes do pod
+A página exibida fornece uma guia para acessar os logs do pod em execução. Esses logs mostram a saída do aplicativo que está sendo executado dentro do pod.
+
+
+Figura 5.6: Consulta aos logs do pod
+Um console dentro do contêiner que está executando o aplicativo pode ser acessado na guia Terminal. Desenvolvedores experientes podem usar esse console para solução avançada de problemas.
+
+
+Figura 5.7: Acesso ao terminal do pod
+Depuração de um aplicativo em execução no OpenShift
+Para algumas Linguagens, como Node.js e Java, o OpenShift fornece recursos para anexar um depurador a um pod em execução.
+
+Geralmente, o depurador é executado em uma estação de trabalho local e se conecta ao aplicativo em execução no OpenShift por meio de uma porta de depuração remota.
+
+A depuração remota de aplicativos está fora do escopo deste curso. Para obter mais informações, consulte a seguinte documentação:
+
+Como depurar seu aplicativo Node.js no OpenShift com o Chrome DevTools em
+
+Depuração remota de aplicativos Java no OpenShift em
+
+Reimplantação de um aplicativo depois de corrigir um problema
+Depois que o código-fonte for corrigido, confirmado e enviado para o repositório Git, os desenvolvedores poderão usar o console da web do OpenShift para iniciar uma nova compilação. Quando a compilação for concluída, o OpenShift reimplantará automaticamente o aplicativo.
+
+Lembre-se de que também é possível configurar webhooks para que o OpenShift inicie automaticamente uma nova compilação a cada commit. Dessa forma, assim que o desenvolvedor fizer commit de uma correção, o OpenShift reimplantará o aplicativo sem demora nem intervenção manual.
+
+Acesso a eventos do OpenShift
+Para simplificar a solução de problemas, o OpenShift oferece um registro em log de alto nível e um recurso de auditoria denominado events. Os eventos do OpenShift indicam ações significativas, como a inicialização ou a destruição de um pod.
+
+Para ler os eventos do OpenShift no console da web, selecione o menu Advanced → Events.
+
+
+Figura 5.8: Listagem de eventos do projeto
+Nessa página, os desenvolvedores têm uma visão geral dos eventos do projeto. Visualizar os eventos do OpenShift associados a um projeto é uma etapa importante para entender o que o aplicativo está fazendo.
+
+Como o OpenShift atualiza automaticamente a página com novos eventos, os desenvolvedores podem acompanhar o progresso da implantação em tempo real. Mais especificamente, quando uma compilação ou implantação de aplicativo apresenta falhas, muitas vezes são fornecidas dicas fundamentais sobre a causa-raiz do problema nos eventos do projeto. Às vezes, as informações apresentadas são suficientes para que o desenvolvedor corrija o aplicativo sem ter que inspecionar os logs mais detalhados do OpenShift.
+
+O OpenShift usa eventos para relatar erros, como quando há falha na compilação ou criação de um pod. Ele também notifica condições normais por meio de eventos, como quando o OpenShift dimensiona automaticamente um aplicativo adicionando um novo pod.
+
+Solução de problemas de ausência de variáveis de ambiente
+Às vezes, o código-fonte exige personalizações que estão disponíveis em ambientes em contêiner, como credenciais de banco de dados, acesso ao sistema de arquivos ou informações da fila de mensagens. Geralmente, esses valores são fornecidos usando as variáveis de ambiente dentro do pod. Por exemplo, uma instância MySQL exige que determinadas variáveis de ambiente sejam configuradas no ambiente antes de ser iniciada. Se essas variáveis estiverem ausentes, ocorrerá falha ao iniciar o serviço. Os desenvolvedores que usam o processo S2I poderão precisar acessar ou gerenciar essas informações se um serviço ou aplicativo apresentar um comportar inesperado.
+
+Os logs do OpenShift podem indicar valores ausentes ou opções que devem ser ativadas, parâmetros ou sinalizadores incorretos ou incompatibilidades de ambiente.
+
+Solução de problemas de parâmetros inválidos
+Aplicativos de várias camadas geralmente exigem o compartilhamento de determinados parâmetros, como as credenciais de login para um banco de dados de back-end. Como desenvolvedor, é importante garantir que os mesmos valores dos parâmetros cheguem a todos os pods do aplicativo. Por exemplo, se um aplicativo Node.js estiver em execução em um pod conectado a outro pod que está executando um banco de dados, verifique se os dois contêineres usam os mesmos nomes de usuário e senhas para o banco de dados. Geralmente, os logs do pod do aplicativo fornecem uma indicação clara desses problemas e de como resolvê-los.
+
+Uma prática recomendada para centralizar os parâmetros compartilhados é armazená-los em recursos de mapa de configuração ou segredos. Lembre-se de que esses recursos podem ser inseridos nos pods como variáveis de ambiente por meio da configuração de implantação. Inserir o mesmo recurso de mapa de configuração ou segredo em pods diferentes garante que não apenas as mesmas variáveis de ambiente estejam disponíveis, mas também os mesmos valores.
+
+REFERÊNCIAS
+Para obter mais informações sobre eventos, consulte o capítulo Exibição de informações de eventos do sistema em um cluster do OpenShift Container Platform, no guia Configuração e gerenciamento de nós do OpenShift Container Platform em
+
+Para obter mais informações, consulte Realização e interação com compilações no OpenShift Container Platform em

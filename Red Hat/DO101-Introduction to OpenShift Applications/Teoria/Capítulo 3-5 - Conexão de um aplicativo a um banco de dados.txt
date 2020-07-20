@@ -1,0 +1,100 @@
+
+Conexão de um aplicativo a um banco de dados
+
+
+Objetivos
+Depois de concluir esta seção, você deverá ser capaz de implantar um aplicativo que se conecte a um banco de dados no Red Hat OpenShift Container Platform.
+
+Conexão com bancos de dados
+O Red Hat OpenShift Container Platform é compatível com a implantação de vários bancos de dados, como MySQL, PostgreSQL e MongoDB, usando a visualização Developer do console da web do OpenShift ou o cliente da linha de comando do OpenShift (oc).
+
+Depois de implantar um banco de dados, você pode implantar outros aplicativos no OpenShift para acessar, armazenar e gerenciar dados no banco de dados. Armazene as credenciais do banco de dados em um segredo do OpenShift e conecte-se ao banco de dados de aplicativos usando variáveis de ambiente. O OpenShift insere os dados secretos, como variáveis de ambiente, em pods de aplicativos no tempo de execução.
+
+NOTA
+Quando você implanta um banco de dados usando um dos modelos incluídos fornecidos pelo OpenShift, um segredo contendo o nome de usuário, a senha e o nome do banco de dados é criado automaticamente. O nome do segredo é o mesmo que o nome do serviço de banco de dados.
+
+Embora você possa usar esse segredo para se conectar ao banco de dados, pode ser conveniente criar seu próprio segredo para armazenar mais detalhes sobre o banco de dados, incluindo sinalizadores específicos do aplicativo.
+
+Você pode criar um segredo único que contém todos os detalhes da configuração do banco de dados. Você pode excluir com segurança o segredo padrão gerado se não precisar dele.
+
+Ao externalizar a configuração do banco de dados e armazená-la em um segredo, você evita armazenar informações confidenciais em arquivos de configuração com texto simples. Outra vantagem dessa abordagem é o suporte para alternar entre diferentes ambientes, como desenvolvimento, preparação, controle de qualidade e produção, sem implantar o aplicativo novamente.
+
+
+Figura 3.41: Conexão a um banco de dados PostgreSQL
+O fluxo de trabalho para acessar bancos de dados em aplicativos implantados no OpenShift é o seguinte:
+
+Crie um segredo para armazenar a configuração de acesso ao banco de dados usando o console da web do OpenShift ou o cliente de linha de comando do OpenShift (oc).
+
+O OpenShift insere o segredo nos pods do aplicativo depois que você edita a configuração de implantação do aplicativo e mapeia as variáveis de ambiente para usar o segredo.
+
+O aplicativo acessa os valores durante o tempo de execução usando pesquisas com base na chave. O OpenShift reverte a conversão dos dados codificados em base64 para um formato legível para o aplicativo.
+
+Para aplicativos JavaScript baseados em Node.js, o formato geral da string de conexão com o banco de dados PostgreSQL é:
+
+postgresql://username:password@dbservice:port/dbname
+onde
+
+username = nome de usuário do banco de dados para acessar o banco de dados
+
+password = senha para acessar o banco de dados
+
+dbservice = nome do serviço para o banco de dados implantado em OpenShift
+
+port = porta TCP na qual o servidor do banco de dados escuta conexões de entrada; o padrão é "5432" para PostgreSQL
+
+dbname = nome do banco de dados
+
+Por exemplo, implante um banco de dados PostgreSQL no OpenShift conforme mostrado na seguinte tabela:
+
+Tabela 3.2. Detalhes do banco de dados PostgreSQL
+
+Campo do formulário	Valor
+Database Service Name	mydbservice
+PostgreSQL Connection Username	myapp
+PostgreSQL Connection Password	mypass
+Port	5432
+PostgreSQL Database Name	mydb
+
+A string resultante de conexão com o banco de dados para aplicativos baseados em Node.js é:
+
+postgresql://myapp:mypass@mydbservice:5432/mydb
+Nos cenários em que o aplicativo Node.js é implantado no OpenShift, mas o banco de dados fica fora do cluster, a string de conexão com o banco de dados permanece a mesma; a única exceção é que o nome do serviço do banco de dados é substituído pelo nome do host ou endereço IP do servidor do banco de dados externo.
+
+Por exemplo, se o servidor de banco de dados PostgreSQL estiver sendo executado em um servidor chamado de mydbhost.example.com, a string de conexão com o banco de dados (pressupondo que todos os outros detalhes sejam semelhantes aos valores listados na tabela anterior) se tornará:
+
+postgresql://myapp:mypass@mydbhost.example.com:5432/mydb
+Para criar um segredo com a string de conexão com o banco de dados no formato de dados e para acessá-lo a partir de um aplicativo Node.js, execute as seguintes etapas:
+
+Acesse Advanced → Search no console da web do OpenShift.
+
+Clique em Service para expandir o menu e procure secret. Selecione a opção Secret.
+
+
+Figura 3.42: Procurar o tipo Secret
+Clique em Create → Key/Value Secret para criar um novo segredo.
+
+Crie um novo segredo de chave-valor usando a string de conexão com o banco de dados no campo de valor.
+
+
+Figura 3.43: Detalhes do segredo
+Depois de criar o segredo, edite a configuração de implantação do aplicativo e mapeie o segredo para uma variável de ambiente que possa ser acessada por meio do aplicativo.
+
+
+Figura 3.44: Mapear segredo para a variável de ambiente
+Por fim, acesse a variável de ambiente a partir de um aplicativo Node.js da seguinte maneira:
+
+...output omitted...
+const DB_CONFIG = process.env.DB_CONFIG ...output omitted...
+const { Pool } = require('pg');
+
+`const pgconn = new Pool({
+    connectionString: DB_CONFIG,
+    ssl: false,
+});`
+...output omitted...
+REFERÊNCIAS
+Para obter mais informações, consulte a seção Criação de um aplicativo com um banco de dados no guia de Ferramentas da CLI do OpenShift Container Platform 4.2 em https://access.redhat.com/documentation/en-us/openshift_container_platform/4.2/html-single/cli_tools/index#creating-an-application-with-a-database
+
+OpenShift e bancos de dados
+
+Encaminhamento de portas do OpenShift

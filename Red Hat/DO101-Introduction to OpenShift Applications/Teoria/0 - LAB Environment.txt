@@ -1,0 +1,6 @@
+OpenShift Details
+Username	RHT_OCP4_DEV_USER	nezzonarcizo
+Password	RHT_OCP4_DEV_PASSWORD
+API Endpoint	RHT_OCP4_MASTER_API	https://api.ocp-la2.prod.nextcle.com:6443
+Console Web Application		https://console-openshift-console.apps.ocp-la2.prod.nextcle.com
+Cluster Id		34303d3b-897c-4c8b-a275-eee97070fa1b

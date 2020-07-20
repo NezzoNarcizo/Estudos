@@ -1,0 +1,273 @@
+Exercício orientado: Solução de problemas de um aplicativo
+
+Neste exercício, você usará logs do OpenShift para solucionar problemas de um aplicativo.
+
+Resultados
+
+Você deverá ser capaz de usar o console da web do OpenShift para:
+
+Identificar problemas de compilação e implantação.
+
+Analisar o código-fonte do aplicativo e os logs do OpenShift para diagnosticar problemas.
+
+Corrigir problemas e reimplantar aplicativos.
+
+Para realizar este exercício, confirme se você tem acesso a um cluster do Red Hat OpenShift Container Platform em execução, se o Visual Studio Code (VS Code) e o Git estão instalados no sistema e se você clonou o repositório DO101-app do GitHub no VS Code.
+
+Procedimento 5.1. Etapas
+
+No VS Code, no repositório DO101-apps, crie uma nova ramificação denominada troubleshoot para registrar seu trabalho neste exercício. Envie essa ramificação por push para o repositório do GitHub.
+
+Se o VS Code não tiver sido aberto em um exercício anterior, abra-o.
+
+No VS Code, na visualização de controle do código-fonte (View → SCM), garanta que a entrada DO101-apps abaixo da opção SOURCE CONTROL PROVIDERS mostre a ramificação master.
+
+NOTA
+Se a visualização de controle do código-fonte não exibir a opção SOURCE CONTROL PROVIDERS, clique com o botão direito do mouse em SOURCE CONTROL na parte superior da visualização e selecione Source Control Providers.
+
+Se necessário, clique na ramificação atual e selecione master na janela Select a ref to checkout para alternar para a ramificação master.
+
+ATENÇÃO
+Cada exercício usa uma ramificação exclusiva. Sempre crie uma nova ramificação usando master como base.
+
+Clique em master na entrada DO101-apps sob SOURCE CONTROL PROVIDERS e selecione Create new branch. Digite troubleshoot para dar um nome à ramificação.
+
+
+Figura 5.9: Criação de uma nova ramificação com o VS Code
+Para enviar por push a nova ramificação ao GitHub, clique no ícone Publish Changes da entrada DO101-apps. O VS Code pode solicitar seu nome de login e senha do GitHub.
+
+
+Figura 5.10: Envio por push da nova ramificação para o GitHub
+Acesse o console da web do OpenShift web console e crie um novo projeto com o nome seu_usuário-troubleshoot-app. Substitua seu_usuário pelo seu nome de usuário.
+
+Faça login no console da web do OpenShift usando sua conta de desenvolvedor.
+
+No menu à esquerda, selecione a perspectiva Developer.
+
+No menu Advanced → Projects, clique em Create Project.
+
+Digite seu_usuário-troubleshoot-app no campo Name. Substitua seu_usuário pelo seu nome de usuário. Deixe os outros campos vazios e clique em Create.
+
+O aplicativo contacts-troubleshoot implantado neste exercício requer um banco de dados PostgreSQL. Implante esse banco de dados pelo catálogo.
+
+No console da web, clique em Add e em From Catalog.
+
+Clique em Databases → Postgres e clique em PostgreSQL (Ephemeral). Clique em Instantiate Template e preencha o formulário conforme a seguinte tabela:
+
+Tabela 5.1. Parâmetros do PostgreSQL
+
+Parâmetro	Valor
+Database Service Name
+
+postgresql
+
+PostgreSQL Database Name
+
+contactsdb
+
+
+Deixe os valores padrão nos demais campos e clique em Create para implantar o banco de dados. Ao implantar o banco de dados com esses parâmetros padrão, o OpenShift gera um nome de usuário e uma senha aleatórios para acessar o banco de dados e os armazena em um recurso secreto.
+
+Para inspecionar o recurso de segredo que o OpenShift cria para armazenar os parâmetros de autenticação no banco de dados, clique no menu Advanced → Search. Clique no menu Service e digite secret. Selecione Secret na lista.
+
+
+Figura 5.11: Pesquisa dos recursos de segredo
+Na lista resultante, clique no segredo postgresql.
+
+
+Figura 5.12: Acesso ao recurso de segredo
+Na seção Data, observe que o segredo armazena o nome do banco de dados na entrada database-name, a senha na entrada database-password e o nome de usuário na entrada database-user.
+
+
+Figura 5.13: Dados armazenados no recurso de segredo
+Implante o aplicativo Node.js JavaScript contacts. O código está no subdiretório contacts-troubleshoot do repositório Git. Use a ramificação troubleshoot para implantar o aplicativo no OpenShift.
+
+Na guia Add, clique em From Catalog.
+
+Clique em Languages → JavaScript e clique na primeira opção, Node.js. Clique em Create Application para inserir os detalhes do aplicativo.
+
+Preencha o formulário de acordo com a tabela a seguir. Para acessar os parâmetros Git, clique em Show Advanced Git Options.
+
+Tabela 5.2. Parâmetros do novo aplicativo
+
+Parâmetro	Valor
+Git Repo URL
+
+https://github.com/seu_usuário_do_git/DO101-apps
+
+Git Reference
+
+troubleshoot
+
+Context Dir
+
+/contacts-troubleshoot
+
+Application Name
+
+contacts
+
+Name
+
+contacts
+
+
+Para evitar erros inesperados ao realizar as próximas etapas, revise os valores que você digitou no formulário antes de continuar. Clique em Create para iniciar os processos de compilação e implantação.
+
+O OpenShift falhará ao compilar ou implantar seu aplicativo. Use o console da web do OpenShift para localizar o erro. Acesse o log para obter mais detalhes.
+
+O console da web deve mostrar automaticamente a página Topology. Se ela não for exibida, clique na guia Topology.
+
+Após alguns minutos, o aplicativo exibe um estado de erro.
+
+
+Figura 5.14: Erro na etapa de compilação
+Clique no ícone Node.js para acessar os detalhes do aplicativo (não clique na marca de seleção do erro). Clique na guia Resources para listar o estado dos recursos.
+
+
+Figura 5.15: Acesso aos detalhes do erro
+Observe que a compilação apresenta um estado de erro. O OpenShift não consegue implantar o aplicativo e nenhum pod está em execução.
+
+Clique em View Logs para acessar o log de compilação. Observe que o erro ocorre durante a instalação das dependências e é causado por um erro de sintaxe no arquivo package.json.
+
+...output omitted...
+---> Installing dependencies
+internal/modules/cjs/loader.js:800
+    throw err;
+    ^
+
+SyntaxError: /opt/app-root/src/package.json: Unexpected token d in JSON at position 118
+    at JSON.parse (<anonymous>)
+    at Object.Module._extensions..json (internal/modules/cjs/loader.js:797:27)
+    at Module.load (internal/modules/cjs/loader.js:653:32)
+    at tryModuleLoad (internal/modules/cjs/loader.js:593:12)
+    at Function.Module._load (internal/modules/cjs/loader.js:585:3)
+    at Module.require (internal/modules/cjs/loader.js:692:17)
+    at require (internal/modules/cjs/helpers.js:25:18)
+    at [eval]:1:13
+    at Script.runInThisContext (vm.js:122:20)
+    at Object.runInThisContext (vm.js:329:38)
+subprocess exited with status 1
+subprocess exited with status 1
+error: build error: error building at STEP "RUN /usr/libexec/s2i/assemble": exit status 1
+Abra o arquivo DO101-apps/contacts-troubleshoot/package.json para identificar e corrigir o problema. Quando terminar, faça commit da alteração e envie-a por push para o GitHub.
+
+Na visualização de explorador do VS Code (View → Explorer), abra o arquivo DO101-apps/contacts-troubleshoot/package.json.
+
+A palavra-chave dependencies deve estar entre aspas duplas. Observe que as aspas duplas de abertura estão ausentes.
+
+Adicione as aspas duplas ausentes e salve o arquivo.
+
+"dependencies": {
+  "cookie-parser": "~1.4.4",
+  "debug": "~2.6.9",
+  "dotenv": "^8.1.0",
+  "express": "4.x",
+  "http-errors": "~1.6.3",
+  "morgan": "~1.9.1",
+  "pg": "^7.12.1",
+  "pug": "2.0.0-beta11"
+},
+Faça commit da alteração. Na visualização de controle do código-fonte (View → SCM), clique no ícone + da entrada package.json para preparar o arquivo para a próxima commit. Clique no campo Message (press Ctrl+Enter to commit). Digite Fix syntax error na caixa de mensagem. Clique no ícone da marca de seleção para fazer commit da alteração.
+
+Para enviar por push sua alteração para o repositório do GitHub, clique no ícone Synchronize Changes da entrada DO101-apps, em Source Control Providers. Se o VS Code exibir uma mensagem informando que essa ação enviará e extrairá commits para/de origem/solução de problemas, clique em OK. O VS Code pode solicitar seu nome de login e senha do GitHub.
+
+
+Figura 5.16: Envio de alterações por push ao GitHub
+Use o console da web do OpenShift para iniciar uma nova compilação e implantação. Clique na guia Topology. Clique no ícone Node.js e na guia Resources. Clique em Start Build para iniciar uma compilação. Nessa nova compilação, o OpenShift recupera sua versão fixa do aplicativo no GitHub.
+
+O OpenShift falhará novamente ao compilar ou implantar seu aplicativo. Use o console da web do OpenShift para localizar o erro. Acesse o log para obter mais detalhes.
+
+Aguarde até a conclusão da compilação e observe que a compilação foi bem-sucedida. O pod, no entanto, apresenta um estado de erro.
+
+
+Figura 5.17: Implantação com erro
+O status do erro pode alternar entre Error e CrashLoopBackOff.
+
+Clique em View Logs próximo ao pod com erro para acessar o log.
+
+Durante a inicialização, o Node.js não encontrou o programa a ser executado.
+
+...output omitted...
+> node ./bin/www.js
+
+internal/modules/cjs/loader.js:638
+    throw err;
+    ^
+
+Error: Cannot find module '/opt/app-root/src/bin/www.js'
+...output omitted...
+O aplicativo Node.js indica o programa que será iniciado no arquivo package.json. Identifique e corrija o problema no arquivo DO101-apps/contacts-troubleshoot/package.json. Quando terminar, faça commit da alteração e envie-a por push para o GitHub.
+
+Abra o arquivo DO101-apps/contacts-troubleshoot/package.json no VS Code.
+
+O arquivo define o programa a ser executado na seção scripts . O programa é ./bin/www.js.
+
+No VS Code, acesse o diretório ./bin/ (DO101-apps/contacts-troubleshoot/bin/). Nesse diretório, o arquivo de programa é www, não www.js.
+
+Em package.json, substitua www.js por www e salve o arquivo.
+
+...output omitted...
+"scripts": {
+  "start": "node ./bin/www"
+},
+...output omitted...
+
+Faça commit da alteração. Na visualização de controle do código-fonte (View → SCM), clique no ícone + da entrada package.json para preparar o arquivo para a próxima commit. Clique no campo Message (press Ctrl+Enter to commit). Digite Fix wrong program name na caixa de mensagem. Clique no ícone da marca de seleção para fazer commit da alteração.
+
+Para enviar por push sua alteração para o repositório do GitHub, clique no ícone Synchronize Changes da entrada DO101-apps, em Source Control Providers.
+
+Use o console da web do OpenShift para iniciar uma nova compilação e implantação. Clique na guia Topology. Clique no ícone Node.js e na guia Resources. Clique em Start Build para iniciar uma compilação.
+
+Aguarde alguns minutos para que a compilação e a implantação sejam concluídas. Dessa vez, a compilação foi bem-sucedida e um pod está em execução. Acesse o aplicativo e observe a mensagem de erro.
+
+Clique no botão Open URL para acessar o aplicativo.
+
+
+Figura 5.18: Acesso ao aplicativo de contatos
+O aplicativo exibe uma mensagem de erro relacionada à conexão com o banco de dados.
+
+
+Figura 5.19: Erro do banco de dados
+Essa mensagem indica que o nome de usuário fornecido para autenticação no banco de dados não está definido. Quando terminar, feche a guia do navegador.
+
+O aplicativo Node.js define os parâmetros do banco de dados no arquivo DO101-apps/contacts-troubleshoot/db/config.js. Abra esse arquivo no VS Code.
+
+O aplicativo recupera os parâmetros de conexão com o banco de dados nas variáveis de ambiente database-user, database-password e database-name, mas essas variáveis não estão disponíveis no pod em execução.
+
+...output omitted...
+// The following variables should be defined in the
+// secret resource associated with the database.
+
+var db_user = process.env["database-user"];
+var db_pass = process.env["database-password"];
+var db_name = process.env["database-name"];
+...output omitted...
+
+Use o console da web do OpenShift para associar o segredo postgresql ao recurso de configuração de implantação contacts. Com essa associação, o OpenShift define cada entrada no segredo como uma variável de ambiente no pod. Quando terminar, confirme se o aplicativo finalmente está funcionando conforme esperado.
+
+Clique no link de configuração de implantação contacts.
+
+
+Figura 5.20: Acesso aos detalhes de configuração da implantação
+Clique na guia Environment. Na seção All values from existing config maps or secrets (envFrom), defina o campo Config Map/Secret como postgresql e clique em Save.
+
+
+Figura 5.21: Associação do segredo à configuração de implantação
+Quando você atualiza o recurso de configuração da implantação, o OpenShift reimplanta automaticamente o aplicativo.
+
+Aguarde um minuto até que o pod seja reimplantado e teste o aplicativo. Para testar o aplicativo, clique em Topology e em Node.js Open URL. O aplicativo exibe as linhas recuperadas do banco de dados.
+
+
+Figura 5.22: Aplicativo de contatos
+Quando terminar, feche a guia do navegador.
+
+Para limpar seu trabalho, exclua o projeto seu_usuário-troubleshoot-app. Quando você exclui um projeto, o OpenShift remove automaticamente todos os recursos associados.
+
+Use o menu Advanced → Projects para listar todos os seus projetos.
+
+Clique no botão do menu no final da linha do projeto seu_usuário-troubleshoot-image e clique em Delete Project. Para confirmar a exclusão, digite o nome do projeto na janela de confirmação e clique em Delete.
+
+Faça logout do console da web. Para fazer logout, clique no seu nome de login no canto superior direito e clique em Log out.
+
+Isso conclui o exercício orientado.
