@@ -1,0 +1,9 @@
+Resumo]
+
+Neste capítulo, você aprendeu que:
+
+Pode acionar manualmente novas compilações usando o console da web do OpenShift ou a CLI do OpenShift. Pode acionar automaticamente novas compilações usando webhooks.
+
+Pode externalizar a configuração do aplicativo usando segredos e mapas de configuração. Os segredos são usados para armazenar informações confidenciais, como senhas, e os mapas de configuração são usados para armazenar parâmetros de configuração não confidenciais como texto simples.
+
+Os aplicativos podem armazenar as credenciais de conexão com o banco de dados e outras informações em um segredo e integrar-se a bancos de dados usando serviços do OpenShift.

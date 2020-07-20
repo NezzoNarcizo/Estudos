@@ -1,0 +1,340 @@
+
+Exercício orientado: Configuração de segredos do aplicativo
+
+Neste exercício, você implantará um aplicativo Node.js que use mapas de configuração e segredos no Red Hat OpenShift Container Platform.
+
+Resultados
+
+Você deverá ser capaz de:
+
+Crie mapas de configuração e segredos usando o console da web do OpenShift.
+
+Atualizar a configuração de implantação do aplicativo para usar os mapas de configuração e segredos.
+
+Implantar um aplicativo que use os mapas de configuração e segredos.
+
+Para realizar este exercício, verifique se você tem acesso:
+
+A um cluster do Red Hat OpenShift em execução.
+
+Ao código-fonte do aplicativo weather no repositório Git DO101-apps em seu sistema local.
+
+Procedimento 3.2. Etapas
+
+Neste exercício, você usará a API OpenWeatherMap para buscar a previsão do tempo de cidades do mundo todo. Para invocar a API OpenWeatherMap, você precisa de uma chave de API exclusiva.
+
+Crie uma nova conta para a API OpenWeatherMap. Acesse o site https://openweathermap.org/ usando um navegador.
+
+Clique em Sign up para criar uma nova conta.
+
+
+Figura 3.17: Inscrição na conta de OpenWeatherMap
+Insira um username, email e password para sua conta. Marque as caixas de seleção para confirmar sua idade e concordar com os termos e condições.
+
+Não selecione nenhuma das três opções relacionadas ao recebimento de comunicações do OpenWeather. Selecione a opção I’m not a robot e clique em Create Account.
+
+
+Figura 3.18: Criar uma nova conta da OpenWeatherMap
+Quando for solicitado a informar detalhes sobre o uso da API, insira seu nome e selecione Other no campo Purpose.
+
+
+Figura 3.19: Diálogo de utilização da API
+Depois de fazer login, clique em Services para visualizar os serviços oferecidos na conta gratuita. Há restrições em contas gratuitas que limitam o número de chamadas de API que você pode fazer em um período.
+
+
+Figura 3.20: Serviços da API
+Clique em API keys para visualizar as chaves de API da sua conta.
+
+
+Figura 3.21: Chaves de API
+
+Uma chave de API padrão é gerada para a conta. Copie essa chave de API em um arquivo temporário ou mantenha a guia do navegador aberta. Você precisa da chave de API para criar um segredo do OpenShift para o aplicativo weather. Você também pode gerar mais chaves clicando em Generate.
+
+Talvez leve alguns minutos para que a chave de API seja ativada antes que você possa invocar a API OpenWeatherMap. Para verificar se a chave de API está ativa, invoque a URL http://api.openweathermap.org/data/2.5/weather?q=London&appid=api_key usando um navegador.
+
+Substitua api_key por sua chave de API padrão da etapa anterior. Se a chave da API estiver ativa, você receberá uma resposta JSON como a seguinte com os dados da previsão do tempo para Londres:
+
+Se a chave ainda não estiver ativa, você receberá o código 401 com a mensagem Invalid API key. Prossiga para as próximas etapas do exercício enquanto a chave da API é ativada e teste-a novamente depois que o aplicativo for implantado no OpenShift.
+
+{"coord":{"lon":-0.13,"lat":51.51},"weather": ...output omitted...
+{"temp": ...output omitted...
+{"type":1,"id":1414,"country":"GB","sunrise": ...output omitted...
+Inspecione o código-fonte do aplicativo weather.
+
+Inicie o editor do Visual Studio Code (VS Code) e abra a pasta DO101-apps no workspace My Projects. O código-fonte do aplicativo weather está no diretório weather.
+
+Inspecione o arquivo DO101-apps/weather/package.json para exibir as dependências do pacote para esse aplicativo Node.js. O aplicativo weather é um aplicativo web simples e baseado na conhecida estrutura Express.js. O aplicativo weather usa o pacote de cliente HTTP node-fetch para acessar a API OpenWeatherMap e exibir a previsão do tempo de várias cidades do mundo.
+
+"dependencies": {
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "dotenv": "^8.1.0",
+    "express": "~4.16.1",
+    "http-errors": "~1.6.3",
+    "morgan": "~1.9.1",
+    "node-fetch": "^2.6.0",
+    "package.json": "^2.0.1",
+    "pug": "2.0.0-beta11"
+  }
+Inspecione o arquivo DO101-apps/weather/app.js, que é o principal ponto de entrada para o aplicativo. Há uma única definição de rota do Express.js chamada indexRouter:
+
+...output omitted...
+var cookieParser = require('cookie-parser');
+var logger = require('morgan');
+
+app.use('/', indexRouter);
+var app = express();
+...output omitted...
+O código da rota indexRouter está definido no arquivo DO101-apps/weather/routes/index.js. Abra esse arquivo no VS Code. O arquivo contém a lógica comercial principal do aplicativo.
+
+O primeiro método controla as solicitações HTTP GET para a URL '/':
+
+Todas as solicitações HTTP GET para a URL '/' são redirecionadas para uma página com um formulário HTML que permite inserir o nome da cidade para a qual você deseja ver a previsão do tempo.
+
+O código do formulário HTML está no arquivo DO101-apps/weather/views/index.pug.
+
+...output omitted...
+router.get('/', function(req, res) {
+  res.render('index', { weather: null, err: null });
+});
+...output omitted...
+O segundo método controla as solicitações HTTP POST do formulário HTML invocando a API OpenWeatherMap. Depois, ele passa a resposta JSON resultante para o front-end do HTML:
+
+...output omitted...
+router.post('/get_weather', async function (req,res) {
+  let city = req.body.city;
+  let url = http://api.openweathermap.org/data/2.5/weather?q=${city}&units=${UNITS}&appid=${OWM_API_KEY};
+
+  try {
+    let data = await fetch(url);
+    let weather = await data.json();
+...output omitted...
+Observe que invocar a API OpenWeatherMap requer uma chave de API. A chave de API é inserida como uma variável de ambiente durante o tempo de execução. Você criará um segredo do OpenShift para armazenar a chave da API:
+
+...output omitted...
+const OWM_API_KEY = process.env.OWM_API_KEY || 'invalid_key';
+...output omitted...
+Você também criará um mapa de configuração para armazenar a configuração específica do aplicativo em texto simples. A variável de ambiente UNITS controla se a previsão do tempo é exibida no sistema Métrico (Celsius) ou Imperial (Fahrenheit):
+
+...output omitted...
+const UNITS = process.env.UNITS || 'metric';
+...output omitted...
+Crie uma nova ramificação no repositório Git para o aplicativo weather.
+
+No VS Code, na visualização de controle do código-fonte (View → SCM), garanta que a entrada DO101-apps abaixo da opção SOURCE CONTROL PROVIDERS mostre a ramificação master. Se estivesse trabalhando com outra ramificação em um exercício diferente, você alternaria para a ramificação master clicando na ramificação atual e selecionando master na janela Select a ref to checkout. Se estivesse trabalhando com outra ramificação em um exercício diferente, você clicaria na ramificação atual e selecionaria master na janela Select a ref to checkout para alternar para a ramificação master.
+
+ATENÇÃO
+Cada exercício usa uma ramificação exclusiva. Sempre crie uma nova ramificação usando master como base.
+
+Clique em master na entrada DO101-apps sob SOURCE CONTROL PROVIDERS.
+
+Selecione Create new branch…​ na lista de opções.
+
+No prompt, digite weather no nome da ramificação. A visualização de controle do código-fonte é atualizada para a entrada DO101-apps com o nome da nova ramificação.
+
+Envie por push a ramificação weather para seu repositório DO101-apps do GitHub.
+
+Clique no ícone da nuvem ao lado da ramificação weather para enviar por push a ramificação local para o repositório Git remoto. Quando solicitado, forneça seu nome de usuário e senha do GitHub.
+
+Crie um novo projeto para o aplicativo weather.
+
+Faça login no console da web do OpenShift usando sua conta de desenvolvedor. Selecione a perspectiva Developer.
+
+Crie um novo projeto chamado de seu_usuário-weather. Substitua seu_usuário pelo seu nome de usuário.
+
+Crie um segredo para armazenar a chave da API do serviço OpenWeatherMap.
+
+Clique em Advanced → Search no painel de navegação.
+
+Clique em Service para expandir o menu e procure secret. Selecione a opção Secret.
+
+
+Figura 3.22: Procurar segredos
+Verifique se o projeto atual é seu_usuário-weather.
+
+Clique em Create → Key/Value Secret para criar um novo segredo.
+
+
+Figura 3.23: Criar segredo
+Na página Create Key/Value Secret, insira owm-api-secret no campo Secret Name e OWM_API_KEY no campo Key e copie a chave de API padrão gerada para sua conta da API OpenWeatherMap no campo Value.
+
+
+Figura 3.24: Detalhes do segredo
+Clique em Create para criar o segredo.
+
+Crie um mapa de configuração para armazenar a configuração relacionada ao aplicativo weather.
+
+Para o aplicativo weather, crie um mapa de configuração para conter uma variável que indique se a previsão do tempo deve estar em unidades imperiais (Fahrenheit) ou métricas (Celsius).
+
+Clique em Advanced → Search.
+
+Clique em Service para expandir o menu e procure configmap. Selecione a opção ConfigMap.
+
+
+Figura 3.25: Procurar ConfigMap
+Clique em Create Config Map para criar um novo mapa de configuração.
+
+A página Create Config Map mostra um editor YAML e um exemplo de código para criar pares de chave-valor.
+
+Exclua o conteúdo YAML existente. Adicione o seguinte YAML à área editável. Substitua seu_usuário pelo seu nome de usuário para garantir que o atributo namespace corresponda ao projeto atual:
+
+IMPORTANTE
+Certifique-se de manter o recuo correto conforme mostrado no trecho. Os arquivos YAML diferenciam a distância do recuo.
+
+Clique em Create para criar o mapa de configuração.
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: weather-config
+  namespace: youruser-weather
+data:
+  UNITS: metric
+  
+  
+O trecho cria um mapa de configuração denominado weather-config no projeto seu_usuário-weather. O mapa de configuração armazena uma única variável (chave) chamada de UNITS com o valor metric da string.
+
+Implante o aplicativo weather no OpenShift.
+
+Selecione Add no menu à esquerda e clique em From Catalog.
+
+Selecione Languages → JavaScript e clique na primeira opção, Node.js. Clique em Create Application para inserir os detalhes do aplicativo.
+
+Preencha o formulário de acordo com a tabela a seguir. Para acessar os parâmetros Git, clique em Show Advanced Git Options.
+
+Tabela 3.1. Parâmetros do novo aplicativo
+
+Campo do formulário	Valor
+Git Repo URL
+
+https://github.com/seu_usuário_do_git/DO101-apps
+
+Git Reference
+
+weather
+
+Context Dir
+
+/weather
+
+Application Name
+
+weather
+
+Name
+
+weather
+
+
+Não clique em Create ainda. Primeiro, personalize a configuração da implantação.
+
+Clique em Deployment Configuration para personalizar a configuração da implantação. Faça referência ao segredo e ao mapa de configuração que você criou anteriormente.
+
+
+Figura 3.26: Configuração de implantação do aplicativo de previsão do tempo
+Clique em Add from Config Map or Secret.
+
+
+Figura 3.27: Adicionar variáveis de ambiente a partir do mapa de configuração ou do segredo
+Uma nova linha é adicionada à tabela Environment Variables. Adicione uma chave com o nome OWM_API_KEY. Clique na lista Select a resource, procure own-api-secret e selecione o segredo own-api-secret.
+
+
+Figura 3.28: Selecionar segredo
+Clique em Select a key e selecione OWM_API_KEY.
+
+Clique novamente em Add from Config Map or Secret. Uma terceira linha é adicionada à tabela Environment Variables.
+
+Adicione uma chave chamada UNITS. Clique em Select a resource, procure weather e selecione o mapa de configuração weather-config. Clique em Select a key e selecione UNITS.
+
+Remova a primeira linha da tabela Environment Variables clicando no ícone de menos ao lado do campo value vazio.
+
+
+Figura 3.29: Remover variável de ambiente vazia
+A tabela final de Environment Variables deverá ser exibida da seguinte maneira:
+
+
+Figura 3.30: Tabela final de variáveis de ambiente
+Para evitar erros de implantação nas etapas a seguir, revise os valores que você digitou no formulário antes de continuar. Clique em Create para iniciar os processos de compilação e implantação.
+
+Teste o aplicativo.
+
+Aguarde alguns minutos enquanto a imagem de contêiner do aplicativo é compilada e implantada. Quando a implantação for concluída, uma marca de seleção verde será exibida para a implantação de weather na página Topology.
+
+
+Figura 3.31: Aplicativo de previsão do tempo compilado com êxito
+Clique no link Open URL para abrir a URL da rota para o aplicativo weather.
+
+
+Figura 3.32: URL da rota do aplicativo de previsão do tempo
+A página inicial do aplicativo weather é exibida.
+
+
+Figura 3.33: Página inicial do aplicativo de previsão do tempo
+Digite o nome de uma cidade no campo, como "Nova York", e clique em Get Weather.
+
+A previsão do tempo para a cidade no momento é exibida em unidades métricas.
+
+
+Figura 3.34: Previsão do tempo
+Feche a guia do navegador.
+
+Volte para o console da web do OpenShift para visualizar os logs do aplicativo weather.
+
+Clique em Topology e clique na implantação weather.
+
+Clique em Resources e em View Logs do pod weather para visualizar os logs do aplicativo weather.
+
+
+Figura 3.35: Exibir logs do aplicativo de previsão do tempo
+A resposta JSON bruta da API OpenWeatherMap deve ser exibida. A interface de usuário do aplicativo filtra a resposta e exibe um subconjunto dos dados na tela.
+
+
+Figura 3.36: Logs do aplicativo de previsão do tempo
+Atualize a configuração da implantação do aplicativo weather para alterar o valor da chave UNITS no mapa de configuração weather-config de modo a exibir a previsão em unidades de medidas imperiais.
+
+Clique em Advanced → Search. Clique em Service para expandir o menu e procure configmap. Em seguida, selecione ConfigMap.
+
+Clique nos três pontos à direita de weather-config e clique em Edit Config Map.
+
+
+Figura 3.37: Editar mapa de configuração
+Uma página é exibida com um trecho YAML editável que contém os dados existentes no mapa de configuração weather-config.
+
+Altere o valor da chave UNITS para imperial como mostrado abaixo:
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: weather-config
+  namespace: youruser-weather
+  ...output omitted...
+data:
+  UNITS: imperial
+Clique em Save para salvar as alterações.
+
+Teste o aplicativo novamente e verifique se a previsão do tempo é exibida em unidades de medidas imperiais.
+
+Clique em Topology e clique na implantação weather.
+
+Clique em Actions → Start Rollout. Pode levar um minuto para reimplantar o aplicativo.
+
+
+Figura 3.38: Iniciar implantação
+Clique no ícone Open URL da implantação weather na página Topology, representada por um diagrama de círculo azul com o logotipo Node.js.
+
+
+Figura 3.39: URL da rota do aplicativo de previsão do tempo
+Digite o nome de uma cidade e clique em Get Weather. A previsão do tempo é exibida em unidades de medida imperiais.
+
+
+Figura 3.40: Previsão do tempo em unidades imperiais
+Feche a guia do navegador.
+
+Faça a limpeza. Exclua o projeto seu_usuário-weather:
+
+No console da web do OpenShift, clique em Advanced → Projects para visualizar a lista de projetos e exclua o projeto seu_usuário-weather. Confirme a exclusão quando solicitado.
+
+Digite seu_usuário-weather na janela de confirmação e exclua o projeto.
+
+Isso conclui o exercício orientado.
+

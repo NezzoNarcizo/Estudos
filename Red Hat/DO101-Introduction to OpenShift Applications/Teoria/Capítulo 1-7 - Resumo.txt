@@ -1,0 +1,8 @@
+Resumo
+Neste capítulo, você aprendeu que:
+
+Os ambientes integrados de desenvolvimento (IDEs) combinam várias ferramentas de desenvolvimento de software (compiladores, conjuntos de testes, linters) em um único aplicativo para melhorar sua produtividade.
+
+O Git é uma ferramenta de gerenciamento de configuração do software usada com frequência para implementar o controle de versão das alterações de código do aplicativo.
+
+Muitos serviços de hospedagem de código-fonte concedem acesso ao repositório git para um projeto, o que permite a colaboração no desenvolvimento do código-fonte.

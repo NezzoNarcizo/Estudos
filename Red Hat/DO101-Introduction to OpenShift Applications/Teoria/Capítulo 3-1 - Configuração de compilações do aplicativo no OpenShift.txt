@@ -1,0 +1,92 @@
+Capítulo 3. Configuração de compilações do aplicativo no OpenShift
+
+Atualização de um aplicativo
+Exercício orientado: Atualização de um aplicativo
+Configuração de segredos do aplicativo
+Exercício orientado: Configuração de segredos do aplicativo
+Conexão de um aplicativo a um banco de dados
+Exercício orientado: Conexão com um banco de dados
+Resumo
+
+
+
+Resumo
+
+Meta	Gerenciar compilações do aplicativo no Red Hat OpenShift Container Platform.
+
+Objetivos	
+Atualizar um aplicativo.
+
+Adicionar e ajustar a configuração e os segredos do aplicativo.
+
+Conectar um aplicativo a um banco de dados.
+
+
+Seções	
+Atualização de um aplicativo (e exercício orientado)
+
+Configuração de segredos do aplicativo (e exercício orientado)
+
+Conexão de um aplicativo a um banco de dados (e exercício orientado)
+
+Atualização de um aplicativo
+Objetivos
+Depois de concluir esta seção, você deverá ser capaz de atualizar um aplicativo implantado no Red Hat OpenShift Container Platform.
+
+Compilação e atualização de aplicativos
+Para implantar aplicativos no OpenShift, você deve criar uma imagem de contêiner. A imagem de contêiner é um pacote binário que contém um aplicativo e todas as suas dependências, inclusive o sistema operacional.
+
+No OpenShift, uma compilação é o processo de criação de uma imagem de contêiner executável a partir do código-fonte do aplicativo. O recurso BuildConfig define todo o processo de compilação.
+
+O OpenShift pode criar imagens de contêiner a partir do código-fonte sem a necessidade de usar ferramentas como Docker ou Podman. Depois de serem compiladas, as imagens de contêiner do aplicativo são armazenadas e gerenciadas em um registro do contêiner integrado que vem no pacote da plataforma OpenShift.
+
+O OpenShift oferece muitas maneiras diferentes de criar uma imagem de contêiner. O método mais comum é chamado de Source to Image (S2I). Em uma compilação S2I, o código-fonte do aplicativo é combinado com uma imagem do construtor S2I, que é uma imagem de contêiner que contém as ferramentas, as bibliotecas e as estruturas necessárias para executar o aplicativo.
+
+Por exemplo, para executar aplicativos Node.js no OpenShift, você usará uma imagem do construtor S2I do Node.js. A imagem do construtor S2I do Node.js é uma imagem de contêiner configurada com tempo de execução do Node.js, ferramentas de gerenciamento de pacotes (NPM) e outras bibliotecas necessárias para execução de aplicativos Node.js.
+
+O OpenShift pode detectar automaticamente o tipo de aplicativo e escolher uma imagem apropriada do construtor S2I para compilar a imagem final de contêiner do aplicativo.
+
+Por exemplo, se a raiz da árvore de código-fonte do aplicativo contiver o arquivo package.json, o OpenShift selecionará automaticamente a imagem mais recente do construtor S2I do Node.js para a compilação. Se desejar, você pode substituir a seleção padrão e escolher sua própria imagem do construtor S2I para o processo de compilação.
+
+Acionamento manual de compilações
+Depois que um aplicativo for implantado no OpenShift, o OpenShift poderá recompilar e reimplantar uma nova imagem de contêiner sempre que o código-fonte do aplicativo for modificado. Use o cliente da linha de comando oc ou o console da web do OpenShift para acionar uma nova compilação do aplicativo atualizado.
+
+Este é o fluxo de trabalho de um aplicativo implantado a partir do GitHub ao usar o processo de compilação manual:
+
+
+Figura 3.1: Compilações manuais
+Atualize o código-fonte de um aplicativo existente, como de v1 para v2, e depois faça commit das alterações no GitHub.
+
+Acione manualmente uma nova compilação usando o console da web do OpenShift ou a interface de linha de comando (CLI) do cliente OpenShift.
+
+O OpenShift cria uma nova imagem de contêiner com o código atualizado.
+
+O OpenShift distribui novos pods com base na nova imagem de contêiner (v2).
+
+Depois que os novos pods baseados na v2 forem distribuídos, o OpenShift direcionará as novas solicitações aos novos pods e encerrará os pods baseados na versão antiga (v1).
+
+Compilações automáticas usando webhooks
+Um webhook é um mecanismo para se inscrever em eventos de um sistema de gerenciamento de código-fonte, como o GitHub. O OpenShift gera URLs de webhook exclusivas para os aplicativos criados a partir de fontes armazenadas em repositórios Git. Os webhooks são configurados em um repositório Git. Com base na configuração do webhook, o GitHub enviará uma solicitação HTTP POST para a URL do webhook, com detalhes que incluem as informações de commit mais recentes.
+
+A API REST do OpenShift escuta notificações de webhook nesta URL e aciona automaticamente uma nova compilação. Você deve configurar seu webhook para apontar para essa URL exclusiva.
+
+Este é o fluxo de trabalho para uma nova compilação automática acionada por webhooks:
+
+
+Figura 3.2: Compilações automáticas usando webhooks
+Atualize o código-fonte de um aplicativo existente (de v1 para v2) e faça commit das alterações no GitHub.
+
+O webhook do GitHub envia uma notificação de evento para a API REST do OpenShift.
+
+O OpenShift cria uma nova imagem de contêiner com o código atualizado.
+
+O OpenShift distribui novos pods com base na nova imagem de contêiner (v2).
+
+Depois que os novos pods baseados na v2 forem distribuídos, o OpenShift direcionará as novas solicitações aos novos pods e encerrará os pods baseados na v1 antiga.
+
+REFERÊNCIAS
+Para obter mais informações sobre compilações do OpenShift, consulte o capítulo Builds da documentação do produto do Red Hat OpenShift Container Platform em https://docs.openshift.com/container-platform/4.1/welcome/index.html
+
+Acionadores de compilação
+
+Criação de webhooks do GitHub

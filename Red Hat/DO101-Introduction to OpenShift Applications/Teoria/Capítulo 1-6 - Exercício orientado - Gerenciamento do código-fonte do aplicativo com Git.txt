@@ -1,0 +1,154 @@
+Exercício orientado: Gerenciamento do código-fonte do aplicativo com Git
+
+Neste exercício, você usará o VS Code para enviar por push as alterações do código de uma nova ramificação para um repositório Git remoto.
+
+Resultados
+
+Você deverá ser capaz de:
+
+Bifurcar o repositório dos aplicativos de exemplo deste curso na sua conta pessoal do GitHub.
+
+Clonar o repositório dos aplicativos de exemplo deste curso da sua conta pessoal do GitHub para seu sistema.
+
+Fazer commit das alterações do código em uma nova ramificação.
+
+Enviar por push uma nova ramificação para um repositório remoto.
+
+O Visual Studio Code (VS Code) está instalado no seu sistema.
+
+O Node.js e o Gerenciador de pacotes do nó (NPM) estão instalados no sistema.
+
+O Git está instalado no sistema e está configurado com seu nome de usuário e endereço de e-mail.
+
+Procedimento 1.3. Etapas
+
+Bifurque os aplicativos de exemplo deste curso na sua conta pessoal do GitHub.
+
+Abra um navegador e acesse https://github.com/RedHatTraining/DO101-apps. Se você não estiver conectado ao GitHub, clique em Sign in no canto superior direito.
+
+
+Figura 1.47: Página de login do repositório Git do curso.
+Faça login no GitHub usando seu nome de usuário pessoal e senha.
+
+
+Figura 1.48: Página de login do GitHub.
+Volte para https://github.com/RedHatTraining/DO101-apps e clique em Fork no canto superior direito.
+
+
+Figura 1.49: Bifurque o repositório DO101-apps do Treinamento Red Hat.
+Na janela Fork DO101-apps, clique em seu_usuário_do_git para selecionar seu projeto pessoal do GitHub.
+
+
+Figura 1.50: Bifurque o repositório DO101-apps do Treinamento Red Hat.
+IMPORTANTE
+Embora seja possível renomear seu fork pessoal do repositório https://github.com/RedHatTraining/DO101-apps, os scripts de classificação, o exemplo de saída deste curso pressupõe que você mantenha o nome DO101-apps ao bifurcar o repositório.
+
+Depois de alguns minutos, a interface web do GitHub exibe seu novo repositório seu_usuário_do_git/DO101-apps.
+
+
+Figura 1.51: Bifurcação pessoal do repositório DO101-apps do Treinamento Red Hat.
+Clone os aplicativos de exemplo deste curso da sua conta pessoal do GitHub usando o VS Code.
+
+Se o VS Code não tiver sido aberto em um exercício anterior, abra-o.
+
+Na paleta de comandos (View → Command Palette…​), digite clone. Selecione Git: Clone na lista de opções.
+
+
+Figura 1.52: Uso da paleta de comandos para clonar um repositório.
+No prompt exibido, insira a URL HTTPS para seu repositório, https://github.com/seu_usuário_do_git/DO101-apps.
+
+Na janela do arquivo que for aberta, escolha uma pasta local para armazenar o clone do repositório. O VS Code cria a subpasta DO101-apps na pasta selecionada. O local padrão é sua pasta inicial.
+
+Clique em Select Repository Location para selecionar o local.
+
+Depois que o VS Code clonar o repositório, um prompt será exibido no canto inferior direito da janela do VS Code. Clique em Add to Workspace para adicionar o repositório clonado ao seu workspace do VS Code.
+
+
+Figura 1.53: Adicionar um repositório clonado ao workspace atual.
+NOTA
+Esse prompt permanece ativo por apenas alguns segundos. Se o prompt for encerrado, adicione a pasta do repositório clonado ao workspace (File → Add Folder to Workspace…​). Na janela de arquivo exibida, navegue até o local da pasta DO101-apps clonada. Selecione a pasta DO101-apps e clique em Add.
+
+Adicione um recurso ao aplicativo express-helloworld para exibir Hello Mars! quando um usuário acessar o ponto de extremidade do aplicativo /mars. Implemente o novo recurso na ramificação devenv-versioning.
+
+Na visualização de controle do código-fonte (View → SCM), clique em master na entrada DO101-apps em SOURCE CONTROL PROVIDERS.
+
+
+Figura 1.54: Checkout de uma nova ramificação para um repositório.
+NOTA
+Se a visualização de controle do código-fonte não exibir a opção SOURCE CONTROL PROVIDERS, clique com o botão direito do mouse em SOURCE CONTROL na parte superior da visualização e selecione Source Control Providers.
+
+Selecione Create new branch…​ na lista de opções.
+
+Quando solicitado, digite devenv-versioning como nome da ramificação. A entrada DO101-apps na visualização de controle do código-fonte é atualizada para a ramificação devenv-versioning.
+
+Na visualização do explorador (View → Explorer), clique no arquivo DO101-apps/express-helloworld/app.js. O VS Code abre uma guia do editor para o arquivo.
+
+Para implementar o novo recurso, adicione as seguintes linhas ao arquivo app.js:
+
+Insira essas linhas antes da linha que começa com app.listen:
+
+
+Figura 1.55: Recurso adicionado ao aplicativo Express.
+Salve o arquivo app.js (File → Save).
+
+app.get('/mars', function(req, res) {
+  res.send('Hello Mars!\n');
+});
+Instale as dependências do aplicativo e execute o aplicativo. Verifique se ele retorna a mensagem Hello Mars! quando você acessa o ponto de extremidade /mars.
+
+NOTA
+Esta etapa requer o Gerenciador de pacotes do nó (NPM). Quando você instala o pacote Node.js nos sistemas Ubuntu, o NPM não é instalado como uma dependência. Portanto, você também precisa instalar o pacote NPM nos sistemas Ubuntu.
+
+O pacote NPM do Ubuntu instala vários pacotes de desenvolvimento de software diferentes. Você poderá ignorar esta etapa se precisar diminuir o número de pacotes instalados no seu sistema Ubuntu. Ignorar a etapa não impede que você conclua este exercício.
+
+Clique com o botão direito do mouse em express-helloworld na visualização do explorador (View → Explorer) e selecione Open in Terminal.
+
+Execute o comando npm install no terminal integrado para instalar as dependências do aplicativo.
+
+Execute o comando npm start no terminal integrado para iniciar o aplicativo.
+
+
+Figura 1.56: Execução de um aplicativo Node.js no terminal integrado.
+Em um navegador, acesse http://localhost:8080/. Verifique se o aplicativo responde com a mensagem Hello World!.
+
+Em um navegador, acesse http://localhost:8080/mars. Verifique se o aplicativo responde com a mensagem Hello Mars!.
+
+Para interromper o aplicativo, clique no terminal integrado e digite Ctrl+C. Se um prompt for exibido, forneça uma resposta apropriada para encerrar o processo.
+
+Para limpar, clique no ícone Kill Terminal para fechar a janela de terminal integrado.
+
+Confirme as alterações localmente e envie a nova commit por push para o repositório do GitHub.
+
+Acesse a visualização de controle do código-fonte (View → SCM) e clique em DO101-apps na lista SOURCE CONTROL PROVIDERS.
+
+Passe o mouse sobre a entrada para o arquivo app.js abaixo do título CHANGES do repositório DO101-apps. Clique no ícone Stage Changes para adicionar as alterações do arquivo app.js à próxima commit.
+
+Adicione a mensagem de commit add /mars endpoint no prompt da mensagem e clique no botão de marca de seleção para fazer commit das alterações preparadas:
+
+
+Figura 1.57: Mensagem de commit para um novo recurso.
+Publique a ramificação devenv-versioning no repositório do GitHub. Verifique se suas alterações estão presentes no GitHub.
+
+Na visualização de controle do código-fonte (View → SCM), localize a entrada DO101-apps abaixo da opção SOURCE CONTROL PROVIDERS. Clique no ícone Publish Changes para publicar a ramificação devenv-versioning no repositório remoto. Se for exibido um prompt, forneça seu nome de usuário e senha do GitHub.
+
+
+Figura 1.58: Publicação de uma ramificação local em um repositório remoto.
+Em um navegador, acesse seu repositório DO101-apps pessoal em https://github.com/seu_usuário_do_git/DO101-apps. A interface do GitHub indica que você efetuou recentemente alterações no código na ramificação devenv-versioning.
+
+
+Figura 1.59: Um repositório do GitHub indica a presença de uma nova ramificação.
+Clique em commits abaixo da guia Code para exibir a lista de commits recentes.
+
+Na lista de ramificações, selecione devenv-versioning. Uma entrada para a commit add/mars endpoint é exibida na parte superior do histórico de commits.
+
+
+Figura 1.60: Histórico de commits de uma ramificação do repositório do GitHub.
+À direita da entrada add /mars endpoint, clique no hash de commit com sete caracteres. No exemplo exibido, esse valor é 50498a4.
+
+O GitHub mostra as quatro linhas de código que você adicionou ao arquivo express-helloworld/app.js.
+
+
+Figura 1.61: O GitHub exibe as commits de alterações de código.
+Você enviou por push suas alterações de código de uma nova ramificação para o repositório do GitHub.
+
+Isso conclui o exercício orientado.

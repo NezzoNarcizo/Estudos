@@ -1,0 +1,126 @@
+
+Exercício orientado: Implantar um aplicativo no Red Hat OpenShift Container Platform
+
+Neste exercício, você usará o console da web do OpenShift para implantar um aplicativo Node.js.
+
+Resultados
+
+Você deverá ser capaz de usar o console da web do OpenShift para:
+
+Criar um novo projeto.
+
+Adicionar um novo aplicativo de um repositório Git.
+
+Inspecionar os recursos que o OpenShift cria durante a compilação e implantação.
+
+Para realizar este exercício, verifique se o aplicativo Node.js express-helloworld está em seu repositório DO101-app do GitHub criado na atividade anterior. Suas alterações devem estar na ramificação devenv-versioning.
+
+O Red Hat Training gerencia um cluster do OpenShift exclusivo para este curso. Seu ambiente de aprendizado on-line Red Hat Training fornece acesso a essa plataforma.
+
+
+Figura 2.14: Detalhes do ambiente de aprendizado on-line Red Hat Training
+No exercício, use a URL do Console Web Application e o nome de usuário e a senha fornecidos para acessar o console da web do OpenShift.
+
+Procedimento 2.1. Etapas
+
+Abra um navegador e acesse o console da web do OpenShift. Faça login e alterne para a perspectiva Developer.
+
+Abra um navegador e acesse https://console-openshift-console.apps.cluster.domain.example.com para acessar o console da web do OpenShift. Substitua a URL pelo valor de seu ambiente de aprendizado on-line do Treinamento Red Hat. A página de login do console da web é exibida.
+
+Faça login com o nome de usuário e a senha de seu ambiente de aprendizado on-line do Treinamento Red Hat.
+
+Na lista na parte superior do menu à esquerda, selecione a perspectiva Developer.
+
+
+Figura 2.15: Acesso à perspectiva do desenvolvedor
+A página pode mostrar um aviso de acesso restrito, pois você ainda não tem acesso aos projetos. Você criará um projeto na próxima etapa.
+
+Crie um novo projeto chamado seu_usuário-deploy-app. Substitua seu_usuário pelo seu nome de usuário.
+
+Use o menu Advanced → Projects e clique em Create Project.
+
+Digite seu_usuário-deploy-app no campo Name. Substitua seu_usuário pelo seu nome de usuário. Deixe os outros campos vazios e clique em Create.
+
+Crie um novo aplicativo Node.js em JavaScript chamado de helloworld. Use o código que você enviou por push para o repositório Git no exercício anterior. O código está no subdiretório express-helloworld. O nome da ramificação é devenv-versioning.
+
+Clique na guia Add no lado esquerdo da página e, em seguida, em From Catalog.
+
+
+Figura 2.16: Adição de um novo aplicativo
+Clique em Languages → JavaScript e clique na primeira opção, Node.js. Clique em Create Application para inserir os detalhes do aplicativo.
+
+Preencha o formulário de acordo com a tabela a seguir. Para acessar os parâmetros Git, clique em Show Advanced Git Options.
+
+Tabela 2.1. Parâmetros do novo aplicativo
+
+Parâmetro	Valor
+Git Repo URL
+
+https://github.com/seu_usuário_do_git/DO101-apps
+
+Git Reference
+
+devenv-versioning
+
+Context Dir
+
+/express-helloworld
+
+Application Name
+
+helloworld
+
+Name
+
+helloworld
+
+Create a route to the application
+
+Certifique-se de que a caixa esteja marcada
+
+
+Para evitar erros de implantação nas etapas a seguir, revise os valores que você digitou no formulário antes de continuar. Clique em Create para iniciar os processos de compilação e implantação.
+
+Aguarde até que o OpenShift compile e implante seu aplicativo.
+
+O console da web deve mostrar automaticamente a página Topology. Se necessário, clique na guia Topology do lado esquerdo da página.
+
+Aguarde até que o ícone do aplicativo mude para o status de compilação concluída.
+
+
+Figura 2.17: Implantação concluída do aplicativo
+Os processos de compilação e implantação podem levar até dois minutos para serem concluídos.
+
+Revise os recursos do aplicativo e confirme se você consegue acessar o aplicativo na Internet.
+
+Clique no ícone Node.js para acessar os detalhes do aplicativo.
+
+Clique na guia Resources para listar os recursos que o OpenShift criou durante a implantação do aplicativo.
+
+
+Figura 2.18: Revisão dos recursos do aplicativo
+Observe o recurso pod. Esse pod hospeda o aplicativo em execução na plataforma.
+
+O recurso de compilação coleta detalhes do processo de compilação do aplicativo. Observe que a compilação foi concluída.
+
+O recurso de rota associa uma URL pública ao aplicativo.
+
+Clique no link Location no recurso de rota. O navegador abrirá uma nova guia e acessará a URL pública do aplicativo.
+
+
+Figura 2.19: Acesso ao aplicativo helloworld
+Quando terminar, feche a guia do navegador.
+
+Para limpar seu trabalho, exclua o projeto seu_usuário-deploy-app. Quando você exclui um projeto, o OpenShift remove automaticamente todos os recursos associados.
+
+Use o menu Advanced → Projects para listar todos os seus projetos.
+
+Clique no botão do menu na parte inferior da linha do projeto seu_usuário-deploy-image e clique em Delete Project.
+
+
+Figura 2.20: Exclusão de um projeto
+Para confirmar a exclusão, digite o nome do projeto na janela de confirmação e clique em Delete.
+
+Faça logout do console da web. Para fazer logout, clique no seu nome de login no canto superior direito e clique em Log out.
+
+Isso conclui o exercício orientado.

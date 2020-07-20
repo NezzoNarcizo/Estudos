@@ -1,0 +1,140 @@
+Capítulo 2. Implantação de aplicativos no Red Hat OpenShift Container Platform
+
+Implantação de um aplicativo no Red Hat OpenShift Container Platform
+
+Exercício orientado: Implantar um aplicativo no Red Hat OpenShift Container Platform
+
+Resumo
+
+
+
+
+Resumo
+
+Meta	Implantar um aplicativo no OpenShift.
+Objetivos	
+Implantar um aplicativo no OpenShift.
+
+Seções	Implantação de um aplicativo no Red Hat OpenShift Container Platform (e exercício orientado)
+Implantação de um aplicativo no Red Hat OpenShift Container Platform
+Objetivos
+Depois de concluir esta seção, você deverá ser capaz de implantar um aplicativo no OpenShift.
+
+
+
+Introdução ao OpenShift Container Platform
+Red Hat OpenShift Container Platform é uma plataforma de autosserviço na qual as equipes de desenvolvimento implantam seus aplicativos. A plataforma integra ferramentas para compilar e executar aplicativos e gerencia todo o ciclo de vida do aplicativo, desde o desenvolvimento inicial até a produção.
+
+O OpenShift oferece vários cenários de implantação. Um fluxo de trabalho típico começa quando um desenvolvedor fornece a URL do repositório Git de um aplicativo para o OpenShift.
+
+A plataforma recupera automaticamente o código-fonte do Git, compila e implanta o aplicativo. O desenvolvedor também pode configurar o OpenShift para detectar novas commits do Git e, então, recompilar e reimplantar o aplicativo automaticamente.
+
+Ao automatizar os processos de compilação e implantação, o OpenShift permite que os desenvolvedores se concentrem no design e desenvolvimento do aplicativo. Ao recompilar seu aplicativo com todas as alterações das quais você fizer commit, o OpenShift oferece um retorno imediato. Você pode detectar e corrigir erros no início do processo de desenvolvimento, antes que eles se tornem um problema na produção.
+
+O OpenShift fornece os mecanismos de compilação, as bibliotecas e os ambientes de tempo de execução para as linguagens mais usadas, como Java, Ruby, Python, PHP, .NET, Node.js e muitas outras. Ele também é fornecido com um conjunto de serviços adicionais que você pode usar diretamente no aplicativo, como bancos de dados.
+
+À medida que o tráfego e a carga do seu aplicativo web aumentam, o OpenShift pode provisionar e implantar rapidamente novas instâncias dos componentes do aplicativo. Para a equipe de operações, ele fornece ferramentas adicionais de registro e monitoramento.
+
+Arquitetura do OpenShift Container Platform
+O Red Hat OpenShift Online, em https://www.openshift.com/, é uma instância pública do OpenShift executada pela Red Hat. Com essa plataforma em nuvem, os clientes podem implantar diretamente seus aplicativos on-line sem precisar instalar, gerenciar e atualizar a própria instância da plataforma.
+
+A Red Hat também fornece o Red Hat OpenShift Container Platform, que as empresas podem implantar em sua infraestrutura própria. Quando implanta sua instância do OpenShift Container Platform, você pode ajustar o desempenho do cluster para suas necessidades específicas. Nesta sala de aula, você receberá acesso a um cluster privado do OpenShift.
+
+Arquitetura de aplicativo
+Várias equipes de desenvolvimento ou clientes costumam compartilhar a mesma plataforma OpenShift. Para obter segurança e isolamento entre projetos e clientes, o OpenShift compila e executa os aplicativos em containers isolados.
+
+Um contêiner é uma forma de empacotar um aplicativo com todas as suas dependências, como ambientes de tempo de execução e bibliotecas.
+
+
+Figura 2.1: Um contêiner em um pod
+O diagrama anterior mostra um contêiner de um aplicativo Node.js. O contêiner agrupa o tempo de execução de Node.js, os pacotes Node.js exigidos pelo aplicativo e o próprio código de aplicativo.
+
+Para gerenciar os aplicativos em contêineres, o OpenShift adiciona uma camada de abstração conhecida como pod.
+
+Pods são a unidade básica de trabalho do OpenShift. Um pod encapsula um contêiner e outros parâmetros, como um endereço IP exclusivo ou um armazenamento. Um pod também pode agrupar vários contêineres relacionados que compartilham recursos.
+
+
+Figura 2.2: Pods em execução no OpenShift.
+O diagrama anterior mostra uma plataforma OpenShift hospedando vários aplicativos e sendo executada em pods. Para implantar um novo aplicativo, use o seguinte fluxo de trabalho:
+
+Os desenvolvedores fazem commit do trabalho em um repositório Git.
+
+Quando estão prontos para implantar o código, os desenvolvedores usam o web console do OpenShift para criar o aplicativo. A URL para o repositório Git é um dos parâmetros exigidos.
+
+O OpenShift recupera o código do repositório Git e compila o aplicativo.
+
+O OpenShift implanta o aplicativo em um pod.
+
+Tipos de recurso do OpenShift
+O OpenShift usa resources para descrever os componentes de um aplicativo. Quando você implanta um novo aplicativo, o OpenShift cria esses recursos para você, e você pode exibi-los e editá-los usando o console da web.
+
+Por exemplo, o tipo de recurso Pod representa um contêiner em execução na plataforma. O tipo de recurso Route associa uma URL pública ao aplicativo, de modo que seus clientes possam acessá-la de fora do OpenShift.
+
+Introdução ao console da web do desenvolvedor do OpenShift
+O console da web do OpenShift é uma interface de usuário baseada em navegador que oferece uma alternativa gráfica às ferramentas de linha de comando. Com a interface de usuário da web, os desenvolvedores podem implantar e gerenciar seus aplicativos com facilidade.
+
+Login e acesso à perspectiva do desenvolvedor
+Para acessar o console da web, use a URL de sua plataforma OpenShift. Para usar o OpenShift, cada desenvolvedor deve ter uma conta. A captura de tela a seguir mostra a página de login.
+
+
+Figura 2.3: Login no OpenShift
+O console da web oferece duas perspectivas, uma para os desenvolvedores e a outra para administradores e operadores. Como mostrado na captura de tela a seguir, a perspectiva é selecionada no menu à esquerda. Como desenvolvedor, normalmente você seleciona a perspectiva Developer.
+
+
+Figura 2.4: Perspectivas do administrador e do desenvolvedor
+Criação de um projeto
+O OpenShift agrupa os aplicativos em projects. Usando projetos, as equipes de desenvolvedores organizam o conteúdo separadamente de outras equipes. Os projetos permitem agrupar os componentes individuais de um aplicativo (front-end, back-end e banco de dados) e criar ambientes do ciclo de vida (desenvolvimento, controle de qualidade, produção).
+
+Para criar um projeto, use o menu Advanced → Projects.
+
+
+Figura 2.5: Criação de um projeto
+Implantação de um novo aplicativo
+O OpenShift oferece vários métodos para adicionar um novo aplicativo. A opção Add é o ponto de entrada para um assistente que permite escolher entre os métodos disponíveis para implantar um aplicativo no cluster do OpenShift como parte de um projeto específico.
+
+
+Figura 2.6: Seleção de um método para implantar um novo aplicativo no OpenShift.
+Com o método From Catalog, é possível listar e implantar os aplicativos prontos para usar, por exemplo, o banco de dados MariaDB. Você também pode selecionar a linguagem do aplicativo e fornecer o código-fonte a partir de um repositório Git.
+
+A captura de tela a seguir mostra algumas das linguagens disponíveis.
+
+
+Figura 2.7: Linguagens disponíveis no catálogo
+Depois de selecionar a linguagem do aplicativo no catálogo, o OpenShift exibe um formulário para coletar os detalhes do aplicativo.
+
+
+Figura 2.8: Implantação de um aplicativo — detalhes do Git
+Use os campos da primeira seção do formulário para fornecer detalhes sobre o repositório Git do aplicativo.
+
+Se o código-fonte a ser implantado não estiver na ramificação master do Git, informe o nome da ramificação no campo Git Reference. Use o campo Context Dir quando o aplicativo a ser implantado estiver em um subdiretório, e não na raiz do repositório Git.
+
+Na captura de tela anterior, o aplicativo é armazenado no subdiretório frontend-ui, no repositório Git em https://github.com/yourgituser/DO101-apps. Observe também que o OpenShift deve buscar a ramificação feature5 em vez da ramificação master.
+
+Na seção General do formulário, use o campo Application Name para dar um nome ao aplicativo. O OpenShift usa esse nome para se referir ao aplicativo nas páginas do console da web. O campo Name é um nome interno que o OpenShift usa para identificar todos os recursos que ele cria durante a compilação e implantação. Esse nome é usado, por exemplo, para o recurso de rota que associa uma URL pública ao aplicativo.
+
+
+Figura 2.9: Definição do nome do aplicativo
+Revisão de um aplicativo no console da web
+A opção Topology fornece uma visão geral dos aplicativos de um projeto. A captura de tela a seguir mostra dois aplicativos em execução no projeto bookstore: o aplicativo PHP Frontend e um banco de dados.
+
+
+Figura 2.10: Visão geral dos aplicativos de um projeto
+Clique no ícone application para acessar os detalhes do aplicativo. A captura de tela a seguir mostra os recursos que o OpenShift cria para o aplicativo. Observe que um pod está em execução, a compilação foi concluída e uma rota fornece acesso externo ao aplicativo.
+
+
+Figura 2.11: Recursos de um aplicativo
+Normalmente, quando o console da web exibe um nome de recurso, ele é um link para a página de detalhes desse recurso. A captura de tela a seguir exibe os detalhes do recurso de rota.
+
+
+Figura 2.12: Detalhes da rota do aplicativo
+Edição de recursos do OpenShift
+A maioria das páginas de detalhes do console da web do OpenShift tem o botão Actions que exibe um menu.
+
+
+Figura 2.13: Ações disponíveis para um recurso de rota
+Normalmente, esse menu fornece opções para editar e excluir o recurso.
+
+REFERÊNCIAS
+Para obter mais informações, consulte a documentação do produto do Red Hat OpenShift Container Platform em
+
+Introdução ao OpenShift

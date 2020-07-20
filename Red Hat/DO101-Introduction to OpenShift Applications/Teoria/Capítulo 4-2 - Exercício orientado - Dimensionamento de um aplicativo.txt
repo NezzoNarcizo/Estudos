@@ -1,0 +1,264 @@
+Exercício orientado: Dimensionamento de um aplicativo
+Neste exercício, você configurará o OpenShift para dimensionar automaticamente um aplicativo a fim de atender à demanda por carga.
+
+Resultados
+
+Você deverá ser capaz de usar o OpenShift para:
+
+Dimensionar manualmente um aplicativo usando o console da web.
+
+Configurar o OpenShift para dimensionar automaticamente um aplicativo quando a carga da CPU aumentar.
+
+Para realizar este exercício, confirme se você tem acesso a um cluster do OpenShift em execução, se o VS Code, o Git e o comando oc estão instalados no sistema e se você clonou o repositório DO101-app do GitHub no VS Code.
+
+Procedimento 4.1. Etapas
+
+No Visual Studio Code (VS Code), no repositório DO101-apps, crie uma nova ramificação denominada scale. Envie a ramificação por push para o repositório do GitHub.
+
+Abra o VS Code. Clique em View → SCM para acessar a visualização de controle do código-fonte. Garanta que a entrada DO101-apps abaixo de SOURCE CONTROL PROVIDERS mostre a ramificação master.
+
+NOTA
+Se a visualização de controle do código-fonte não exibir a opção SOURCE CONTROL PROVIDERS, clique com o botão direito do mouse em SOURCE CONTROL na parte superior da visualização e selecione Source Control Providers.
+
+Se estiver trabalhando com outra ramificação em um exercício diferente, clique na ramificação atual e selecione master na janela Select a ref to checkout.
+
+ATENÇÃO
+Cada exercício usa uma ramificação exclusiva. Sempre crie uma nova ramificação usando master como base.
+
+Clique em master na entrada DO101-apps sob SOURCE CONTROL PROVIDERS e selecione Create new branch. Digite scale para dar um nome à ramificação.
+
+
+Figura 4.4: Criação de uma nova ramificação com o VS Code
+Para enviar por push a nova ramificação ao GitHub, clique no ícone Publish Changes da entrada DO101-apps. O VS Code pode solicitar seu nome de login e senha do GitHub.
+
+
+Figura 4.5: Envio por push da nova ramificação para o GitHub
+Acesse o console da web do Red Hat OpenShift Container Platform e crie um novo projeto com o nome seu_usuário-scale. Substitua seu_usuário pelo seu nome de usuário.
+
+Faça login no console da web do OpenShift usando sua conta de desenvolvedor.
+
+Selecione a perspectiva Developer no painel de navegação.
+
+No menu Advanced → Projects, clique em Create Project.
+
+Digite seu_usuário-scale no campo Name. Substitua seu_usuário pelo seu nome de usuário. Deixe os outros campos vazios e clique em Create.
+
+Implante o aplicativo PHP scale. Quando é acessado pela Internet, esse aplicativo exibe o nome e o endereço IP de seu pod. O código-fonte do aplicativo está no subdiretório php-scale do seu repositório Git. Use a ramificação scale para implantar o aplicativo no OpenShift.
+
+Clique na guia Add no lado esquerdo da página e, em seguida, em From Catalog.
+
+Clique em Languages → PHP e clique em PHP.
+
+
+Figura 4.6: Criação de um aplicativo PHP
+Clique em Create Application para inserir os detalhes do aplicativo.
+
+Preencha o formulário de acordo com a tabela a seguir. Para acessar os parâmetros Git, clique em Show Advanced Git Options.
+
+Tabela 4.1. Parâmetros do novo aplicativo
+
+Parâmetro	Valor
+Git Repo URL
+
+https://github.com/seu_usuário_do_git/DO101-apps
+
+Git Reference
+
+scale
+
+Context Dir
+
+/php-scale
+
+Application Name
+
+scale
+
+Name
+
+scale
+
+
+Para evitar erros inesperados, revise os valores que você digitou no formulário antes de continuar:
+
+
+Figura 4.7: Preenchimento do formulário de criação do aplicativo
+Clique em Create para iniciar os processos de compilação e implantação.
+
+Aguarde até que o OpenShift compile e implante seu aplicativo. Verifique se você consegue acessá-lo pela Internet.
+
+O console da web deve mostrar automaticamente a página Topology. Se necessário, clique na guia Topology.
+
+Aguarde até o ícone do aplicativo mostrar que a implantação foi concluída e clique no ícone Open URL para acessar o aplicativo.
+
+
+Figura 4.8: Acesso ao aplicativo scale
+Uma nova guia do navegador exibe o aplicativo.
+
+
+Figura 4.9: Exibição do aplicativo scale
+O nome do host e o endereço IP da captura de tela anterior provavelmente são diferentes no seu sistema.
+
+Feche a guia do navegador do aplicativo.
+
+Dimensione o aplicativo para dois pods e confirme se você ainda consegue acessá-lo pela Internet.
+
+Na página Topology, clique no ícone PHP e clique na guia Overview.
+
+Clique na seta Increase the pod count para dimensionar o aplicativo para dois pods.
+
+
+Figura 4.10: Aumento do dimensionamento do aplicativo
+Aguarde alguns segundos até que o segundo pod seja iniciado e clique no ícone Open URL para confirmar se você ainda consegue acessar o aplicativo.
+
+Feche a guia do navegador do aplicativo.
+
+Por padrão, o balanceador de carga redireciona todas as solicitações de um cliente específico para o mesmo pod. Use o navegador para testar se o OpenShift distribui as solicitações entre os dois pods. Configure o recurso de rota para desativar a afinidade entre os clientes e os pods.
+
+Na página Topology, clique no ícone PHP e clique na guia Resources.
+
+Clique no recurso de rota scale.
+
+
+Figura 4.11: Acesso ao recurso de rota
+Clique na guia YAML e use o editor para adicionar as duas linhas abaixo à seção annotations:
+
+IMPORTANTE
+Certifique-se de manter o recuo correto conforme mostrado no exemplo. Os arquivos YAML diferenciam a distância do recuo.
+
+annotations:
+  app.openshift.io/vcs-ref: scale
+  app.openshift.io/vcs-uri: 'https://github.com/yourgituser/DO101-apps'
+  openshift.io/host.generated: 'true'
+  haproxy.router.openshift.io/balance: roundrobin
+  haproxy.router.openshift.io/disable_cookies: 'true'
+Clique em Save. O OpenShift reconfigura automaticamente o balanceador de carga com a nova configuração.
+
+Use o navegador para verificar se o OpenShift distribui as solicitações para o aplicativo PHP entre os dois pods. Na página Topology, clique no botão Open URL do aplicativo PHP. Uma nova guia do navegador exibe o aplicativo. Atualize a página várias vezes. Observe que o nome do pod e o endereço IP são alternados a cada solicitação.
+
+Feche a guia do navegador do aplicativo.
+
+Reduza o dimensionamento do aplicativo para um pod.
+
+Na página Topology, clique no ícone PHP e clique na guia Overview.
+
+Clique na seta Decrease the pod count para dimensionar o aplicativo para um pod.
+
+Aguarde até o encerramento do segundo pod e clique no botão Open URL do aplicativo PHP para acessar o aplicativo novamente. Atualize a página do aplicativo várias vezes. Observe que a página sempre exibe o mesmo nome de pod e o mesmo endereço IP. O OpenShift direciona todas as solicitações para o pod restante.
+
+Feche a guia do navegador do aplicativo.
+
+Na segunda parte do exercício, você configurará o OpenShift para dimensionar automaticamente o aplicativo quando a carga da CPU for superior a 20%.
+
+Você não pode configurar o dimensionador automático do console da web. Em vez disso, use o comando oc no sistema.
+
+Abra um novo terminal de linha de comando e faça login em sua conta do OpenShift usando a URL do ponto de extremidade da API. No comando a seguir, substitua a URL pelo valor de seu ambiente de aprendizado on-line Red Hat Training e use o mesmo nome de usuário e senha que você usa para fazer login no console da web do OpenShift.
+
+ATENÇÃO
+A URL do ponto de extremidade da API e a URL do console da web do OpenShift não são iguais. A URL do ponto de extremidade da API é usada principalmente para interagir com o OpenShift, usando ferramentas de linha de comando como oc.
+
+$ oc login https://api.cluster.domain.example.com:6443
+Username: youruser
+Password: ******
+Login successful.
+...output omitted...
+Selecione o projeto seu_usuário-scale:
+
+$ oc project youruser-scale
+Configure o dimensionador automático para o aplicativo. Defina o número máximo de pods como três e a carga da CPU como 20%.
+
+$ oc autoscale dc/scale --max=3 --cpu-percent=20
+horizontalpodautoscaler.autoscaling/scale autoscaled
+Para testar a configuração, implante o aplicativo stress para acionar o dimensionador automático.
+
+NOTA
+O aplicativo stress foi desenvolvido especificamente para este curso. Ele usa a ferramenta de referência do servidor HTTP Apache, ou ApacheBench (ab), para enviar muitas solicitações simultâneas ao seu aplicativo PHP.
+
+O comando ab é chamado a partir do arquivo DO101-apps/stress/Dockerfile:
+
+ab -dSrk -c 20 -n 50000000 \
+  http://${SCALE_SERVICE_HOST}:${SCALE_SERVICE_PORT}/index.php
+Observe o uso das variáveis SCALE_SERVICE_HOST e SCALE_SERVICE_PORT para se referir ao aplicativo scale. O OpenShift define automaticamente essas variáveis em todos os pods do projeto.
+
+No console da web do OpenShift, clique na guia Add e clique em From Dockerfile.
+
+Preencha o formulário de acordo com a tabela a seguir. Para acessar os parâmetros Git, clique em Show Advanced Git Options.
+
+Tabela 4.2. Parâmetros do aplicativo stress
+
+Parâmetro	Valor
+Git Repo URL
+
+https://github.com/seu_usuário_do_git/DO101-apps
+
+Git Reference
+
+scale
+
+Context Dir
+
+/stress
+
+Application
+
+Selecione Create application na lista.
+
+Application Name
+
+stress
+
+Name
+
+stress
+
+Create a route to the application
+
+Desmarque a caixa de seleção
+
+
+Para evitar erros inesperados, revise os valores que você digitou no formulário antes de continuar.
+
+
+Figura 4.12: Preenchimento do formulário de criação do aplicativo stress
+Clique em Create para iniciar os processos de compilação e implantação.
+
+Aguarde até que o aplicativo stress seja implantado e consulte os logs do pod para verificar se o comando ab está enviando solicitações. Na página Topology, clique no ícone stress e clique na guia Resources. Clique em View Logs próximo ao pod.
+
+
+Figura 4.13: Acesso aos logs do pod stress
+Observe que ApacheBench está em execução:
+
+O endereço IP exibido na saída anterior provavelmente é diferente no seu sistema.
+
+This is ApacheBench, Version 2.3 <$Revision: 1826891 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking 172.30.199.15 (be patient)
+
+Examine o aplicativo scale e confirme se o número de pods aumenta automaticamente para três.
+
+Na página Topology, clique no ícone PHP e clique na guia Overview.
+
+Observe que o número de pods do aplicativo scale aumentou para três. Talvez seja necessário aguardar alguns minutos.
+
+
+Figura 4.14: Dimensionamento automático do aplicativo
+
+Interrompa o aplicativo stress dimensionando-o com zero pod. Observe que o aplicativo scale reduz automaticamente o número de pods para um.
+
+Na página Topology, clique no ícone stress e clique na guia Overview.
+
+Clique na seta Decrease the pod count para dimensionar o aplicativo para zero pod.
+
+Clique no ícone PHP e clique na guia Overview. Pode levar até 10 minutos para o número de pods do aplicativo scale ser redimensionado para um.
+
+Para limpar seu trabalho, exclua o projeto seu_usuário-scale. Quando você exclui um projeto, o OpenShift remove automaticamente todos os recursos associados.
+
+Clique no menu Advanced → Projects para listar todos os seus projetos.
+
+Clique no botão do menu no final da linha do projeto seu_usuário-scale e clique em Delete Project. Para confirmar a exclusão, digite o nome do projeto na janela de confirmação e clique em Delete.
+
+Faça logout do console da web. Para fazer logout, clique no seu nome de login no canto superior direito e clique em Log out.
+
+Isso conclui o exercício orientado.

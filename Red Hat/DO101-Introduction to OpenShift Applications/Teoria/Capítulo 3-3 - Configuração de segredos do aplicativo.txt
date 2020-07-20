@@ -1,0 +1,88 @@
+Configuração de segredos do aplicativo
+
+Objetivos
+Depois de concluir esta seção, você deverá ser capaz de adicionar e ajustar a configuração de aplicativos e os segredos dos aplicativos implantados no Red Hat OpenShift Container Platform.
+
+Externalização da configuração de aplicativos no OpenShift
+Os aplicativos nativos de nuvem armazenam a configuração de aplicativos como variáveis de ambiente em vez de codificar os valores da configuração diretamente no código-fonte dos aplicativos. A vantagem dessa abordagem é que ela cria uma separação entre a configuração do aplicativo e o ambiente no qual ele está sendo executado. A configuração normalmente varia de um ambiente para outro, mas o código-fonte não varia.
+
+Por exemplo, digamos que você deseje promover um aplicativo do ambiente de desenvolvimento para o ambiente de produção com estágios intermediários como testes e aceitação do usuário. O código-fonte permanece o mesmo, mas os detalhes de configuração específicos para cada ambiente, como os detalhes de conexão para um banco de dados fora da produção, não devem ser estáticos e precisam ser gerenciados separadamente.
+
+Configuração de aplicativos usando segredos e mapas
+O Red Hat OpenShift Container Platform oferece os recursos Secret e Configuration Map para externalizar a configuração de um aplicativo.
+
+Os segredos são usados para armazenar informações confidenciais, como senhas, credenciais de banco de dados e qualquer outro dado que não deva ser armazenado em texto não criptografado.
+
+Os mapas de configuração, também chamados de config maps, são usados para armazenar dados de configuração de aplicativos não confidenciais em texto não criptografado.
+
+Você pode armazenar dados em segredos e mapas de configuração como pares de chave-valor ou pode armazenar um arquivo inteiro (por exemplo, arquivos de configuração) no segredo. Os dados secretos são codificados usando base64 e armazenados em disco, enquanto os mapas de configuração são armazenados como texto simples. Isso fornece uma camada adicional de segurança aos segredos para garantir que os dados confidenciais não sejam armazenados em texto não criptografado que os seres humanos possam ler.
+
+Este é um exemplo de definição de mapa de configuração em YAML:
+
+apiVersion: v1
+data:
+    username: myuser 1
+    password: mypass 2
+kind: ConfigMap 3
+metadata:
+    name: myconf 4
+1 2
+
+Dados armazenados no mapa de configuração
+
+3
+
+Tipo de recurso do OpenShift (mapa de configuração)
+
+4
+
+Nome do mapa de configuração
+
+Este é um exemplo de definição de segredo em YAML:
+
+apiVersion: v1
+data:
+    username: cm9vdAo= 1
+    password: c2VjcmV0Cg== 2
+kind: Secret 3
+metadata:
+    name: mysecret 4
+    type: Opaque
+1 2
+
+Dados armazenados no segredo em formato codificado usando base64
+
+3
+
+Tipo de recurso do OpenShift (segredo)
+
+4
+
+Nome do segredo
+
+Observe que os dados do segredo (username e password) são codificados no formato base64 e não são armazenados em texto simples como os dados do mapa de configuração.
+
+Depois de criar segredos e mapas de configuração, você deve associar os recursos aos aplicativos fazendo referência a eles na configuração de implantação de cada aplicativo.
+
+O OpenShift reimplanta o aplicativo automaticamente e disponibiliza os dados ao aplicativo.
+
+
+Figura 3.16: Mapas de configuração e segredos
+Este é o fluxo de trabalho para criar e usar segredos e mapas de configuração no OpenShift:
+
+Crie mapas de configuração e segredos usando o console da web do OpenShift ou o cliente de linha de comando do OpenShift (oc). Você pode armazenar pares de chave-valor ou um arquivo inteiro.
+
+Depois de editar a configuração de implantação do aplicativo e mapear as variáveis de ambiente para usar os segredos e mapas de configuração configurados no projeto, o OpenShift insere os segredos e os mapas de configuração nos pods do aplicativo.
+
+O aplicativo acessa os valores durante o tempo de execução usando pesquisas com base na chave. O OpenShift converte os dados codificados em base64 para um formato que o aplicativo consiga ler.
+
+Além de expor segredos e mapas de configuração como variáveis de ambiente, você também pode expô-los como arquivos. Isso é útil ao armazenar arquivos de configuração inteiros em segredos ou mapas de configuração.
+
+Por exemplo, se a configuração do aplicativo estiver em um arquivo XML, você poderá armazenar o arquivo em um mapa de configuração ou segredo e montá-lo dentro do contêiner, onde seu aplicativo pode analisá-lo na inicialização. Para fazer alterações na configuração, edite o mapa de configuração ou segredo. Em seguida, o OpenShift reimplanta automaticamente o contêiner do aplicativo e seleciona as alterações. Você não precisa recompilar o aplicativo nem a imagem de contêiner.
+
+Observe que, se você optar por montar os segredos e mapas de configuração como arquivos dentro dos pods do aplicativo, o OpenShift montará o arquivo usando um sistema de arquivos temporário somente leitura, com um arquivo para cada chave e o valor da chave como conteúdo do arquivo correspondente.
+
+REFERÊNCIAS
+Segredos do OpenShift
+
+Configuração do aplicativo no OpenShift

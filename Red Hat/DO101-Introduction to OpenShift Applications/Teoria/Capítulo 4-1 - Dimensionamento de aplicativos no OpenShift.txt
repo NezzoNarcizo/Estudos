@@ -1,0 +1,106 @@
+Capítulo 4. Dimensionamento de aplicativos no OpenShift
+Dimensionamento de um aplicativo
+Exercício orientado: Dimensionamento de um aplicativo
+Resumo
+Resumo
+
+Meta	Dimensionar e testar um aplicativo com o Red Hat OpenShift Container Platform.
+Objetivos	
+Dimensionar um aplicativo implantado no OpenShift para atender à demanda por carga.
+
+Seções	Dimensionamento de um aplicativo (e exercício orientado)
+Dimensionamento de um aplicativo
+Objetivos
+Depois de concluir esta seção, você deverá ser capaz de dimensionar um aplicativo implantado no Red Hat OpenShift Container Platform para atender à demanda por carga.
+
+Descrição do dimensionamento de pods
+A maioria dos aplicativos reais não é executada apenas em um pod. Muitas vezes, eles precisam ser executados em diversos pods para atender à crescente demanda dos usuários. Ao duplicar o aplicativo em vários pods, o aplicativo é scaling para atender à demanda dos usuários. Quando um usuário faz uma solicitação para acessar o aplicativo, o OpenShift direciona automaticamente a solicitação de serviço para um pod disponível. Dessa forma, mais usuários podem acessar simultaneamente o aplicativo. Se houver mais pods executando o aplicativo, a probabilidade de ocorrer interrupções ou indisponibilidade do aplicativo para os usuários será menor.
+
+Alguns aplicativos recebem um grande número de solicitações simultâneas apenas em determinados períodos, tornando muito difícil dimensionar o número de pods antes de executar o aplicativo. No entanto, há custos extras associados à execução de mais pods do que o necessário quando o tráfego não está no pico.
+
+O Red Hat OpenShift Container Platform se refere à ação de alterar o número de pods de um aplicativo para dimensionar. Scaling up significa aumentar o número de pods de um aplicativo. Scaling down significa diminuir esse número. O dimensionamento para aumentar o número permite que o aplicativo controle mais solicitações de clientes, e o dimensionamento para reduzir o número permite a redução de custos quando a carga diminui.
+
+Lembre-se de que, para que seus clientes acessem o aplicativo de fora do OpenShift, você deve criar um recurso de rota que associe uma URL pública ao aplicativo. Ao dimensionar seu aplicativo, o OpenShift configura automaticamente essa rota para distribuir solicitações de clientes entre os pods dos membros.
+
+
+Figura 4.1: O recurso de rota distribui as solicitações dos clientes
+Para aumentar o dimensionamento de um aplicativo, a plataforma OpenShift implanta um novo pod e depois aguarda até que o pod esteja pronto. Somente depois que o novo pod estiver disponível, a plataforma OpenShift configurará a rota para enviar tráfego para o novo pod. Ao reduzir o dimensionamento, o OpenShift reconfigura a rota para parar de enviar tráfego ao pod e, em seguida, exclui o pod.
+
+Preparação do aplicativo para o dimensionamento
+O OpenShift permite que qualquer aplicativo seja dimensionado criando vários pods, mas isso não significa que todo aplicativo se tornará automaticamente dimensionável porque está em execução no OpenShift. O aplicativo deve ser capaz de funcionar corretamente executando várias instâncias dele próprio.
+
+Alguns aplicativos web mantêm o estado do usuário por meio de algum tipo de abstração de sessão HTTP, geralmente com cookies HTTP. Como o OpenShift pode direcionar um usuário para qualquer pod em execução, as informações dessa sessão devem estar disponíveis globalmente e não apenas no primeiro pod que o usuário acessar. Portanto, esses aplicativos devem manter as informações de sessão em um repositório central, como um banco de dados ou armazenamento compartilhado na memória, como Redis ou memcached, e não apenas no sistema de arquivos local do pod.
+
+Os bancos de dados, como MariaDB e PostgreSQL, geralmente não oferecem suporte à execução em vários pods. Para esses cenários, há soluções alternativas. Por exemplo, o operador MariaDB em https://access.redhat.com/containers/?tab=overview#/registry.connect.redhat.com/mariadb/operator fornece uma implantação que pode ser dimensionada em vários pods.
+
+Para PostgreSQL, consulte o operador PostgreSQL na documentação do OpenShift em https://blog.openshift.com/leveraging-the-crunchy-postgresql/ para obter mais detalhes.
+
+Configuração do recurso de rota
+Por padrão, o OpenShift tenta direcionar todas as solicitações de um cliente para o mesmo pod. Você pode configurar o recurso de rota para modificar esse comportamento. Por exemplo, se o algoritmo round robin é selecionado, o OpenShift distribui ou faz o balanceamento de carga das solicitações aplicando round robin entre os pods. Com dois pods, por exemplo, o OpenShift envia a primeira solicitação ao primeiro pod, a segunda solicitação ao segundo pod, a terceira solicitação ao primeiro pod novamente e assim por diante.
+
+Para acessar os detalhes da rota, na página Topology, clique no ícone do aplicativo, clique na guia Overview e selecione o recurso de rota.
+
+
+Figura 4.2: Acesso aos detalhes do recurso de rota
+Modifique a seção annotations no arquivo YAML para editar os parâmetros de rota.
+
+
+Figura 4.3: Atualização do recurso de rota
+Dimensionamento manual de um aplicativo
+Com o console da web do OpenShift, os desenvolvedores podem dimensionar manualmente seus aplicativos. Por exemplo, o desenvolvedor pode aumentar o número de pods ao prever um aumento na carga do aplicativo.
+
+
+1
+
+Aumenta o número de pods.
+
+2
+
+Diminui o número de pods.
+
+Configuração do Horizontal Pod Autoscaler
+Além do dimensionamento manual, o OpenShift fornece o recurso Horizontal Pod Autoscaler (HPA). O HPA aumenta ou diminui automaticamente o número de pods de acordo com a utilização média da CPU. Os desenvolvedores também podem configurar o HPA para usar métricas personalizadas de aplicativos para dimensionamento. Embora essa configuração avançada esteja fora do escopo deste curso, a seção de referência apresenta um link para obter mais informações sobre o assunto.
+
+O console da web do OpenShift não fornece uma interface para ativar o HPA. Portanto, os desenvolvedores devem usar o cliente de linha de comando oc. Neste exemplo, o comando ativa e configura o HPA para a configuração de implantação frontend (dc):
+
+$ oc autoscale dc/frontend --min=1 --max=5 --cpu-percent=80
+
+Estas são as opções:
+
+dc/frontend
+Nome do recurso de configuração de implantação do aplicativo
+
+--min=1
+Número mínimo de pods
+
+--max=5
+Número máximo de pods O HPA não aumenta o dimensionamento do aplicativo para além desse limite, mesmo que a carga continue a crescer.
+
+--cpu-percent=80
+A média ideal de utilização da CPU para cada pod. Se a média global de utilização da CPU estiver acima desse valor, o HPA iniciará um novo pod. Se a média global de utilização da CPU estiver abaixo desse valor, o HPA excluirá um pod.
+
+O diagrama a seguir mostra como o HPA dimensiona um aplicativo com base na utilização da CPU.
+
+
+1
+
+Os clientes acessam o aplicativo.
+
+2
+
+O roteador do OpenShift distribui as solicitações aos pods.
+
+3
+
+O aplicativo nos pods processa a solicitação.
+
+4
+
+Quando o número de clientes aumenta, a utilização da CPU aumenta em cada pod. Quando a utilização da CPU está acima do valor configurado, o HPA aumenta o dimensionamento implantando um novo pod.
+
+REFERÊNCIAS
+Para obter mais informações, consulte a seção Dimensionamento de pods do aplicativo e verificação de compilações e rotas no guia Criação e gerenciamento de aplicativos no OpenShift Container Platform 4.2 em
+
+Para obter mais informações sobre o dimensionamento de pods, consulte a seção Dimensionamento automático de pods no guia Criação e gerenciamento de aplicativos no OpenShift Container Platform 4.2 em
+
+Para obter mais informações sobre o uso de métricas personalizadas com o HPA, consulte a seção Exposição de métricas de aplicativos personalizadas para dimensionamento automático, em Configuração e uso da pilha de monitoramento no guia do OpenShift Container Platform 4.2 em

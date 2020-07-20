@@ -1,0 +1,293 @@
+
+Exercício orientado: Atualização de um aplicativo
+Neste exercício, você atualizará o código-fonte de um aplicativo Node.js implantado no OpenShift.
+
+Resultados
+
+Você deverá ser capaz de:
+
+Criar um novo aplicativo OpenShift usando o comando oc new-app.
+
+Acionar uma nova compilação manualmente no console da web do OpenShift depois de atualizar o código-fonte de um aplicativo.
+
+Configurar os webhooks no GitHub de modo que eles acionem automaticamente novas compilações quando houver commits para o repositório Git.
+
+Para realizar este exercício, verifique se você tem acesso:
+
+A um cluster do Red Hat OpenShift Container Platform em execução.
+
+Ao código-fonte do aplicativo version no repositório Git DO101-apps em seu sistema local.
+
+Procedimento 3.1. Etapas
+
+Instale a interface de linha de comando (CLI) do OpenShift.
+
+Baixe o binário da CLI do OpenShift para sua plataforma em https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/.
+
+Faça o download dos arquivos compactados do formulário penshift-client-<platform>-<version>.*.
+
+ATENÇÃO
+Não faça download dos arquivos openshift-install-*.
+
+Descompacte o arquivo compactado e copie o binário oc em um diretório à sua escolha. Verifique se esse diretório está na variável PATH do seu sistema. No macOS e no Linux, copie o binário oc para /usr/local/bin:
+
+$ sudo cp oc /usr/local/bin/
+$ sudo chmod +x /usr/local/bin/oc
+Para sistemas Windows 10, descompacte o arquivo baixado e siga as instruções em https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/ para editar a variável de ambiente PATH e adicione o caminho completo ao diretório onde o binário oc está localizado.
+
+Verifique se o binário oc funciona em sua plataforma. Abra um novo terminal de linha de comando e execute o seguinte:
+
+$ oc version
+Client Version: openshift-clients-4.2.0-201910041700
+Sua saída pode ser um pouco diferente com base na versão do cliente OpenShift que você baixou.
+
+NOTA
+Para usar o comando oc de dentro do terminal integrado do VS Code, reinicie o IDE depois de instalá-lo.
+
+Implante o aplicativo version no OpenShift usando a ferramenta oc.
+
+Faça login na sua conta do OpenShift usando a URL de ponto de extremidade da API que foi fornecida a você:
+
+Você será solicitado a informar um nome de usuário e uma senha. Use o mesmo nome de usuário e a mesma senha que você usou para fazer login no console da web do OpenShift.
+
+ATENÇÃO
+A URL do ponto de extremidade da API e a URL do console da web do OpenShift não são iguais. A URL do ponto de extremidade da API é usada principalmente para interagir com o OpenShift, usando ferramentas de linha de comando como oc.
+
+Resposta
+
+----------------------------------------------------------
+$ oc login https://api.cluster.domain.example.com:6443
+Username: <youruser>
+Password: 
+Login successful.
+ ...output omitted...
+ ---------------------------------------------------------
+
+Crie um novo projeto com o nome seu_usuário-version.
+
+Resposta
+
+---------------------------------------------------------------------
+$ oc new-project youruser-version
+Now using project "youruser-version" on server  ...output omitted...
+---------------------------------------------------------------------
+
+Inicie o editor do Visual Studio Code (VS Code). Na visualização do explorador (View → Explorer), abra a pasta DO101-apps no workspace My Projects. O código-fonte do aplicativo version está no diretório version.
+
+No VS Code, na visualização de controle do código-fonte (View → SCM), garanta que a entrada DO101-apps abaixo da opção SOURCE CONTROL PROVIDERS mostre a ramificação master. Se você estivesse trabalhando com outra ramificação em um exercício diferente, você clicaria na ramificação atual e selecionaria master na janela Select a ref to checkout para alternar para a ramificação master.
+
+ATENÇÃO
+Cada exercício usa uma ramificação exclusiva. Sempre crie uma nova ramificação usando master como base.
+
+Clique em master na entrada DO101-apps sob SOURCE CONTROL PROVIDERS.
+
+Selecione Create new branch…​ na lista de opções.
+
+No prompt, digite update-app no nome da ramificação. A visualização de controle do código-fonte é atualizada para a entrada DO101-apps com o nome da nova ramificação.
+
+Envie por push a ramificação update-app para o repositório DO101-apps do GitHub.
+
+Clique no ícone da nuvem Publish Changes ao lado da ramificação update-app para enviar por push a ramificação local para o repositório Git remoto. Se for solicitado, forneça o nome de usuário e senha do GitHub.
+
+Implante o aplicativo version do repositório Git DO101-apps.
+
+Alterne para um terminal de linha de comando. Digite o comando abaixo em uma única linha sem quebras de linha. Não digite o caractere \ no final das linhas. O comando é dividido em várias linhas neste exemplo apenas para fins de clareza e formatação:
+
+NOTA
+O #update-app indica que o OpenShift deve usar a ramificação update-app do Git, que foi criada na etapa anterior. O parâmetro --context-dir indica o diretório no repositório DO101-apps onde o código-fonte do aplicativo está armazenado.
+
+Resposta
+
+------------------------------------------------------------------------------------------------------
+$ oc new-app --name version \
+    https://github.com/yourgituser/DO101-apps#update-app \
+    --context-dir version
+--> Found image a7092f1 (4 weeks old) in image stream "openshift/nodejs" under tag "10" for "nodejs"
+
+Node.js 10.16.3
+---------------
+ ...output omitted...
+-------------------------------------------------------------------------------------------------------
+
+Teste o aplicativo.
+
+Abra um navegador e acesse o console da web do OpenShift. Faça login no console da web do OpenShift usando sua conta de desenvolvedor.
+
+Alterne para a perspectiva Developer.
+
+Clique em Topology no painel de navegação. Na lista Project:, selecione o projeto seu_nome-version.
+
+Clique na configuração de implantação version e clique na guia Overview. Verifique se há um único pod em execução. Talvez seja necessário aguardar um minuto ou dois para que o aplicativo seja totalmente implantado.
+
+
+Figura 3.3: Implantação concluída do aplicativo
+Os aplicativos criados usando o comando oc new-app não criam um recurso de rota por padrão. Execute o seguinte comando para criar uma rota e permitir o acesso ao aplicativo pela Internet:
+
+$ oc expose svc/version
+route.route.openshift.io/version exposed
+NOTA
+Você também pode criar uma rota usando o console da web do OpenShift. Selecione a perspectiva do Administrator e clique em Networking → Routes.
+
+Visualize a página Topology novamente e observe que a implantação de version agora exibe um ícone para abrir uma URL.
+
+Clique em Open URL para visualizar o aplicativo.
+
+
+Figura 3.4: URL da rota
+O aplicativo é aberto em uma nova guia do navegador. Você deve ver a versão 1 do aplicativo na saída.
+
+
+Figura 3.5: Versão 1 do aplicativo
+Feche a guia do navegador.
+
+Atualize o aplicativo para version.
+
+Na visualização do explorador do VS Code (View → Explorer), clique no arquivo app.js na pasta do aplicativo version da pasta DO101-apps. O VS Code abre uma guia do editor para o arquivo app.js.
+
+Altere a variável response para a versão 2 da seguinte maneira:
+
+Resposta
+
+-------------------------------------------------------
+ ...output omitted...
+var response;
+
+app.get('/', function (req, res) {
+    response = 'This is version 2 of the app.' + '\n';
+
+    //send the response to the client
+    res.send(response);
+
+});
+ ...output omitted...
+--------------------------------------------------------
+
+Salve as alterações no arquivo.
+
+Confirme as alterações localmente e envie a nova commit por push para o repositório do GitHub.
+
+Acesse a visualização de controle do código-fonte (View → SCM). Localize a entrada para o arquivo app.js abaixo do título CHANGES do diretório DO101-apps.
+
+Clique no botão de mais (+) para adicionar as alterações do arquivo app.js à próxima commit.
+
+Adicione a mensagem de commit updated app to v2 no prompt da mensagem e clique no botão de marca de seleção para fazer commit das alterações preparadas.
+
+Localize a entrada DO101-apps na opção SOURCE CONTROL PROVIDERS.
+
+Clique no ícone Synchronize Changes para publicar as alterações no repositório remoto.
+
+Se for exibido um aviso que essa ação enviará por push e extrairá commits de/para a origem, clique em OK para continuar. Se for solicitado, forneça o nome de usuário e senha do GitHub.
+
+Acione uma nova compilação manualmente usando o console da web do OpenShift.
+
+Clique em Builds no painel de navegação para visualizar a página Build Configs.
+
+
+Figura 3.6: Página de configurações da compilação
+Expanda o menu à direita da configuração da compilação version e clique em Start Build.
+
+
+Figura 3.7: Iniciar compilação
+Agora você verá a página de detalhes da compilação version-2.
+
+Clique na guia Logs para conferir o progresso da compilação. Uma nova imagem de contêiner com o código-fonte atualizado é criada e enviada por push para o registro de imagem do OpenShift. Aguarde até que a imagem de contêiner do aplicativo seja criada e implantada. Você verá a mensagem Push successful nos logs antes de prosseguir para a próxima etapa.
+
+Clique em Topology no painel de navegação e em Open URL na implantação de version. A versão 2 do aplicativo é exibida.
+
+
+Figura 3.8: Versão 2 do aplicativo
+Feche a guia do navegador.
+
+Configure os webhooks no GitHub de modo que eles acionem automaticamente uma nova compilação quando você fizer commits no repositório Git.
+
+Acesse o repositório DO101-apps (https://github.com/seu_usuário_do_git/DO101-apps) no GitHub usando um navegador. Faça login na sua conta do GitHub se for solicitado.
+
+Clique na guia Settings para abrir a página de configurações do repositório.
+
+
+Figura 3.9: Configurações do repositório do GitHub
+Clique em Webhooks no menu à esquerda para abrir a página de webhooks.
+
+
+Figura 3.10: Página Webhooks
+Clique em Add webhook para adicionar um novo webhook. Talvez você precise inserir novamente a senha do GitHub. Depois que a senha for confirmada, a página Add Webhook será exibida.
+
+Em seguida, você deve fornecer uma URL de carga para o webhook. O webhook é acionado (envia uma solicitação HTTP POST à URL) quando você faz commit de alterações no repositório Git.
+
+Para obter a URL de carga, alterne para o console da web do OpenShift no navegador e clique em Builds no painel de navegação.
+
+Clique na configuração da compilação version para exibir a página Build Config Overview.
+
+Role até o final dessa página e localize o link Copy URL with Secret ao lado do tipo GitHub.
+
+Clique no ícone do bloco de notas para copiar a URL de carga.
+
+
+Figura 3.11: URL de carga
+Retorne para a página de webhooks do GitHub.
+
+Cole a URL de carga no campo Payload URL.
+
+Altere Content type para application/json.
+
+Não altere os outros campos.
+
+Clique em Add webhook para adicionar o webhook.
+
+O GitHub envia um ping de teste à URL de carga para confirmar a disponibilidade e exibe uma marca de seleção verde para o webhook, em caso de êxito.
+
+
+Figura 3.12: Webhook ativo
+Envie as alterações por push ao repositório Git para acionar automaticamente uma nova compilação.
+
+Edite o arquivo DO101-apps/version/app.js no VS Code para alterar a variável response para a versão 3:
+
+Resposta
+
+-------------------------------------------------------
+ ...output omitted...
+var response;
+
+app.get('/', function (req, res) {
+    response = 'This is version 3 of the app.' + '\n';
+
+    //send the response to the client
+    res.send(response);
+
+});
+ ...output omitted...
+--------------------------------------------------------
+
+Salve as alterações do arquivo.
+
+Prepare as alterações, faça commit e envie por push as alterações para o repositório Git usando etapas semelhantes às usadas para a versão 2 do aplicativo.
+
+Depois que for feita commit das alterações e elas forem enviadas para o repositório Git remoto, uma nova compilação será acionada automaticamente.
+
+No console da web do OpenShift, clique em Builds → version e clique na guia Builds para visualizar a lista de compilações do aplicativo version. Observe que uma nova compilação, version-3, foi iniciada.
+
+
+Figura 3.13: Lista de compilações
+Aguarde até que a compilação seja concluída com êxito e o aplicativo seja implantado novamente.
+
+Clique em Topology e em Open URL para visualizar o aplicativo atualizado. Agora, ele deve exibir a versão 3 na saída.
+
+
+Figura 3.14: Versão 3 do aplicativo
+Feche a guia do navegador.
+
+Faça a limpeza. Exclua o projeto seu_usuário-version e remova os webhooks do GitHub.
+
+Acesse a página Settings do repositório DO101-apps no GitHub.
+
+Clique em Webhooks para visualizar a página de webhooks.
+
+Clique em Delete ao lado do webhook ativo e confirme a exclusão na janela de confirmação. Talvez seja solicitada sua senha do GitHub.
+
+No console da web do OpenShift, clique em Advanced → Projects para visualizar a lista de projetos e exclua o projeto seu_usuário-version. Quando solicitado, confirme a exclusão.
+
+Digite seu_usuário-version na janela de confirmação e exclua o projeto.
+
+
+Figura 3.15: Excluir aplicativo da versão
+Isso conclui o exercício orientado.
