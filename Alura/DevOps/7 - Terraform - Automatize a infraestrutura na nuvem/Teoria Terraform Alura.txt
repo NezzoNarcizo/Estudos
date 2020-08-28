@@ -66,7 +66,8 @@ Aula 01: Provisionando a primeira infraestrutura com o Terraform -------
 
                             $ source .profile
 
-                            Obs: Isto irá configurar seu $PATH temporariamente, para que assim que abra o terminal tudo já esteja pronto, adicione o seguinte trecho ao final do .bashrc
+                            Obs: Isto irá configurar seu $PATH temporariamente, para que assim que abra o terminal tudo já esteja pronto, adicione o seguinte trecho 
+                            ao final do .bashrc
 
                                 # set PATH so it includes user's private bin if it exists
                                 if [ -d "$HOME/.local/bin" ] ; then
@@ -79,20 +80,761 @@ Aula 01: Provisionando a primeira infraestrutura com o Terraform -------
 
                             Verificamos então que de fato o .local/bin foi adicionado ao nosso $PATH
 
-                - Configurações AWS:
+                - Configurações AWS (Criação do IAM):
 
                     Vamos criar um chave igual já fizemos antes no curso introdutório da Amazon AWS...
 
                         Entramos no serviço IAM (Identity and Access Management) da AWS e criamos um usuário com o nome "terraform-aws"
 
+                        O tipo de usuário será aquele que utiliza: 
 
+                            "Acesso programático"
+                            "Habilita uma ID da chave de acesso​e chave de acesso secreta para a API da AWS, CLI, SDK, e outras ferramentas de desenvolvimento."
 
+                        Precisamos que este usuário tenha acesso a todos os recursos da AWS, então se ainda não temos, vamos criar um grupo que dê estas permissões.
+                        Já tinha do outro curso o grupo "admin", bastou adicioná-lo ali.
 
+                            Políticas anexadas: "AdministratorAccess"
+                            Definir limite de permissões: Criar user sem limites de permissões
+
+                            Obs: Por curiosidade, se olharmos os detalhes das políticas anexadas veremos que temos agora permissões para o nosso usuário de 228 de 228 
+                            serviços que a AWS oferece.
+
+                        Ao terminar de criar o usuário, faça o download do arquivo .csv com as chaves de acesso e salve os dados fornecidos.
+                            Obs: Caso, por acidente, passemos desta parte sem salvar as credenciais ou fazer o download do arquivo, teremos que criar novamente a IAM, 
+                            pois a Amazon não da oportunidade de voltarmos nesta parte para nossa própria segurança.
+
+        Configurando a primeira infraestrutura:
+
+            De posso do nosso arquivo csv, faremos a configuração da nossa aws cli.
+            Obs: Aqui estamos considerando que já temos a aws cli instalada...
+
+            Executamos o comando:
+
+                # aws configure
+
+            Então preenchemos os 4 campos conforme o arquivo:
+
+                    AWS Access Key ID [********************]: 
+                    AWS Secret Access Key [********************]: 
+                    Default region name [us-east-1]: //Região default que estamos na AWS
+                    Default output format [json]: //Formato de saída dos dados
+
+            Precisamos de um ambiente, um pasta de laboratório, para colocarmos os nossos arquivos de configuração do Terraform assim como os arquivos das atividades.
+            Por isso criei a pasta "terraform-alura". Estou utilizando para a edição dos arquivos de configuração a IDE VS Code. A extensão do Terraform que estou 
+            utilizando é a do Michael Olenfalk. Usamos o VS Code para abrir a pasta do nosso projeto dentro do Ubuntu WSL.
+
+            Depois de instalar a extensão e abrir a pasta do nosso projeto, criamos o nosso primeiro arquivo Terraform o main.tf.
+            Não é obrigatório o uso do nome "main" porém é uma prática indicada na documentação, a de usar o nome "main" para o arquivo principal.
+
+            Começamos configurando o nosso provedor, e ao escrever "provider" no arquivo ele já nos auxilia na construção da estrutura com chaves.
+            Preenchemos apenas o identificador do provider como "aws".
+
+                provider "aws" {
+                  
+                }
+
+            O curso basicamente vai se basear em criar funções e componentes e entendendo como funcionam.
+            No caso do provedor, como escolhemos AWS, veremos quais seus recursos, quais opções temos? Como funcionam? etc.
+            No link a seguir podemos ter uma visão ampla de todos os provedores que o Terraform da suporte, assim também como utiliza-los.
+
+                https://www.terraform.io/docs/providers/index.html
+
+            Se clicarmos em "Major cloud" veremos quais são os principais provedores. Se clicarmos em "Cloud" teremos a lista completa deles.
+            Ao entrarmos em "Major cloud" e depois em "AWS" veremos exemplos de configurações. No caso seguiremos o exemplo da configuração do "Provider" para
+            terminarmos de preencher o bloco que começamos logo acima.
+
+                provider "aws" {
+                  version = "~> 2.0"
+                  region  = "us-east-1"
+                }
+            
+            Configuramos dois parâmetros já sugeridos na documentação. O primeiro é a versão do provedor AWS que no momento do curso está na versão 2.0.
+            O segundo parâmetro é a nossa região que já deixamos configurados na AWS. O que foi configurado acima é a base da nossa infraestrutura.
+            Durante as próximas aulas, para exercício, utilizaremos um cenário onde deveremos prover três maquinas para o nosso time de desenvolvimento. 
+            Então entenderemos como aplicar esta infraestrutura num mesmo arquivo.
+
+            No próximo bloco, criaremos o que ele chama de "resource", que é o tipo de recurso que utilizaremos do nosso provedor. Como vimos no curso de criamos
+            uma infraestrutura diretamente no console da AWS, o nosso recurso será "aws_instance", o nome dela definiremos como "dev".
+
+                resource "aws_instance" "dev" {
                 
+                }
+
+            Por isso é importante conhecer a estrutura do provedor antes de mexer com o Terraform. Teremos que colocar os parâmetros que a AWS exige.
+            No caso, se é uma instância, temos que saber o tipo da instância que iremos criar, aquela mesmo que escolhemos ao clicar em "Launch instance" dentro
+            do console da AWS.
+
+            Escolher a imagem que iremos utilizar. Neste caso utilizarei uma imagem Ubuntu, já disponibilizada para uso no free tier.
+            O parâmetro que usamos para definir o tipo da imagem no bloco resouce é o "ami=". Poderíamos utilizar o "CLI" para pegar o identificador da imagem.
+            Mas também podemos utilizar o browser para verificar diretamente no nosso provedor.
+
+            Devemos nos atentar, porque, a mesma imagem em regiões diferentes tem ID's diferentes.
+            Como estão utilizando o Norte da Virgínia como região (us-east-1), precisamos pegar o ID da imagem Ubuntu nela.
+
+                resource "aws_instance" "dev" {
+                ami = "ami-085925f297f89fce1"
+                }
+
+            Pronto! Agora já temos o ID da imagem que iremos utilizar. Agora precisamos do tipo de instância, o recurso computacional na qual nossa imagem será
+            instalada. Obviamente como estamos usando o free tier, vamos utilizar aquela recurso que ta de graça XD.....O t2.micro.
+
+                resource "aws_instance" "dev" {
+                  ami = "ami-085925f297f89fce1"
+                  instance_type = "t2.micro"
+                }
+
+            Agora que já temos a imagem e o recurso computacional, iremos precisar de um "key_name".
+
+            Sabemos que para gerenciar uma máquina na nuvem precisamos do SSH. Para fazer SSH, precisamos de um par de chaves, uma pública e uma privada.
+            Podemos utilizar aquele mesmo par de chaves que criamos por região para gerenciar nossas instâncias, mas podemos fazer uma chave local para utilizarmos 
+            em qualquer lugar/ambiente que queiramos. Utilizamos o comando seguinte dentro da nossa pasta do projeto terraform-alura:
+
+                # ssh-keygen -f terraform-aws -t rsa
+
+            Então, criamos uma chave pública e uma chave privada com o nome "terraform-aws" utilizando o algoritmo rsa.
+            Para mantermos a organização movemos a chave privada para o diretório ~/.ssh/ e também uma CÓPIA da chave pública para o mesmo diretório.
+            Preciamos agora importar a chave pública na AWS. Vamos até o menu da EC2 na AWS na parte de "key_pairs"
+
+                https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#KeyPairs:
+
+            Agora em:
+
+                Actions > Import key pair
+
+                Damos um nome para a nossa chave, para seguir o padrão deste curso o ideal é que se coloque "terraform-aws" e então indicamos o arquivo.
+
+            Agora já temos a nossa "key_name":
+
+                resource "aws_instance" "dev" {
+                  ami = "ami-085925f297f89fce1"
+                  instance_type = "t2.micro"
+                  key_name = "terraform-aws"
+                }
+
+            Repare que não precisamos da extensão, somente o nome da chave mesmo.
 
 
-                        
+        Deploy da primeira infraestrutura:
 
+            No ultimo tópico demos uma parada, mas faltava apenas dois parâmetros. O primeiro são as "tags". "Tags" nada mais são do que o nome, ou, os nomes, que
+            serão utilizamos pelos nosso recursos:
+
+                resource "aws_instance" "dev" {
+                  ami = "ami-085925f297f89fce1"
+                  instance_type = "t2.micro"
+                  key_name = "terraform-aws"
+                  tags = {
+                    Name = "1"
+                  }
+                }
+
+            Se neste momento fizessemos o deploy, teríamos uma máquina rodando na nuvem, porém o combinado foi que colocassemos três máquinas na AWS.
+            Para isso, utilizaremos um outro parâmetro, o parâmetro "count". Nele podemos colocar o número da quantidade de máquinas que desejamos.
+            Então novamente, como já falamos, o número de máquina será 3.
+
+                resource "aws_instance" "dev" {
+                  count = 3
+                  ami = "ami-085925f297f89fce1"
+                  instance_type = "t2.micro"
+                  key_name = "terraform-aws"
+                  tags = {
+                    Name = "dev"
+                  }
+                }
+
+            Porém temos um problema agora, como definimos o nome da "tags" como "dev" todas as máquinas criadas terão o mesmo nome.
+            Podemos então, usar a referência do index do contador para alterarmos o nome da nossa máquina. Colocaremos entre chaves o index do count, para que elas 
+            fiquem nomeadas como dev0, dev1 e dev2.
+
+                resource "aws_instance" "dev" {
+                  count = 3
+                  ami = "ami-085925f297f89fce1"
+                  instance_type = "t2.micro"
+                  key_name = "terraform-aws"
+                  tags = {
+                    Name = "dev${count.index}"
+                  }
+                }
+
+            Agora que nosso arquivo esta praticamente pronto, vamos abrir um terminal na pasta do projeto e executar os comandos do Terraform.
+            O primeiro comando é o:
+
+                # terraform init
+
+                Para que possamos baixar as dependências. Ele baixa o módulo AWS conforme a versão que colocamos.
+
+            Executamos também:
+
+                # terraform plan
+
+                Este comando nos mostra como ficará o ambiente. Ele é o "plano" da futura infraestrutura.
+                Podemos ler sua saída e notar que serão feitas três adições de máquinas que ele irá prover.
+
+            E por fim:
+
+                # terraform apply
+
+                Que vai executar o nosso "plano" e jogar na AWS.
+                Durante a execução deste comando ele vai solicitar confirmação, fazemos isto com um "yes".
+                Durante o "apply" podem ser encontrados erros de sintaxe, erro no identificador da imagem, erro de interdependência de recursos, etc.
+
+                Podemos ao final da execução verificar no nosso provedor se a infraestrutura foi criada, no meu caso na AWS.
+
+        Nesta aula:
+
+            - Tivemos uma apresentação do Terraform
+            - Vimos como preparar o nosso ambiente
+                * Instalação do Terraform
+                * Inclusão no PATH
+                * Criação de uma chave AWS
+                * Instalação da AWS CLI
+                * Instalação da extensão do Terraform no Visual Studio Code
+            - Preparamos o código da infraestrutura
+            - Fizemos o deploy, conhecendo os passos/comandos init, plan e apply
 
 
     Questões:
+
+        1 - Sobre as características da ferramenta Terraform, podemos dizer que:
+
+            Selecione uma alternativa
+
+            R: É uma ferramenta para o gerenciamento de infraestrutura
+
+            Alternativa correta! Sim, o Terraform tem como proposta criar e gerenciar sua infraestrutura.
+
+        
+        2 - Para nós configurarmos a infraestrutura, existem alguns requisitos que devem ser observados. Selecione-os abaixo:
+
+            Selecione 2 alternativas
+
+            a) Dentro da configuração, é mandatório o uso do bloco provider
+
+            Alternativa correta! Perfeito, através deste bloco, apontamos qual o provedor que iremos utilizar na configuração.
+
+            b) Podemos ter mais de um provider, ou seja, múltiplos providers configurados.
+
+            Alternativa correta! O Terraform permite a opção de trabalhar com múltiplos provedores.
+
+        
+        3 - Para que possamos fazer o deploy, é necessário a seguinte sequência de comandos:
+
+            Selecione uma alternativa
+
+            R: init, plan e apply
+
+            Alternativa correta! Na primeira vez utilizamos o init, depois o plan na sequência (mostra todas as alterações, mas sem aplicá-las) e apply para efetivar
+            as mudanças.
+
+
+Aula 02: Modificando a infraestrutura e inserindo novos recursos -------
+
+    Teria:
+
+        Criando security groups:
+
+            Quando criamos nossas máquinas elas já foram inseridas no security group default da AWS. Como vimos no curso da AWS, este grupo permite que as máquinas
+            "conversem" entre si. Precisamos então criar um grupo para acesso via ssh, o antigo grupo nosso "acesso-remoto".
+
+            Como são máquinas de desenvolvedores, não queremos deixar elas se comunicarem entre si, queremos deixa-las isoladas, mas, obviamente precisamos acessa-las.
+            Vamos então criar um security group e vincular este security group a cada instância.
+
+            Vamos para a parte da documentação do Terraform para acharmos um exemplo de criação/configuração do security group dentro da AWS.
+            Isto está em Docs > Providers > AWS > VPC > Resource > aws_security_group ou podemos acessar diretamente o link:
+
+                https://www.terraform.io/docs/providers/aws/r/security_group.html
+
+            Pegamos o exemplo mais simples:
+
+                Basic usage
+
+                    resource "aws_security_group" "allow_tls" {
+                      name        = "allow_tls"
+                      description = "Allow TLS inbound traffic"
+                      vpc_id      = "${aws_vpc.main.id}"
+
+                      ingress {
+                        description = "TLS from VPC"
+                        from_port   = 443
+                        to_port     = 443
+                        protocol    = "tcp"
+                        cidr_blocks = aws_vpc.main.cidr_block
+                      }
+
+                      egress {
+                        from_port   = 0
+                        to_port     = 0
+                        protocol    = "-1"
+                        cidr_blocks = ["0.0.0.0/0"]
+                      }
+
+                      tags = {
+                        Name = "allow_tls"
+                      }
+                    }
+
+            Neste exemplo podemos ver que ele cria um security group que permite acesso através do protocolo TLS na porta 443, ou seja, todo acesso.
+            Já nós queremos acesso à porta 22. O recurso, como qualquer outro, tem que existir, então inserimos "aws_security_group". A referência do recurso "acesso-ssh".
+            Mudaremos o nome para acesso-ssh, assim como deixamos a nossa referência.Na descrição colocamos: "Grupo para acesso SSH". Mudamos a porta 22. 
+            O cidr_blocks está liberado para todo mundo, mas não podemos deixar assim, colocamos então o nosso número IP/32.
+            
+            Obs: Esta parte do cidr_blocks é uma lista, podemos colocar quantos IP's quisermos, basta colocar entre colchetes e separar por virgula.
+            
+            Em "tags", devemos colocar a tag do nosso security group, colocamos apenas ssh.
+            Após o grupo criado podemos verificar na aba tags se esta tag realmente foi criada.
+
+            Obs2: Tive que tirar um parâmetro que não tinha no curso que é o vpc_id. A parte do egress também.
+
+            Nosso bloco do security group ficou assim:
+
+                resource "aws_security_group" "acesso-ssh" {
+                  name        = "acesso-ssh"
+                  description = "Grupo para acesso SSH"
+
+                  ingress {
+                    description = "TLS from VPC"
+                    from_port   = 22
+                    to_port     = 22
+                    protocol    = "tcp"
+                    cidr_blocks = ["177.3.204.0/32"]
+                  }
+
+                  tags = {
+                    Name = "ssh"
+                  }
+                }
+
+            Pronto! Agora com todos os parâmtros configurados do nosso bloco do security group vamos rodas os comandos para ver se está tudo certo.
+
+                # terraform plan
+
+            depois...
+
+                # terraform apply
+
+            Podemos ir novamente no nosso dashboard do nosso provedor verificar se o security group foi criado.
+            Podemos notar que com o Terraform o trabalho manual com o dashboard do nosso provedor fica de lado. Isto é ideal para quem administra grandes quantidades
+            de ambientes.
+
+        
+        Aplicando as mudanças na infraestrutura:
+
+            Iremos agora "linkar" o nosso security group às nossas instâncias. Adicionaremos abaixo de "tags" a referência da nossa vpc. Como vemos isso? Podemos
+            ir até o dashboard da EC2 na AWS e pega-la, poderíamos pegar o Security group ID utilizando a AWS CLI também.
+
+            Adicionamos então abaixo de "tags" o seguinte parâmetro:
+
+                vpc_security_group_ids = []
+
+            Como este parâmetro é uma lista assim como o cidr_blocks, dentro dos colchetes (com aspas duplas) colocamos o "Security group ID" que é a referência que 
+            precisamos.
+
+                vpc_security_group_ids = ["sg-0bd31ccb3f15a2cf9"]
+
+            Ao rodar o plan, podemos perceber que ele tira o securitry group antigo e coloca o novo, para acesso remoto. As vezes queremos continuar também com o 
+            antigo. Para isso dentro dos colchetes utilizando uma virgula, colocaremos o grupo para que as máquinas possam "conversar" entre si.
+
+                vpc_security_group_ids = ["sg-0bd31ccb3f15a2cf9", "sg-6c9d1144"]
+            
+            Rodamos mais uma vez o comando:
+
+                # terraform plan
+
+            E então:
+
+                # terraform apply
+
+            Obs: Podemos notar que no # terraform plan, o que é adicionado aparece com um + verde, o que é alterado com um ~ amarelo e o que é removido com um 
+            - vermelho
+
+            Um outro comando que podemos utilizar é o:
+
+                # terraform show
+
+            É basicamente uma "foto" de como está o nosso ambiente. Interessante para termos um resumo e também mandar esta saída para algum arquivo.
+
+        
+        Testando o acesso remoto às instâncias:
+
+            Uma observação rápida, se não notamos ainda, o comando # terraform show, no mostra como está nosso ambiente, mas, de onde ele pega isso?
+            Ele pega as informações do arquivo terraform.tfstate.
+
+            Podemos notar que tem muito mais parâmetros do que aqueles que configuramos no nosso arquivo main.tf. O que aconteceu é o que normalmente acontece
+            em qualquer ferramenta onde não definimos todas as características que queremos, que é: Aplica-se as opções default!
+
+            Um exemplo é aquele do momento que não tinhamos definido o security group, ele simplesmente aplicou o security group default.
+            Um comando interessante ainda sobre security groups, é o comando para lista-los:
+
+                # aws ec2 describe-security-groups
+
+            Agora finalmente faremos a conexão com a nossa máquina na AWS via SSH, só para ver se tudo funcionou corretamente.
+            Copiamos aquela linha que já vimos anteriormente no curso da Amazon AWS quando escolhemos a instância na qual queremos nos conectar e então copiamos
+            a linha de comando de exemplo...
+
+                # ssh -i "terraform-aws.pem" ubuntu@ec2-X-XX-XXX-XXX.compute-1.amazonaws.com
+
+            Note que ele informa como exemplo uma chave com o nome que criamos, porém com a extensão .pem, esperando que estejamos na pasta com o arquivo .pem
+            baixado. Porém sabemos que nós mesmos criamos a chave, e temos que usar nossa chave privada para conversar com a pública que deixamos na AWS, e que ela 
+            agora se encontra no diretório ~/.ssh/. Então iremos alterar este caminho e tirar as aspas duplas e também a extensão .pem da linha de comando.
+
+                # ssh -i ~/.ssh/terraform-aws ubuntu@ec2-X-XX-XXX-XXX.compute-1.amazonaws.com
+
+            Uma coisa que não foi pedida no curso, mas eu fiz para testar. As nossas instâncias ainda não permitem acesso público, ou seja, através do IP público.
+            Então, de dentro da instância dev0 que eu realizei um ping para o IP privado da instância dev1 para ver se funcionou a questão de estarem no security
+            group default. Funcionou perfeitamente, o mesmo funcionou para a instância dev2.
+
+        
+        Nesta aula, aprendemos:
+
+            - Como criar um novo resource security group
+            - A adicionar o security group à instância já criada
+            - A testar, acessando via SSH
+
+            
+    Questões aula 02:
+
+        1 - Como deve ser configurado o security group para permitir acesso HTTPS à aplicação?
+
+            Selecione uma alternativa
+
+            R: ingress {
+                from_port   = 443
+                to_port     = 443
+                protocol    = "tcp"
+               }
+
+                Alternativa correta! Não esqueça de incluir os CDIR_BLOCKS com os IPs permitidos.
+
+        
+        2 - Na hora de utilizar os comandos plan ou apply, devemos considerar que:
+
+            Selecione uma alternativa
+
+            R: Podemos utilizar diretamente o apply sem o plan
+
+            Alternativa correta! Sim, mesmo não sendo recomendável, o Terraform permite que você utilize diretamente o apply.
+
+        
+        3 - Qual comando podemos utilizar para visualizar informações, como IPs, redes, etc, alocados em nossa infraestrutura?
+
+            Selecione uma alternativa
+
+            R: terraform show
+
+            Alternativa correta! O comando show lê o arquivo terraform.tfstate e exibe as informações associadas (IP, rede, etc).
+
+
+Aula 03: Utilizando referências e dependências entre os recursos -------
+
+    Uma observação importante relembrada na hora de subir o ambiente novamente para a aula 03...Tentar sempre não deixar comentários nos arquivos do Terraform, pois
+    por mais que o que estiver dentro dos comentários não vá ser criado, vai gerar interpretação na hora da leitura e lentidão na execução do arquivo.
+    Erros e inconsistências gerarão demora na hora da execução também.
+
+    Teoria:
+
+        Utilizando referências entre os recursos:
+
+            Colocamos o ID do security group que queríamos vincular já na criação das nossas instâncias. Porém tem uma forma de colocarmos o id do security group
+            de forma automática. Podemos verificar o id do security group utilizando o comando # terraform show. Mas, como podemos ler esta variável no nosso código?
+
+            Utilizaremos a seguinte expressão: "${aws_security_group.acesso-ssh.id}"
+
+            Como já temos outro security group que queremos adicionar, colocaremos eles dois juntos:
+
+                vpc_security_group_ids = ["sg-6c9d1144", "${aws_security_group.acesso-ssh.id}"]
+
+            Um inserido com o id direto e o outro capturado com uma expressão.
+            Vemos que o recurso é "aws_security_group", o nome do grupo "acesso-ssh" e o atributo "id".
+
+            -------
+
+            Trabalhando agora com recursos com dependências...
+
+            No caso teremos o exemplo da demanda de uma nova máquina, e essa máquina vai rodar uma aplicação e essa aplicação fala com bucket s3.
+            Criaremos o bucket s3, uma máquina de desenvolvimento e vincularemos esses dois serviços. Estes dois serviços serão amarrados.
+
+            Criamos o bucket s3 utilizando a documentação do terraform:
+
+                https://www.terraform.io/docs/providers/aws/r/s3_bucket.html
+
+                resource "aws_s3_bucket" "dev4" {
+                  bucket = "nezzonarcizolabs-dev4"
+                  acl    = "private"
+
+                  tags = {
+                    Name = "nezzonarcizolabs-dev4"
+                  }
+                }
+
+                O nosso recurso, a máquina, será vinculado ao bucket...
+
+                resource "aws_instance" "dev4" {
+                  ami = "ami-0b1660d78b36203c5"
+                  instance_type = "t2.micro"
+                  key_name = "terraform-aws"
+                  tags = {
+                    Name = "dev4"
+                  }
+                  vpc_security_group_ids = ["sg-6c9d1144", "${aws_security_group.acesso-ssh.id}"]
+                }
+
+                Obs: Como podemos ver como a referência é direta, tiramos o count e o "index" contador. O resto é tudo igual, até utilizaremos a mesma imagem.
+                        Criamos também uma outra máquina, um outro recurso, o "dev5", ela vai servir para vermos como é que é a criação de dependências.
+
+                Coloquei o nome do recurso s3 bucket como nezzonarcizolabs-dev4, pois é o recurso para a máquina dev4.
+                "acl" é o permissionamento do bucket. Por padrão ele já é privado, mas vamos deixar ali para ficar claro.
+
+                Nas instâncias, nós colocamos região. Na AWS, o bucket é multirregional, ou seja, não específicamos nada.
+
+                Para que possamos ver como funciona a dependência, damos um # terraform plan mas não o # terraform apply.
+
+
+        Dependências entre os recursos:
+
+            O objetivo é vincular um recurso ao outro. O que queremos vincular? A máquina dev4 tem que estar vinculada ao nosso bucket, e pra isso colocamos o
+            agumento "depends_on", e dentro da nossa lista do que ele depende colocamos o nosso bucket...
+
+                resource "aws_instance" "dev4" {
+                    ami = "ami-0b1660d78b36203c5"
+                    instance_type = "t2.micro"
+                    key_name = "terraform-aws"
+                    tags = {
+                        Name = "dev4"
+                    }
+                    vpc_security_group_ids = ["sg-6c9d1144", "${aws_security_group.acesso-ssh.id}"]
+                    depends_on = [aws_s3_bucket.dev4]
+                }
+
+            Para não ficar dúvida, o bucket tem o nome da instância "dev4", por aí que o Terraform pega a referência, esta referência é a que vai ser usada pela AWS.
+            Na hora que executarmos o "plan" e o "apply" veremos que ele cria até a instância dev5, porém, cria o bucket antes de criar a instância dev4, pois
+            declaramos no nosso código que a nossa instância dev4 depende do bucket, tudo por causa do "depends on", muito bom para montarmos nossa infra e mantermos
+            as nossas dependências.
+
+            Na hora de apagar também fica fácil, pois depois de deletar a instância dev4 o bucket também vai embora.
+
+    Nesta aula, aprendemos:
+
+        - Que existe um modo mais simples de apontar para um recurso
+        - A criar um recurso com dependência
+
+
+    Questões aula 03:
+
+        1 - Veja o exemplo abaixo:
+
+            resource "aws_security_group" "https" {
+                arn = "arn:aws:ec2:us-east-1:23232323232:security-group/sg-0586e4defc54ed1af"
+                description = "Allow TLS inbound traffic"
+                egress = []
+                id = "sg-0586e4defc54ed1af"
+            }
+
+            R: vpc_security_group_ids = ["${aws_security_group.https.id}"]
+
+            Alternativa correta! Para utilizar a referência, é preciso especificar os recursos e seus respectivos atributos. No exemplo, o .id.
+
+        
+        2 - Para utilizarmos as dependências entre os recursos, é necessário:
+
+            Selecione uma alternativa
+
+            R: Utilizar o argumento depends_on
+
+            Alternativa correta! Com o depends_on, é possível vincular recursos, desta forma a criação/exclusão de um implica respectivamente no outro.
+
+
+Aula 04: Organizando a configuração com a separação dos arquivos e aliases -------
+
+    Teoria:
+
+        Quebrando a configuração em diferentes arquivos:
+
+            Agora organizaremos a nossa infraestrutura em arquivos separados.
+            Fizemos a alteração passando todo o código do security group para um arquivo separado chamado security-group.tf.
+            Após executar o comando 'terraform plan' veremos que ele não detecta nenhuma alteração que precise de ajustes, ou seja, tudo que estiver dentro de arquivos
+            com a extensão '.tf' ele detecta como configuração de infra.
+
+            A documentação do terraform e o instrutor aconselham a sempre manter o código da infra em arquivos separados (quebrando a infra) de acordo com seus fins.
+            Por ora, o instrutor recomendou separar a infra da seguinte forma:
+
+                - main.tf: Apenas o essencial para as instâncias, como bucket, banco de dados e as instâncias em si.
+                Outros recursos como security groups, variáveis etc em outros arquivos.
+
+            Nas próximas atividades iremos utilizar outros recursos o que vai facilitar a visualização deste cenário citado acima.
+
+
+        Novos recursos em diferentes regiões:
+
+            Depois de quebrarmos nossa configuração em duas partes, verificamos que é possível cada um criar a sua configuração da forma que achar melhor.
+
+            Como DevOps devemos estar preparados para trabalhar em mais de uma região, sendo assim, nos foi proposto criar (adicionar) na nossa infra mais uma instância
+            e um banco de dados em outra região da AWS.
+
+            Para criar a nova instância em outra região realizamos os seguintes passos:
+
+                Criamos um novo recurso da AWS:
+
+                    O provedor da outra região, estavamos utilizando o us-east-1 que é do norte da Virgínia...E agora criamos um recurso (provedor) para us-east-2
+                    que é Ohio.
+
+                        provider "aws" { (aws é o tipo do recurso, isto não se muda)
+                          alias = "us-east-2" (Este 'alias' serve para que não dê conflito com o nosso outro recurso "aws")
+                          version = "~> 2.0"
+                          region = "us-east-2"
+                        }
+                    
+                Na sequência copiamos o código da nossa dev5 que é uma "máquina" da nossa primeira região, porém teremos que ajustar alguns detalhes:
+
+                    resource "aws_instance" "dev6" {
+                      provider = "aws.us-east-2" (Provider, informando qual o recurso provedor que iremos utilizar para esta instância)
+                      ami = "ami-07c8bc5c1ce9598c3" (ami, Id da imagem que utilizaremos na região us-east-2, Ohio (As imagens tem id's distintos de cada região))
+                      instance_type = "t2.micro"
+                      key_name = "terraform-aws"
+                      tags = {
+                        Name = "dev6" (Nome alterado)
+                      }
+                      vpc_security_group_ids = ["sg-6c9d1144", "${aws_security_group.acesso-ssh-us-east-2.id}"] (Security group criado na região us-east-2)
+                                                                                                                (Também adicionado àquele arquivo separado security-group.tf)
+                    }
+
+                Código do security group utilizado pela nova instância, adicionado ao arquivo security-group.tf:
+
+                    resource "aws_security_group" "acesso-ssh-us-east-2" {
+                      provider = "aws.us-east-2"
+                      name        = "acesso-ssh"
+                      description = "Grupo para acesso SSH"
+
+                      ingress {
+                        description = "TLS from VPC"
+                        from_port   = 22
+                        to_port     = 22
+                        protocol    = "tcp"
+                        cidr_blocks = ["177.5.255.105/32"]
+                      }
+
+                      tags = {
+                        Name = "ssh"
+                      }
+                    }
+
+                    Obs: Note que o nome no resource e no provider é alterado pois este security group é da nova região.
+                    Obs: Nós não podemos ter dois recursos idênticos, ou seja, com o mesmo nome.
+
+            Depois de realizar estas alterações rodamos um 'terraform plan' para verificar quais foram as alterações.
+            Próxima atividade será configurar um database.
+
+        
+        Deploy da infraestrutura multi-região:
+
+            Uma coisa que muita gente esquece é: Configurar a chave de acesso (.pem) na nova região para acessarmos via SSH. Muitos gostam de criar uma chave para cada 
+            região, mas para facilitar a administração da nossa infra, melhor que tenhamos apenas uma chave para trabalhar.
+
+            Para utilizar a mesma chave que ja temos, devemos ir até o painel de administrador da AWS e importar ("Key Pair") o arquivo .pem que já temos no nosso ambiente,
+            será solicitado um nome para a chave, sugiro que coloque o mesmo nome que já estamos utilizando.
+
+            Agora vamos vincular a nossa instância dev6 da região Ohio ao recurso de banco de dados, utilizaremos o recurso DynamoDB da AWS.
+
+            Para utilizar este recurso e ter exemplo de como codifíca-lo, utilizaremos a documentação do Terraform:
+
+                https://registry.terraform.io/providers/hashicorp/aws/latest/docs (Documentação DynamoDB)
+
+            Em 'Resource' 'aws_dynamodb_table' temos o trecho de código que vamos copiar como exemplo.
+
+                resource "aws_dynamodb_table" "dynamodb-homologação" { -> Alteramos o nome do nosso recurso
+                  provider = "aws.us-east-2" -> Não podemos esquecer de onde é a demanda. Caso não informe o local correto aqui, será criado no us-east-1.
+                  name           = "GameScores"
+                  billing_mode   = "PROVISIONED" -> Em 'billing_mode' alteramos de 'PROVISIONED' para 'PAY_PER_REQUEST' que faz que a capacidade aumente conforme a 
+                                    necessidade
+                  read_capacity  = 20 -> Devido a capacidade aumentar conforme a demanda, não precisamos mais defini-las, por isso removemos isso do código (leitura e 
+                                            escrita)
+                  write_capacity = 20 -> !!!!!!!
+                  hash_key       = "UserId"
+                  range_key      = "GameTitle"
+
+                  attribute {
+                    name = "UserId"
+                    type = "S"
+                  }
+
+                  attribute {
+                    name = "GameTitle"
+                    type = "S"
+                  }
+                }
+            
+            Obs: Devemos colocar outro 'depends_on' na criação da nossa instância dev6
+
+                resource "aws_instance" "dev6" {
+                  provider = aws.us-east-2
+                  ami = "ami-07c8bc5c1ce9598c3"
+                  instance_type = "t2.micro"
+                  key_name = "terraform-aws"
+                  tags = {
+                    Name = "dev6"
+                  }
+                  vpc_security_group_ids = ["sg-6c9d1144", "${aws_security_group.acesso-ssh-us-east-2.id}"]
+                  depends_on = [aws_dynamodb_table.dynamodb-homologacao]
+                }
+
+            Executamos um 'terraform plan -out plan' depois disso o 'terraform apply'
+            Temos que verificar se tudo foi criado corretamente e testar a conexão via SSH com a nossa máquina dev6
+
+
+    Nesta aula, aprendemos:
+
+        A quebrar as configurações em arquivos diferentes
+        A criar um security group em outra região
+        A criar um banco de dados em outra região
+
+
+    Questões aula 04:
+
+        1 - Uma característica do Terraform é o gerenciamento das configurações, que devem atender aos seguintes requisitos:
+
+            Selecione 2 alternativas
+
+            R1: Podem ser divididas em vários arquivos
+                Alternativa correta! Sim, a configuração pode ser "quebrada" em mais de um arquivo, desde que esteja na mesma estrutura de diretório.
+
+            R2: Podem estar em um único arquivo
+                Alternativa correta! O Terraform permite que você concentre suas configurações em um único arquivo.
+
+
+        2 - Como podemos utilizar múltiplas configurações em um mesmo provider ?
+
+            Selecione uma alternativa
+
+            provider "aws" {
+                region  = "us-east-1"
+            }
+
+            provider "aws" {
+                alias = "us-east-2"
+                region  = "us-east-2"
+            }
+
+            Alternativa correta! Para um mesmo provedor, utilizamos o alias para referenciar os recursos.
+
+
+        3 - Baseado na configuração abaixo:
+
+            provider "aws" {
+                region  = "us-east-1"
+            }
+
+            provider "aws" {
+                alias = "us-east-2"
+                region  = "us-east-2"
+            }
+            
+            Como devemos configurar o recurso para utilizar a region us-east-2?
+
+            Selecione uma alternativa
+
+            R: resource "aws_dynamodb_table" "dynamodb-homologacao" {
+                 provider = "aws.us-east-2"
+                 ...
+               }
+
+            Alternativa correta! Sim, utilizamos a tag provider, seguida do alias que desejamos utilizar.
