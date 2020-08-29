@@ -162,7 +162,7 @@ Github *******
 			
 			3 - Garanta que o ssh-agent esteja rodando: $ exec ssh-agent bash
 			
-			4 - Adicione a chave: $ ssh-add ~/.ssh/id.rsa (Privada)
+			4 - Adicione a chave: $ ssh-add ~/.ssh/id_rsa (Privada)
 			
 			5 - Copie o conteúdo do arquivo (Que é a chave pública): cat /c/Users/"usuario"/.ssh/id_rsa.pub
 			
