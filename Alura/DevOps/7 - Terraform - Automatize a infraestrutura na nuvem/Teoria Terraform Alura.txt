@@ -281,6 +281,7 @@ Aula 01: Provisionando a primeira infraestrutura com o Terraform -------
 
                 Podemos ao final da execução verificar no nosso provedor se a infraestrutura foi criada, no meu caso na AWS.
 
+
         Nesta aula:
 
             - Tivemos uma apresentação do Terraform
@@ -613,10 +614,11 @@ Aula 03: Utilizando referências e dependências entre os recursos -------
 
             Na hora de apagar também fica fácil, pois depois de deletar a instância dev4 o bucket também vai embora.
 
-    Nesta aula, aprendemos:
 
-        - Que existe um modo mais simples de apontar para um recurso
-        - A criar um recurso com dependência
+        Nesta aula, aprendemos:
+
+            - Que existe um modo mais simples de apontar para um recurso
+            - A criar um recurso com dependência
 
 
     Questões aula 03:
@@ -781,11 +783,11 @@ Aula 04: Organizando a configuração com a separação dos arquivos e aliases -
             Temos que verificar se tudo foi criado corretamente e testar a conexão via SSH com a nossa máquina dev6
 
 
-    Nesta aula, aprendemos:
+        Nesta aula, aprendemos:
 
-        A quebrar as configurações em arquivos diferentes
-        A criar um security group em outra região
-        A criar um banco de dados em outra região
+            A quebrar as configurações em arquivos diferentes
+            A criar um security group em outra região
+            A criar um banco de dados em outra região
 
 
     Questões aula 04:
@@ -838,3 +840,533 @@ Aula 04: Organizando a configuração com a separação dos arquivos e aliases -
                }
 
             Alternativa correta! Sim, utilizamos a tag provider, seguida do alias que desejamos utilizar.
+
+
+Aula 05: Trabalhando com variáveis -------
+
+    Teoria: 
+
+        Trabalhando com variáveis:
+
+            Na nossa configuração, nós ainda estamos fazendo algumas referências pontuais, na forma "hard coded".
+            Ter que colocar, por exemplo, o nome da nossa imagem nas configurações do recurso é meio chato.
+            Então, trabalharemos com um novo conceito, o conceito de variáveis, separando ela em outro arquivo para que as configurações da nossa infra
+            fiquem organizadas.
+
+            Iniciamos criando um arquivo chamado vars.tf
+            Neste arquivo podemos colocar diversos tipos de variáveis.
+            Podemos colocar, por exemplo, um tipo de variável chamada "map", como se fosse um json, chave e valor. Tem variáveis do tipo lista etc.
+
+            Vamos começar criando uma variável no arquivo "vars.tf" do tipo "map"...
+
+                variable "amis" {
+                    type = map(string)
+                    default = {
+                        us-east-1 = "ami-02354e95b39ca8dec"
+                        us-east-2 = "ami-07c8bc5c1ce9598c3"
+                    }
+                }
+
+                Neste bloco criado podemos verificar algumas informações importantes...
+                O nome "amis" é o nome que teremos que acessar quando quisermo  buscar o conteúdo deste bloco.
+                Embaixo vemos o "type = map" que indica o tipo da variável.
+                Depois na chave "default" o nome das variáveis com seus respectivos valores.
+
+                Podemos pegar o exemplo do nosso recurso da dev6...
+
+                    resource "aws_instance" "dev6" {
+                        provider = aws.us-east-2
+                        ami = ami-07c8bc5c1ce9598c3
+                        instance_type = "t2.micro"
+                        key_name = "terraform-aws"
+                        tags = {
+                            Name = "dev6"
+                        }
+                        vpc_security_group_ids = ["${aws_security_group.acesso-ssh-us-east-2.id}"]
+                        depends_on = [aws_dynamodb_table.dynamodb-homologacao]
+                    }
+
+                    Atualmente o código do nosso recurso "aws_instance" se encontra codado desta forma logo acima.
+                    Como podemos notar este é um recurso do provedor "us-east-2" (Ohio)
+                    Substituíremos, então, o valor da ami que está codado de forma direta, pela referência do arquivo vars.tf.
+
+                        resource "aws_instance" "dev6" {
+                            provider = aws.us-east-2
+                            ami = var.amis["us-east-2"]
+                            instance_type = "t2.micro"
+                            key_name = "terraform-aws"
+                            tags = {
+                                Name = "dev6"
+                            }
+                            vpc_security_group_ids = ["${aws_security_group.acesso-ssh-us-east-2.id}"]
+                            depends_on = [aws_dynamodb_table.dynamodb-homologacao]
+                        }
+
+                    Note que agora no valor de ami indicamos que estamos buscando o valor de uma variável "var", do bloco "amis", o valor da chave ou a
+                    variável de forma objetiva "us-east-2".
+
+                    Fizemos isso com todos os nosso outros recursos "aws_instance".
+
+                    Salvamos o arquivo e realizamos o comando:
+
+                        $ terraform plan -out plan
+
+                    A mensagem que deve aparecer é "No changes, Infrastructure is up-to-date"
+                    Por que isto? Porque já vimos que não é mudança para o terraform a nossa organização de sintaxe ou separação de arquivo...
+                    Ele só vai considerar mudança troca de valores ou adição de recursos.
+
+        
+        Tipos de variáveis:
+
+            Agora partiremos para a criação de variáveis de IP's.
+            Nosso arquivo security-group tem IP's configurados na forma hard coded, podemos então substituí-los por referência a uma variável no arquivo
+            vars.tf, assim como fizemos com as instâncias.
+
+            Devemos lembrar que os blocos de acesso são dinâmicos, se fizermos alteração teremos que alterar o código nos nossos arquivos.
+
+            Então, no nosso arquivo de variáveis criaremos uma varíavel para que possamos apenas referenciá-la do arquivo security_group.tf...Inserimos..
+
+                variable "cdirs_acesso_remoto" {
+                    type = list(string)
+                    default = ["177.5.255.105/32"]
+                }
+
+                Obs: Coloquei só um IP por que era o que eu estava usando no momento da criação do bloco, mas como a variável é do tipo lista podemos colocar
+                mais IP's ali.
+                
+                Então o nome da nossa lista é "cdirs_acesso_remoto", indicamos o tipo já citado anteriormente "list" e valor default (em colchetes) os
+                IP's referentes ao nosso bloco de acesso.
+
+                Veremos como isto fica no nosso arquivo secutiry-group.tf que atualmente se encontra assim:
+
+                    resource "aws_security_group" "acesso-ssh" {
+                        name        = "acesso-ssh"
+                        description = "Grupo para acesso SSH"
+
+                        ingress {
+                            description = "TLS from VPC"
+                            from_port   = 22
+                            to_port     = 22
+                            protocol    = "tcp"
+                            cidr_blocks = ["177.5.255.105/32"]
+                        }
+
+                        tags = {
+                            Name = "ssh"
+                        }
+                    }
+
+                    A variável cidr_blocks deverá ficar assim:
+
+                        cidr_blocks = var.cdirs_acesso_remoto
+
+            
+            Vamos criar tambem uma variável para servir de referência para o key_name no nosso arquivo vars.tf:
+
+                variable "key_name" {
+                    default = "terraform-aws"
+                }
+
+                Como só estamos utilizando uma colocamos o valor default queremos utilizar e isto basta. No arquivo main, nos recursos que preciam do valor
+                da chave deixamos o atributo da forma seguinte:
+
+                    resource "aws_instance" "dev" {
+                        count = 3
+                        ami = var.amis["us-east-1"]
+                        instance_type = "t2.micro"
+                        key_name = var.key_name
+                        tags = {
+                            Name = "dev${count.index}"
+                        }
+                        vpc_security_group_ids = ["${aws_security_group.acesso-ssh.id}"]
+                    }
+
+                    O que estava antes como "key_name = terraform-aws" deixamos:
+
+                        key_name = var.key_name
+
+
+        Sintaxe das variáveis:
+
+            Com frequência quando aplicamos o "plan" no Terraform, nos deparamos com alerta de sintaxe, isto acontece por causa da versão do próprio terraform
+            ou a própria extensão do VSCode que estamos utilizando.
+
+            Isto as vezes não atrapalha criar o plano ou aplicá-lo no momento do alerta, principalmente se estiver avisando que está com status "deprecated"
+            o que sifnigica que só irá parar de funcionar futuramente. Convém, então, que já sigamos a dica que o console nos dá deixando no formato da versão
+            que futuramente será a única utilizada.
+
+            Próximo passo é criar uma nova máquina para verificar se dá algum problema ela já ser criada com todas as modificações que realizamos até o momento.
+
+            Criaremos então a máquina "dev7"
+
+                resource "aws_instance" "dev7" {
+                    provider = aws.us-east-2
+                    ami = var.amis["us-east-2"]
+                    instance_type = "t2.micro"
+                    key_name = var.key_name
+                    tags = {
+                        Name = "dev7"
+                    }
+                    vpc_security_group_ids = ["${aws_security_group.acesso-ssh-us-east-2.id}"]
+                }
+
+            Note que as referências de key_name e ami já estão inseridas...
+
+            Basta agora rodar os comandos:
+
+                $ terraform plan -out plan
+                
+                e em seguida:
+
+                $ terrarform apply
+
+                Assim verificamos se existe algum erro...
+
+        Nesta aula, aprendemos:
+
+            - A resolver a questão das múltiplas imagens, com a variável amis
+            - A criar uma nova variável para o security group
+            - A modificar os security groups, apontado para a nossa variável
+            - A criar a variável key_name
+            - A alterar todas as instâncias para utilizar variável key_name
+
+    Questões aula 05:
+
+        1 - No código abaixo foi criada uma variável associada a várias imagens (amis):
+
+            variable "amis" {
+                type = "XXXXX"
+
+                default = {
+                    "us-east-1" = "ami-026c8acd92718196b"
+                    "us-east-2" = "ami-0d8f6eb4f641ef691"
+                }
+            }
+            Qual o tipo correto de variável que deverá ser utilizado?
+
+            Selecione uma alternativa
+
+            R: map
+
+            Alternativa correta! O tipo map utiliza { } em sua declaração e contém chaves e valores.
+
+
+        2 - Utilizando como referência a variável amis:
+
+            variable "amis" {
+                type = "map"
+
+                default = {
+                    "us-east-1" = "ami-026c8acd92718196b"
+                    "us-east-2" = "ami-0d8f6eb4f641ef691"
+                }
+            }
+            Como deverá ser feito o apontamento dentro do recurso aws_instance?
+
+            Selecione uma alternativa
+
+            R: resource "aws_instance" "teste" {
+                    ami = var.amis["us-east-1"]
+                    ...
+                }
+
+                Alternativa correta! Utilizamos a referência var. para referenciar o recursos.
+
+
+Aula 06: Gerenciando recursos e outputs -------
+
+    Teoria:
+
+        Removendo recursos:
+
+            Até o momento vimos que para ir adicionando recursos basta irmos na documentação, olhar a sintaxe de cada recurso e ir aplicando na nossa infra.
+            Mas, e quando queremos excluir/deletar um recurso?
+
+            Podemos fazer isso de algumas maneiras...
+
+                - Apagando o recurso do arquivo -- Seguido de um $ terraform plan e $ terraform apply
+                - Comentando o trecho de código -- Seguido de um $ terraform plan e $ terraform apply
+                - Usando o comando:
+                    $ terraform destroy -target "tipoDoRecurso.nomeDoRecurso"
+
+                    A diferença é que, mesmo usando este comando, você ainda precisa ir no arquivo e remover o código dos recurso. Então se torna mais
+                    prático já excluir ou comentar o trecho de código. O que nos permite criar versões da infra, vai editando e salvando arquivo separados o
+                    que torna nossa infraestrutura mais fácil de controlar.
+                    
+            Obs: Quando criamos um recurso que possui uma dependência, se destruirmos sua depedência, este recurso também vai ser destruído.
+
+            Obs2: Temos que ter muito cuidado ao utilizar o comando acima, porque se digitarmos apenas $ terraform destroy ele vai destruir toda a nossa infra.
+            É claro que ele pede uma confirmação antes, mas, sempre é bom ter cuidado.
+
+
+        Utilizando os outputs:
+            
+           Também podemos criar um arquivo apenas com os códigos de outputs, que servem para quando precisamos de uma informação das máquinas assim que elas acabaram de ser criadas
+           como por exemplo os números IP's para que possamos fazer acesso remoto.
+
+            Para isso criamos um novo arquivo "outputs.tf" neme colocaremos os códigos necessários para imprimir a saída que desejamos.
+
+            O código padrão da estrutura do output é a seguinte:
+
+                output "name" {
+                    value = ""
+                }
+
+            Nela só precisamos colocar o nome que queremos para o output (Outputs não podem ter nome igual) e o valor, que seria o nome do recurso e o ID.
+
+                output "ipDev4" {
+                    value = "${aws_instance.dev4.public_ip}"
+                }
+
+                Acima vemos que colocamos qual o recurso, o ID e o atributo que queremos do recurso, no caso, o IP público.
+                Se a infra já tiver sido provisionada, basta que você utilize o comando...
+
+                    $ terraform refresh
+
+                    ...para que possamos ver a saída no console.
+
+                Obs: No caso deste atributo em específico (IP Públic) se a a máquina estiver em "stop" não teremos esta informação.
+
+                Até o momento vimos 4 arquivos muito comuns no provisionamento da infra com Terraform que são:
+
+                    - main.tf
+                    - security-group.tf
+                    - vars.tf
+                    - outputs.tf
+
+        Nesta aula, aprendemos:
+
+            A remover o recurso dev4
+            Inclusive, são removidas as dependências
+            A apagar todo o main e excluir todos os recursos
+            A realizar a configuração final, incluindo outputs
+
+            
+
+    Questões aula 06:
+
+        1 - Para remover recursos da nossa infraestrutura, temos a(s) seguinte(s) opção(ões):
+
+            Selecione uma alternativa
+
+            R: Executando o comando terraform destroy ou excluindo diretamente os recursos no arquivo de configuração e rodando o apply
+
+            Alternativa correta! Exatamente, tanto removendo as configurações dos recursos no arquivo de configuração, como também utilizando o comando 
+            terraform destroy.
+
+        
+        2 - Dentre as definições abaixo, sobre o uso dos outputs, qual está correta?
+
+            Selecione uma alternativa
+
+            R: São declaradas com a sintaxe:
+
+                output "nome" {
+                    value = "${referência}"
+                }
+
+                Alternativa correta! Utilizamos um nome para referência e no campo valor, a referência do recurso.
+
+
+Aula 07: Trabalhando em equipe - Terraform Cloud -------
+
+    Teoria:
+
+        Tipos de administração local e remota:
+
+            Agora que temos os códigos prontos de uma infraestrutura básica, vamos para um tópico um pouco mais avançado.
+
+            Já sabemos dos cursos do git que quando temos um time inteiro mexendo nos mesmos arquivos os riscos de algum problema acontecer é muito grande.
+            Por isso, agora vamos aprender a deixar em estado "lock" para que outra pessoa não altere as configurações enquanto ainda estamos trabalhando, é preciso trabalhar com
+            versionamento.
+
+            Daria para trabalhar com tudo isso localmente, mas vamos usar o recurso de manter o nosso arquivo state da nossa infra na nuvem. Utilizaremos a nuvem da própria hashicorp,
+            criadora do Terraform, para vermos isso funcionando.
+
+            Assim possibilitamos que duas ou mais pessoa administrem a mesma infraestrutura sem ter nenhum conflito. sem ter problema de um apagar um recurso e outra pessoa criar o
+            mesmo recurso. Assim o arquivo de estado fica travado então um de cada vez irá administrar a infra.
+
+            Primeira coisa é verificar se o nosso código possui erros, se estiver tudo "redondo" vamos para o próximo passo.
+                Obs: Use o terraform plan para verificar isso
+
+            Segundo passo é olhar como podemos criar o código deste tipo de recurso na documentação do terraform, mais especificamente em Docs > Terraform CLI > Backends > Backends Types
+            Local ou Remote...Clicamos em Remote...Para que tudo que façamos localmente reflita na núvem.
+
+                https://www.terraform.io/docs/backends/types/remote.html
+
+                Obs: É muito importante ler a documentação de qualquer ferramente que vá utilizar, inclusive a do Terraform.
+
+            Terceiro passo é criar um conta no Terraform Cloud.
+
+                https://app.terraform.io/app/
+
+                Após terminar o cadastro vá até a caixa do e-mail que voce enviou e clique no link de confirmação.
+                Depois de criar o cadastro temos que criar uma organização, escolha nome que preferir, para este curso escolhi 'terraformAluraLabs'
+                Esta organização terá o workspace que iremos trabalhar, onde ficam as configs da nossa infra.
+                Iremos transferir do local para lá.
+
+                Em user settings criamos um token, esta chave que irá permitir que façamos o acesso remoto, bem similar à AWS.
+
+                Na descrição colocamos o mesmo nome da organização que criamos.
+
+                Importante guardar o hash fornecido pois você não irá mais vê-lo.
+
+        Configurando o back-end remoto:
+
+            Agora veremos como configurar o token para que possamos acessar nosso workspace na nuvem do Terraform.
+
+            Podemos pegar o exemplo de configuração deste arquivo em:
+
+                https://www.terraform.io/docs/commands/cli-config.html
+
+                    credentials "app.terraform.io" {
+                        token = "xxxxxx.atlasv1.zzzzzzzzzzzzz"
+                    }
+
+                Temos duas formas de criar o nosso arquivo da credencial:
+
+                    - terraform.rc
+                    - .terraformrc
+
+                    Escolhemos a segunda como o instrutor do curso.
+
+                    Este arquivo criamos no home e não no diretório do projeto...
+
+                        Obs: Criamos diretamente com o programa 'vi', então...
+
+                            $ vi .terraformrc
+
+                            Inserimos aquele conteúdo de exemplo acima e colocamos no valor da chave 'token' o nosso token que criamos na Cloud Terraform.
+
+                            Salvamos o arquivo e realizamos um...
+
+                                $ cat .terraformrc
+
+                                ...para verificar se o arquivo ficou como desejado (Com nosso token definido).
+
+                Próximo passo é configurar o nosso backend para que ele fique remoto...
+
+                Agora retornamos para a pasta do nosso projeto...
+
+                Dentro dele criaremos o nosso arquivo de backend remoto, no caso pegamos '# Using a single workspace:' no link abaixo...
+
+                    https://www.terraform.io/docs/backends/types/remote.html
+
+                    O nome do nosso arquivo será 'remote-state.tf' e colamos o conteúdo abaixo...
+
+                    terraform {
+                    backend "remote" {
+                        hostname = "app.terraform.io"
+                        organization = "company" //Nome da nossa organização no Terraform Cloud
+
+                        workspaces {
+                        name = "my-app-prod" //Este nome podemos definir aqui mesmo, pois quando rodarmos o terraform init ele criará na cloud automaticamente
+                        }
+                    }
+                    }
+
+                Após salvar este arquivo basta que rodemos o comando...
+
+                    $ terraform init
+
+                    ...novamente, para que possamos redefinir o backend.
+
+                Após alguns instantes nos será apresentada esta mensagem:
+
+                    Initializing the backend...
+                    Acquiring state lock. This may take a few moments...
+                    Do you want to copy existing state to the new backend?
+                    Pre-existing state was found while migrating the previous "local" backend to the
+                    newly configured "remote" backend. No existing state was found in the newly
+                    configured "remote" backend. Do you want to copy this state to the new "remote"
+                    backend? Enter "yes" to copy and "no" to start with an empty state.
+
+                    Enter a value: yes
+
+                Ela basicamente nos pergunta se queremos copiar o arquivo de estada existente.
+                Já existe um arquivo de estado localmente e não existe um na infra remota que queremos criar, por isso ele nos faz esta pergunta.
+
+                Insira 'yes' como no exemplo acima.
+
+                Podemos ir até a Cloud do Terraform para ver se realmente "upou" nosso arquivo de estado...
+
+                Podemos ver que também um workspace dentro da nossa organização foi criado com o nome que definimos no arquivo 'remote-state.tf'
+
+                Agora conseguimos deixar mais profissional o gerenciamento da nossa infra com o arquivo de estado alocado remotamente.
+
+        
+        Visualizando as modificações do State:
+
+            Como teste criamos um recurso novo, um novo bucket. Demos ao bucket o nome de homologação.
+                Obs: A base dele foi copiada do bucket que já tinhamos.
+
+                resource "aws_s3_bucket" "homologacao" {
+                    bucket = "nezzonarcizolabs-homologacao"
+                    acl    = "private"
+
+                    tags = {
+                        Name = "nezzonarcizolabs-dev4"
+                    }
+                }
+
+            Após adicionar o novo recurso deveremos rodar os seguintes comandos:
+
+                $ terraform plan
+
+                $ terraform apply
+
+                    Obs: Enfrentei o probleminha de erro de credencial ao tentar rodar os comando acima, isto por não ter me atentado que depois que colocamos o arquivo de estado na 
+                        Terraform Cloud, todo o "plano" é executado de lá, então as credenciais tem que estar lá também, não somente configuradas em nossa máquina local.
+
+                        Para configurá-las devemos ir até o nosso Workspace e então Variables (Ressaltando que isto é no Terraform Cloud)...
+
+                        Após isto colocamos tanto o ACESS_KEY_ID quanto o SECRET_ACCESS_KEY e seus respectivos valores. Isto em 'Environment Variables'.
+
+                        https://app.terraform.io/app/terraformAluraLabs/workspaces/aws-aluraterraform/variables
+
+                Após os comandos executarem corretamente, veremos uma solicitação de confirmação que é costume, e colocaremos então 'yes'.
+                Tudo será gerado lá na Cloud, o que torna tudo mais fácil de gerenciar.
+
+                    Obs: Lembrando que se as máquinas estiverem paradas, isto será um refresh, os outputs irão vir vazios, a não ser que liguemos as máquinas novamente e realizaremos
+                    outro refresh.
+
+                Podemos verificar no nosso provedor que o novo recurso foi criado.
+                Podemos também olhar o nosso arquivo de estado, e ver que toda a infra que criamos com nossos arquivos de configuração está lá.
+
+    Nesta aula, aprendemos:
+
+        A compartilhar o state na Terraform Cloud
+        A alterar localmente o main, criando uma nova dev
+
+
+    Questões aula 07:
+
+        1 - Sobre o recurso de administração remota, podemos afirmar que:
+
+            Selecione 2 alternativas
+
+            R1: Armazena os states remotamente
+
+            Alternativa correta! Sim, esta é a principal vantagem de utilizar o backend remoto, o que permite inclusive a administração da infraestrutura por mais de uma pessoa.
+    
+            R2: Necessita de configurações adicionais
+
+            Alternativa correta! É necessário criar alguns arquivos adicionais para utilizar o backend remoto.
+                
+        
+        2 - O arquivo terraform.rc tem os seguintes requisitos:
+
+            Selecione 2 alternativas
+
+            R1: Armazena as credenciais de acesso
+
+                Alternativa correta! Nele, deve estar contido o token de acesso:
+
+                credentials "app.terraform.io" {
+                    token = "xxxxxx.atlasv1.zzzzzzzzzzzzz"
+                }
+
+            R2: Fica localizado no diretório $HOME do usuário
+
+                Alternativa correta! O arquivo terraform.rc precisa estar localizado no $HOME do usuário.
+

@@ -1,19 +1,19 @@
 provider "aws" {
-  version = "~> 2.0"
+  version = "~> 3.0"
   region = "us-east-1"
 }
 
 provider "aws" {
   alias = "us-east-2"
-  version = "~> 2.0"
+  version = "~> 3.0"
   region = "us-east-2"
 }
 
 resource "aws_instance" "dev" {
   count = 3
-  ami = "ami-02354e95b39ca8dec"
+  ami = var.amis["us-east-1"]
   instance_type = "t2.micro"
-  key_name = "terraform-aws"
+  key_name = var.key_name
   tags = {
     Name = "dev${count.index}"
   }
@@ -21,9 +21,9 @@ resource "aws_instance" "dev" {
 }
 
 resource "aws_instance" "dev4" {
-  ami = "ami-02354e95b39ca8dec"
+  ami = var.amis["us-east-1"]
   instance_type = "t2.micro"
-  key_name = "terraform-aws"
+  key_name = var.key_name
   tags = {
     Name = "dev4"
   }
@@ -32,9 +32,9 @@ resource "aws_instance" "dev4" {
 }
 
 resource "aws_instance" "dev5" {
-  ami = "ami-02354e95b39ca8dec"
+  ami = var.amis["us-east-1"]
   instance_type = "t2.micro"
-  key_name = "terraform-aws"
+  key_name = var.key_name
   tags = {
     Name = "dev5"
   }
@@ -43,9 +43,9 @@ resource "aws_instance" "dev5" {
 
 resource "aws_instance" "dev6" {
   provider = aws.us-east-2
-  ami = "ami-07c8bc5c1ce9598c3"
+  ami = var.amis["us-east-2"]
   instance_type = "t2.micro"
-  key_name = "terraform-aws"
+  key_name = var.key_name
   tags = {
     Name = "dev6"
   }
@@ -53,8 +53,28 @@ resource "aws_instance" "dev6" {
   depends_on = [aws_dynamodb_table.dynamodb-homologacao]
 }
 
+resource "aws_instance" "dev7" {
+  provider = aws.us-east-2
+  ami = var.amis["us-east-2"]
+  instance_type = "t2.micro"
+  key_name = var.key_name
+  tags = {
+    Name = "dev7"
+  }
+  vpc_security_group_ids = ["${aws_security_group.acesso-ssh-us-east-2.id}"]
+}
+
 resource "aws_s3_bucket" "dev4" {
   bucket = "nezzonarcizolabs-dev4"
+  acl    = "private"
+
+  tags = {
+    Name = "nezzonarcizolabs-dev4"
+  }
+}
+
+resource "aws_s3_bucket" "homologacao" {
+  bucket = "nezzonarcizolabs-homologacao"
   acl    = "private"
 
   tags = {
