@@ -1,0 +1,117 @@
+https://www.youtube.com/watch?v=zynynEynpk8
+
+"SRE é quando trata a operação como se fosse um problema de software." - Ben Treynor : VP of Engineering : Founder of Site Reliability Engineering at Google
+
+Coisas falham, computadores falham...
+
+"100% é a meta errada de confiabilidade para basicamente tudo." - Benjamin Treynor Sloss...Ou seja, se tudo está 100%, não foi feita análise.
+
+Princípios Site Reliability Engineering -------
+
+1 - SRE requer metas de confiabilidade realistas, conhecidos como SLO's.
+
+2 - SRE's precisam ter tempo para tornar o amanhã melhor do que o hoje.
+
+3 - Times SRE tem a autonomia de regular a carga de trabalho.
+
+4 - Falhas são uma oportunidade de se aperfeiçoar. (SRE's gostam disto)
+
+
+Áreas da especialidade SRE -------
+
+- Métricas de monitoramento
+	
+	* SLO's
+	* Dashboards
+	* Análises
+
+	
+- Planejamento de Capacidade
+
+	* Previsão
+	* Baseado em demanda
+	* Performance
+
+
+- Gestão de Mudanças
+
+	* Processo de lançamento
+	* Consultoria no desenho
+	* Automação
+	
+
+- Resposta de Incidentes
+
+	* Plantão
+	* Análises
+	* Postmortems
+	
+
+- Cultura
+
+	* Trabalho Manual
+	* Engenharia Alinhada
+	* Blamelessness (Apontar o dedo é muito fácil, melhorar algo é mais difícil, mas é a única coisa que realmente traz resultados).
+	
+	
+Habilidades da equipe -------
+
+	Contrate bons engenheiros de software (SWE) e bons engenheiros de sistemas (SE).
+	
+	Não necessariamente na mesma pessoa.
+	
+	Tente chegar a um mix de 50:50 de habilidades SWE e SE no time
+	
+	Todo mundo é capaz de programar.
+	
+	SE != "Trabalho Operacional"
+	
+	
+CULTURA, DIVERSIDADE & INCLUSÃO -------
+
+	"Meu time está focado em criar uma força de trabalho que represente nossos usuários e o nosso planeta." - Melonie Parker: Chief Diversity Officer
+
+
+	Trabalhando em um ambiente diverso e inclusivo
+
+	* Trate a todos com respeito e dignidade.
+	* Crie um ambiente onde todos possam ser bem sucedidos.
+	* Estimule cada membro da equipe a compartilhar suas perspectivas.
+	* Isso é uma habilidade básica agora. É difícil aplicar para qualquer cargo sem isso.
+
+	
+Habilidade: Projeto de Sistema Distribuído em Grande Escala -------
+
+	Projete um serviço PubSub que clientes de todo o mundo possam usar para ler e escrever mensagens...
+	
+	Você consegue à partir de um problema, projetar um sistema e identificar se ele vai escalar antes de implementar?
+	
+
+Habilidade: Sistemas Operacionais Linux/Unix -------
+
+	Unix/Linux & Cloud Computing
+	
+	- Linux roda em 100% dos TOP500 Supercomputadores (Junho 2020)
+	- Docker Hub: 99% das imagens públicas são baseadas em Linux.
+	
+
+Habilidade: Resolução de Problemas -------
+
+	Incidente de Redes Google Cloud #18012
+	
+	GFE (Reverse Proxy)
+	
+	* Balanceadores de carga do google HTTPS (...) Tiveram taxas de erros elevadas entre 33% e 87% durante 32 minutos.
+	* Novas funcionalidades foram introduzidas no código fonte da segunda camada de GFE's sem serem ativadas.
+	* Uma das funcionalidades continha um bug que não foi detectado durante testes e implantação inicial.
+
+
+O principal passo para chegar lá...
+
+	Treinar, estudar e implementar...
+	Colocar no papel, jogar números e conseguir visualizar onde estarão os gargalos...
+
+
+
+
+
