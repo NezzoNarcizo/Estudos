@@ -1,0 +1,102 @@
+Ansible: Sua infraestrutura como código:
+
+    Aula 01: Primeiros passos com Ansible -------
+   
+        Introdução:
+
+            A importância de fazer infraestrutura com código é que se trata da base da metodologia DevOps. Se você já trabalha com essa área ou quer começar a atuar nela, precisa deste conhecimento.
+            Com Ansible escreveremos um playbook, para instalarmos uma aplicação completa com banco de dados, Webserver, além do próprio sistema da aplicação. Depois, converteremos o playbook em uma série de roles
+            reutilizáveis, para entendermos como se separa este código e como ele pode ser usado como uma biblioteca extensível para outros projetos.
+
+        
+        Por que usar Ansible?
+
+            Ao falarmos de DevOps precisamos falar de infraestrutura como um todo.
+            O DevOps busca maneiras de encurtar o seu ciclo de feedbacks entre os times de desenvolvimento e estrutura, tornar o processo com repetições do lado da infraestrutura como já é feito no lado do
+            desenvolvimento. Se oebsarnis en yna firna sunokes de definir DevOps, trata-se de levarmos a cultura ágil para a cultura de infraestrutura e integrá-las.
+
+                Não é atoa que o nome 'DevOps' já vem da junção dos dois mundos 'Desenvolvimento' e 'Operacional', transformando-os em um único (ou mais próximo disso).
+
+            É normal que tenha diferenças entre as empresas na aplicação da cultura DevOps, na maneira que trabalham essa ideia. Não existe apenas um meio de aplicarmos o DevOps ou uma bala de prata que vá resolver
+            todos os problemas, um formato único, fixo e perfeito. Cada cultura organizacional entenderá qual é a melhor forma de aplicar os princípios de DevOps.
+
+            Com algumas metodologias DevOps conseguiremos automatizar tudo aquilo que é feito na infraestrutura e garantir o estado dos servidores.
+
+            Antes da cultura DevOps tudo tinha que ser feito com diversos scripts baseados no conhecimento de quem estava criando sem padrões ou documentação que abrangesse de fato tudo que era necessário para agilizar
+            de forma eficaz toda a configuração da infra. Imagine a situação da de lidar com centenas de servidores.
+
+            Era difícil garantir o estado das máquinas da mesma forma, manter estável. O princípio da infraestrutura como código nasce para que descrevamos o estado no qual precisamos que nossos servidores estejam, para
+            caso ocorra algum problema ou algo precise ser modificado ou adicionado na infraestrutura, seja como adicionar um método ou uma classe na programação.
+
+            O Ansible é uma ferramenta para garantirmos esse estado.
+
+            Nós escreveremos uma série de scripts que garantem que os servidores controlados ficarão em um determinado estado.
+
+            Vamos ver de forma superficial a topologia Ansible:
+
+                - Temos a máquina de controle, que é onde fica o Ansible, e como o mesmo é baseado em Python, também temos a versão do Python junto dele.
+                - Temos os hosts que devem ser controlados. Eles se comunicam via SSH e tem também o Python instalado.
+
+                Obs: Diferente de algumas tecnologias de Infraestrutura como código, o Ansible não é dependente da instalação nas máquinas que devem ser configuradas.
+                A maioria dos servidores de produção e desenvolvimento que encontramos hoje em dia tem Python e SSH, principalmente quando falamos de Linux.
+
+                Ou seja, Conseguimos alterar o estado da máquina via conexão SSH, sem que seja necessário entrar nelas e digitar algum comando. O Ansible será responsável por fazer isso.
+
+                Nosso trabalho será desenvolver os scripts que o Ansible usa.
+                Temos três modelos de script:
+
+                    - Arquivo de inventário: Arquivo que contém todas as máquinas que deverão ser configuradas.
+                    - Playbook: "Receita" ...Este arquivo contém o script das ações que irão ser realizadas nos hosts alvos.
+                    - Roles: Permite modularizar o código.
+
+                Durante o conteúdo do curso nos aprofundaremos mais nestes três tipos de script.
+                Basta entender que eles serão usados para que a máquina de controle configure os outros hosts.
+
+                A vantagem é que não existe um número limite de máquinas, diferente de quando tinhamos que fazer tudo a mão, não importa agora se é apenas uma ou mil máquinas.
+                Existem diferentes formas de montar esse inventário (que se trata da lista de máquinas a serem configuradas).
+
+            No curso, nossa máquina física (real) será a nossa máquina de controle e instalaremos o VirtualBox e o Vagrant para criar máquinas virtuais que simularão os hosts que iremos configurar.
+            Na nossa máquina física instalaremos o Ansible, com ele, será configurada a máquina virtual, montando inventário, playbooks e roles.
+            Na nossa máquina virtual (host controlado), para o estudo de caso, instalaremos um Wordpress, e para isso será necessário ter o MySQL, Apache e PHP funcionando na máquina virtual que é o host controlado.
+
+
+        Questões aula 01:
+
+            1 - Sobre Ansible e infraestrutura como código
+
+                Temos as seguintes afirmativas sobre Ansible e Infraestrutura sobre código:
+
+                A) Infraestrutura como código é a base da cultura DevOps, encurtando assim o ciclo de feedback entre os times de desenvolvimento e os de infraestrutura.
+
+                B) É a partir da máquina de controle com o Ansible instalado que gerenciamos outras máquinas.
+
+                C) As máquinas gerenciadas pelo Ansible só precisam do Python e de um servidor SSH instalados.
+
+                Podemos afirmar que:
+
+                Selecione uma alternativa
+
+                R: Todas as afirmativas são verdadeiras.
+
+                Realmente todas as afirmativas são verdadeiras. Animado para aprender mais sobre Ansible?
+
+            
+            2 - Um pouco mais sobre Ansible
+
+                Temos as seguintes afirmativas a respeito do Ansible
+
+                A) O Ansible é uma ferramenta que auxilia no processo de infraestrutura como código.
+
+                B) Arquivo de inventário: arquivo com as "receitas de bolo" do que queremos fazer.
+
+                C) Playbook: é aquele que lista todas as máquinas que serão utilizadas.
+
+                Podemos afirmar que:
+
+                Selecione uma alternativa
+
+                R: As afirmativas B e C são falsas.
+
+                Alternativa correta! O arquivo de inventário é aquele que lista todas as máquinas que serão configuradas e o Playbook é o arquivo com as "receitas de bolo" do que queremos fazer.
+
+
