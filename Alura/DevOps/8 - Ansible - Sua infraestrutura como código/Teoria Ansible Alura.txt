@@ -60,6 +60,51 @@ Ansible: Sua infraestrutura como código:
             Na nossa máquina virtual (host controlado), para o estudo de caso, instalaremos um Wordpress, e para isso será necessário ter o MySQL, Apache e PHP funcionando na máquina virtual que é o host controlado.
 
 
+        Instalando Ansible e o primeiro comando:
+
+            Podemos utilizar a nossa máquina de desenvolvimento para simular a máquina de controle, se caso tivermos uma máquina com Windows, não poderemos instalar o Ansible, precisaremos criar uma máquina virtual
+            com Ubuntu para instalar o Ansible e o Python.
+
+            Para fazer o estudo de caso precisaremos de outra máquina virtual usando Virtual Box e Vagrant.
+
+            No Mac OS X precisariamos apenas usar o 'brew'.
+            No Linux temos que utilizar o 'apt get' ao invés do 'brew'.
+
+            Na documentação do Ansible podemos ver que ainda não temos suporte para usar o Windows como máquina de controle.
+
+            Porém, podemos usar o bash do Ubuntu nas versões de Windows 10 posteriores à atualização creators update, possibilitando a instalação e o uso de todos os comandos necessários no curso. O passo a passo
+            pode ser encontrado no blog oficial da Microsoft:
+
+                https://blogs.msdn.microsoft.com/luisdem/2016/09/01/bash-on-windows-passo-a-passo/
+
+            Se ainda não baixou, deve baixar o Virtual Box e o Vagrant.
+
+                Virtual Box: https://www.virtualbox.org/
+
+                Vagrant: https://www.vagrantup.com/downloads.html
+
+            ------- Caso já esteja trabalhando numa máquina com Ubuntu ou Mac -------
+
+                Digitamos o comando '-v' para saber a versão do Python e '--version' para identificarmos a versão do Ansible.
+
+                Se já estalamos o Vagrant também poderemos ver a sua versão...
+
+                    $ vagrant --version
+            
+                Para termos certeza que a distribuição do Ansible está funcionando, vamos rodar o comando Ansible contra uma máquina virtual de exemplo...
+
+                    $ cd wordpress_com_ansible
+                    $ ls
+                    Vangrantfile        provisioning.retry         world.txt
+                    group_vars          provisioning.yml
+                    hosts               roles
+
+                    $ atom
+
+                Precisamos criar a nossa máquina virtual, veremos como ela pode ser acessada e, depois, rodaremos "Hello, World" na linha de comando.
+                Precisamos de um arquivo 'vagrant.file' com as configurações da máquina que vai ser criada.
+                Está fora do escopo aprender Vagrant, mas já tenho alguns arquivos de configuração Vagrant, além do arquivo do curso para usar como base...
+
         Questões aula 01:
 
             1 - Sobre Ansible e infraestrutura como código
