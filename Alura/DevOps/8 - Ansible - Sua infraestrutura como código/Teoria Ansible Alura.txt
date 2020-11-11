@@ -4,29 +4,33 @@ Ansible: Sua infraestrutura como código:
    
         Introdução:
 
-            A importância de fazer infraestrutura com código é que se trata da base da metodologia DevOps. Se você já trabalha com essa área ou quer começar a atuar nela, precisa deste conhecimento.
-            Com Ansible escreveremos um playbook, para instalarmos uma aplicação completa com banco de dados, Webserver, além do próprio sistema da aplicação. Depois, converteremos o playbook em uma série de roles
-            reutilizáveis, para entendermos como se separa este código e como ele pode ser usado como uma biblioteca extensível para outros projetos.
+            A importância de fazer infraestrutura com código é que se trata da base da metodologia DevOps. Se você já trabalha com essa área ou quer começar a atuar nela, precisa deste
+            conhecimento. Com Ansible escreveremos um playbook, para instalarmos uma aplicação completa com banco de dados, Webserver, além do próprio sistema da aplicação. Depois, 
+            converteremos o playbook em uma série de roles reutilizáveis, para entendermos como se separa este código e como ele pode ser usado como uma biblioteca extensível para 
+            outros projetos.
 
         
         Por que usar Ansible?
 
             Ao falarmos de DevOps precisamos falar de infraestrutura como um todo.
-            O DevOps busca maneiras de encurtar o seu ciclo de feedbacks entre os times de desenvolvimento e estrutura, tornar o processo com repetições do lado da infraestrutura como já é feito no lado do
-            desenvolvimento. Se oebsarnis en yna firna sunokes de definir DevOps, trata-se de levarmos a cultura ágil para a cultura de infraestrutura e integrá-las.
+            O DevOps busca maneiras de encurtar o seu ciclo de feedbacks entre os times de desenvolvimento e estrutura, tornar o processo com repetições do lado da infraestrutura como 
+            já é feito no lado do desenvolvimento. Se oebsarnis en yna firna sunokes de definir DevOps, trata-se de levarmos a cultura ágil para a cultura de infraestrutura e 
+            integrá-las.
 
                 Não é atoa que o nome 'DevOps' já vem da junção dos dois mundos 'Desenvolvimento' e 'Operacional', transformando-os em um único (ou mais próximo disso).
 
-            É normal que tenha diferenças entre as empresas na aplicação da cultura DevOps, na maneira que trabalham essa ideia. Não existe apenas um meio de aplicarmos o DevOps ou uma bala de prata que vá resolver
-            todos os problemas, um formato único, fixo e perfeito. Cada cultura organizacional entenderá qual é a melhor forma de aplicar os princípios de DevOps.
+            É normal que tenha diferenças entre as empresas na aplicação da cultura DevOps, na maneira que trabalham essa ideia. Não existe apenas um meio de aplicarmos o DevOps ou uma 
+            bala de prata que vá resolver todos os problemas, um formato único, fixo e perfeito. Cada cultura organizacional entenderá qual é a melhor forma de aplicar os princípios de
+            DevOps.
 
             Com algumas metodologias DevOps conseguiremos automatizar tudo aquilo que é feito na infraestrutura e garantir o estado dos servidores.
 
-            Antes da cultura DevOps tudo tinha que ser feito com diversos scripts baseados no conhecimento de quem estava criando sem padrões ou documentação que abrangesse de fato tudo que era necessário para agilizar
-            de forma eficaz toda a configuração da infra. Imagine a situação da de lidar com centenas de servidores.
+            Antes da cultura DevOps tudo tinha que ser feito com diversos scripts baseados no conhecimento de quem estava criando sem padrões ou documentação que abrangesse de fato 
+            tudo que era necessário para agilizar de forma eficaz toda a configuração da infra. Imagine a situação da de lidar com centenas de servidores.
 
-            Era difícil garantir o estado das máquinas da mesma forma, manter estável. O princípio da infraestrutura como código nasce para que descrevamos o estado no qual precisamos que nossos servidores estejam, para
-            caso ocorra algum problema ou algo precise ser modificado ou adicionado na infraestrutura, seja como adicionar um método ou uma classe na programação.
+            Era difícil garantir o estado das máquinas da mesma forma, manter estável. O princípio da infraestrutura como código nasce para que descrevamos o estado no qual precisamos 
+            que nossos servidores estejam, para caso ocorra algum problema ou algo precise ser modificado ou adicionado na infraestrutura, seja como adicionar um método ou uma classe 
+            na programação.
 
             O Ansible é uma ferramenta para garantirmos esse estado.
 
@@ -40,13 +44,20 @@ Ansible: Sua infraestrutura como código:
                 Obs: Diferente de algumas tecnologias de Infraestrutura como código, o Ansible não é dependente da instalação nas máquinas que devem ser configuradas.
                 A maioria dos servidores de produção e desenvolvimento que encontramos hoje em dia tem Python e SSH, principalmente quando falamos de Linux.
 
-                Ou seja, Conseguimos alterar o estado da máquina via conexão SSH, sem que seja necessário entrar nelas e digitar algum comando. O Ansible será responsável por fazer isso.
+                Ou seja, Conseguimos alterar o estado da máquina via conexão SSH, sem que seja necessário entrar nelas e digitar algum comando. O Ansible será responsável por fazer 
+                isso.
 
                 Nosso trabalho será desenvolver os scripts que o Ansible usa.
                 Temos três modelos de script:
 
                     - Arquivo de inventário: Arquivo que contém todas as máquinas que deverão ser configuradas.
                     - Playbook: "Receita" ...Este arquivo contém o script das ações que irão ser realizadas nos hosts alvos.
+
+                        Exemplo:
+
+                            [wordpress]
+                            "IP DO COMPUTADOR ALVO (SEM ASPAS)"
+
                     - Roles: Permite modularizar o código.
 
                 Durante o conteúdo do curso nos aprofundaremos mais nestes três tipos de script.
@@ -55,15 +66,17 @@ Ansible: Sua infraestrutura como código:
                 A vantagem é que não existe um número limite de máquinas, diferente de quando tinhamos que fazer tudo a mão, não importa agora se é apenas uma ou mil máquinas.
                 Existem diferentes formas de montar esse inventário (que se trata da lista de máquinas a serem configuradas).
 
-            No curso, nossa máquina física (real) será a nossa máquina de controle e instalaremos o VirtualBox e o Vagrant para criar máquinas virtuais que simularão os hosts que iremos configurar.
+            No curso, nossa máquina física (real) será a nossa máquina de controle e instalaremos o VirtualBox e o Vagrant para criar máquinas virtuais que simularão os hosts que 
+            iremos configurar.
             Na nossa máquina física instalaremos o Ansible, com ele, será configurada a máquina virtual, montando inventário, playbooks e roles.
-            Na nossa máquina virtual (host controlado), para o estudo de caso, instalaremos um Wordpress, e para isso será necessário ter o MySQL, Apache e PHP funcionando na máquina virtual que é o host controlado.
+            Na nossa máquina virtual (host controlado), para o estudo de caso, instalaremos um Wordpress, e para isso será necessário ter o MySQL, Apache e PHP funcionando na máquina 
+            virtual que é o host controlado.
 
 
         Instalando Ansible e o primeiro comando:
 
-            Podemos utilizar a nossa máquina de desenvolvimento para simular a máquina de controle, se caso tivermos uma máquina com Windows, não poderemos instalar o Ansible, precisaremos criar uma máquina virtual
-            com Ubuntu para instalar o Ansible e o Python.
+            Podemos utilizar a nossa máquina de desenvolvimento para simular a máquina de controle, se caso tivermos uma máquina com Windows, não poderemos instalar o Ansible, 
+            precisaremos criar uma máquina virtual com Ubuntu para instalar o Ansible e o Python.
 
             Para fazer o estudo de caso precisaremos de outra máquina virtual usando Virtual Box e Vagrant.
 
@@ -72,8 +85,8 @@ Ansible: Sua infraestrutura como código:
 
             Na documentação do Ansible podemos ver que ainda não temos suporte para usar o Windows como máquina de controle.
 
-            Porém, podemos usar o bash do Ubuntu nas versões de Windows 10 posteriores à atualização creators update, possibilitando a instalação e o uso de todos os comandos necessários no curso. O passo a passo
-            pode ser encontrado no blog oficial da Microsoft:
+            Porém, podemos usar o bash do Ubuntu nas versões de Windows 10 posteriores à atualização creators update, possibilitando a instalação e o uso de todos os comandos 
+            necessários no curso. O passo a passo pode ser encontrado no blog oficial da Microsoft:
 
                 https://blogs.msdn.microsoft.com/luisdem/2016/09/01/bash-on-windows-passo-a-passo/
 
@@ -104,6 +117,241 @@ Ansible: Sua infraestrutura como código:
                 Precisamos criar a nossa máquina virtual, veremos como ela pode ser acessada e, depois, rodaremos "Hello, World" na linha de comando.
                 Precisamos de um arquivo 'vagrant.file' com as configurações da máquina que vai ser criada.
                 Está fora do escopo aprender Vagrant, mas já tenho alguns arquivos de configuração Vagrant, além do arquivo do curso para usar como base...
+
+                    Obs: No curso o professor como exemplo usou o snapshot "ubuntu/trusty64", tentei utiliza-lo porém depois que reiniciava a máquina não se conectava mais via SSH, 
+                    por isso preferi utilizar "ubuntu/groovy64" uma versão mais recente.
+
+                    Obs: Ainda a ubuntu/groovy64 apresentou problemas após desligar e religar para estudos, passei a utilizar a hashicorp/precise64
+                    
+                    Conteúdo do arquivo...
+
+                        Vagrant.configure("2") do |config|
+
+                            config.vm.box = "ubuntu/groovy64"
+
+                            config.vm.provider "virtualbox" do |v|
+                                v.memory = 1024
+                            end
+
+                            config.vm.define "wordpress" do |m|
+                                m.vm.network "private_network", ip: "172.17.177.40"
+                            end
+
+                        end
+
+                    Se está for a primeira vez que estiver criando a máquina virtual com Vagrant o processo irá demorar.
+                    Ele irá baixar o snapshot do https://vagrantcloud.com/ubuntu/trusty64
+
+                Enquanto ele levanta a máquina virtual, criaremos o primeiro arquivo que será usado pelo Ansible para começar a infraestrutura completa do código.
+
+                O nome do arquivo será hosts, um arquivo de inventário onde colocaremos todas as informações necessárias para o Ansible saber como acessar as máquinas.
+                Em seguida, vamos colocar o IP da máquina criada: 172.17.177.40. Nós também adicionaremos o grupo 'wordpress', cuja utilidade é informar ao Ansible para o servidor
+                qual é a sua serventia.
+
+                Até o momento parece que ele não tem muita serventia, mas veremos como Ansible decide o que a nossa máquina é, além de qual tipo de código será aplicado na estrutura.
+                Para conectar utilizamos o protocolo 'ssh'.
+
+                    $ vagrant ssh
+
+                Nós conseguiremos verificar que a máquina existe, após limparmos a tela com o comando 'clear', rodaremos o comando Ansible:
+
+                    $ ansible -u vagrant -i hosts -m shell -a 'echo Hello, World'
+
+                O Vagrant sempre cria um usuário chamado 'vagrant', além dele, passaremos o arquivo de inventário 'hosts' e o módulo 'shell'. Módulos são os comandos que o Ansible
+                é capaz de rodar, o primeiro deles é responsável por executar um comando no Shell quando rodarmos o SSH na máquina. Nós queremos passar 'echo Hello, World'.
+
+                No entanto, ao rodarmos o comando, teremos um erro porque esquecemos de informar para o Ansible contra quais grupos estamos executando determinado comando.
+                No caso, especificaremos o grupo 'wordpress'.
+
+                Vamos trabalhar com um usuário SSH, então, precisamo passar uma senha ou uma chave, Se disponibilizarmos a senha, não vai funcionar corretamente.
+                Passar uma chave é a melhor solução, faremos isso adicionando --private-key, O Vagrant cria uma chave:
+
+                    .vagrant/machines/wordpress/virtualbox/private_key
+
+                    $ ansible -u vagrant --private-key .vagrant/machines/wordpress/virtualbox/private_key -i hosts -m shell -a 'echo Hello, World'
+
+                    Nós passamos:
+
+                        - Grupo de hosts que queremos rodar o comando;
+                        - Qual nome do usuário;
+                        - A chave privada (e evitar passar senha na linha de comando);
+                        - Informamos o arquivo de inventário para ele conferir os hosts que configuraremos;
+                        - Informamos o módulo que executaremos: shell;
+                        - Quais os argumentos que estamos passando: echo Hello, World (comando que eu executaria direto no bash).
+
+                Agora conseguiremos executar o comando:
+
+                    $ ansible wordpress -u vagrant --private-key .vagrant/machines/wordpress/virtualbox/private_key -i hosts -m shell -a 'echo Hello, World'
+                        172.17.177.40 | SUCCESS | rc=0 >>
+                        Hello, World
+
+                Esse retorno do Ansible significa que ele rodou um comando no servidor 172.17.177.40, e que a execução foi bem-sucedida. A saída foi Hello, World.
+
+                No entanto, é possível compreender se ele fez uma conexão SSH? Adicionaremos o parâmetro -vvvv na execução, assim iremos os assegurar. O Ansible vai ficar mais verboso
+                quando for executado, mas conseguiremos ver exatamente o que está acontecendo. Isto é bastante útil quando estamos depurando ou desenvolvendo um script'.
+
+                    $ ansible -vvvv wordpress -u vagrant --private-key .vagrant/machines/wordpress/virtualbox/private_key -i hosts -m shell -a 'echo Hello, World'
+
+                Agora a saída será mais extensa e nos informará qual é a versão e arquivos utilizados, além de como ele achou os módulos no 'path'. Ele nos avisará, inclusive, qual 
+                usuário foi utilizado para estabelecer a conexão, além do comando SHH usado.
+
+                Depois, será mostrado como são carregados os arquivos dos comandos enviados. No fim, ainda teremos a saída simplificada nos informando que a execução foi bem-sucedida.
+
+                Se você tiver alguma dúvida sobre o que aconteceu do ponto de vista de conectividade no Ansible, caso tenha algum problema para logar, um usuário em que antes 
+                conseguimos acessar a máquina, mas não é mais possível, ou outras informações sobre problemas, o padrão '-vvvv' pode ser útil para ajudar a depurar.
+
+                Nossa instalação Ansible está funcionando, conseguimos nos conectar via SSH na máquina virtual criada, sabemos que ela está executando os comandos que o Ansible 
+                está pedindo. Estamos prontos para criar o playbook a seguir.
+
+
+        Preparando o ambiente:
+
+            Instalando o Ansible:
+
+                Para instalar o Ansible basta executar o seguinte comando na máquina de controle Linux...
+
+                    $ sudo apt install ansible
+
+                    Obs: Na máquina ubuntu/groovy64 não funcionou de primeira este comando, precisei atualizar o cache do repositório com o comando:
+
+                        $ sudo apt update
+
+                    Para verificar a versão do Ansible instalada basta executar o comando:
+
+                        # ansible --version
+
+                        O console deverá apresentar uma saída como esta:
+
+                            ansible 2.9.9
+                                config file = /etc/ansible/ansible.cfg
+                                configured module search path = ['/root/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
+                                ansible python module location = /usr/lib/python3/dist-packages/ansible
+                                executable location = /usr/bin/ansible
+                                python version = 3.8.6 (default, Sep 25 2020, 09:36:53) [GCC 10.2.0]
+
+            
+            Instalando o Python:
+
+                Caso não tenha o Python instalado ainda na máquina, basta executar o comando:
+
+                    $ sudo apt install python
+
+                Para verificar a versão do Python instalada:
+
+                    $ python -V
+
+                    O console deverá apresentar uma saída como esta:
+
+                        Python 2.7.18
+
+            
+            Caso vá utilizar máquinas virtuais para este curso é necessário o Vagrant e o Virtual Box...
+            Criar uma máquina de "controle" e a outra que será "controlada". Tanto o Ansible quanto o Python devem estar na máquina de controle.
+
+            Para se conectar à máquina de controle após ela ser criada com o Vagrant file e o comando $ vagrant up. Devemos nos conectar a ela com o comando:
+
+                $ vagrant ssh
+
+                Usando o id da máquina virtual ou realizando o comando dentro do diretório da máquina na qual quer se conectar.
+
+            Como o meu Desktop atual está com o sistema operacional Windows, instalei duas máquinas virtuais utilizando o Virtual Box e o Vagrant.
+            O nome que dei a máquina de controle foi controlMachine e o nome da máquina a ser controlada wordpress (Como orientado no curso).
+
+            Após instalar o Ansible e o Python na máquina controlMachine testei a comunicação entre as duas, para dar prosseguimento ao curso, com o comando:
+
+                $ sudo ansible wordpress -u vagrant --private-key .vagrant/machines/wordpress/virtualbox/private_key -i hosts -m shell -a 'echo Hello, World'
+
+                Para uma saída mais verbosa acrescentar o -vvvv:
+
+                    $ sudo ansible -vvvv wordpress -u vagrant --private-key .vagrant/machines/wordpress/virtualbox/private_key -i hosts -m shell -a 'echo Hello, World'
+
+                    Obs: Qualquer dos dois comandos que executarmos teremos o erro 'Unreachable'
+
+            
+            Erro Unreachable?
+
+                Se sim, temos um problema de autenticação entre as máquinas, iremos então, criar chaves SSH, dentro do diretório '/home/vagrant/.ssh#' (no curso fizemos isso no diretório
+                ssh-keys dentro do diretório do projeto), com o comando:
+
+                    $ ssh-keygen -t rsa
+
+                    Será solicitado o local para salvar a chave:
+
+                        Enter file in which to save the key (/root/.ssh/id_rsa):
+
+                        Obs: Se já estiver no diretório correto, basta utilizar o comando: ./nome_da_chave
+                            No caso utilizer a sugerida pelo curso: vagrant_id_rsa
+                            Se não estiver no diretório correto, basta colocar o caminho completo...
+
+                        Obs2: Neste momento temos que estar com as duas máquinas virtuais funcionando.
+
+                    Realizaremos a cópia da chave pública para a máquina que quermos controlar, no meu caso a máquina controladora é a 192.168.2.1 e a máquina controlada é 192.168.2.2
+                    Para realizar a cópia da chave PÚBLICA para a máquina controlada realizamos o comando:
+
+                        $ ssh-copy-id -i vagrant_id_rsa.pub vagrant@192.168.0.2
+
+                        Obs: Este snapshot que estou utilizando não permitia a inserção de chaves públicas via comandos ssh de uma máquina para a outra, o erro que aparecia era o seguinte:
+                        
+                            $ sudo ssh-copy-id -i vagrant_id_rsa.pub vagrant@192.168.0.2
+
+                            /usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "vagrant_id_rsa.pub"
+                            /usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
+                            /usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
+                            vagrant@192.168.2.2: Permission denied (publickey).
+                        
+                            precisei realizar as seguintes ações pra tornar isso possível...
+
+                                Ir até a máquina que vai ser controlada (vagrant@192.168.2.2) e editar o arquivo sshd_config em /etc/ssh
+
+                                    $ vi /etc/ssh/sshd_config
+
+                                    Alterei os seguintee atributos para 'yes':
+
+                                        PasswordAuthentication yes
+
+                                        PermitRootLogin yes
+
+                                    Após isso, realizei o reset do serviço...
+
+                                        $ sudo service sshd restart
+
+                                    Depois tentei realizar novamente a cópia do arquivo e deu certo...
+
+                                    Obs: Se quiser pode tentar realizar a conexão via SSH de uma máquina virtual para outra...
+
+                                        A partir da vagrant@192.168.0.1, faça:
+
+                                        $ vagrant ssh vagrant@192.168.0.2
+
+                Obs: Outro erro fatal que eu estava cometendo, no comando do 'Hello World' do Ansible, não estava me atentando que não tinha criado o diretório 'ssh' dentro do diretório 
+                'wordpress_com_ansible' deixando a chave privada 'vagrant_id_rsa' na raiz. Então quando eu copiava o comando da aula sempre dava erro, porque não estava encontrando a chave. 
+
+                    O comando é:
+
+                        $ sudo ansible wordpress -i hosts -u vagrant --private-key ssh-keys/vagrant_id_rsa -m ping -m shell -a 'echo Hello, World'
+
+                        Por isso é bom seguir sempre o passo a passo, ou ler com calma o erro que é apresentado no console...
+
+                Obs2: Este Snapshot 'ubuntu/groovy64' que eu baixei está com as permissões bem restritas, diferente do 'ubuntu/trusty64' que eu estava usando, por isso frequentemente 
+                estaremos usando o comando 'sudo' ou então já devemos elevar as permissões pra não precisar ficar rodando este comando.
+
+
+                Por fim a saída que temos que receber rodando o comando acima do Ansible é:
+
+                    192.168.2.2 | CHANGED | rc=0 >>
+                    Hello, World
+
+                No caso de utilizar o comando com a saída mais verbosa:
+
+                    $ sudo ansible -vvvv wordpress -i hosts -u vagrant --private-key ssh-keys/vagrant_id_rsa -m ping -m shell -a 'echo Hello, World'
+
+            
+                Nesta aula, aprendemos:
+
+                Como subir sua máquina virtual pelo Vagrant
+                Como utilizar a chave privada no Ansible para se comunicar com a VM
+                Como executar um Hello, World utilizando Ansible
+
 
         Questões aula 01:
 
@@ -142,6 +390,591 @@ Ansible: Sua infraestrutura como código:
 
                 R: As afirmativas B e C são falsas.
 
-                Alternativa correta! O arquivo de inventário é aquele que lista todas as máquinas que serão configuradas e o Playbook é o arquivo com as "receitas de bolo" do que queremos fazer.
+                Alternativa correta! O arquivo de inventário é aquele que lista todas as máquinas que serão configuradas e o Playbook é o arquivo com as "receitas de bolo" do que 
+                queremos fazer.
+
+
+            3 - Ricardo está começando a estudar Ansible. Ele já subiu a sua máquina com o Vagrant, criou o arquivo de inventário hosts com o grupo groupA, com o IP 10.0.0.1, e 
+            resolveu fazer um teste, imprimindo o famoso Hello, World, através do seguinte comando:
+
+            ansible groupA -u vagrant -i hosts -m shell -a 'echo Hello, World'
+            
+            Esse comando irá funcionar?
+
+            Selecione uma alternativa
+
+            R: Não, pois o Ansible não conseguirá fazer a autenticação para executar um comando na máquina.
+
+            Alternativa correta! Para fazer a autenticação, uma chave precisa ser passada, que o próprio Vagrant cria:
+
+            ansible wordpress -u vagrant --private-key .vagrant/machines/wordpress/virtualbox/private_key -i hosts -m shell -a 'echo Hello, World'
+
+    
+
+    Aula 02: Criação do primeiro Playbook -------
+
+        O primeiro Playbook:
+
+            Até agora montamos o nosso primeiro laboratório para trabalho:
+
+                - Máquina virtual de controle 'controlMachine'.
+                - Máquina virtual à ser controlada 'wordpress'.
+                - Diretório do projeto 'wordpress_com_ansible' na máquina de controle.
+                - Pasta 'ssh-keys' (dentro do diretório wordpress_com_ansible) contendo as chaves SSH que garantem a comunicação entre a máquina controlMachine e a máquina wordpress.
+                - Arquivo hosts com o primeiro servidor de máquinas a ser controlado.
+                - Primeiro teste: Um comando Ansible para exibir um 'Hello, World' na máquina controlada.
+                    sudo ansible wordpress -i hosts -u vagrant --private-key ssh-keys/vagrant_id_rsa -m ping -m shell -a 'echo Hello, World'
+
+            Agora iremos criar nosso primeiro script com comandos. Nosso objetivo principal é montar uma máquina no qual a instalação final tenha:
+                - PHP.
+                - MySQL.
+                - Apache.
+
+                E então, rodar o wordpress nesta máquina. Porém, não faz sentido que façamos isso da forma que fizemos na ultima aula, rodando comando por comando.
+                Se fosse assim não teria sentido utilizar o Ansible.
+
+            Um dos propósitos do Ansible é automatizar a infraestrutura e tornar simples a reprodução e a realização de testes. Como Ansible é uma das ferramentas de 'IAC'
+            'Infraesctruture as Code', podemos criar a infra que iremos trabalhar utilizando código, podendo assim, manter ela num repositório, tornando ela de fácil acesso para
+            a equipe de trabalho e versionando ela conforme formos atualizando. Ou seja, transformar a infra num projeto bem similar a de qualquer aplicação.
+
+            Primeiramente vamos criar um arquivo de script que no Ansible é chamado de Playbook. Se a nossa máquina padrão tiver interface gráfica, basta clicar com o botão direito e
+            criar o arquivo em 'New File'. Caso estejamos utilizando o Linux sem interface gráfica (através de uma máquina virtual), utilizamos o comando:
+
+                $ sudo vi provisioning.yml
+
+            Este deve ser o nome do arquivo, 'provisioning', e sua extensão deve ser, '.yml'. Este é o formato padrão adotado pelo Ansible para criação dos arquivos de configuração.
+            Obs: Este é um derivado de como criamos dicionários em Python e possui alguns detalhes que serão citados a seguir.
+
+            O arquivo sempre deve ser iniciado com três hífens (---) e o elemento de primeiro nível é sempre uma lista que começa com um filtro chamado hosts.
+            No caso, nesta tag, indicaremos quais hosts foram colocados no inventário, que será trabalhado pelo Ansible. A seguir, rodaremos uma lista de comandos, informando quais
+            hosts serão o 'alvo' dela.
+
+                - hosts: all
+                  tasks: 
+                    - shell: 'echo hello > /vagrant/world.txt'
+
+            No conteúdo do arquivo provisioning.yml, já adicionamos também o campo 'tasks' que contém o conjunto de comandos que serão rodados à partir da máquina de controle e serão
+            aplicados nesses hosts filtrados. Estamos novamente rodando o módulo shell neste trecho de código dentro do arquivo. O que o conteúdo do arquivo diz, é que, colocaremos a
+            palavra 'hello' dentro do arquivo 'world.txt' que será adicionado no diretório '/vagrant' da máquina virtual que está sendo controlada (wordpress).
+                Obs: O diretório '/vagrant' é um diretório padrão em máquinas criadas pelo Vagrant, ele é muito útil para que possamos compartilhar de forma fácil, arquivos de fora 
+                para dentro, e de dentro para fora, entre a máquina física e a máquina virtual.
+
+            No comando da aula passada utilizamos um módulo arbitrário, que foi o shell. Mas para executar um playbook digitaremos um comando diferente: ansible-playbook.
+
+            Adicionamos na linha de comando a plavra 'vagrant' para informar qual é o usuário a se autenticar na máquina alvo.
+
+            Temos também, como no outro exemplo, informar qual é o arquivo de inventário, para que ele saiba em quais máquinas ele vai executar o comando '-' no caso, é o arquivo hosts
+            e informaremos a chave privada de autenticação ssh.
+
+                $ ansible-playbook provisioning.yml -u vagrant -i hosts --private-key ssh-keys/vagrant_id_rsa
+
+                Obs: Se ainda não tivermos logado na máquina, wordpress, alvo dos comandos, ela vai pedir para gravar a chave. Basta que repondamos "sim".
+                Em seguida, devemos esperar o Ansible terminar de executar o comando.
+                
+                A saída deverá ser:
+
+                   PLAY [all] ********************************************************************
+
+                   GATHERING FACTS ***************************************************************
+                   ok: [192.168.0.2]
+
+                   TASK: [shell echo hello > /vagrant/world.txt] *********************************
+                   changed: [192.168.0.2]
+
+                   PLAY RECAP ********************************************************************
+                   192.168.0.2                : ok=2    changed=1    unreachable=0    failed=0
+
+                Obs: Muitos comandos tenho alterado no meu material e laboratório pois estou usando duas máquinas virtuais, diferente do instrutor do alura.
+                    No exemplo acima minhas chaves permanecem em ssh-keys e não no diretório padrão do Vagrant.
+
+            Podemos verificar se o playbook rodou corretamente logando na nossa máquina virtual wordpress.
+            No meu caso que tenho duas máquinas virtuais para o laboratório, Posso sair para a máquina física, ir no diretório da máquina wordpress e executar o comando:
+
+                $ vagrant ssh
+
+                Caso queira fazer à partir da máquina virtual de controle:
+
+                $ ssh vagrant@"Ip da máquina wordpress"
+
+                Obs: Passei a usar nos dias seguintes o git bash à partir do diretório da máquina wordpress, para não precisar toda horas sair de uma máquina para entrar em outra.
+                Assim consigo trabalhar com dois terminais diferentes em duas máquinas diferentes. O terminal do VS Code para a controlMachine e o gitBash paara a wordpress.
+
+            Basta olha no diretório 'vagrant' e ver se o arquivo 'word.txt' está lá...
+            Obs: Não é pasta vagrant do usuário que está em 'home' e sim a pasta vagrant criada automaticamente que fica na raiz '/' da máquina virtual.
+
+            Podemos rodar o comando:
+
+                $ cat world.txt
+
+                ...e ver se o conteúdo 'hello' está presente.
+
+            Agora já sabemos que está funcionando perfeitamente a execução de playbooks à partir da 'controlMachine'. Podemos ver o arquivo world.txt tanto dentro, quanto fora da
+            máquina virtual, já que o que foi levado para dentro do diretório vagrant, também foi para o diretório de criação na máquina física, onde se encontra o arquivo 'Vagrantfile'.
+
+            Porém, este ainda não é o objetivo final, vamos instalar o PHP, Apache e MySQL.
+
+        
+            Instalando dependências:
+
+                Obs: Precisei remover a linha #  - shell: 'echo hello > /vagrant/world.txt'... Para deixar o playbook limpo.
+
+                Obs2: Nos dias seguintes criei uma pasta para armazenar todos os arquivos já utilizados sem deletar nada para poder ter vários exemplos.
+
+                Criamos nosso primeiro playbook, realizamos a sua execução, vimos como o arquivo fica dentro da máquina virtual, como é compartilhado do lado de fora.
+                Agora vamos efetivamente instalar o projeto.
+
+                Como vimos no ínicio do curso, a intenção é provisionar uma máquina com PHP, MySQL, Apache e Wordpress. Utilizaremos o Ansible para fazer isso.
+
+                Vamos utilizar o nosso arquivo de playbook, provisioning.yml, que já utilizamos no primeiro exemplo. No primeiro exemplo utilizamos o módulo shell para executar o 
+                comando, porém, como estamos provisionando uma máquina Ubuntu, faremos isso como se estivessemos rodando os comandos do seu próprio terminal.
+
+                Sendo assim, o módulo que o Ansible irá utilizar é o 'apt', para gerenciar pacotes Ubuntu do Debian, e o módulo yum para gerenciar pacotes da Red Hat e do CentOS.
+
+                Veremos ainda uma coleção de módulos administradores de pacote. Neste momento, focaremos no apt.
+                Com o módulo apt podemos passar um parâmetro chamado name, referente ao pacote que desejamos instalar.
+                Começaremos pelo php5
+
+                    ---
+                    - hosts: all
+                      tasks:
+                        - name: 'Instalando o PHP7.4'
+                          apt:
+                            name: php7.4
+                            state: latest
+                        become: yes
+
+                    Assim ficou o nosso arquivo provisioning.yml
+
+                No Ansible é importante utilizar o parâmetro 'state' na maior parte dos módulos. Nele podemos informar o estado esperado depois da execução de uma task.
+                Todas as tasks são checadas no Ansible para que saibamos como está seu estado após finalizada.
+
+                Dependendo do módulo, teremos algumas opções de estado. Neste primeiro exemplo, definimos como 'latest', que significa que estamos garantindo que teremos a última
+                versão do php7.4. Ou seja, se caso encontre uma versão anterior, ela será atualizada.
+
+                Ou parâmetro importante é o 'become', ele garante que executaremos aquela task como 'root'. O que é essencial quando se trata de instalação de algum programa na máquina.
+                Ou seja: "Instale o programa como root, e não como o usuário SSH com o qual me autentiquei".
+
+                Obs: Seu valor é 'yes'
+
+                Obs2: Ele não é um parâmetro do apt.
+
+                Para uma melhor visualização do arquivo que criamos, é como se na máquina wordpress, estivessemos executando o seguinte comando em seu terminal...
+
+                    $ sudo apt install php7.4 -y
+
+                Rodando como root o sistema da máquina alvo permite que realizemos alterações em seu filesystem.
+                O comando é aquele acima, mas iremos utilizar o arquivo que criamos.
+
+                Então, utilizaremos o comando:
+
+                    $ sudo ansible-playbook provisioning.yml -u vagrant -i hosts --private-key ssh-keys/vagrant_id_rsa
+
+                    Novamente nest comando estamos elevando permissão, indicando que é uma execução do playbook do ansible, indicando qual é o usuário
+
+                Obs: Não tinha versão php5 disponível para instalar, o seguinte erro era apresentado:
+
+                    PLAY [all] **************************************************************************************************************************
+                    TASK [Gathering Facts] **************************************************************************************************************
+                    ok: [192.168.0.2]
+
+                    TASK [Instala o PHP7] ***************************************************************************************************************
+                    fatal: [192.168.0.2]: FAILED! => {"changed": false, "msg": "No package matching 'php7' is available"}
+                    ---
+
+                    PLAY RECAP **************************************************************************************************************************
+                    192.168.0.2                : ok=1    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0
+
+
+                    O mesmo aconteceu com a versão 7...Neste momento do curso ainda não descobri se o problema são versões que não existem mais do php5, se não instala porque a
+                    máquina virtual que estou utilizando (ubuntu/focal64 (lts 20.04)) é mais nova que a do professor (ubuntu/trusty64 (lts 14.04)) e não permite versões mais antigas
+                    do php. Ou, por fim, se a versão do Ansible que estou utilizando exige que tenhamos como primeira referência uma versão exata das aplicações que queremos instalar.
+
+                Obs2: Eu já mudei de antemão todos os lugares onde havia deixado php5.
+
+                Após estas observações retomo ao assunto das tasks, que num primeiro momento, na primeira instalação na máquina alvo, terá uma execução bem demorada, já que estará
+                baixando, instalando pacotes e verificando se a versão está atualizada.
+
+                Após uma execução com sucesso a seguinte saída deverá ser apresentada:
+
+                    PLAY [all] **********************************************************************************************************************************************
+                    TASK [Gathering Facts] **********************************************************************************************************************************
+                    ok: [192.168.0.2]
+
+                    TASK [Instala o PHP7.4] *********************************************************************************************************************************
+                    ok: [192.168.0.2]
+
+                    PLAY RECAP **********************************************************************************************************************************************
+                    192.168.0.2                : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+
+                O Ansible marcou 'changed' para a task apt. Podemos confirmar se obtivemos sucesso é rodá-la novamente.
+                Agora a saída é:
+
+                    TASK [Instala o PHP7.4] *********************************************************************************************************************************
+                    ok: [192.168.0.2]
+
+                Ou seja, ele já está com o pacote instalado. A task já ficou marcada como 'ok'.
+                Isso aconteceu porque já está instalado e está na versão que o Ansible precisa, e, por isso, ele não executará ela de novo.
+                O Ansible utiliza o princípio da Idempotência, com qual apenas irá alterar o resultado quando aas operações forem efetivamente alteradas.
+
+                Se ele garantiu que algo está no estado definido pelo arquivo, ele não vai realizar a mesma operação uma segunda vez.
+                Isto evita duas coisas...A primeira é sobreescrever informações importantes, a segunda que evitamos chegar em um estado indeterminado.
+
+                - Ele garante que o processo será realizado da maneira como nós determinamos.
+
+                - Ou ele para de funcionar e não tenta executar tarefas em um estdo não solicitado.
+
+                Agora que já instalamos o PHP, o próximo passo será instalar o Apache.
+                Obs: Nesta altura o instrutor nos ensina a utilizar o parâmetro '- name' nas tasks. Isto porquê se tivermos várias tasks num só arquivo, não ficaremos perdidos
+                sobre o que cada uma dela faz. Porém, já utilizei no exemplo anterior, por isso a task já saiu como 'Instala o PHP7.4'.
+
+                A seguir, usaremos o mesmo princípio para instalar o Apache2. Começaremos adicionando name e usaremos o mesmo módulo. O nome do pacote será apache2.
+                Escolhemos a task (instalação do Apache), definimos a descrição para identificar mais facilmente ('Instala o Apache'), dizemos que queremos a versão mais nova do 
+                Apache2 (latest) e, por fim, dizemos que queremos a execução desta task como root (become: yes).
+
+                Agora rodaremos o comando para ver se conseguimos realizar esta segunda task...
+
+                    $ sudo ansible-playbook provisioning.yml -u vagrant -i hosts --private-key ssh-keys/vagrant_id_rsa
+
+                A saída foi a seguinte:
+
+                    PLAY [all] ***********************************************************************************************************************************
+                    TASK [Gathering Facts] ******************************************************************************************************ok: [192.168.0.2]
+
+                    TASK [Instala o PHP7.4] *****************************************************************************************************ok: [192.168.0.2]
+
+                    TASK [Instala o Apache] *****************************************************************************************************ok: [192.168.0.2]
+
+                    PLAY RECAP *****************192.168.0.2                : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+                Conforme podemos perceber na saída, não houve mudanças, isto porque o Apache já estava instalado.
+                Tivemos esta saída porque no Ubuntu o PHP depende do Apache. Assim que instalamos o PHP, automaticamente, será instalado o módulo de compatibilidade do Apache2.
+                O PHP é utilizadado para desenvolvimento WEB, e o módulo APT entende que se instalamos um, queremos a instalação do outro.
+
+                Não é interessante tirar do nosso playbook a instalação do Apache, porque o PHP depende dele, e se em outro cenário o módulo de instalação não fizer o que o APT, faz
+                o provisionamento da máquina desejada não estará o mesmo. E o nosso playbook não funcionará.
+
+                É importante garantir a instalação de todas as dependências que são necessárias para o nosso ambiente funcionar, estando ou não presentes.
+                Por isso devemos citamos nominalmente todas as nossas dependências, deixando explícito o que deve ser feito.
+
+                Por último, o MOD PHP, deverá ser instalado. Este é o módulo de integração entre o PHP e o Apache.
+
+                     - name: 'Instala o MOD PHP'
+                        apt: 
+                            name: libapache2-mod-php7.4
+                            state:latest
+                        become: yes
+
+                    Após adicionar este trecho de código ao playbook, rodaremos o comando novamente...
+
+                        $ sudo ansible-playbook provisioning.yml -u vagrant -i hosts --private-key ssh-keys/vagrant_id_rsa
+
+                Lembre-se, mesmo que já temos por certo que ele já está instalado, pois instalamos o PHP e o Apache, temos que garantir todas as dependências estão disponíveis,
+                no estado que são necessários.
+
+                A saída deverá ser a seguinte:
+
+                    PLAY [all] *****************************************************************************************************************************************
+                    TASK [Gathering Facts] ************************************************************************************************************ok: [192.168.0.2]
+
+                    TASK [Instala o PHP7.4] ***********************************************************************************************************ok: [192.168.0.2]
+
+                    TASK [Instala o Apache] ***********************************************************************************************************ok: [192.168.0.2]
+
+                    TASK [Instala o MOD PHP] **********************************************************************************************************ok: [192.168.0.2]
+
+                    PLAY RECAP ***********************192.168.0.2                : ok=4    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+                
+                Agora, para conferirmos se a nossa instalação de Apache funciona, acessaremos pelo browser o ip da máquina virtual (192.168.0.2).
+                Temos que ver uma 'Default Page' do Apache.
+
+                No decorrer do curso veremos como melhorar o nosso playbook, pois ainda falta muitas dependências do PHP e se podemos evitar de deixar o processo de instalação
+                repetitivoo. Usaremos mais a frente um loop chamado 'with_items', que é uma frma mais inteligente de administrar as dependências.
+
+                
+                Nesta aula, aprendemos:
+
+                - Como criar um Playbook de Ansible
+                - Como instalar dependências usando o Ansible
+                - Como utilizar alguns parâmetros de forma correta no seu Playbook
+
+        Questões aula 02;
+
+            1 - A Ana quer criar um Playbook que gere um arquivo txt com o seu nome dentro do arquivo /vagrant/nome.txt. A tarefa deve funcionar para todos os hosts configurados. 
+            Como deverá ficar esse Playbook?
+
+                Selecione uma alternativa
+
+                R: ---
+                - hosts: all
+                    tasks:
+                    - shell: "echo Ana > /vagrant/nome.txt"
+
+                Alternativa correta! A primeira linha do Playbook são três hífens, o primeiro elemento são os hosts que o Ansible vai trabalhar e após isso são escritos os comandos a 
+                serem executados, que são uma lista de tasks. Para escrever o nome em um arquivo, utilizamos o módulo shell, executando o comando echo em seguida.
+
+            2 - Tendo como referência o Playbook abaixo, podemos dizer:
+
+                ---
+                - hosts: all
+                    - name: 'Instala o PHP5'
+                        name: php5
+                        state: latest
+                    become: yes
+
+
+                Selecione uma alternativa
+
+                R: O arquivo possui 2 erros.
+
+
+                Alternativa correta! O arquivo possui 2 erros: faltou colocar a dependência na lista de tasks e declarar o módulo a ser utilizado, o apt. O arquivo correto seria:
+
+                ---
+                - hosts: all
+                  tasks:
+                    - name: 'Instala o PHP5'
+                      apt:
+                        name: php5
+                        state: latest
+                      become: yes
+
+            
+            3 - Abaixo estão algumas palavras-chave do Ansible e os seus usos. Mas há um uso incorreto, qual?
+
+                Selecione uma alternativa
+
+                R: become: É um booleano e indica se a task será executada antes das outras tasks.
+
+                Alternativa correta! O uso do become está incorreto, pois ele é um booleano e indica se a task será executada com ou sem privilégios administrativos.
+
+    
+
+    Aula 03: Aplicando boas práticas -------
+
+        Simplificando o playbook with_items:
+
+            Agora veremos como melhorar o playbook, como criar o primeiro loop e tornar nosso código mais eficiente com menos linhas. Veremos também, como organizar melhor o inventário
+            e com isso, usaremos comandos menores.
+
+            Atualmente o arquivo provisioning.yml está assim:
+
+                ---
+                - hosts: all
+                  tasks:
+                    - name: 'Instala o PHP7.4'
+                      apt:
+                        name: php7.4
+                        state: latest
+                      become: yes
+                    - name: 'Instala o Apache'
+                      apt:
+                        name: apache2
+                        state: latest
+                      become: yes
+                    - name: 'Instala o MOD PHP'
+                      apt:
+                        name: libapache2-mod-php7.4
+                        state: latest
+                      become: yes
+
+            
+            Podemos notar que a única diferença entre as nossas tasks é o pacote que estamos instalando e a descrição do mesmo.
+            Porém agora criaremos uma nova task responsável por instalar todas as dependências do sistema operacional que precisamos.
+            Preencheremos 'item' com a palavra reservada item, depois, vamos incluir o lop usando o parâmetro 'with_items' que ficará no nível da task, ou seja, with_items não
+            faz parte da task.
+
+                ---
+                - hosts: all
+                  tasks:
+                    - name: 'Instala pacotes de dependencia do sistema operacional'
+                      apt:
+                        name: "{{ item }}"
+                        state: latest
+                      become: yes
+                      with_items:
+                        - php5
+                        - apache2
+                        - libapache2-mod-php5
+
+
+                Usamos praticamente a mesma estrutura, porém agora com o with_items, encadeamos na mesma task (ou, em um loop) a instalação de todas as dependências que precisamos.
+                A cada passo do loop, ele substituirá a parâmetro "{{ item }}" por um pacote da nossa lista.
+
+                Obs: 'item' é uma palavra reservada do Ansible, uma variável especial que o Ansible cria na execução dos loops.
+
+                Após criar esta nova task, podemos remover o restante do conteúdo do arquivo.
+                Rodaremos novamente o comando de execução do playbook no terminal para verificar se está tudo funcionando.
+
+                Obs: Ao executar o comando recebi a seguinte saída:
+
+                "[DEPRECATION WARNING]: Invoking "apt" only once while using a loop via squash_actions is deprecated. Instead of using a loop to supply multiple items and specifying 
+                `name: "{{ item }}"`, please use `name: ['php7.4','apache2', 'libapache2-mod-php7.4']` and remove the loop. 
+                This feature will be removed in version 2.11. Deprecation warnings can be disabled by setting deprecation_warnings=False in ansible.cfg."
+
+                Ou seja, o looping de tasks está "deprecated". Isso significa que nem funcionará mais em versões posteriores.
+                Então em 'name: "{{ item }}", já devemos específicar todos os pacotes, removendo o parâmetro no final 'with_items'.
+
+                Então, no fim nosso arquivo ficou assim:
+
+                    ---
+                    - hosts: all
+                      tasks:
+                        - name: 'Instala todos os pacotes de dependência do Sistema Operacional'
+                          apt:
+                            name: ['php7.4', 'apache2', 'libapache2-mod-php7.4']
+                            state: latest
+                          become: yes
+
+                Após salvar o arquivo e rodar o comando:
+
+                    $ sudo ansible-playbook provisioning.yml -u vagrant -i hosts --private-key ssh-keys/vagrant_id_rsa
+
+                    Podemos observar que deu certo e, da mesma forma que antes, o Ansible verificou que todas as dependências já haviam sido instaladas, como se não tivessemos
+                    alterado o arquivo.
+
+                Agora, neste arquivo novo, vamos adicionar a instalação do pacote php7.4-gd, para ver se vai funcionar corretamente adicionando uma nova instalação.
+
+                    name: ['php7.4', 'apache2', 'libapache2-mod-php7.4', 'php7.4-gd']
+
+                Após salvar o arquivo rodamos o comando novamente e verificamos que tudo funciona corretamente. Podemos notar que agora uma task do nosso provisionamento está com o 
+                status "changed".
+
+                Conseguimos deixar menor e mais limpos os comandos da administração dos nossos pacotes. Com esta mudança podemos administrar todos os pacotes com apenas uma task, e 
+                também, simplificamos futuras mudanças nos pacotes.
+
+                Agora falta as demais dependências necessárias para o uso completo do PHP que são solicitadas pelo Wordpress.
+                Precisamos também instaalr o servidor MySQL (mysql-server-8.0) e a integração Python e MySQL (python-mysqldb), esta última é pedida pelo Ansible e utilizada na execução
+                de alguns módulos na máquina que será configurada.
+
+                Após salvar e executar o comando, foi exibida a seguinte saída...
+
+                    fatal: [192.168.0.2]: FAILED! => {"changed": false, "msg": "No package matching 'python-mysqldb' is available"}
+
+                Após uma rápida pesquisa na internet, verifiquei que isto não é mais necessário nas atuais versões do Ubuntu e Ansible.
+
+                    Obs: Isto aconteceu com vários pacotes que foi sugerida a instalação durante as aulas.
+
+                Com estas dependências instaladas, conseguiremos fazer o Ansible controlar o servidor que faremos a seguir, e teremos um ambiente completo PHP, MySQL e Apache.
+                Tudo será administrador por um único comando, evitando escrever diversas linhas por dependência.
+
+                Os comando podem demorar pois está sendo realizado o download dos pacotes na máquina alvo.
+
+                Agora temos um ambiente mais completo, no qual é possível administrá-lo de forma mais organizada. Nosso playbook está agora sem repetições de tasks com a mesma
+                utilidade. Se precisarmos adicionar ou remover algo, basta alterarmos a listagem.
+        
+                Obs: Ao final desta aula temos a divisão 'Para saber mais: Novo Loop', onde foi sugerido testar o método das "novas versões" do Ansible...
+
+                    - name: 'Instala pacotes do sistema operacional'
+                      apt:
+                        name:
+                        - php5
+                        - apache2
+                        - libapache2-mod-php5
+                        state: latest
+                      become: yes
+
+                Depois podemos testar para ver se não é necessário utilizar os colchetes e aspas.
+
+        
+        Trabalhando com vários logins:
+
+            Veremos agora como é possível configurar o arquivo de inventário para suprir usuários diferentes, chaves privadas diferentes.
+            Neste processo, o comando 'ansible_playbook' também será simplificado.
+
+            Para isto precisamos no nosso arquivo de 'hosts', incluir duas informações: Nome do usuário e o local da chave privada que estamos passando na linha de comando.
+            Antes estavamos executando o seguinte comando:
+
+                $ sudo ansible-playbook provisioning.yml -u vagrant -i hosts --private-key ssh-keys/vagrant_id_rsa
+
+            O primeiro parâmetro é a chamada da função do Ansible: 'ansible-playbook'
+            No segundo comando estamos passando o arquivo das tasks: 'provisioning.yml'
+            O terceiro parâmetro estamos passando o usuário ssh: '-u vagrant'
+            No quarto parâmetro o arquivo de inventário, em outras palavras, informamos os hosts que serão configurados: '-i hosts'
+            E por último mas não menos importante temos a chave privada: '--private-key ssh-keys/vagrant_id_rsa'
+
+            Para simplificarmos este comando, teremos que alterar o arquivo hosts...
+
+                $ sudo vi hosts
+
+                [wordpress]
+                192.168.0.2
+
+                Note que temos ainda somente o host alvo das tasks, agora passaremos o primeiro parâmetro logo a frente do IP...
+
+                [wordpress]
+                192.168.0.2 ansible_user=vagrant
+
+                Este primeiro parâmetro nada mais é que o usuário ssh
+                Adicionamos então, o segundo parâmetro...
+
+                [wordpress]
+                192.168.0.2 ansible_user=vagrant ansible_ssh_private_key_file="./ssh-keys/vagrant_id_rsa"
+
+                Este segundo parâmetro a frente do usuário ssh é a cheve privada.
+
+            Nosso comando ficou bem mais simples agora:
+
+                $ sudo ansible-playbook provisioning.yml -i hosts
+
+            Obs: Tanto o usuário ssh quanto a chave privada podem ser inclusos no arquivo hosts ou exclusos do comando individualmente. Não é obrigatório fazer os dois juntos.
+            Basta não esquecer de usar na linha de comando aquele que não adicionou ao arquivo hosts.
+
+            Obs2: Sempre bom deixar, no arquivo hosts, entre aspas duplas o caminho da chave privada, assim garantimos que a string não será quebrada.
+
+            Obs3: Caso não se lembre de cabeça qual é ou a sintaxe do caminho da chave privada, basta ir onde você deixou sua chave privada de conexão com a máquina algo e digitar
+            o comando:
+
+                $ pwd
+
+            Viu como nosso comando ficou mais simples? 
+            Isto é muita vantagem na hora de utilizar o Ansible, tentar provisionar mais de uma máquina que tem usuários de acesso e administração diferentes não é possível, pois na 
+            linha de comando para rodar o playbook só aceita 1 usuário.
+
+            Mas, como vimos, podemos passar quantos usuários quisermos para a máquina que quisermos através do arquivo hosts. Ou seja, podemos definir as configurações necessárias
+            por máquina individualmente. Desta forma que garantimos o bom funcionamento de um ambiente heterogêneo no Ansible.
+
+            O próximo passo é provisionar o Banco de Dados, o MySQL, e preparar a nossa instalação do Wordpress.
+
+        Nesta aula, aprendemos:
+
+        - Como deixar nosso código mais enxuto com o uso de item e with_items
+        - Como configurar nosso projeto para lidar com chaves privadas diferentes
+
+
+        Questões aula 03:
+
+            01 - Temos as seguintes afirmativas sobre with_items:
+
+                A) O parâmetro with_items fica no nível da task, ou seja, não faz parte da task.
+
+                B) Em with_items, passamos o nome (name) dos pacotes das tasks que desejamos que ele contenha.
+
+                C) Acabamos escrevendo mais com with_items.
+
+                Podemos afirmar que:
+
+                Selecione uma alternativa
+
+                R: Apenas as afirmativas A e B são verdadeiras.
+
+                Alternativa correta! A afirmativa C é falsa, pois acabamos escrevendo menos com with_items.
+
+            
+            02 - No último vídeo aprendemos sobre a variável especial item. Qual das afirmações abaixo é verdadeira?
+
+                Selecione uma alternativa
+
+                R: Ela é uma palavra reservada do Ansible e com ela conseguimos fazer uma referência a todos os elementos inclusos em uma lista.
+
+                Alternativa correta! Ela é uma palavra reservada do Ansible e serve para fazer uma referência aos objetos inclusos na nossa lista de dependências.
+
+    
+    Aula 04: Preparando o banco de dados -------
+
+        Configurando o banco de dados:
+
+
 
 
