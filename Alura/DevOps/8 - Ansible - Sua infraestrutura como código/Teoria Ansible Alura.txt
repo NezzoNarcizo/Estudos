@@ -973,8 +973,936 @@ Ansible: Sua infraestrutura como código:
     
     Aula 04: Preparando o banco de dados -------
 
+        Obs: Podemos consultar a documentação do Ansible sobre a utilização do MySQL: Documentação do Ansible sobre MySQL: 
+        
+            https://docs.ansible.com/ansible/2.8/modules/mysql_db_module.html#mysql-db-module
+
+            Bancos mais famosos como Oracle, PostgreSQL, cross server, tem uma coleção de módulos dentro do Ansible, que vão nos ajudar a administrar e operar o banco.
+            Como no link acima do MySQL, podemos ver que existe uma série de parâmetros. Nem todos os parâmetros utilizaremos nos nossos exemplos, porém é bom saber que temos uma
+            documentação que nos explica como eles funcionam e nos auxilia a criar o nosso playbook.
+
         Configurando o banco de dados:
 
+            Para instalar o banco de dados MySQL foi necessário adicionar mais um trecho de código...
 
+                - name: 'Cria banco de dados MySQL'
+                  mysql_db:
+                    name: wordpress_db
+                    state: present
+                  become: yes
+
+                Caso estejamos utilizando uma versão do MySQL que utiliza obrigatoriamente login e senha, poderemos utilizar os parâmetros 'login_user' e 'login_password'.
+
+            Obs: Esta é uma task no mesmo nível das outras, O primeiro '- name' informando o que esta task faz, abaixo o nome da task em si 'mysql_db', depois o nome que queremos
+            para o nosso banco 'wordpress_db', o state indicando que queremos que instale 'present' e o por último a flag indicando que queremos que tudo seja feito como root.
+
+            Obs2: Ocorreu um erro ao inserir somente o bloco de código de instalação do mysql_db:
+
+                fatal: [192.168.0.2]: FAILED! => {"changed": false, "msg": "The PyMySQL (Python 2.7 and Python 3.X) or MySQL-python (Python 2.X) module is required."}
+
+                Isto porque faltava uma dependência a ser instalada para que pudessemos realizar as tarefas do MySQL no computador alvo...
+                Após pesquisar um pouco verifiquei que podemos utilizar no Ansible um bloco chamado pre_tasks, e então adiconei a dependência que faltava, o pacote python3-mysqldb:
+
+                    pre_tasks:
+                      - name: 'Instalando as bibliotecas python-3 mysql'
+                        apt:
+                          name: ['python3-mysqldb']
+                          state: present
+                        become: yes
+
+            Obs: No caso do parâmetro 'state', cada módulo possui seus estados, podemos ler sobre os estados na documentação...
+
+                - Present: com o qual criamos um banco de dados;
+                
+                - Absent: com o qual destruímos um banco de dados;
+                
+                - Dump: Traduzido para o português, significa despejo. Com o database dump, temos um registro da estrutura de tabelas, trilhas, o elemento que você tenha criado dentro 
+                  do banco de dados, juntamente com os inserts (entradas).
+                
+                - Import: é o contrário do Dump. Com ele, pegamos um script SQL pronto e o aplicamos em um banco vazio.
+
+            Na documentação também existem vários exemplos...
+
+            No caso do módulo 'apt' os estados mudam um pouco, também podemos consultar na documentação:
+
+                - Latest: com ele definimos que usaremos a última versão disponível dos pacotes utilizados;
+                
+                - Absent: com ele desisntalamos o pacote, equivalente ao apt-get-remover;
+                
+                - Present: se o pacote já estiver instalado na máquina, será usada a verão disponível, mesmo que ela seja mais antiga;
+                
+                - Build-dep: sua utilidade é nos garantir que todas as dependências de um determinado pacote serão construídas antes do comando ser executado.
+            
+
+            Depois de realizar as alterações necessárias no arquivo provisioning.yml, iremos realizar o comando ansible-playbook mais uma vez:
+
+                $ ansible-playbook -i hosts provisioning.yml
+
+            Se tudo estiver ok e a depência citada no ínicio deste capítulo já tiver sido adicionada, teremos duas alterações.
+            Rodamos o comando duas vezes para verificar se tudo se manteve.
+
+                PLAY [all] ****************************************************************************************************************************************
+                
+                TASK [Gathering Facts] ************************************************************************************************************ok: [192.168.0.2]
+
+                TASK [Instalando as bibliotecas python-3 mysql] ***********************************************************************************ok: [192.168.0.2]
+
+                TASK [Instala todos os pacotes de dependências do Sistema Operacional] ************************************************************ok: [192.168.0.2]
+
+                TASK [Cria banco de dados MySQL] **************************************************************************************************ok: [192.168.0.2]
+
+                PLAY RECAP ***********************192.168.0.2                : ok=4    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+            Em seguida logamos na máquina alvo para ver se o MySQL foi instalado:
+
+                $ ssh 192.168.0.2
+
+            Usamos o programa como root já que não criamos usuário para o banco de dados:
+
+                $ sudo mysql
+
+            Agora, realizamos o comando para ver os databases que existem no MySQL, e assim verificamos se o nosso banco 'wordpress_db' foi criado:
+
+                mysql> show databases;
+
+            A seguinte saída é apresentada:
+
+                +----------------------+
+                | Database             |
+                +----------------------+
+                | information_schema   |
+                | mysql                |
+                | performance_schema   |
+                | wordpress_db         |
+                +----------------------+
+                4 rows in set (0.00 sec)
+
+            Podemos ver que o 'wordpress_db' está na lista...
+
+            Usamos o comando para entrar no banco de dados que criamos:
+
+                mysql> user wordpress_db;
+
+                A seguinte saída é apresentada:
+
+                    Empty set (0.00 sec)
+
+                Isto porque ainda não criamos as tabelas. Usamos o comando para sair do banco:
+
+                    mysql> quit;
+
+
+            Ainda sobre o 'state'...Se quisessemos deletar o banco ao invés de criar, usariamos o seguinte valor:
+
+                    - name: 'Cria banco de dados MySQL'
+                      mysql_db:
+                        name: wordpress_db
+                        login_user: root
+                        state: absent
+                      become: yes
+            
+            Rodando o playbook novamente o banco é deletado.
+            É sempre importante ir na máquina alvo conferir para ver se de fato os comandos estão funcionando. No caso se realizarmos os mesmos passos anteriores para chegar até
+            os bancos de dados que estão dentro do MytSQL na máquina wordpress, veremos a seguinte saída:
+
+                mysql> show databases;
+                +----------------------+
+                | Database             |
+                +----------------------+
+                | information_schema   |
+                | mysql                |
+                | performance_schema   |
+                +----------------------+
+                3 rows in set (0.00 sec)
+
+            Ou seja, nosso banco 'wordpress_db' sumiu, o que significa que o comando funcionou e que o Ansible está se comunicando perfeitamente com o MySQL.
+
+            Nesta instalação e criação do banco de dados através do playbook, foi possível perceber o tanto de passos que economizamos...
+            Entre:
+
+                - Logar na máquina.
+                - Instalar as dependências.
+                - Instalar o MySQL.
+                - Entrar no MySQL.
+                - Rodar o comando para criação do banco worpress_db (create database wordpress_db).
+
+            fizemos tudo com apenas um comando 'ansible_playbook -i hosts provisioning.yml'.
+            Claro que escrever o playbook a primeira vez gera sim um certo trabalho, mas depois disto vamos apenas realizando pequenas alterações.
+            Executar comando por comando é mais propício a gerar erros.
+
+        
+        Criação do usuário no banco:
+
+            Vamos treinar um pouco a utilização da documentação...
+            Para pegar os exemplos e utilização dos módulos não deixei na tag 'latest' da documentação, temos que excolher no combo box a versão do Ansible que estamos utilizando.
+            No meu caso estou utilizando aa versão 2.9.6, no combo box tinhamos a versão 2.9.
+            Temos sempre que ficar atentos a versão adequada da documentação...Novas versões trazem suporte a características novas, adicionam algo a mais no template engine ou alteram a forma de escrever o código.
+            Neste curso mesmo utilizei uma versão diferente...O instrutor usa a versão 2.4, pois o curso é antigo, enquanto eu estou utilizando a versão 2.9.
+            Duas coisas por exemplo que estou utilizando que não foram ensinadas ou que a versão antiga não dava suporte é:
+
+                - pre_tasks
+                - A forma de informar os pacotes no parâmetro 'name' do módulo 'apt'.
+
+            Com a documentação temos a oportunidade de entender cada detalhe de cada módulo do Ansible.
+
+            Voltando a parte que nos interessa neste momento na documentação...
+            Escolhemos 'User Guide', 'Working with modules', 'Module Index', e por fim 'Databases Modules'.
+
+            Pegaremos o exemplo de como criar o usuário do banco de dados...
+
+            Documentação Ansible de como adicionar/remover usuário do MySQL:
+
+                https://docs.ansible.com/ansible/2.9/modules/mysql_user_module.html#mysql-user-module
+
+                Depois de passar da parte da explicação de todos os parâmetros do bloco de criação de usuário, veremos uma área com vários exemplos.
+                Pegamos o exemplo de criação de usuário e definção de senha com o atributo para conceder privilégios.
+
+                - name: Create database user with name 'bob' and password '12345' with all database privileges
+                  mysql_user:
+                    name: bob
+                    password: 12345
+                    priv: '*.*:ALL'
+                    state: present
+
+                No exemplo acima vemos a criação do usuário para uso do MySQL, onde:
+
+                    - O nome será bob
+                    - A senha será 12345
+                    - Terá todos os privilégios (ALL) em todos os bancos (primeiro *) e todas as tabelas (segundo *).
+                        Obs: bom notar que entre o primeiro e o segundo asterísco temos um ponto.
+                    - state present representando que queremos a criação do usuário
+
+                Vamos alterar os valores para a nossa realidade...
+
+                    - name: 'Cria usuário do Banco de Dados com nome wordpress_user e senha 12345 com todos os privilégios'
+                      mysql_user:
+                        name: wordpress_user
+                        password: '12345'
+                        priv: 'wordpress_db.*:ALL'
+                        state: present
+                      become: yes
+
+                      Obs: Acrescentei become: yes por causa das permissões da minha máquina alvo.
+
+                Após rodar o comando:
+
+                    $ sudo ansible-playbook -i hosts provisioning.yml
+
+                    Vericamos na máquina alvo se as alterações foram realizadas...
+
+                    Primeiro entramos no MySQL como root..
+
+                    $ sudo mysql        
+
+                    mysql> show databases;
+                    +--------------------+
+                    | Database           |
+                    +--------------------+
+                    | information_schema |
+                    | mysql              |
+                    | performance_schema |
+                    | sys                |
+                    | wordpress_db       |
+                    +--------------------+
+                    5 rows in set (0.00 sec)
+
+                    mysql> exit
+
+                Agora entrando no MySQL com o usuário que criamos dando permissão apenas no banco wordpress_db...
+
+                    $ mysql -u wordpress_user -p
+
+                    Dizemos que queremos entrar com o usuário (-u) wordpress e depois que queremos inserir uma senha (-p) que será solicitada após teclarmos enter.
+
+                    Enter password: 12345
+
+                    Veremos a tabela com apenas dois elementos...
+
+                    mysql> show databases;
+                    +--------------------+
+                    | Database           |
+                    +--------------------+
+                    | information_schema |
+                    | wordpress_db       |
+                    +--------------------+
+                    2 rows in set (0.00 sec)
+
+                    mysql> quit;
+
+                    Isto aconteceu porque demos permissões em apenas um banco de dados para o usuário wordpress_user...
+
+        Nesta aula, aprendemos:
+
+            - Como criar e deletar um banco de dados
+            - Como criar e manipular usuários em nosso banco de dados
+            
+        
+        Questões aula 04:
+
+            1 - Aprendemos no último vídeo como podemos usar o Ansible para criar e deletar bancos de dados. Qual das opções abaixo realiza a opção de criação de uma base de dados 
+                MySQL chamada bancoteste?
+
+                Selecione uma alternativa
+
+                R:
+                - name: 'Cria o banco do MySQL'
+                  mysql_db:
+                    name: bancoteste
+                    login_user: root
+                    state: present
+
+                Alternativa correta! Com essa sintaxe e com o state present, a base de dados MySQL bancoteste é criada.
+
+            
+            2 - O usuário do MySQL também possui alguns privilégios, que são configurados no parâmetro priv. Como seria a permissão para o usuário poder fazer todas as operações comuns em todas as tabelas da base 
+                de dados alura_ansible?
+
+                Selecione uma alternativa
+
+                R: priv: 'alura_ansible.*:ALL'
+
+                Alternativa correta! O formato da string de privilégio é: base_de_dados.tabela:privilegio. A base de dados é alura_ansible, as tabelas são todas (logo, utiliza-se *) e para o usuário poder fazer todas
+                as operações comuns no banco de dados, usa-se ALL.
+
+            
+            3 - Tendo como referência a task abaixo de criação de um usuário do MySQL, podemos dizer:
+
+                - name: 'Cria o usuário do MySQL'
+                  mysql_user:
+                    login: root
+                    alias: wordpress_user
+                    pass: 12345
+                    priv: 'wordpress_db.*:ALL'
+                    state: present
+
+                Selecione uma alternativa
+
+                R: Ela possui 3 erros.
+
+                Alternativa correta! A task possui 3 erros: o usuário que será utilizado para fazer a autenticação não é passado no parâmetro login, e sim no parâmetro login_user; o usuário a ser criado não é 
+                passado no parâmetro alias, e sim no parâmetro name; e por fim, a senha do usuário não é passada no parâmetro pass, e sim no parâmetro password. O três parâmetros incorretos sequer existem.
+    
+
+    Aula 05: Instalação do servidor e deploy da aplicação -------
+
+        Download e instalação da aplicação:
+
+            Até o momento utilizamos os pacotes apt, mas esta não é a forma preferida de fazer instalação de Wordpress porquê eles não seguem atualizados com as versões mais recentes do Wordpress e este é um 
+            pré-requisito.
+
+            O Wordpress tem um software muito ativo, com correções e melhorias constantes. Outra coisa importante de se frizar é que a forma que nós lidamos com dependências do instalador de um pacote para outro
+            pode mudar de acordo com a distribuição Linux, e isso pode se tornar um problema.
+
+            Utilizaremos alguns passos para instalar o Wordpress...
+
+                - Download da versão oficial disponível no site
+
+                    https://wordpress.org/download/
+
+                -  Descompactaremos e configuraremos
+                - Incluíremos alguns parâmetros de banco de dados: para que ele se conecte com aquele criado por nós.
+                - Configurar o Apache instalado anteriormente: para que seja reconhecido o site do Wordpress.
+
+            Faremos download usando os módulos do Ansible. Temos que identificar a URL para realizarmos o download da última versão:
+
+                https://wordpress.org/latest.tar.gz
+
+            Ao voltarmos na documentação do Ansible, vemos que get_url poderá ser utilizado na instalação, por fazer downloads de arquivo HTTP, HTTPS ou FTP.
+            Na documentação específica, encontraremos a sinopse, a descrição de como ele se comporta com _proxy, com o protocolo HTTP.
+
+            Obs: Se executarmos o módulo em um host remoto Windows, precisaremos do parâmetro win_get_url. Temos um exemplo útil na documentação que faz download do arquivo foo.conf e será utilizado.
+
+                https://docs.ansible.com/ansible/latest/collections/ansible/builtin/get_url_module.html
+
+                - name: Download foo.conf
+                  get_url:
+                    url: http://example.com/path/file.conf
+                    dest: /etc/foo.conf
+                    mode: '0440'
+
+                Agora adaptaremos o módulo para nossa necessidade...
+
+                - name: 'Baixa o arquivo de instalação do Wordpress'
+                  get_url:
+                    url: 'https://wordpress.org/latest.tar.gz'
+                    dest: '/tmp/wordpress.tar.gz'
+
+                Adicionamos no '-name' a descrição do que o módulo está fazendo. Em seguida em 'url' colocamos o endereço de onde vamos baixar o pacote e, por último indicamos para onde ele deve ser copiado.
+
+                Obs: Em exemplos mais antigos tinhamos o parâmetro 'mode: 0440' que representa o nível de permissão configurada no arquivo que estamos baixando. Porém como podemos configurar as permissões do jeito
+                que já é feito no Linux, não adicionaremos este parâmetro. As configurações automáticas já são o suficiente para nós.
+
+                Agora usaremos o módulo para descompactar o arquivo, este módulo é o 'unarchive'.
+
+                    - name: 'Baixa o arquivo de instalacao do Wordpress'
+                      get_url:
+                        url: https://wordpress.org/latest.tar.gz'
+                        dest: '/tmp/wordpress.tar.gz'
+
+                    - name: 'Descompacta o Wordpress'
+                      unarchive:
+                        src: '/tmp/wordpress.tar.gz'
+                        dest: /var/www/
+
+                Podemos reparar que o 'src' do módulo 'Descompacta o Wordpress' é o mesmo do 'dest' do módulo 'Baixa o arquivo de instalacao do Wordpress'.
+                Em seguida enviamos o arquivo descompactado para '/var/www/' e não indicamos a pasta 'wordpress' pois ele cria ela automaticamente.
+
+                Obs: O local '/var/www/' é o local padrão para aplicações.
+
+                Sabendo que, o local '/var/www/' é um local onde apenas 'root' tem permissões, faremos isso utilizando a tag 'become', configurada como 'yes'. Ela fica no mesmo nível da task por não se tratar
+                de um parâmetro.
+
+                    - name: 'Descompacta o Wordpress'
+                      unarchive:
+                        src: '/tmp/wordpress.tar.gz'
+                        dest: /var/www/
+                    become: yes
+
+                Em seguida, testaremos se o código está funcionando utilizando o comando 'ansible-playbook'...
+
+                    $ sudo ansible-playbook -i hosts provisioning.yml
+
+                Ele irá fazer o download, porém veremos que a task de descompactação do Wordpress não funcionou. Receberemos a msg de que ele não conseguiu acessar 'tmp/wordpresstar.gz'...
+
+                    TASK [Baixa o arquivo de descompactação do Wordpress] **************************************************************************************************
+                    changed: [172.17.177.40]
+
+                    TASK [ Descompacta o wordpress] ************************************************************************************************************************
+                    fatal: [172.17.177.40]: FAILED! => {"changed": false, "msg": "Could not find or access '/tmp/ wordpress.tar.gz'"}
+                            to retry, use: --limit @/Users/marcoscropalato/wordpress_com_anisble/provisioning.retry
+
+                    PLAY RECAP *********************************************************************************************************************************************
+                    172.17.177.40               : ok=5   changed=1    unreachable=0    failed=1
+
+                Lembrando que, é importante recorrer à documentação quando acontecer algum erro que não consigamos reconhecer.
+                Veremos que este erro acontece porque não configuramos o parâmetro 'remote_src:', este parâmetro tem que estar habilitado como 'yes' para que a tarefa de 'unzip' seja realizado na máquina alvo.
+                Ele ausente ou configurado como 'no' faz com que o Ansible tente descompactar o arquivo em nossa máquina. Obs: O arquivo tem que existir onde quer que executemos o módulo unarchive.
+
+                No nosso caso fizemos o download diretamente na máquina alvo. Agora o nosso módulo ficou da seguinte maneira...
+
+                    - name: 'Descompacta o wordpress'
+                      unarchive:
+                        src: '/tmp/wordpress.tar.gz'
+                        dest: /var/www/
+                        remote_src: yes
+                      become: yes
+
+                Desta vez não teremos erro, nosso arquivo já terá sido baixado e tentaremos realizar o descompactamento no lugar correto...
+                Acessamos a máquina alvo...
+
+                    $ ssh 192.168.0.2
+
+                    E verificamos que o arquivo foi descompactado no lugar correto...
+
+                        vagrant@vagrant-ubuntu-trusty-64:~$ cd /var/www
+                        vagrant@vagrant-ubuntu-trusty-64:/var/www$ ls -1h
+                        total 8.0K
+                        drwxr-xr-x 2 root   root    4.0K Dec  7 13:52 html
+                        drwxr-xr-x 5 root   root    4.0K Nov 29 19:06 wordpress
+
+                    $ cd wordpress
+
+                    $ ls -lh
+
+                        total 208K
+                        -rw-r--r--  1 nobody nogroup  405 Feb  6  2020 index.php
+                        -rw-r--r--  1 nobody nogroup  20K Feb 12  2020 license.txt
+                        -rw-r--r--  1 nobody nogroup 7.2K Jun 26 13:58 readme.html
+                        -rw-r--r--  1 nobody nogroup 7.0K Jul 28 17:20 wp-activate.php
+                        drwxr-xr-x  9 nobody nogroup 4.0K Oct 30 20:41 wp-admin
+                        -rw-r--r--  1 nobody nogroup  351 Feb  6  2020 wp-blog-header.php
+                        -rw-r--r--  1 nobody nogroup 2.3K Jul 23 00:52 wp-comments-post.php
+                        -rw-r--r--  1 nobody nogroup 2.9K Feb  6  2020 wp-config-sample.php
+                        drwxr-xr-x  4 nobody nogroup 4.0K Oct 30 20:41 wp-content
+                        -rw-r--r--  1 nobody nogroup 3.9K Feb  6  2020 wp-cron.php
+                        drwxr-xr-x 24 nobody nogroup  12K Oct 30 20:41 wp-includes
+                        -rw-r--r--  1 nobody nogroup 2.5K Feb  6  2020 wp-links-opml.php
+                        -rw-r--r--  1 nobody nogroup 3.3K Feb  6  2020 wp-load.php
+                        -rw-r--r--  1 nobody nogroup  48K Jul  7 03:59 wp-login.php
+                        -rw-r--r--  1 nobody nogroup 8.4K Apr 14  2020 wp-mail.php
+                        -rw-r--r--  1 nobody nogroup  20K Jul  6 10:50 wp-settings.php
+                        -rw-r--r--  1 nobody nogroup  31K Jul 23 21:11 wp-signup.php
+                        -rw-r--r--  1 nobody nogroup 4.7K Feb  6  2020 wp-trackback.php
+                        -rw-r--r--  1 nobody nogroup 3.2K Jun  8 19:55 xmlrpc.php
+
+            Agora nós já instalamos o Wordpress. Temos que configurar o Wordpress para que ele localize o banco de dados, saber como ele acessa, e avisar ao Apache onde está o Wordpress e como ele será utilizado.
+            
+        Alterando a configuração do Host:
+
+            Obs: Sempre é importante consultar a documentação dos módulos/plugins do Ansible.
+
+            Já baixamos o Wordpress, descompactamos usando os módulos 'get_url' e 'uncarchive'. Temos agora que configurar o Wordpress, informá-lo como acessar o banco de dados e avisar o Apache como ele servirá
+            ao Wordpress.
+
+            Para isto precisamos acessar a máquina virtual alvo (192.168.0.2) à partir da nossa máquina virtual de controle (192.168.0.1)...
+            Dentro do diretório 'wordpress' que está em /var/www/wordpress rodamos o comando:
+
+                $ ls
+
+                Deveremos ter uma saída assim:
+
+                index.php    readme.html      wp-admin            wp-comments-post.php  wp-config.php  wp-cron.php  wp-links-opml.php  wp-login.php  wp-settings.php  wp-trackback.php
+                license.txt  wp-activate.php  wp-blog-header.php  wp-config-sample.php  wp-content     wp-includes  wp-load.php        wp-mail.php   wp-signup.php    xmlrpc.php
+
+            Um dos arquivos que encontraremos na listagem é 'wp-config-sample.php', devemos copiá-lo para que ele se torne a configuração de Wordpress e poder ser alterado conforme a nossa necessidade.
+            Como podemos fazer isso? Da lista de módulos do Ansible, precisaremos do Copy, utilizado para copiar arquivos com localizações locais ou remotas para outra que seja remota.
+
+                Lista de módulos: https://docs.ansible.com/ansible/latest/collections/ansible/builtin/index.html#plugins-in-ansible-builtin
+
+                Módulo Copy: https://docs.ansible.com/ansible/latest/collections/ansible/builtin/copy_module.html#copy-module
+
+                Com base no exemplo mais próximo que precisamos, copiá-lo para o nosso playbook e editá-lo conforme nossa necessidade.
+                Primeiro vemos como é feita a cópia de um arquivo na máquina local para uma remota. O primeiro exemplo do módulo não serviu para nós, porque mostrava apenas como trabalhar com o arquivo na máquina
+                de controle. Em outro exemplo encontramos os parâmetros necessários para trabalhar com o arquivo na máquina alvo.
+
+                    - name: Copy a "sudoers" file on the remote machine for editing
+                      copy:
+                        src: /etc/sudoers
+                        dest: /etc/sudoers.edit
+                        remote_src: yes
+                        validate: /usr/sbin/visudo -csf %s
+
+                Modificaremos o 'src' para a pasta que está na máquina alvo e onde está o arquivo que queremos. Colocamos o caminho com o nome do arquivo da forma que é atualmente. Em 'dest' colocamos o local ou
+                a cópia do arquivo com um nome diferente...No caso junto com o caminho origem colocamos o nome 'wp-config-sample.php' e no caminho destino, a cópia do arquivo com o novo nome 'wp-config.php'.
+
+                Com o parâmetro 'remote_src' definido com o valor yes, evitamos buscas na máquina de controle. Fizemos algo parecido com 'unarchive'.
+                No caso do parâmetro 'validate' definido com o valor yes, trata-se de um comando usado para validar se um arquivo está funcionando, no caso, ele não nos será útil e será removido.
+                Obs: Minha task ficou um pouco diferente da do professor por causa do nome da task que eu preenchi.
+
+                    - name: 'Cria uma cópia do arquivo wp-config-sample.php para não perdermos o exemplo'
+                      copy:
+                        src: '/var/www/wordpress/wp-config-sample.php'
+                        dest: '/var/www/wordpress/wp-config.php'
+                        remote_src: yes
+                      become: yes
+
+                      Como geralmente fazemos, adicionamos 'become' para que a tarefa seja executada como root...
+
+                Rodamos o playbook mais uma vez e veremos 'changed' nas ultimas tarefas...Entraremos na máquina alvo para verificar se o arquivo foi criado com o nome desejado...
+
+                    drwxr-xr-x  5 nobody nogroup  4096 Nov 26 02:57 .
+                    drwxr-xr-x  4 root   root     4096 Nov 25 02:12 ..
+                    -rw-r--r--  1 nobody nogroup   405 Feb  6  2020 index.php
+                    -rw-r--r--  1 nobody nogroup 19915 Feb 12  2020 license.txt
+                    -rw-r--r--  1 nobody nogroup  7278 Jun 26 13:58 readme.html
+                    -rw-r--r--  1 nobody nogroup  7101 Jul 28 17:20 wp-activate.php
+                    drwxr-xr-x  9 nobody nogroup  4096 Oct 30 20:41 wp-admin
+                    -rw-r--r--  1 nobody nogroup   351 Feb  6  2020 wp-blog-header.php
+                    -rw-r--r--  1 nobody nogroup  2332 Jul 23 00:52 wp-comments-post.php
+                    -rw-r--r--  1 nobody nogroup  2913 Feb  6  2020 wp-config-sample.php
+                    -rw-r--r--  1 root   root     2900 Nov 26 02:57 wp-config.php
+                    drwxr-xr-x  4 nobody nogroup  4096 Oct 30 20:41 wp-content
+                    -rw-r--r--  1 nobody nogroup  3940 Feb  6  2020 wp-cron.php
+                    drwxr-xr-x 24 nobody nogroup 12288 Oct 30 20:41 wp-includes
+                    -rw-r--r--  1 nobody nogroup  2496 Feb  6  2020 wp-links-opml.php
+                    -rw-r--r--  1 nobody nogroup  3300 Feb  6  2020 wp-load.php
+                    -rw-r--r--  1 nobody nogroup 48761 Jul  7 03:59 wp-login.php
+                    -rw-r--r--  1 nobody nogroup  8509 Apr 14  2020 wp-mail.php
+                    -rw-r--r--  1 nobody nogroup 20181 Jul  6 10:50 wp-settings.php
+                    -rw-r--r--  1 nobody nogroup 31159 Jul 23 21:11 wp-signup.php
+                    -rw-r--r--  1 nobody nogroup  4755 Feb  6  2020 wp-trackback.php
+                    -rw-r--r--  1 nobody nogroup  3236 Jun  8 19:55 xmlrpc.php
+
+                Podemos ver que na listagem temos um arquivo novo wp-config.php
+                Executamos o comando 'less' no arquivo para darmos uma olhada...
+
+                 $ less wp-config.php
+
+                 Veremos algo como:
+
+                    <?php
+                    /**
+                    * The base configuration for WordPress
+                    *
+                    * The wp-config.php creation script uses this file during the
+                    * installation. You don't have to use the web site, you can
+                    * copy this file to "wp-config.php" and fill in the values.
+                    *
+                    * This file contains the following configurations:
+                    *
+                    * * MySQL settings
+                    * * Secret keys
+                    * * Database table prefix
+                    * * ABSPATH
+                    *
+                    * @link https://wordpress.org/support/article/editing-wp-config-php/
+                    *
+                    * @package WordPress
+                    */
+
+                    // ** MySQL settings - You can get this info from your web host ** //
+                    /** The name of the database for WordPress */
+                    wp-config.php
+
+                O comando 'less' é utilizado para exibir arquivos que ocupa mais de uma página, podemos utilizar setas para cima e para baixo para que possamos ler ele por completo.
+                Apertamos 'q' para sair do arquivo.
+
+            Veremos no arquivo que as constantes de banco já foram definidas e são estes os valores que iremos alterar...
+
+                // ** MySQL settings - You can get this info from your web host ** //
+                /** The name of the database for WordPress */
+                define('DB_Name', 'database_name_here');
+
+                /** MySQL database username */
+                define('DB_USER', 'username_here');
+
+                /** MySQL database password */
+                define(DB_PASSWORD', 'password_here');
+
+                /** MySQL hostname */
+                define('DB_HOST', 'localhost');
+
+                /** Database Charset to use in creating database table. */
+
+            Em seguida utilizaremos uma estratégia de expressões regulares para alterarmos três valores:
+
+                - Nome do banco de dados: database_name_here;
+                - Nome do usuário: username_here;
+                - Senha: password_here;
+
+            Antes, descobriremos qual módulo nos apoiará a fazer as alterações dentro do arquivo. No caso será o módulo replace, ele nos permitirá mudar a entrada de uma string por outra qualquer dentro do arquivo.
+            Ele vai alterar todas as ocorrências de uma determinada string por outra...É uma forma simples de fazermos expressões regulares, ele é praticamente um 'CTRL + H'.
+
+                - name: Before Ansible 2.3, option 'dest', 'destfile' or 'name' was used instead of 'path'
+                  replace:
+                    path: /etc/hosts
+                    regexp: '(\s+)old\.host\.name(\s+.*)?$'
+                    replace: '\1new.host.name\2'
+
+                Iremos adicioná-lo embaixo do nosso módulo 'copy'...
+
+                    - name: 'Cria uma cópia do arquivo wp-config-sample.php para não perdermos o exemplo'
+                      copy:
+                        src: '/var/www/wordpress/wp-config-sample.php'
+                        dest: '/var/www/wordpress/wp-config.php'
+                        remote_src: yes
+                      become: yes
+
+                    - name: 'Configura o wp-config com as entradas do banco de dados'     
+                      replace:
+                        path: '/var/www/wordpress/wp-config.php'
+                        regexp: '(\s+)old\.host\.name(\s+.*)?$'
+                        replace: '\1new.host.name\2'
+                        backup: yes
+
+                Em 'regexp' adicionaremos a expressão regular. Se analisarmos o que é criado na máquina e ver como fica essa configuração de banco de dados dentro do wp-config, teremos o seguinte:
+
+                    /** MySQL database password */
+                    define(DB_PASSWORD', 'password_here');
+
+                    /** MySQL hostname */
+                    define('DB_HOST', 'localhost');
+
+                    /** Database Charset to use in creating database tables. */
+                    define('DB_CHARSET', 'utf8');
+
+                    /** The Database Collate type. Dont´t change this if in doubt.*/
+                    define('DB_COLLATE', '');
+                
+                Podemos usar essas expressões como os alvos de alteração da nossa expressão regular, podemos fzer isso de uma vez utilizando o parâmetro 'with_items' abaixo de backup. Passaremos o objeto regex,
+                composto por dois campos:
+
+                    - database_name_here
+                    - value: wordpress_db.
+
+                Considerando que o segundo é o nome que eu dei para o banco de dados. Em seguida, adicionaremos outras expressões regex.
+
+                    with_items:
+                      - { regex: 'database_name_here', value: 'wordpress_db'}
+                      - { regex: 'username_here', value: ' wordpress_use'}
+                      - { regex: 'password_here', value: '12345'}
+
+                      Obs: 'with_items' é como se fosse um 'while' no final da expressão.
+
+                Após a adição de 'with_items', incluíremos {{ item_regex }} e {{ item_value }} e ficará da seguinte maneira:
+
+                    - name: 'Configura o wp-config com as entradas do banco de dados'
+                      replace:
+                        path: /var/www/wordpress/wp-config.php
+                        regexp: '{{ item.regex }}'
+                        replace: '{{ item.value }}'
+                      with_items:
+                        - { regex: 'database_name_here', value: 'wordpress_db'}
+                        - { regex: 'username_here', value: 'wordpress_user'}
+                        - { regex: 'password_here', value: '12345'}
+                      become: yes
+
+                Item é referente à uma entrada da lista que passamos no 'with_items'. Como usamos um objeto com dois atributos (regex e value), quando o elemento regex for iterado, será alterado o valor dele.
+                E o mesmo acontecerá com cada uma das entradas no campo regex. Por último, adicionamos become: yes e estamos prontos para testar.
+
+                No terminal rodamos o playbook novamente:
+
+                    $ sudo ansible-playbook -i hosts provisioning.yml
+
+                Após as alterações serem bem sucedidas iremos até a máquina alvo para verificar se de fato o arquivo foi modificado...
+
+                    $ ssh 192.168.0.2
+
+                    Vamos até a pasta onde está o arquivo 'wp-config.php'...
+
+                    $ cd /var/www/wordpress/
+
+                    E então vemos o que tem no arquivo:
+
+                    $ cat wp-config.php
+
+                Vemos que os valores das constantes foram alterados conforme configuramos no playbook...
+
+                Podemos novamente utilizar o comando '$ less' ou '$ cat' se preferir...
+
+                    * @link https://wordpress.org/support/article/editing-wp-config-php/
+                    *
+                    * @package WordPress
+                    */
+
+                    // ** MySQL settings - You can get this info from your web host ** //
+                    /** The name of the database for WordPress */
+                    define( 'DB_NAME', 'wordpress_db' );
+
+                    /** MySQL database username */
+                    define( 'DB_USER', 'wordpress_user' );
+
+                    /** MySQL database password */
+                    define( 'DB_PASSWORD', '12345' );
+
+            O Wordpress está pronto para se comunicar com o banco de dados? Veremos a seguir...Também vamos configurar o Apache, um passo que ainda está faltando...
+
+        
+        Reiniciando serviços com Handlers:
+
+            Vimos como configurar o Wordpress para encontrar o banco de dados dentro do MySQL e como se conectar a ele.
+            Vimos qual usuário deve ser usado, modificando o arquivo wp-config.php e utilizando o módulo replace.
+
+            Agora vamos preparar o Apache para encontrar o Wordpress e entender como trabalhar com ele...
+
+            Já configuramos o Wordpress para encontrar o banco de dados dentro do MySQL e como se conectar a ele. Mostramos qual usuário deve ser usado, modificando wp-config e
+            utilizando módulo replace.
+
+            Vamos preparar o Apache para encontrar o Wordpress e saber como dar suporte a ele...
+
+            Na máquina controlada, onde estão instalados o wordpress, apache e banco de dados, vamos localizar o arquivo padrão utilizado pelo Apache para servir as aplicações...
+            Este arquivo está em '/etc/apache2/sites-available/' é o arquivo 000-default.conf
+
+            Seu conteúdo é mais ou menos o seguinte:
+
+                vagrant@vagrant-ubuntu-trusty-64:~$ cat /etc/apache2/sites-available/000-default.conf
+                <VirtualHost *:80>
+                        # The ServerName directive sets the request scheme, hostname and port that
+                        # the server uses to identify itself. This is used when creating
+                        # redirection URLs. In the context of virtual hosts, the ServerName
+                        # specifies what hostname must appear in the request´s Host: header to
+                        # match this virtual host. For the default virtual host (this file) this
+                        # value is not devisive as it is used as a last resort host regardless.
+                        # However, you must set it for any further virtual host explicity.
+                        #ServerName www.example.com
+
+                        ServerAdmin webmaster@localhost
+                        DocumentRoot /var/www/html
+
+            Criamos uma cópia deste arquivo na máquina de controle para que possamos modificá-lo e utilizá-lo de acordo com nossa necessidade...
+            Após alteração, enviaremos de volta para a máquina que estamos controlando para que este arquivo substitua o arquivo padrão do Apache lá.
+
+            Por padrão, devemos manter os arquivos que vão ser modificados pelo Ansible e mandados de volta para as máquinas controladas num diretório chamado 'files'.
+            Sendo assim, colocaremos nosso arquivo '000-default.conf' neste diretório.
+
+            Modificamos o arquivo copiado para trocar a linha onde está 'DocumentRoot /var/www/html' fique 'DocumentRoot /var/www/wordpress' (este é o caminho no qual instalamos o 
+            Wordpress) e então enviar para a máquina de controle para que lá seja substituído o arquivo do Apache.
+
+            Obs: O 'Virtual Host' é a maneira como é dito para o Apache como ele deve servir para um determinado site. Quando especificamos *:80, indicamos que qualquer caminho passado
+            para o apache na porta 80, será realizada uma busca no documento '/var/www/wordpress', a melhor forma de servir. Este é o caminho da nossa instalação do Wordpress.
+
+            Agora temos que copiar este arquivo modificado para a máquina alvo, usando novamente o módulo copy e a fonte (arquivo original) será 'files/000-default.conf'.
+            O destino será '/etc/apache2/sites-available/000-default.conf'. Adicionamos o parâmetro 'become' porque precisamos fazer isso como root.
+
+            Devemos notar que agora não estamos copiando um arquivo da máquina alvo para máquina alvo, mas sim, da máquina de controle para máquina alvo. Então, devemos remover o 
+            parâmetro 'remote_src' configurado como 'yes'.
+
+                - name: 'Configura Apache para servir o Wordpress'
+                  copy:
+                    src: 'files/000-default.conf'
+                    dest: '/etc/apache2/sites-available/000-default.conf'
+                  become: yes
+
+            Rodamos o playbook novamente para ver se tudo funcionou...
+
+                PLAY [all] **********************************************************************************************************************************************************
+                TASK [Gathering Facts] *****************************************************************************************************************************ok: [192.168.0.2]
+
+                TASK [Instalando as bibliotecas python-3 mysql] ****************************************************************************************************ok: [192.168.0.2]
+
+                TASK [Instala todos os pacotes de dependências do Sistema Operacional] *****************************************************************************ok: [192.168.0.2]
+
+                TASK [Cria banco de dados MySQL] *******************************************************************************************************************ok: [192.168.0.2]
+
+                TASK [Cria usuário do Banco de Dados com nome wordpress_user e senha 12345 com todos os privilégios] ********[WARNING]: Module did not set no_log for update_password
+                ok: [192.168.0.2]
+
+                TASK [Baixa o arquivo de instalação do Wordpress] **********************************************************************************************changed: [192.168.0.2]
+
+                TASK [Descompactar o arquivo] ***********************************************************************************************************************ok: [192.168.0.2]
+
+                TASK [Cria uma cópia do arquivo wp-config-sample.php para não perdermos o exemplo] *************************************************************changed: [192.168.0.2]
+
+                TASK [Configura o wp-config com as entradas do banco de dados] **************changed: [192.168.0.2] => (item={'regex': 'database_name_here', 'value': 'wordpress_db'})
+                changed: [192.168.0.2] => (item={'regex': 'username_here', 'value': 'wordpress_user'})
+                changed: [192.168.0.2] => (item={'regex': 'password_here', 'value': '12345'})
+
+                TASK [Configura Apache para servir Wordpress] **************************************************************************************************changed: [192.168.0.2]
+
+                PLAY RECAP ************************************************************************************************************************************************192.168.0.2                : ok=10   changed=4    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+            Obs: Algumas coisas eu tinha alterado no Playbook e, por isso, coisas a mais das que configuramos hoje foram alteradas.
+
+            Se executarmos o comando 'cat /etc/apache2/sites-available/000-default.conf' veremos que as alterações foram feitas...
+            Lá na linha de código citada antes está 'DocumentRoot /var/www/wordpress'.
+
+            Conseguimos alterar o arquivo como queriamos, porém se colocarmos no browser o número IP da máquina alvo, ainda veremos exibida a página do Apache. Isto ocorre porque
+            mudamos qual a aplicação o Apache vai servir porém não reiniciamos o serviço, pra resolver isso que utilizamos os handlers no playbook.
+
+            Handlers são tasks Ansible simples, porém elas podem ser chamadas com notificações em momentos diversos do Playbook. E não precisa necessariamente estar no fluxo de
+            código como as outras tasks...
+
+            Colocamos os handlers abaixo de hosts no mesmo nível de outras tasks. A nova task recebeu o nome de 'Restart Apache', e por este nome devemos chamá-la do ponto que
+            acharmos necessário. O módulo se chama service - utilizado para administrar sistemas Daemon do Linux, como systemd, upstart, init.d. O parâmetro que passaremos
+            para o service será apache2, nós devemos saber o nome do serviço que será manipulado. O parâmetro 'state' configurado como 'restarted' indica que se chamarmos esse handler,
+            ele deve reiniciar o Apache. E como trabalhamos com um serviço administrativo, ele será feito como root, 'become: yes'.
+
+                - hosts: all
+                  handlers:
+                    - name: Restart Apache
+                      service:
+                        name: apache2
+                        state: restarted
+                      become: yes
+
+                    pre_tasks:
+                      - name: 'Instalando as bibliotecas python-3 mysql'
+                        apt:
+                          name: ['python3-mysqldb']
+                          state: present
+                        become: yes
+
+                    tasks:
+
+            Depois basta escolher em qual ponto chamaremos o handler ou uma lista de handlers. No caso, queremos utilizar o Handler 'Restart Apache' depois que alterarmos seu arquivo
+            de configuração. Utilizamos então o parâmetro 'notify' dentro da task que altera este arquivo.
+
+                - name: 'Configura Apache para servir o Wordpress'
+                  copy:
+                    src: './files/000-default.conf'
+                    dest: '/etc/apache2/sites-available/000-default.conf'
+                  become: yes
+                  notify:
+                    - Restart Apache
+
+            Agora rodaremos mais uma vez o playbook. Após executarmos o comando, tivemos um problema, não conseguimos reiniciar o serviço, por que?
+            Porque não conseguimos entrar na task de alteração do arquivo. Por que não conseguimos entrar na task de alteração do arquivo?
+            Por que já tinhamos feito isso! Sempre bom treinar e lembrar da forma de trabalhar do Ansible...
+
+            Por isso, no arquivo, na máquina de controle adicionei o seguinte comentário:
+
+                # Alteração realizada no arquivo pois o arquivo de configuração do Apache já tinha sido substituído por isso o Handler não funcionou
+                # Ou seja, esta alteração faz com que a função de configuração do Apache rode de novo fazendo com que o Handler de reinicio de serviço seja ativado
+
+                Então...Rodamos o playbook mais uma vez...
+
+            Assim, o Ansible verificou que o arquivo estava diferente e então entrou na task para mandar um arquivo atualizado para a máquina de controle, fazendo isso, restartou
+            o serviço do Apache.
+
+            Depois de tudo rodar certinho, vemos que ao colocar o endereço 192.168.0.2 no browser veremos a página do Wordpress, a página de configuração de instalação do Wordpress.
+
+            Todos os passos que vimos até o momento, são os mesmos passos que utilizaremos para instalar qualquer aplicação no modelo três camadas, na qual temos banco de dados,
+            um servidor web e a aplicação em si. Caso estejamos trabalhando com outro objeto Open Source, seja phpBB, Magento ou outra tecnologia que não trabalhe com PHP, também
+            funcionará.
+
+            O que muda são quais pacotes serão instalados, seja da plataforma ou web server. Por exemplo Nginx com Tomcat, mesmo assim, teremos que instalar os pacotes da maneira
+            como a distribuição escolhida funcionará. Instalaremos o banco de dados, seja MySQL, PostgreSQL ou a tecnologia mais apropriada.
+
+            Passos como:
+
+                - Teremos que baixá-la (Aplicação ou a base dela)
+                    Obs: Não é necessário caso esteja em "Hardcoded"
+                - Descompactá-la
+                - Deveremos saber como fazer a instalação
+                - Configuração
+                - Criar usuário para aplicação
+                - Dar as permissões corretas - Usuário tem que ter ações limitadas
+                    Obs: Aplicação, baixada da internet - como foi o nosso caso - fica em um repositório privado que utilizamos no trabalho, em casa ou de um servidor de integração.
+                - Fazer o servidor Web saber onde está a aplicação
+                - Fazer os dois se comunicarem
+
+            Os passos visto no curso, até o momento, abrangem a baseline necessária para fazer uma aplicação de três camadas funcionar, independente da tecnologia usada.
+            Se rodar com Linux, o Ansible serve como base de configuração de qualquer tecnologia.
+
+            A seguir aprenderemos como utilizar este conteúdo em produção, porque o que fizemos ainda parece com ambiente de desenvolvimento. Instalamos tudo na mesma máquina.
+            Precisamos separa aplicação web do banco de dados por questões de segurança, performance. Aplicações Web são diferentes de banco de dados.
+
+            Provavelmente, serão necessários mais nós de uma aplicação web, do que de um banco de dados em produção. Você precisa ter uma forma de separa as responsabilidades
+            dos seus servidores. Feremos isso mais adiante.
+
+        Nesta aula, aprendemos:
+
+            - Como baixar e instalar o WordPress através do Ansible
+            - Como configurar o WordPress para encontrar o banco de dados
+            - Como preparar o Apache para encontrar o WordPress
+
+
+        Questões aula 05:
+
+            1 - Temos o seguinte código:
+
+                - name: 'x'
+                  get_url: 
+                    url: 'https://endereco.com/x.zip'
+                    dest: '/tmp/y.zip'
+                
+                Podemos afirmar que:
+
+                Selecione uma alternativa
+
+                R: O Ansible baixará o arquivo da URL definida na propriedade url, gravando-o na pasta indicada na propriedade dest, com o nome que definirmos.
+                    Alternativa correta! Na propriedade url, é definida a URL que o Ansible utilizará para baixar o arquivo, que será gravado na pasta indicada na propriedade dest, com o nome que definirmos.
+
+            
+            2 - Temos o seguinte trecho de código do Playbook:
+
+                - copy:
+                    src: '/var/www/wordpress/wp-config-sample.php'
+                    dist: '/var/www/wordpress/wp-config.php'
+                    remote_src: yes
+                become: yes
+
+                Quantos erros há no trecho de código acima?
+
+                Selecione uma alternativa
+
+                R: 1 erro
+                
+                Alternativa correta! Há apenas um erro: a propriedade não é dist, é dest.
+
+            
+            3 - Tendo como referência o handler abaixo para reiniciar o Apache2, podemos dizer:
+
+                handlers:
+                - name: restart apache
+                    name: apache2
+                    state: restarted
+                    become: yesCOPIAR CÓDIGO
+
+                Selecione uma alternativa
+
+                R: Alternativa correta! Ele possui um erro: faltou a declaração do serviço, através de service. O correto seria:
+
+                    handlers:
+                    - name: restart apache
+                      service:
+                        name: apache2
+                        state: restarted
+                      become: yes
+
+
+    Aula 06: Separando banco de dados da aplicação -------
+
+        
 
 
