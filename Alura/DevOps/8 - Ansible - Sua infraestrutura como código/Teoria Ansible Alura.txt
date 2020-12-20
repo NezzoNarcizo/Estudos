@@ -301,7 +301,7 @@ Ansible: Sua infraestrutura como código:
                         
                             precisei realizar as seguintes ações pra tornar isso possível...
 
-                                Ir até a máquina que vai ser controlada (vagrant@192.168.2.2) e editar o arquivo sshd_config em /etc/ssh
+                                Ir até a máquina que vai ser controlada (vagrant@192.168.0.2) e editar o arquivo sshd_config em /etc/ssh
 
                                     $ vi /etc/ssh/sshd_config
 
@@ -322,6 +322,8 @@ Ansible: Sua infraestrutura como código:
                                         A partir da vagrant@192.168.0.1, faça:
 
                                         $ vagrant ssh vagrant@192.168.0.2
+
+                                        Obs: Precisa do Vagrant instalado
 
                 Obs: Outro erro fatal que eu estava cometendo, no comando do 'Hello World' do Ansible, não estava me atentando que não tinha criado o diretório 'ssh' dentro do diretório 
                 'wordpress_com_ansible' deixando a chave privada 'vagrant_id_rsa' na raiz. Então quando eu copiava o comando da aula sempre dava erro, porque não estava encontrando a chave. 
