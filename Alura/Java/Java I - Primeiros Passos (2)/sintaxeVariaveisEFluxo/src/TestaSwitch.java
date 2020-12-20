@@ -11,7 +11,7 @@ public class TestaSwitch {
          * Faremos um algoritmo com switch para imprimir o nome do mês de acordo com o número que fornecermos
          */
 
-        int mes = 9;
+        int mes = 4;
 
         switch (mes) {
             case 1:

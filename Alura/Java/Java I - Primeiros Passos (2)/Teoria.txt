@@ -101,6 +101,111 @@ Operadores aritméticos:
 / para Divisão
 
 
+Nessa aula (1) introdutória já aprendemos vários assuntos fundamentais sobre Java.
+
+Falamos sobre as principais características da linguagem Java como:
+
+orientado a objetos
+parecido com C++
+muitas bibliotecas e grande comunidade
+Além disso, aprendemos:
+
+a diferença entre o código fonte e o Bytecode
+para executar o Bytecode é preciso ter a máquina virtual java
+o Bytecode é independente do sistema operacional
+Vimos também os principais componentes da plataforma Java que são:
+
+Java Virtual Machine (JVM)
+linguagem Java
+Bibliotecas Java (API)
+Na próxima aula já vamos escrever o primeiro código Java! Vamos continuar?
+
+------->
+
+Nessa aula (2) você escreveu o seu primeiro código Java e aprendemos:
+
+qual é a diferença entre JRE e JDK
+como compilar um código fonte Java na linha de comando (javac)
+como executar o Bytecode na linha de comando (java)
+um programa Java deve estar escrito dentro de uma classe (class)
+toda instrução Java deve ser finalizada com ;
+para abrir e fechar um bloco usaremos as chaves {}
+um programa Java possui uma entrada que é uma função (método) main
+para imprimir algo no console usamos a instrução System.out.println()
+
+------->
+
+Este capítulo (3) apresentou:
+
+O papel de um IDE e sua diferença de um editor
+Como fazer o download do Eclipse IDE
+Para que serve um workspace
+O conceito de perspectiva
+Como criar um projeto Java, inclusive classes e como executá-lo.
+Como exibir diferentes views
+
+------->
+
+Nesta aula (4) iniciamos nosso aprendizado com variáveis e tipos primitivos do Java. Os tipos vistos com mais detalhe foram int (inteiro) e double (decimal).
+Que usamos para fazer operações aritméticas e também concatenar com texto.
+
+Durante o capítulo falamos sobre boas práticas na hora de nomear classes e também variáveis. Iniciamos as classes com letra maiúscula e as nossas funções e
+variáveis com letras minúsculas. Vamos falar mais sobre isto no futuro.
+
+Foi possível entender um pouco de type casting e como podemos passar um valor de um tipo para uma variável de outro. Para alguns casos nós não precisamos
+fazer nada, pois o casting é implícito e em outros precisamos deixar claro para o compilador que sabemos o que estamos fazendo, mostrando entre parênteses o
+tipo que queremos que seja usado.
+
+Com isso finalizamos esta aula. Próximo passo: caracteres! Espero vocês lá!
+
+------->
+
+Este capítulo (5) apresentou:
+
+O conceito e como declarar char e String
+Como concatenar Strings
+Atalho para criação da main
+Variáveis guardam valores e não referências.
+
+------->
+
+Nessa aula (6), aprendemos:
+
+como usar o if
+como usar as operações lógicas AND (&&) e OR (||)
+trabalhar com o escopo de variáveis
+Também já vimos alguns atalhos no Eclipse:
+
+main ctrl + espaço
+para gerar o método main
+ctrl + shift + f
+para formatar o código fonte
+sysout + ctrl + espaço
+para gerar a instrução System.out.println()
+
+------->
+
+Neste capítulo (7) aprendemos:
+
+A sintaxe do while e for
+O operador +=
+O operador ++
+Laços aninhados
+A funcionalidade do break
+
+------>
+
+E agora?
+
+Nesse curso apresentamos os primeiros passos para você escrever e executar um programa simples com Java e Eclipse IDE, mas claro que o Java oferece muito
+mais recursos principalmente pensando na Orientação a Objetos.
+
+Convido você assistir o próximo curso que fala justamente sobre a Orientação a Objetos com Java. Você aprenderá os principais recursos desse paradigma
+poderoso sempre aplicado com Java e Eclipse.
+
+Espero que você tenha gostado desse curso e peço avaliar para dar um feedback para gente.
+
+Muito obrigado, Paulo :)
 
 
 ------- Questões
@@ -110,7 +215,6 @@ Operadores aritméticos:
 
 R: Correto, no mundo Java você terá sempre o mesmo "executável" ou Bytecode que será executado pela Maquina Virtual Java, totalmente independente do sistema
 operacional. Assim não é preciso rescrever ou adaptar o código para rodar em um outro sistema operacional. Temos um único executável para todos os sistemas!
-
 
 
 2 - A linguagem Java nasceu com algumas características que são mantidas até hoje.
@@ -153,8 +257,8 @@ Java precisam da máquina virtual Java.
 5 - Todas as afirmações abaixo sobre o Bytecode são verdadeiras, exceto:
 Selecione uma alternativa
 
-R: O Bytecode é o código fonte - A afirmação "O Bytecode é o código fonte" não é verdadeira. O código fonte é para o desenvolvedor entender, o Bytecode foi criado e
-otimizado para a máquina virtual.
+R: O Bytecode é o código fonte - A afirmação "O Bytecode é o código fonte" não é verdadeira. O código fonte é para o desenvolvedor entender, o Bytecode foi
+    criado e otimizado para a máquina virtual.
 
 Já falamos um pouco sobre o Bytecode que é um código de máquina parecido com o Assembly. Talvez você (como eu!) estranhou o nome Bytecode, no entanto, tem uma
 explicação bem simples para tal. Existe um conjunto de comandos que a máquina virtual Java entende. Esses comandos também são chamados de opcodes (operation code),
@@ -206,8 +310,8 @@ java Programa2
 
 10 - Podemos programar em Java utilizando editores de textos e IDEs. Nesse contexto, temos as seguintes afirmativas:
 
-a) Um IDE é um ambiente integrado de desenvolvimento que centraliza em um único lugar o compilador da linguagem utilizada, editor de texto, documentação, banco de
-dados e tudo que gira em torno da criação de aplicações.
+a) Um IDE é um ambiente integrado de desenvolvimento que centraliza em um único lugar o compilador da linguagem utilizada, editor de texto, documentação,
+    banco de dados e tudo que gira em torno da criação de aplicações.
 
 b) Para quem está começando, o Eclipse IDE for Java EE Developers é o mais recomendado.
 
@@ -219,8 +323,8 @@ Marque a opção verdadeira a respeito das afirmações anteriores:
 
 Selecione uma alternativa
 
-R: A, C são verdadeiras. Correto! Um IDE é um ambiente integrado de desenvolvimento que centraliza em um único lugar, e NetBeans e Intellij são outros exemplos
-famosos de IDEs Java.
+R: A, C são verdadeiras. Correto! Um IDE é um ambiente integrado de desenvolvimento que centraliza em um único lugar, e NetBeans e Intellij são outros
+    exemplos famosos de IDEs Java.
 
 
 11 - Marque as alternativas verdadeiras:
@@ -236,11 +340,11 @@ R: O conjunto de janelas exibidas pelo Eclipse IDE é denominado perspectiva.
 
 Selecione 3 alternativas
 
-R: Executamos nosso programa no Eclipse através do menu Run -> Run as -> Java Application. Exato! Inclusive há uma tecla de atalho, exibida durante a opção que
-varia de acordo com seu sistema operacional.
+R: Executamos nosso programa no Eclipse através do menu Run -> Run as -> Java Application. Exato! Inclusive há uma tecla de atalho, exibida durante a opção
+    que varia de acordo com seu sistema operacional.
 
-R: Dentro de um projeto Java, criamos uma nova classe através da opção do menu File -> New -> Class. Correto! Caso o projeto não seja um projeto Java, a opção Class
-não estará disponível, fique atento!
+R: Dentro de um projeto Java, criamos uma nova classe através da opção do menu File -> New -> Class. Correto! Caso o projeto não seja um projeto Java, a opção
+    Class não estará disponível, fique atento!
 
 R: A saída do nosso programa executado pelo Eclipse é feita através da view console. Correto! A view console mostra a saída do programa.
 
@@ -316,8 +420,8 @@ Não, o resultado será 1020.
 Correto. O resultado será a concatenação das duas parcelas.
 
 
-19 - Paulo, vendo que Rômulo continuava com algumas dificuldades com Java, resolveu elaborar um desafio para seu amigo utilizando conceitos de concatenação de
-        Strings, vistos neste capítulo. O desafio continha o seguinte trecho de código:
+19 - Paulo, vendo que Rômulo continuava com algumas dificuldades com Java, resolveu elaborar um desafio para seu amigo utilizando conceitos de concatenação
+       de Strings, vistos neste capítulo. O desafio continha o seguinte trecho de código:
 
      String saudacao = "Olá, meu nome é ";
      String nome = "Rômulo ";
@@ -433,3 +537,68 @@ Correto. O resultado será a concatenação das duas parcelas.
      R: O código nem compila, pois fora do bloco if/else a variável salario não existe mais.
 
         Correto, a variável salario só é visível dentro do bloco if/else.
+
+
+24 - Quais as afirmações abaixo são verdadeiras em relação ao while?
+
+     Selecione2 alternativas
+
+     R1: Na expressão condicional do while é possível utilizar qualquer operador de comparação
+            (< [menor], > [maior], <= [menor ou igual], >= [maior ou igual], == [igual a] e != [diferente de]) e qualquer operador lógico (&& [and], || [ou]).
+
+         Isso aí, aluno! Todos os operadores de comparação e lógicos são válidos na expressão condicional do while! Use-os com sabedoria!
+
+     R2: O while sempre precisará de uma expressão condicional que definirá quando o laço deve ser interrompido.
+
+         Muito bem! Lembre-se, essa expressão condicional precisará ser informada dentro dos parênteses do while e pode ainda utilizar qualquer um dos
+         operadores de comparação e operadores lógicos aprendidos no capítulo 6.
+
+
+25 - Clarice está em dúvida sobre o modo como o break funciona quando utilizado dentro de laços de repetição aninhados. Escolha a opção que descreve
+        exatamente o funcionamento desse comando nessas situações.
+
+     Selecione uma alternativa
+
+     R: Para a execução do laço mais interno que contém o comando break e continua executando os laços mais externos.
+
+        Muito bem! O break irá interromper apenas o laço de repetição mais interno que o contém.
+
+
+26 - Após assistir as aulas de aninhamento de laços de repetição e sobre o comando break, Fernando decidiu criar um código como forma de treinamento que
+        imprime na tela o seguinte:
+
+            1
+            12
+            123
+            1234
+            12345
+
+        Para isso, ele criou o seguinte código:
+
+            public class ProgramaComBreak {
+                public static void main(String args[]) {
+                    for(int linha = 0; linha < 5; linha++) {
+                        for (int coluna = 0; coluna < 5; coluna++) {
+                            if ( ??? ) {
+                                break;
+                            }
+                            System.out.print( ??? );
+                        }
+                        System.out.println();
+                    }
+                }
+            }
+
+        No entanto, ele está em dúvida sobre como deve preencher os espaços com ???. Selecione a opção que mostra respectivamente as formas corretas de
+            preenchimento do código. Se tiver com dúvida, faça o teste e execute o programa.
+
+        Selecione uma alternativa
+
+        R: coluna > linha e coluna+1
+
+           Excelente, aluno! Conseguimos assim obter a resposta correta! Observe que precisamos adicionar 1 ao valor da coluna pois o for está
+           inicializando essa variável com o valor 0.
+
+
+
+
