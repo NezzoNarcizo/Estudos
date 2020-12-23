@@ -3,3 +3,5 @@
 3 – Criar templates para agilizar a escrita do código (Eclipse ou IntelliJ).
 4 – Tratar sempre todos os erros com exceptions.
 5 – Verificar se não está sub ou super utilizando uma Collection.
+6 - Aplicar CleanCode
+7 - Refatorar a lógica do código

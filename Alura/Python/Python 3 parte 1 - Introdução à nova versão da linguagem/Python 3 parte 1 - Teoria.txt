@@ -1,0 +1,215 @@
+Para beixar o Python - python.org
+Para utilizá-lo no navegador - repl.it
+
+
+Aula 01: Função print e variáveis -------
+
+Usamos a função print...
+
+>>> print("Ola Mundo")
+Ola Mundo
+
+
+Podemos analisar mais esta função com...
+
+>>> help()
+
+Então que o console mudou...
+
+help>
+
+Agora podemos pesquisar o módulo que estavamos utilizando...
+
+help> print
+
+Help on built-in function print in module builtins:
+
+print(...)
+    print(value, ..., sep=' ', end='\n', file=sys.stdout, flush=False)
+
+    Prints the values to a stream, or to sys.stdout by default.
+    Optional keyword arguments:
+    file:  a file-like object (stream); defaults to the current sys.stdout.
+    sep:   string inserted between values, default a space.
+    end:   string appended after the last value, default a newline.
+    flush: whether to forcibly flush the stream.
+
+>>>
+
+Poderíamos ter feito o caminho direto...
+
+>>> help(print)
+
+O que nos importa ~sao os três primeiros valores que a função print pode receber:
+
+- value = Valor que queremos imprimir...As reticencias indicam que a função pode receber mais de um valor, basta separá-los por vírgula.
+
+- sep = Separador entre os valores, por padrão o separador é um espaço em branco.
+
+- end = O que acontecerá ao final da função, podemos por padrão colocar uma quebra de linha (\n)
+
+
+A tecla 'Q' serve para sairmos da documentação...
+
+CTRL + C ou CTRL + D para sair do console de ajuda do Python.
+
+TESTANDO A FUNÇÃO PRINT...
+
+>>> print("Brasil", "ganhou", 5, "titulos mundiais", sep="-")
+
+Brasil-ganhou-5-titulos mundiais
+
+Como vimos antes, sep no final separa os valores com o caracter que informamos...
+
+
+
+VARIÁVEIS -------
+
+Vamos definir valores fora da função print()....
+
+>>> pais = "Italia"
+
+Definimos a variável 'pais' com o valor "Italia", vamos fazer isso com a quantidade também....
+
+>>> quantidade = 4
+
+
+Agora vamos refazer a função print() porém com as variáveis que acabamos de criar ao invés do valor...
+
+>>> print(pais, "ganhou", quantidade, "titulos mundiais")
+
+A saída que teremos será:
+
+Italia ganhou 4 titulos mundiais
+
+Podemos perceber que a variável é criada assim que atribuimos um valor a ela não importando seu nome....Mas e o tipo? O tipo é definido baseado no valor...
+
+Se executarmos...
+
+>>> type(pais) // Teremos a seguinte saida
+<class 'str'> //  O que significa que a variável é do tipo String
+
+>>> type(quantidade)
+<class 'int'> // O que significa que a variável é do tipo int
+
+
+IMPRIMINDO DATAS -------
+
+Neste tópico a questão era...Sem passar variável nova e nem string adicional
+
+Como teriamos a data em que:
+
+>>> dia = 15
+>>> mes = 10
+>>> ano = 2015
+
+Ficassem formatados desta forma: 15/10/2015
+
+Minha resposta: print(dia, mes, ano, sep="/")
+Estava correta!
+
+
+TIPAGEM DO PYTHON -------
+
+Vimos nos tópicos anteriores que Python sempre tem um tipo associado a sua variável.
+Porém em nenhum momento definimos qual seria o tipo da variável, isto porque Python trabalha com tipagem dinâmica
+
+Algo como:
+
+>>> str pais = "Brasil"
+
+Ocasionaria um erro...
+
+Seguindo o fluxo de execução, se fizessemos...
+
+>>> pais = "Brasil"
+>>> type(pais)
+<class 'str'>
+>>> pais = 644
+>>> type(pais)
+<class 'int'>
+
+Ou seja, o tipo da variável foi alterando de acordo com o valor que fomos mudando...
+
+
+SNAKE_CASE -------
+
+O Python utiliza por convenção o padrão Snake_Case para nomes de variáveis (Ou identificadores)...
+
+Exemplos de variáveis Snake_Case:
+
+idade_esposa = 20
+perfil_vip = 'Flávio Almeida'
+recibos_em_atraso = 30
+
+Em outras linguagens, como Java, utilizamos o padrão CamelCase:
+
+idadeEsposa = 20;
+perfilVip = 'Flávio Almeida';
+recibosEmAtraso = 30
+
+
+Questões aula 01:
+
+1 - Qual é a função utilizada para imprimir algo na tela?
+
+Selecione uma alternativa
+
+R: print()
+
+Correto!
+
+A função é a print(). Basta passar a mensagem como parâmetro para a função, que a mensagem será impressa. Ela inclusive apareceu várias vezes no vídeo!
+
+
+2 - Veja o código a seguir:
+
+>>> subst = "Python"
+>>> verbo = "é"
+>>> adjetivo = "fantástico"
+>>> print(subst, verbo, adjetivo, sep="_", end="!\n")COPIAR CÓDIGO
+Qual será a saída do comando print?
+
+Selecione uma alternativa
+
+R: Python_é_fantástico!
+
+Correto!
+
+
+3 - Temos a seguinte variável, que representa o preço de um produto:
+
+preco = 49.99
+
+Qual será o tipo da variável preco? Faça o teste!
+
+Selecione uma alternativa
+
+R: float
+
+Correto!
+
+O valor 49.99, é um número decimal, ou seja, com um ponto flutuante, por isso em Python o seu tipo será o float.
+
+
+4 - Sabendo que o Python usa uma tipagem dinâmica, qual alternativa abaixo é correta?
+
+Selecione uma alternativa
+
+R: Uma variável só passa a existir quando atribuímos um valor.
+
+Correto! É preciso atribuir um valor para inicializar uma variável, definindo assim o seu tipo.
+
+Não há declaração de variáveis estáticas em Python, como em linguagens como C, Java ou C#. Nessas linguagens, indicamos o tipo e o nome das variáveis e ela já passa a existir.
+
+Exemplo:
+
+int idade;
+
+Em Python precisamos atribuir um valor na criação da variável sem expecificar seu tipo...
+
+idade = 17
+
+
+Aula 02: Lidando com a entrada do usuário -------
+

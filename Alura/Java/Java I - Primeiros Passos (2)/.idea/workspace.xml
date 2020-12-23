@@ -2,16 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f75d12f9-c0ab-4942-ba2a-97daa14a209e" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/sintaxeVariaveisEFluxo/src/DesafioFatorial.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sintaxeVariaveisEFluxo/src/DesafioMultiploDe3.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sintaxeVariaveisEFluxo/src/TestaFor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sintaxeVariaveisEFluxo/src/TestaLacos.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sintaxeVariaveisEFluxo/src/TestaLacos2.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sintaxeVariaveisEFluxo/src/TestaSomatoria.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sintaxeVariaveisEFluxo/src/TestaWhile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Bons costumes programação.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../Bons costumes programação.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Teoria.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Teoria.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sintaxeVariaveisEFluxo/src/TestaSwitch.java" beforeDir="false" afterPath="$PROJECT_DIR$/sintaxeVariaveisEFluxo/src/TestaSwitch.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -103,6 +96,53 @@
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="Java I - Primeiros Passos (2)" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="WORKING_DIRECTORY" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="Java I - Primeiros Passos (2)" />
+      <option name="filePath" />
+      <option name="vmParameters" />
+      <option name="alternativeJrePath" />
+      <option name="programParameters" />
+      <option name="passParentEnvs" value="true" />
+      <option name="workingDirectory" />
+      <option name="isAlternativeJrePathEnabled" value="false" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="WORKING_DIRECTORY" />
+      <option name="filePath" />
+      <option name="vmParameters" />
+      <option name="alternativeJrePath" />
+      <option name="programParameters" />
+      <option name="passParentEnvs" value="true" />
+      <option name="workingDirectory" />
+      <option name="isAlternativeJrePathEnabled" value="false" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="WORKING_DIRECTORY" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
