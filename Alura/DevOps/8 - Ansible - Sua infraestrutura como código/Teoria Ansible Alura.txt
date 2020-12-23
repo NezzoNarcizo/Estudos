@@ -1905,6 +1905,184 @@ Ansible: Sua infraestrutura como código:
 
     Aula 06: Separando banco de dados da aplicação -------
 
+        Até o momento colocamos o Wordpress para funcionar, revimos os conceitos relativos à instalação de uma aplicação de três camadas.
+        Agora precisamos separar o ambiente para que ele se assemelhe a um ambiente de produção...
+
+        Primeiro separaremos o banco de dados da aplicação. Usaremos máquinas virtuais diferentes para cada um deles.
+        Vamos criar mais uma máquina virtual. Abaixo o código Vagrant da máquina virtual nova...
+
+            Vagrant.configure("2") do |config|
+
+                config.vm.box = "ubuntu/focal64"
+                config.vm.hostname = "database"
+
+                config.vm.provider "virtualbox" do |vb|
+                    vb.memory = 1024
+                end
+
+                config.vm.define "database" do |db|
+                    db.vm.network "private_network", ip: "192.168.0.3"
+                end
+
+            end
+
+        A única coisa que está diferente é o nome e o IP...
+        Obs: No curso o instrutor deixou está máquina com o nome 'mysql', para dar uma conotação genérica configurei como 'database'.
+
+        No arquivo hosts, na máquina de controle, adicionei a linha indicando onde estava a public key no servidor database...
+
+            [database]
+            192.168.0.3 ansible_user=vagrant ansible_ssh_private_key_file="./ssh-keys/vagrant_id_rsa"
+
+        Como ela será só para o banco deixamos ela separada neste grupo database...
+        A Web application em si, fica na máquina 'wordpress' (nome da máquina), onde está o Apache, PHP e Wordpress (aplicação).
+
+        Feita a separação dos servidores, vamos agora separar os playbooks. Agora precisamos instalar as aplicações que são próprias do banco de dados no novo servidor 'database'.
+        Como já tinhamos feito os módulos do banco na outra máquina, apenas separaremos eles em outro bloco, exclusivo para a máquina database.
+        Não precisamos por exemplo das dependências do PHP, mas precisamos por exemplo do módulo 'python-mysqldb' que é módulo usado pelo Ansible para conseguir falar com MySQL.
+
+            Abaixo já deixei configuradas todas as dependências que eu precisava...
+            Obs: O instrutor fez isso por partes, mas para poupar tempo já deixei tudo completo como foi a mudança...
+            Obs2: Outra coisa que precisei fazer foi criar a 'pre_tasks' pro servidor database que está logo abaixo...
+                    Eu não lembrava que tinha tido problema por falta do 'apt-get update', por isso deixei a pré tarefa de dar um apt-get update na máquina database
+                    porque estava dando erro por não encontrar os pacotes que são instalados logo abaixo.
+
+            //Define para qual host é direcionado este bloco do Playbook
+            - hosts: database
+
+              //Tarefas de preparação que tem prioridade diante de outros pacotes
+              pre_tasks:
+                - name: 'Atualiza o repositório apt-get e cache'
+                  apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+
+                - name: 'Instalando as bibliotecas python-3 mysql'
+                  apt:
+                    name: ['python3-mysqldb']
+                    state: present
+                  become: yes
+
+              //Daqui para baixo os nomes das tasks já se explicam...
+              tasks:
+                - name: 'Instala pacotes de dependência do Sistema Operacional'
+                  apt:
+                    name: ['mysql-server-8.0', 'unzip']
+                    state: latest
+                  become: yes
+
+                - name: 'Cria banco de dados MySQL'
+                  mysql_db:
+                    name: wordpress_db
+                    login_user: root
+                    state: present
+                  become: yes
+
+                - name: 'Cria usuário do Banco de Dados com nome wordpress_user e senha 12345 com todos os privilégios'
+                  mysql_user:
+                    name: wordpress_user
+                    password: '12345'
+                    priv: 'wordpress_db.*:ALL'
+                    state: present
+                    update_password: always
+                  become: yes
+        
+        Para que alguns comandos não afetem todas as máquinas, separamos em blocos como já mostrado acima...
+        Todos os pacotes acima vão afetar a máquina que está na tag 'hosts' que é o servidor 'database'...
+
+        Os outros pacotes do Wordpress e PHP Apache deixamos dentro do bloco 'hosts' wordpress...
+        Eles são:
+
+            - hosts: wordpress
+              handlers:
+                - name: Restart Apache
+                  service:
+                  name: apache2
+                  state: restarted
+                become: yes
+
+              tasks:
+                - name: 'Instala todos os pacotes de dependências do Sistema Operacional'
+                  apt:
+                    name: ['php7.4', 'apache2', 'libapache2-mod-php7.4', 'php7.4-gd', 'php7.4-mysql', 'unzip']
+                    state: latest
+                  become: yes
+
+                - name: 'Baixa o arquivo de instalação do Wordpress'
+                  get_url:
+                    url: 'https://wordpress.org/latest.tar.gz'
+                    dest: '/tmp/wordpress.tar.gz'
+                  become: yes
+
+                - name: 'Descompactar o arquivo'
+                  unarchive:
+                    src: /tmp/wordpress.tar.gz
+                    dest: /var/www/wordpress
+                    remote_src: yes
+                  become: yes
+
+                - name: 'Cria uma cópia do arquivo wp-config-sample.php para não perdermos o exemplo'
+                  copy:
+                    src: '/var/www/wordpress/wp-config-sample.php'
+                    dest: '/var/www/wordpress/wp-config.php'
+                    remote_src: yes
+                  become: yes
+
+                - name: 'Configura o wp-config com as entradas do banco de dados'
+                  replace:
+                    path: /var/www/wordpress/wp-config.php
+                    regexp: '{{ item.regex }}'
+                    replace: '{{ item.value }}'
+                    with_items:
+                      - { regex: 'database_name_here', value: 'wordpress_db'}
+                      - { regex: 'username_here', value: 'wordpress_user'}
+                      - { regex: 'password_here', value: '12345'}
+                    become: yes
+
+                - name: 'Configura Apache (Colando o arquivo alterado) para servir o Wordpress'
+                  copy:
+                    src: './files/000-default.conf'
+                    dest: '/etc/apache2/sites-available/000-default.conf'
+                  become: yes
+                  notify:
+                    - Restart Apache
+
+        Se deixássemos 'all' como estava antes as configurações iam para todos os hosts.
+
+        Revisão:
+
+            - Criamos a máquina virtual mysql no Vangrantfile;
+            - Colocamos o IP, usuário e a chave privada da máquina criada no grupo database, no arquivo de inventário para o Ansible conseguir enxergá-la.
+            - Incluímos um grupo novo com tarefas específicas para a instalação do banco de dados no playbook. Neste processo, será feita a configuração da máquina.
+
+        Agora basta rodar o playbook para deixar a nova máquina pronta para ser exclusiva para banco de dados.
+        Obs: Caso não tenhamos adicionado a chave pública na máquina nova com o comando ssh, ela ira perguntar se queremos adicioná-la, graças ao trecho de código no arquivo
+                hosts.
+
+        Se tudo der certo veremos uma informação no final de que as duas máquinas foram configuradas.
+        Conectamos a nossa máquina para ver se tudo foi instalado e configurado corretamente...
+
+            $ vagrant ssh 192.168.0.3
+
+        Depois o comando para conectar ao MySQL...
+
+            $ mysql -u wordpress_user -p12345
+
+        Depois o comando para ver as tabelas criadas...
+
+            $ mysql> show databases;
+
+                +----------------------+
+                | Database             |
+                +----------------------+
+                | information_schema   |
+                | wordpress_db         |
+                +----------------------+
+                2 rows in set (0.00 sec)
+
+        Tudo está ok, porém ainda falta limparmos a máquina do Wordpress, PHP e Apache...
+        Deixaremos ela igual a máquina do banco de dados....Exclusiva para seu fim...
+
+        
+
         
 
 
