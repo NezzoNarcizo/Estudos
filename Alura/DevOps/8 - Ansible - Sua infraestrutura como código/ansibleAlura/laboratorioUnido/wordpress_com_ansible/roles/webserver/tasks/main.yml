@@ -1,0 +1,6 @@
+---
+- name: 'Instala todos os pacotes de dependências do Sistema Operacional' 
+  apt: 
+    name: ['php7.4', 'apache2', 'libapache2-mod-php7.4', 'php7.4-gd', 'php7.4-mysql', 'unzip']
+    state: latest
+  become: yes

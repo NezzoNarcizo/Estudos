@@ -1,0 +1,18 @@
+---
+- hosts: all
+  tasks:
+    - name: 'Instala o PHP7.4'
+      apt:
+        name: php7.4
+        state: latest
+      become: yes
+    - name: 'Instala o Apache'
+      apt:
+        name: apache2
+        state: latest
+      become: yes
+    - name: 'Instala o MOD PHP'
+      apt:
+        name: libapache2-mod-php7.4
+        state: latest
+      become: yes

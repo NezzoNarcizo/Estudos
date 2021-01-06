@@ -315,6 +315,10 @@ Ansible: Sua infraestrutura como código:
 
                                         $ sudo service sshd restart
 
+                                    Obs: Caso não funcione, podemos ver o que tem de errado na configuração do arquivo sshd_config com o comando:
+
+                                        $ sshd -T
+
                                     Depois tentei realizar novamente a cópia do arquivo e deu certo...
 
                                     Obs: Se quiser pode tentar realizar a conexão via SSH de uma máquina virtual para outra...
@@ -2081,8 +2085,970 @@ Ansible: Sua infraestrutura como código:
         Tudo está ok, porém ainda falta limparmos a máquina do Wordpress, PHP e Apache...
         Deixaremos ela igual a máquina do banco de dados....Exclusiva para seu fim...
 
+    
+        Reinstalando o servidor com um click:
+
+        Agora vamos tirar os pacotes de instalação do banco do bloco de configuração da máquina wordpress no nosso playbook...
+        Obs: Eu já tinha feito isso na aula anterior, já tinha adiantado.
+
+        Agora, no bloco de código da máquina wordpress, só temos as linhas relacionadas com a instalação de PHP, Apache e Wordpress.
+        Poderíamos apenas desinstalar o MySQL desta máquina, porém a intenção é ver como o Ansible facilita a recriação de todo o ambiente do zero.
+        Se o playbook está correto, será fácil realizar esta tarefa...
+
+        Primeiro vamos utilizar o comando para destruir a nossa máquina virtual wordpress.
+        
+            $ vagrant destroy -f "id máquina virtual"
+
+        Depois subimos ela novamente (Agora, pura, sem nada instalado)
+
+            $ vagrant up
+
+        Vamos conferir se a máquina virtual está rodando...
+
+            Fora do diretório da vm: vagrant global-status
+            Dentro do diretório da vm: vagrant status
+
+        Obs: Tive diversos problemas com as máquinas, principalmente com o arquivo de configuração do MySQL onde o novo my.cnf vem vazio
+                O arquivo de exemplo nas novas versões estão em /etc/mysql/mysql.conf.d/mysqld.cnf
+                ²No trecho do playbook onde tem o comando para instalação do MySQL tirei a versão e deixei somente 'mysql-server'...
+                ³Começou a dar erro no Unzip do Wordpress a certa altura do estudo. Eu já tinha passado a tarde inteira ajustando o Playbook, e pensava que podia ser erro
+                    por causa de aspas, ou a sintaxe do módulo Unarchive estivesse errado, porém no fim, descobri que estava com problema de download o site do wordpress.
+                    Mesmo através da máquina física tentando fazer o download do modo convencional ou dava erro ou ficava muito lento, o que fazia com que o módulo no Ansible
+                    nunca terminasse o download. Não sei se fiz download demais no site (rss) ou se estava com problema mesmo.
+
+        Voltando para a teoria da Aula...
+
+        Rodando a primeira vez o playbook (De acordo com a aula e não com meus erros que tive que corrigir kkkk) funcionou normal, já tendo deixado o que é do banco em um bloco
+        e o que é do wordpress em outro.
+
+        Porém, ao tentarmos acessar pelo browser o site do wordpress pelo IP: 192.168.0.2 verificamos que acontece um erro.
+
+            "Error establishing a database connection"
+
+        Isto acontece porque no arquivo de configuração do Wordpress estava configurado que deviamos usar um banco local, mas agora separamos o banco....
+
+            /** MySQL database username */
+            define('DB_USER', 'wordpress_user');
+            
+            /** MySQL database password */
+            define('DB_PASSWORD', '12345');
+            
+            /** MySQL hostname */
+            define('DB_HOST', 'localhost');
+            
+            /** Database Charset to use in creating database tables. */
+            define('DB_CHARSET', 'utf8');
+            
+            /** Database Collate type. Don´t change this if in doubt. */
+            define('DB_COLLATE', '');
+
+        Ou seja, devemos no lugar de 'localhost', no nosso módulo 'regexp e replace', substituir também este valor pelo IP do micro onde esta o nosso database que é 192.168.0.3
+
+            - name: 'Configura o wp-config com as entradas do banco de dados'
+            replace:
+            path: /var/www/wordpress/wp-config.php
+            regexp: '{{ item.regex }}'
+            replace: '{{ item.value }}'
+            with_items:
+            - { regex: 'database_name_here', value: 'wordpress_db'}
+            - { regex: 'username_here', value: 'wordpress_user'}
+            - { regex: 'password_here', value: '12345'}
+            - { regex: 'localhost', value: '192.168.0.3'}    
+            become: yes
+
+        Depois desta mudança tentamos rodar o playbook mais uma vez, e....Não funciona!
+
+        Agora está acontecendo erro porque a instalação do MySQL não aceita duas coisas por padrão, conexão de fora do host de onde ele está instalado (localhost e 127.0.0.1) 
+        e os usuários que criamos para o MySQL são apenas para permissões locais...
+
+        Começamos pelo usuário que é mais fácil de alterar...
+
+        Agora no tag 'host' adicionaremos o "{{ item }}", para que possamos usar o 'with_items' e dar permissões em outros servidores...
+        No mesmo módulo que estamos criando o usuário do banco então, adicionamos o nome 'localhost', o ip que o representa '127.0.0.1' e o IP da máquina onde o Wordpress está
+        instalado 192.168.0.2.
+
+            - name: 'Cria usuário do Banco de Dados com nome wordpress_user e senha 12345 com todos os privilégios'
+            mysql_user:
+            name: wordpress_user
+            password: '12345'
+            priv: 'wordpress_db.*:ALL'
+            state: present
+            update_password: always
+            host: "{{ item }}"
+            with_items:
+            - 'localhost'
+            - '127.0.0.1'
+            - '192.168.0.2'
+            become: yes
+
+        Mas, mesmo depois destas outras alterações ainda não é possível fazer funcionar o site do wordpress...
+        Isto está acontecendo ainda porque não configuramos o servidor MySQL para aceitar a conexão remota, que é a parte mais chata da configuração que falamos anteriormente...
+        Na observação que fiz lá em cima, está a diferença das aulas para o que eu tive que fazer por causa da diferença de versão do MySQL
+        O exemplo de arquivo de configuração está em: /etc/mysql/mysql.conf.d/mysqld.cnf
+
+        Teremos que copiar o conteúdo deste arquivo...
+
+            $ cat /etc/mysql/mysql.conf.d/mysqld.cnf
+
+            E colocar num arquivo chamado my.cnf. Aí o procedimento será o mesmo daquele que fizemos com o arquivo 000-default.conf do Apache, pra no playbook, copiar
+            o arquivo da máquina de controle para a máquina alvo já configurado com as opções que desejamos. No caso do 000-default.conf do Apache pré-definimos a configuração
+            para uso da porta 80 na máquina virtual.
+
+            No caso de copiar as opções padrões do mysqld.cnf para o my.cnf, estaremos alterando os hosts que ele vai servir no caso o trecho mais importante de código neste arquivo
+            é:
+
+                [mysqld]
+                #
+                # * Basic Settings
+                #
+                user          = mysql
+                pid-file      = /var/run/mysqld/mysqld.pid
+                socket        = /var/run/mysqld/mysqld.sock
+                port          = 3306
+                datadir       = /var/lib/mysql
+                
+                
+                # If MySQL is running as a replication slave, this should be
+                # changed. Ref https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_tmpdir
+                # tmpdir                = /tmp
+                #
+                # Instead of skip-networking the default is now to listen only on
+                # localhost which is more compatible and is not less secure.
+                bind-address            = 0.0.0.0
+                mysqlx-bind-address     = 127.0.0.1
+
+                O 'bind-address' onde tiramos o 127.0.0.1 que permitia apenas conexões locais, para colocar 0.0.0.0 que aceita conexão de qualquer servidor.
+
+            Ou seja, copiamos o conteúdo do mysqld.cnf, criamos o arquivo my.cnf dentro da pasta 'files' na máquina de controle, adicionamos o conteúdo e alteramos o bind address para
+            aceitar qualquer conexão. Agora falta somente adicionar o arquivo na máquina virtual via playbook como fizemos com o arquivo do Apache...
+
+                - name: 'Configura o MySQL para aceitar conexões remotas'
+                  copy:
+                    src: './files/my.cnf'
+                    dest: '/etc/mysql/my.cnf'
+                  become: yes
+
+            Rodamos o playbook mais uma vez, e...Ainda não funcionou!
+
+            O que faltou agora, igual como fizemos com o servidor Apache, foi reiniciar o MySQL, pois alteramos um arquivo administrativo.
+            Então precisamos colocar um 'notify' com a chamada para um handler - restart mysql...
+            No caso ficaria assim no módulo 'Configura o MySQL para aceitar conexões remotas'
+
+                - name: 'Configura o MySQL para aceitar conexões remotas'
+                  copy:
+                    src: './files/my.cnf'
+                    dest: '/etc/mysql/my.cnf'
+                  become: yes
+                  notify:
+                    - restart mysql
+
+            E o Handler:
+
+                handlers:
+                  - name: restart mysql
+                  service:
+                    name: mysql
+                    state: restarted
+                  become: yes
+
+            Handlers sempre no ínicio do arquivo...
+
+            Obs: Se já tivermos rodado o Playbook copiando o arquivo, ele não vai entrar no bloco e relizar o restart do MySQL, então precisamos fazer qualquer alteração no
+            arquivo, nos comentários mesmo, para que ele entre no bloco e realize o playbook completo.
+
+            Agora sim, se tentarmo acessar pelo browser o endereço 192.168.0.2 veremos que o wordpress finalmente está funcionando.
+            A aplicação de três camadas (Servidor Web, Banco de dados e Aplicação) funcionando perfeitamente e de fato separados.
+
+            Revisando os passos seguidos para fazer a página do Wordpress funcionar:
+
+                - Separamos o playbook em dois grupos de hosts, que usam as duas máquina virtuais criadas anteriormente;
+
+                - Colocamos no inventário do Ansible os IPs e como eles se conectam nessas máquinas;
+
+                - Separamos as tarefas do MySQL, de forma que a máquina do Wordpress fique sem comandos do MySQL;
+
+                - E a máquina do MySQL fique sem comandos do Wordpress;
+
+                - Incluímos a informação de como o Wordpress conecta no servidor remoto, mudando o replace;
+
+                - Além disso, incluímos o arquivo de configuração novo my.cnf, liberando o MySQL para aceitar conexões remotas.
+
+                - Demos permissão para o usuário criado para o Wordpress de aceitar conexões de servidores remotos colocando a lista de IPs.
+
+            O próximo passo agora será refatorarmos o código que escrevemos, pois temos diversos valores de variáveis, IPs, caminhos e endereços espalhados pelo código que não
+            é nada seguro.
+
+        Nesta aula, vimos:
+
+            - Como separar o playbook em dois grupos de hosts:
+            - Esses dois grupos usam as duas máquinas virtuais que criamos;
+            - Inclusive, essas máquinas foram adicionadas ao inventário do Ansible.
+            - Como separar as tarefas entre os grupos;
+            - Como conectar o WordPress em um servidor remoto;
+            - Como liberar o MySQL para receber conexões remotas.
+
+    Questões aula 06:
+
+        01: Segue uma parte do provisioning.yml com a configuração do handler que reinicia o Apache2:
+
+            - hosts: wordpress
+              handlers:
+                - name: restart apache
+                service:
+                    name: apache2
+                    state: restarted
+                become: yes
+            ...
+
+            Como garantimos que esse handler realmente será chamado após execução de uma tarefa?
+        
+            Selecione uma alternativa
+
+            R: No final da task, usando:
+
+                notify:
+                - restart apache
+            
+                Alternativa correta! Através do notify podemos "avisar" o handler.
+
+        02: O Ansible nos permite executar comandos contra uma lista arbitrária de hosts remotos através do arquivo de inventário, que podem estar divididos em diferentes grupos. 
+            Dito isso, dado o arquivo de inventário abaixo, qual seria o retorno do comando ansible groupA -i hosts -m ping?
+
+            [groupA]
+            10.0.0.1
+            10.0.0.2
+
+            [groupB]
+            10.0.0.3
+            10.0.0.4
+
+            [groupC]
+            10.0.0.5
+            10.0.0.6
+
+            R: 10.0.0.1 | SUCCESS => {
+                "changed": false,
+                "failed": false,
+                "ping": "pong"
+            }
+            
+            10.0.0.2 | SUCCESS => {
+                "changed": false,
+                "failed": false,
+                "ping": "pong"
+            }
+            
+            Alternativa correta! O comando informado recebeu os seguintes parâmetros : <grupo> -i <inventário> -m <módulo>.
+            
+            O grupo informado foi o groupA, que de acordo com o arquivo de inventário fornecido é formado pelos hosts 10.0.0.1 e 10.0.0.2. Dessa forma, quando rodamos o comando 
+            ansible informando o grupo groupA, o módulo solicitado será executado apenas contra os hosts desse grupo.
+            
+            Para maiores detalhes, você pode ler a documentação aqui (https://docs.ansible.com/ansible/2.4/intro_patterns.html).
+
+    
+    Aula 07: Trabalhando com variáveis e templates -------
+        
+        Configurações flexíveis com variáveis:
+
+            Vamos melhorar a qualidade do nosso playbook com a definição das variáveis em outros arquivos.
+            Precisamos trabalhar com a qualidade do nosso código, facilitar todo o processo, até mesmo o de refatoração, se não seria desnecessário utilizar ferramentas mais
+            complicadas. Seria desnecessário termos controle de qualidade.
+
+            Quando se trata de construir uma infraestrutura como código, temos que deixar ela de uma forma que tenha manutenibilidade, ser testável e ter isolamento adequado
+            e ser organizada.
+
+            Mesmo num cenário simples como o nosso, ainda é perigoso gerarmos erros nas próximas vezes que formos alterar o nosso playbook, pois usamos mais de uma vez durante
+            o código a mesma variável. Ou seja, quanto mais dependermos de alterações humanas, mas provável que aconteçam erros.
+
+            Agora nosso código ficará com uma cara mais profissional.
+
+            Vamos começar criando uma variável para o nome do banco da nossa aplicação que no momento é 'wordpress_db'.
+            Podemos utilizar o 'Localizar e Substituir' (Ctrl + H) para facilitar a nossa vida...
+
+            Localizaremos 'wordpress_db' e substituíremos por '{{ wp_db_name }}'...
+            Obs: No código tem que estar com aspas duplas, ex: "{{ wp_db_name }}"
+
+            No código:
+
+                - name: 'Configura o wp-config com as entradas do banco de dados'     
+                  replace:
+                    path: '/var/www/wordpress/wp-config.php'
+                    regexp: "{{ item.regex }}"
+                    replace: "{{ item.value }}"
+                  with_items:
+                    - { regex: 'database_name_here', value: "{{ wp_db_name }}"}
+                    - { regex: 'username_here', value: ' wordpress_user'}
+                    - { regex: 'password_here', value: '12345'}
+                    - { regex: 'local_host', value: '172.17.177.42'}
+                  become: yes
+            
+            Faremos este mesmo ajuste em 'Cria usuário do Banco de Dados com nome wordpress_user e senha 12345 com todos os privilégios'
+
+                  - name: 'Cria usuário do Banco de Dados com nome wordpress_user e senha 12345 com todos os privilégios'
+                  mysql_user:
+                    login_user: root
+                    name: wordpress_user
+                    passoword: 12345
+                    priv: "{{ wp_db_name }}.*:ALL"
+                    state: present
+                    host: "{{ item }}"
+                  with_items:
+                    - 'localhost'
+                    - '127.0.0.1'
+                    - '172.17.177.40'
+            
+            E por último, em 'Cria banco de dados MySQL'
+
+                - name: 'Cria o banco do MySQL'
+                  mysql_db:
+                    name: "{{ wp_db_name }}"
+                    login_user: root
+                    state: present
+
+            No caso, na aula, o professor mudou no playbook mas não criou o arquivo que associa o valor desejado para que vissemos o erro acontecendo...
+            O Playbook não encontra os valores corretos e por isso da erro.
+
+            No primeiro exemplo de como fazer referência do valor, ele usa a linha de comando mesmo...
+
+                $ sudo ansible-playbook -i hosts --extra-vars 'wp_db_name=wordpress_db' provisioning.yml
+
+            Rodou perfeitamente...
+
+            A próxima variável substituída foi: 'wordpress_user', que será substituída por '{{ wp_username }}'...
+            Novamente usando "Replace in Buffer".
+
+            Com esta alteração o playbook ficará assim:
+            Uma parte do código:
+            
+                - name: 'Cria o usuário do MySQL'
+                  mysql_user:
+                    login_user: root
+                    name: "{{ wp_username }}"
+                    password: 12345
+                    priv: "{{ wp_db_name }}.*:ALL"
+                    state: present
+                    host: "{{ item }}"
+                  with_items:
+                    - 'localhost'
+                    - '127.0.0.1'
+                    - '172.17.177.40'
+
+            Nunca se esquecendo das aspas duplas e verificando todos os locais onde aquele valor é usado no playbook...
+            Agora executaremos o playbook novamente, e novamente passando as referências, os valores das variáveis por linha de comando.
+
+                $ sudo ansible-playbook -i hosts --extra-vars 'wp_db_name=wordpress_db wp_username=wordpress_user' provisioning.yml
+
+            Tudo funcionará corretamente porque estamos passando os valores das variáveis...
+            Porém conforme formos trocando os valores estáticos por variáveis, mais a linha de comando ficará carregada de informações e isso tornará muito trabalhoso passar
+            todos os valores das variáveis. O que tornará a linha de comando enorme e desorganizada.
+
+            Poderiamos versionar isso colocando dentro da integração continua do Ansible, mas isso deixaria o código poluído.
+            Podemos criar um diretório chamado 'group_vars' e dentro dele um arquivo 'all.yml'.
+
+            Ele fica um arquivo parecido com o 'host.all', porém com as variáveis e seus valores...
+            Até o momento utilizamos duas variáveis:
+
+                - wordpress_user
+                - wp_db_name
+            
+            No arquivo 'all.yml' dentro do diretório 'group_vars' deixaremos da seguinte forma:
+
+                ---
+                wp_username: wordpress_user
+                wp_db_name: wordpress_db
+
+            Se colocarmos todas as entradas que utilizamos no playbook neste arquivo, elas não precisam ser mais passadas via linha de comando...
+
+                $ sudo ansible-playbook -i hosts provisioning.yml
+
+            Após verificar que deu tudo certo, podemos começar a colocar os demais valores repetidos no playbook em outras variáveis.
+            O diretório de instalação do Wordpress ('/var/www/wordpress') e o IP do host do Wordpress ('192.168.0.2') são dois valores recorrentes no playbook.
+
+                wp_username: wordpress_user
+                wp_db_name: wordpress_db
+                wp_user_password: 12345
+                wp_installation_dir: '/var/www/wordpress'
+                wp_host_ip: '192.168.0.2'
+                wp_db_ip: '192.168.0.3'
+
+            Acima já está incluído o IP do host do banco de dados do Wordpress, '192.168.0.3'...
+            Agora, como fizemos anteriormente, vamos trocar no playbook os valores estáticos por variáveis...
+
+                - name: 'Cria o usuário do MySQL'
+                  mysql_user:
+                    login_user: root
+                    name: wordpress_user
+                    password: "{{ wp_user_password }}"
+                    priv: "{{ wp_db_name }}.*:ALL"
+                    state: present
+                    host: "{{ item }}"
+                  with_tem:
+                    - 'localhost'
+                    - '127.0.0.1'
+                    - "{{ wp_host_ip }}"
+
+            Refatorando desta forma vemos que o código estava repetido em diversos trechos, o que torna o projeto muito suscetível a erros.
+
+                - name: 'Configura o wp-config com as entradas do banco de dados'     
+                  replace:
+                    path: "{{ wp_installation_dir }}/wp-config.php"
+                    regexp: "{{ item.regex }}"
+                    replace: "{{ item.value }}"
+                    backup: yes
+                  with_items:
+                    - { regex: 'database_name_here', value: 'wordpress_db'}
+                    - { regex: 'username_here', value: 'wordpress_user'}
+                    - { regex: 'passaword_here', value: "{{ wp_user_password }}"}
+                    - { regex: 'localhost', value: "{{ wp_db`ip }}"}
+                  become: yes
+            
+            O caminho da instalação do Wordpress também estava bastante repetido, por isso, foi substituído. Em 'copy', faremos algumas alterações:
+
+                - copy:
+                    src: "{{ wp_installation_dir }}/wp-config-sample.php"
+                    dest: "{{ wp_installation_dir }}/wp-config.php"
+                    remote_src: yes
+                  become: yes
+
+            Nós eliminamos o uso de string hard-coded, pelo menos da parte mais relevante, que queremos modificar com Wordpress.
+            Uma coisa que não fizemos ainda é separar o que é só pro Wordpress e o que é só pro Banco de dados.
+
+            No caso o IP do host com Wordpress só é importante para o host do banco de dados, então criamos um arquivo database.yml dentro do diretório group_vars assim como
+            fizemos com o arquivo all.yml, a propósito, all porque a princípio seriam variáveis para o uso comum de qualquer máquina provisionada pelo nosso playbook.
+
+            Dentro do arquivo database.yml ficará assim:
+
+                ---
+                wp_host_ip: '192.168.0.2'
+
+            Também criaremos um arquivo wordpress.yml, pois o IP da máquina do banco de dados só é interessante para o host Wordpress...
+            O arquivo wordpress.yml ficará assim:
+
+                ---
+                wo_db_ip: '192.168.0.3'
+
+            Agora temos um arquivo para o grupo de hosts, um exclusivo para o servidor de banco de dados e um exclusivo para o servidor wordpress.
+            Executamos o playbook para ver se está tudo ok...
+
+            O que vimos ser possível fazer?
+
+                - Nós podemos deixar o script mais reutilizável, com uso de variáveis no Ansible;
+                - É possível passar as variáveis tanto na linha de comando quanto por meio da organização de arquivos no diretório group_vars - sendo que cada grupo específico 
+                    pode ter seu próprio valor específico, com seu próprio arquivo e valores.
+                
+                - E podemos ter um arquivo all.yml que passa valores padrão para um grupo específico;
+                - Com isso evitamos a repetição.
+
+            Agora o código está mais organizado, está mais limpo e a chance de cometer erros diminuiu.
+            Porém ele ainda está misturando as tarefas, tanto do Wordpress como do servidor de banco de dados. Agora iremos especializar o código, separá-lo aumenta o nosso grau
+            de reaproveitamento.
+
+            Podemos instala um servidor PHP e um servidor Apache que pode ser utilizado para fazer diversas coisas, porém, da forma que está, é difícil reaproveitar.
         
 
+        Gerando configurações com templates:
+
+            As configurações de variáveis que fizemos até o momento, nos ajudaram a melhorar a organização do nosso código que continha muita repetição.
+            Para organizar criamos o diretório 'group_vars' e colocamos ali dentro todos os arquivos de configurações de variáveis.
+
+            Temos ainda mais um local onde o caminho de instalação do Wordpress é usado, é o arquivo 000-default.conf.
+            Para conseguir substituir ali também, que é um arquivo de configuração do Apache, teremos que utilizar templates, assim o Apache também aproveitará do setup das
+            nossas variáveis. Pois, pode ser que alteremos o local de instalação do Wordpress, e se o mudarmos a variável do caminho a aplicação vai quebrar.
+
+            Substituiremos a cópia do arquivo de configuração do Apache que fizemos no playbook por um template que vai gerar um arquivo de resultado direto na nossa máquina
+            de destino. No nosso arquivo 'provisioning.yml' alteraremos o nosso módulo 'Configura Apache (Colando o arquivo alterado) para servir o Wordpress'...
+            Teremos agora um módulo template, que virá da pasta 'templates'. O módulo ficará da seguinte forma...
+
+                - name: ' Configura Apache para servir Wordpress'
+                  template:
+                    src: 'templates/000-default.conf.j2'
+                    dest: '/etc/apache2/sites-available/000-default.conf'
+                  become: yes
+                  notify: 
+                    - restart apache
+
+            O destino continua sendo o mesmo. A diferença está na origem, por isso vamos salvar o arquivo '000-default.conf' na pasta 'templates', que já devemos ter criado.
+            Obs: A extensão de um arquivo template deve sempre ser '.j2'. 
+            Agora teremos o nosso 'src': 'templates/000-default.conf.j2'. Agora, ao invés de termos o valor do caminho estático no arquivo de configuração do Apache, teremos
+            a variável '{{ wp_installation_dir }}', exatamente como fizemos no nosso arquivo 'provisioning.yml'.
+
+            Quando precisarmos fazer a alteração no arquivo 'all.yml', esta alteração também será feita automaticamente no arquivo recém criado.
+            Desta forma evitamos que mais alguns problemas aconteça com nossa aplicação.
+
+            Nenhuma alteração será feita no banco de dados, mas o template será aplicado...
+            Se testarmos o servidor da nossa aplicação '192.168.0.2' veremos que tudo ainda funciona perfeitamente.
+
+            Tem outras alterações que também podiamos ter feito, poderíamos ter ocultado de tasks o que estava sendo feito, copiando o arquivo de configuração do Wordpress
+            e colocado todos os placeholders e usado template. Deixar bem separado é o ideal, no caso o template saberia o que deve ser substituído e as tasks o que deve ser
+            executado.
+
         
+        Para saber mais sobre variáveis...
+
+            Existem algumas regras que devemos considerar na hora de declarar uma varíavel (como em qualquer outra ferramenta ou linguagem de programação). Por exemplo, uma 
+            variável não deve ter um ponto, espaço ou hífen no nome. Todas as declarações abaixo são inválidas:
+
+            foo-var: 'nao_pode_ter_hifen'
+            foo var: 'nem_ter_espaco'
+            foo.var: 'tambem_nao_pode_ter_ponto'
+            12foovar: 'nao_pode_ter_numero_no_inicio'
+
+            Todos os detalhes sobre as declarações e muito mais se encontra da documentação do Ansible: 
+                    https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#what-makes-a-valid-variable-name.
+
+        
+        Para saber mais: Jinja
+
+            No curso você já aprendeu como usar templates e qual é a sintaxe para declarar uma variável. Para trabalhar com os templates, o Ansible usa um outro framework 
+            que se chama Jinja.
+
+            Ele faz parte dos template engine's (ou template processor). Um template engine combina um template (HTML, XML, ou qualquer outro arquivo, configurações etc) 
+            com um modelo de dados para gerar um novo documento: https://jinja.palletsprojects.com/en/2.11.x/
+            
+            Isso é muito utilizado no desenvolvimento web para gerar páginas HTML dinamicamente. Por isso o Jinja é o template engine padrão do Flask, um micro framework web 
+            também escrito em Python: https://flask.palletsprojects.com/en/1.1.x/
+            
+            Se tiver interessado em aprender Flask, na Alura também temos cursos dedicados. Vale conferir: https://cursos.alura.com.br/search?query=flask
+
+        
+        Nesta aula, vimos:
+
+            - Como deixar o script mais organizado e menos repetido com variáveis e templates
+            - Como declarar as variáveis tanto na linha de comando quanto em arquivos do diretório group_vars
+            - Cada grupo pode ter seu próprio arquivo com seus valores
+            - Se o Ansible não encontrar as variáveis nos arquivos do grupo, ele irá utilizar as do arquivo all.yml
+            - Como separar responsabilidades com templates.
+
+    
+        Questões aula 07:
+
+            01 - Sobre declaração de variáveis, temos as seguintes afirmativas:
+
+                A) Utilizamos variáveis declaradas através de "{{ nome_da_variavel }}".
+                
+                B) Não há limite no número de variáveis declaradas.
+                
+                C) Uma variável só pode ser definida na linha de comando.
+                
+                Podemos dizer que:
+                
+                Selecione uma alternativa
+
+                R: Apenas a afirmativa C é falsa.
+
+                Alternativa correta! As variáveis também podem ser definidas em arquivos.
+
+            
+            02 - Aprendemos sobre templates nesta aula. Das afirmações abaixo, qual a correta?
+
+                Selecione uma alternativa
+
+                R: Os templates são manipulados por um módulo de mesmo nome, template.
+
+            
+            03 - Você pegou um projeto Ansible do colega de trabalho e começou a analisar a estrutura. No projeto, dentro da pasta group_vars tem o arquivo server.yml, 
+                com a declaração da variável:
+
+                server_ip: '172.17.177.40'
+
+                Baseado nisso, quais das afirmações abaixo são verdadeiras?
+            
+                Selecione uma alternativa
+
+                R: Essa variável é válida para o grupo server.
+
+                Alternativa correta! Repare que o arquivo se chama server.yml, ou seja, é válida para o grupo server.
+                
+                Para ser válido em todos os grupos, o arquivo precisa se chamar all.yml.
 
 
+    Aula 08: Usando roles, dependências e defaults -------
+
+        Playbooks reaproveitáveis com Rules:
+
+            Agora dividiremos melhor o código e aumentar seu reuso. O playbook que criamos atende as nossas necessidades, porém, por ele estar no que chamariamos de monolito,
+            não podemos reaproveitar quase, ou talvez, nada.
+
+            O Ansible nos permite criar pequenas bibliotecas de playbooks chamadas 'Roles'. Nós criaremos um grupo de três roles:
+
+                - Uma será responsável por instalar o Webserver;
+                - Uma para instalar o MySQL;
+                - E uma para instalar o Wordpress;
+
+            Não adicionaremos mais código, apenas organizaremos aqueles que já criamos. Primeiro com o código do MySQL. Todas as roles devem ser colocadas dentro de um diretório
+            'tasks' e dentro, possuem um arquivo chamado 'main.yml'. Trata-se do arquivo padrão de execução das tasks da role, ou seja, é o ponto de entrada.
+                Ou seja, o caminho fica: '/roles/mysql/tasks/main.yml'
+
+            Começamos o arquivo com os três traços habituais '---'. Copiaremos os textos das tasks referentes a parte do host do MySQL para lá...
+
+                ---
+                - name: 'Atualiza o repositório apt-get e cache'
+                  apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+                  become: yes
+                    
+                - name: 'Instalando as bibliotecas python-3-mysqldb'
+                  apt:
+                    name: ['python3-mysqldb']
+                    state: present
+                  become: yes
+                
+                - name: 'Instala pacotes de dependência do Sistema Operacional'
+                  apt: 
+                    name: ['mysql-server', 'unzip']
+                    state: latest
+                  become: yes
+                
+                - name: 'Cria banco de dados MySQL'
+                  mysql_db:
+                    name: "{{ wp_db_name }}"
+                    login_user: root
+                    state: present
+                  become: yes
+                
+                - name: 'Cria usuário do Banco de Dados com nome {{ wp_username }} e senha 12345 com todos os privilégios'
+                  mysql_user:
+                    name: "{{ wp_username }}"
+                    password: "{{ wp_user_password }}"
+                    priv: "{{ wp_db_name }}.*:ALL"
+                    state: present
+                    update_password: always
+                    host: "{{ item }}"
+                  with_items:
+                    - 'localhost'
+                    - '127.0.0.1'
+                    - "{{ wp_host_ip }}"
+                  become: yes
+                
+                - name: 'Configura o MySQL para aceitar conexões remotas'
+                  copy:
+                    src: './files/my.cnf'
+                    dest: '/etc/mysql/my.cnf'
+                  become: yes
+                  notify:
+                    - restart mysql
+            
+            Temos as tasks responsáveis por instalar os pacotes, criar o banco de dados, como configurar e incluímos o 'notify' para o 'handler'. Onde vamos adicionar o handler
+            criado? As roles também têm um diretório específico para handlers, que receberá o nome de 'handlers', nele também temos o arquivo 'main.yml'.
+                Ou seja, o caminho ficará assim: 'roles/mysql/handlers/main.yml'
+
+                ---
+                - name: restart mysql
+                  service:
+                    name: mysql
+                    state: restarted
+                  become: yes
+
+            Obs: Repare que dos dois conteúdos removemos as tags 'tasks' e 'handlers', pois estas funções dos módulos já são indicadas nos nomes das pastas.
+
+            Após separarmos o código referente ao banco de dados, removeremos o código copiado para outros arquivos e no lugar, invocaremos a role.
+
+            No nosso playbook vai ficar assim:
+
+                ---
+                - hosts: database
+                  roles:
+                    - mysql
+
+            Ali nós passamos a lista de roles que serão executadas. Testamos para ver se o código continua funcionando.
+            Obs: Eu separei o código todo, fiz todo o processo e depois testei tudo junto no curso.
+
+            Agora a saída não será mais como antes, ela terá o nome 'TASK', o host no qual ela está sendo executada e o nome do módulo...
+
+                PLAY [database] *********************************************************************************************************************************
+                TASK [Gathering Facts] *********************************************************************************************************ok: [192.168.0.3]
+                
+                TASK [mysql : Atualiza o repositório apt-get e cache] *********************************************************************changed: [192.168.0.3]
+                
+                TASK [mysql : Instalando as bibliotecas python-3-mysqldb] **********************************************************************ok: [192.168.0.3]
+                
+                TASK [mysql : Instala pacotes de dependência do Sistema Operacional] ***********************************************************ok: [192.168.0.3]
+                
+                TASK [mysql : Cria banco de dados MySQL] ***************************************************************************************ok: [192.168.0.3]
+                
+                TASK [mysql : Cria usuário do Banco de Dados com nome wordpress_user e senha 12345 com todos os privilégios] ok: [192.168.0.3] => (item=localhost)
+                ok: [192.168.0.3] => (item=127.0.0.1)
+                ok: [192.168.0.3] => (item=192.168.0.2)
+                [WARNING]: The value ******** (type int) in a string field was converted to '********' (type string). If this does not look like .................
+                [WARNING]: Module did not set no_log for update_password
+                
+                TASK [mysql : Configura o MySQL para aceitar conexões remotas] ******************************************************************ok: [192.168.0.3]
+
+            Agora se tornou muito mais identificar o que está sendo executado e onde, tornando mais fácil a correção de erros.
+
+            A role do banco de dados está pronta, agora faremos a role do web server. Criaremos o arquivo main.yml, dentro de 'roles/webserver/tasks'.
+            Depois, colocaremos dentro deste arquivo o conteúdo do módulo 'Instala todos os pacotes de dependências do Sistema Operacional' que trata da preparação do ambiente 
+            do Apache para que possamos comportaro Wordpress.
+
+            No arquivo main.yml então, colocaremos o seguinte conteúdo...
+
+                ---
+                - name: 'Instala todos os pacotes de dependências do Sistema Operacional' 
+                  apt: 
+                    name: ['php7.4', 'apache2', 'libapache2-mod-php7.4', 'php7.4-gd', 'php7.4-mysql', 'unzip']
+                    state: latest
+                  become: yes
+
+            Este é o nosso web server padrão. Agora, como já criamos um arquivo específico de role para o web server, vamos substituir o módulo no nosso playbook pela chamada
+            da role...
+
+                    ---
+                    - hosts: wordpress
+                      handlers:
+                        - name: restart apache
+                          service:
+                            name: apache2 
+                            state: restarted
+                          become: yes
+                        roles:
+                          - webserver
+
+            Vamos executar o playbook mais uma vez para ver se não quebramos nada...
+
+                Se tudo tiver dado certo veremos a seguinte saída sobre o web server...
+
+                TASK [webserver : Instala todos os pacotes de dependências do Sistema Operacional] ********************************************ok: [192.168.0.2]
+
+            Observe que mesmo tendo misturado a execução de roles com tasks nenhum erro ocorreu, isto é assim porque o Ansible se encarrega de organizar. A execução acontecerá
+            na ordem em que for passada.
+
+            Agora criaremos a ultima role, esta instalará o Wordpress. Numa role então, ficaram as dependências e na outra teremos o código da aplicação Web.
+            Desta forma, quando for desenvolver uma nova aplicação usando o mesmo stack, você não precisará resscrever essa parte do código, apenas será necessário escrever o
+            código da nova aplicação.
+
+            Criaremos o arquivo:
+                'roles/worpress/tasks/main.yml'
+
+            Moveremos para esse arquivo o restante do código que ficou no nosso 'provisioning.yml'
+
+                ---
+                - name: 'Atualiza o repositório apt-get e cache'
+                  apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+                  become: yes
+                
+                - name: 'Baixa o arquivo de instalação do Wordpress'
+                  get_url:
+                    url: 'https://wordpress.org/latest.tar.gz'
+                    dest: '/tmp/wordpress.tar.gz'
+                    timeout: 1080
+                    force: no
+                  become: yes
+                        
+                - name: 'Descompactar o arquivo'
+                  unarchive:
+                    src: '/tmp/wordpress.tar.gz'
+                    dest: '/var/www/'
+                    remote_src: yes
+                  become: yes
+                
+                - name: 'Cria uma cópia do arquivo wp-config-sample.php para não perdermos o exemplo'
+                  copy:
+                    src: "{{ wp_installation_dir }}/wp-config-sample.php"
+                    dest: "{{ wp_installation_dir }}/wp-config.php"
+                    remote_src: yes
+                  become: yes
+                
+                - name: 'Configura o wp-config com as entradas do banco de dados'
+                  replace:
+                    path: "{{ wp_installation_dir }}/wp-config.php"
+                    regexp: '{{ item.regex }}'
+                    replace: '{{ item.value }}'
+                  with_items:
+                    - { regex: 'database_name_here', value: "{{ wp_db_name }}"}
+                    - { regex: 'username_here', value: "{{ wp_username }}"}
+                    - { regex: 'password_here', value: "{{ wp_user_password }}"}
+                    - { regex: 'localhost', value: "{{ wp_db_ip }}"}    
+                  become: yes
+                
+                - name: 'Configura Apache (Colando o arquivo alterado) para servir o Wordpress'
+                  template:
+                    src: 'templates/000-default.conf.j2'
+                    dest: '/etc/apache2/sites-available/000-default.conf'
+                    become: yes
+                  notify:
+                    - Restart Apache
+
+            Esse trecho é responsável por baixar, descompactar, copiar arquivo de config. também fizemos os replaces necessários para o funcionamento, fizemos o Apache reconhecer
+            o Wordpress e reiniciamos o Apache. A seguir, vamos precisar do handler, que ficará em um arquivo que iremos gerar a seguir.
+
+                'roles/wordpress/handlers/main.yml'
+
+                Neste arquivo, teremos o conteúdo que restarta o serviço 'Apache'...
+
+                    ---
+                    - name: Restart Apache
+                      service:
+                        name: apache2
+                        state: restarted
+                      become: yes
+
+            Após separar em outros arquivos as 'tasks' e os 'handlers', podemos remover todo o conteúdo repetido no nosso 'provisioning.yml'...
+            Agora o arquivo ficou bem enxuto...
+
+                ---
+                - hosts: database
+                  roles:
+                    - mysql
+                
+                - hosts: wordpress
+                  roles:
+                    - webserver
+                    - wordpress
+
+                Obs: Observe que a role 'webserver' esta posicionada antes de 'wordpress'. Isto porque o Wordpress depende do Servidor Web para funcionar, caso não fizessemos isso
+                iriamos 'quebrar' a execução do playbook.
+
+            Falta ainda copiarmos os arquivos de 'template' de file que usamos duarante a criação do playbook para dentro das roles. Se optarmos por deixar o projeto como está, 
+            ele funcionará, porque o Ansible procura os arquivos de maneira hierárquica, então, ele procurará primeiramente dentro da role, depois, ele buscará "por fora", no
+            nível do playbook. Esta não é a melhor prática.
+
+            Se decidirmos no futuro usar a role do MySQL em outro projeto, se não tivermos o arquivo do my.cnf, teremos problemas. Então, na role do mysql, vamos criar um
+            diretório chamado 'files' e moveremos 'my.cnf' para dentro deste...
+
+                O caminho ficará assim: 'roles/mysql/files/my.cnf'
+
+            Agora faremos algo parecido com o arquivo '000-default-conf.j2' para a role do wordpress. Antes, criaremos um diretório chamado 'templates' e nele será guardado o
+            template. Observe que usamos a estrutura diretório templates, para colocarmos os 'templates files', disponibilizado aos arquivos que só faremos cópias simples.
+            E o Ansible consegue colocar estes arquivos dentro das roles.
+
+            Rodamos o playbook novamente, ele continuará fazendo as cópias, e os templates foram aplicados onde eram necessários. Agora podemos apagar o diretório 'files'
+            que ficou vazio.
+            Obs: Lembrar de mudar o endereço de origem do template no arquivo 'roles/wordpress/tasks/main.yml', pois o destino não mudou mas a origem do arquivo de template sim.
+
+            Nossas roles estão completas, já especificamos o que elas devem cuidar. Elas guardam todos os arquivos necessários e o playbook se tornou apenas uma lista de 
+            encadeamento de roles, chamando-as quando são necessárias.
+
+            Agora falta criarmos um controle de dependências de roles, porque, pode por acaso alguém chamar a role do wordpress sem chamar a do web server, o que fará com que 
+            quebre a aplicação.
+
+            Também temos o problema do usuário esquecer de passar alguma variável de configuração e que é usada dentro das roles. O que fará com quel elas não executem com
+            sucesso. O Ansible também nos dá uma maneira de determinarmos quais são os comportamentos padrões das roles, caso o usuário se esqueça de informar um valor.
+
+        
+        Usando Defaults e dependências:
+
+            Agora vamos "proteger" nossas roles, evitando que elas possam ser usadas de uma forma que quebre a execução do playbook ou da aplicação e, também, evitando de 
+            ficar quebrando a cabeça com erros simples.
+
+            Precisamos aqui deixar mais transparente a depenência entre as roles, de uma forma melhor do que colocar em "linha" o que deve ser executado primeiro.
+            Começaremos apresentando como é possível declarar valores padrões para roles e garantir que elas tenham um comportamento que respeite omínimo aceitável.
+
+            Se analisarmos a role do MySQL, passamos uma lista de hosts nas quais o usuário vai ter permissão de acesso.
+
+                - name: 'Cria usuário do Banco de Dados com nome {{ wp_username }} e senha 12345 com todos os privilégios'
+                  mysql_user:
+                    login_user: root
+                    name: "{{ wp_username }}"
+                    password: "{{ wp_user_password }}"
+                    priv: "{{ wp_db_name }}.*:ALL"
+                    state: present
+                    update_password: always
+                    host: "{{ item }}"
+                  with_items:
+                    - 'localhost'
+                    - '127.0.0.1'
+                    - "{{ wp_host_ip }}"
+                  become: yes
+
+            Neste trecho, nós usamos a variável wp_host_ip, e o que acontecerá se o usuário esquecer de passá-la? Vamos entender isso analisando o arquivo 'group_vars'.
+            Alterando o arquivo 'database.yml' para 'database2.yml', na hora que rodarmos o playbook, teremos erro na execução, pois não temos como alvo nenhum host 'database2'
+            então ele não achou o arquivo que precisava e consequentemente não conseguiu valor para a variável declarada, o erro é similar ao seguinte: 
+
+                TASK [mysql: Cria o usuário do MySQL] ************************************************************************************************************
+                fatal: [172.17.177.42]: FAILED! => {"msg": "'wp_host_ip' is undefined"}
+                        to retry, use: --limit @/Users/marcoscropalato/wordpress_com_ansible/provisioning.retry
+                
+                PLAY RECAP ***************************************************************************************************************************************
+                172.17.177.42             : ok=3     changed=0     unreachable=0    failed=1
+        
+            O que faremos nesta situação? Onde aquele que esta configurando o ambiente não passa o IP onde determinado usuário vai ter permissão?
+            Para que não quebre a execução do playbook, teremos que definir valores 'default' para as variáveis. Criaremos então uma pasta 'defaults' e dentro dela, um arquivo
+            'main.yml'. A variável era uma string, agora ela passa a ser uma lista...
+
+            Depois, no playbook 'main.yml - tasks', 'Cria usuário do Banco de Dados com nome {{ wp_username }} e senha 12345 com todos os privilégios' recebe uma lista que 
+            iremos remover completamente, ficando apenas a variável. Após a alteração, o trecho ficará da seguinte maneira:
+
+                - name: 'Cria usuário do Banco de Dados com nome {{ wp_username }} e senha 12345 com todos os privilégios'
+                  mysql_user:
+                    login_user: root
+                    name: "{{ wp_username }}"
+                    password: "{{ wp_user_password }}"
+                    priv: "{{ wp_db_name }}.*:ALL"
+                    state: present
+                    update_password: always
+                    host: "{{ item }}"
+                  with_items:
+                    - "{{ wp_host_ip }}"
+                  become: yes
+
+            Agora é só rodar o playbook, como não temos valor configurado para a variável "{{ wp_host_ip }}", veremos se o Ansible encontra o valor default, a saída deverá
+            ser parecida com esta:
+
+                TASK [mysql: Cria o usuário do MySQL] **************************************************************************************************************
+                ok: [192.168.0.3]
+                
+                TASK [mysql: Cria o usuário do MySQL] **************************************************************************************************************
+                ok: [192.168.0.1] => (item=localhost)
+                ok: [192.168.0.1] => (item=127.0.0.1)
+
+            Com este tipo de declaração padrão, nós facilitamos o uso de uma role, por exemplo, imagine em um caso no qual trabalhamos com 150 variáveis diferentes - ainda que
+            seja uma situação improvável. No entando, às vezes, o projeto é bastante complexo e tem tantos casos de uso que ele pode precisar de mais opções.
+            Deixamos a lista de padrões declarados dentro do arquivo 'main.yml - defaults' e a role passou a se comportar conforme os valores padrões.
+            Se o usuário precisar de valores diferentes, deverá criar 'group_vars' para o grupo ou para 'all.yml'. 
+
+            Agora, de volta ao nosso playbook, declaramos as roles 'webserver' e 'wordpresss' que estão rodando nos hosts do grupo Wordpress. Qual o problema disso? Na primeira
+            vez que criamos o host relacionado, a role Wordpress depende do Web Server instalado, ou seja, é necessário que já tenha ocorrido a instalação do Apache PHP, para o
+            funcionamento correto do Wordpress.
+
+            Se esquecermos de declarar a role de webserver, nós vamos quebrar o código e, talvez, não ficará explícito o porquê disso acontecer no momento da execução do playbook.
+            Nós vamos garantir que o Wordpress explicite essa dependência do Web SAerver, criadno o arquivo 'roles/wordpress/meta/main.yml' e, em seguida, estabeleceremos sua
+            lista de dependência:
+
+                ---
+                dependencies:
+                  - webserver
+
+            Por enquanto, a lista de depend~encia contém apenas um item. Vamos rodar o playbook para verificar sse as duas roles serão executadas.
+            Obs: Temos que tirar a chamada da role 'webserver' do playbook.
+
+            Tudo está funcionando corretamente, graças à dependência em 'main.yml - wordpress/meta'. Neste caso, seria executado apenas 'wordpress' e não será verificado
+            se os pacotes do PHP e do Apache estavam instalados. Se a máquina não estiver no eestado desejado, não conseguiremos prosseguir.
+
+        
+        Nesta aula, vimos:
+
+            - Como pensar em um código que facilite o reuso.
+            - Como deixar o script menos acoplado com roles.
+            - Como definir os handlers dentro dos diretórios das roles.
+            - Como determinar valores padrões para as roles.
+
+
+        Questões aula 08:
+
+            01 - Vimos na aula que os roles representam uma forma de encapsular tarefas, variáveis e handlers para facilitar o reuso.
+
+                Sabendo disso, qual é a estrutura mínima para definir uma tarefa de instalação no role server?
+            
+                Selecione uma alternativa
+
+                R: Usando o main.yml, dentro do diretório 'roles/server/tasks/' e dentro deste arquivo fica a task de instalação.
+
+                Alternativa correta! Dentro do diretório 'roles/server/tasks/*', criamos o arquivo main.yml* e dentro dele fica a task* de instalação.
+
+            
+            02 - Já avançamos bastante no nosso projeto e declaramos as nossas roles.
+
+                Sobre as roles, marque todas as declarações verdadeiras:
+                
+                Selecione3 alternativas
+
+                R1: As dependências são declaradas no arquivo meta/main.yml.
+
+                    Correto! No arquivo meta/main.yml nós declaramos as dependências.
+
+                R2: As tasks são declaradas no arquivo tasks/main.yml.
+
+                    Correto! No arquivo tasks/main.yml nós declaramos as tasks.
+
+                R3: As variáveis são declaradas no arquivo defaults/main.yml.
+
+                    Correto! No arquivo defaults/main.yml nós declaramos as variáveis.
