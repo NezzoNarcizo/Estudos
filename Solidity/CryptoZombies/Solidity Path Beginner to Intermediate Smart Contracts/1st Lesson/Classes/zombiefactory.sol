@@ -4,8 +4,6 @@ pragma solidity ^0.4.19;
 //Name of contract
 contract ZombieFactory {
 
-    
-	
 	/*
 		Events are way to show messages communicate what happened on the blockchain
 		to the front end of your application

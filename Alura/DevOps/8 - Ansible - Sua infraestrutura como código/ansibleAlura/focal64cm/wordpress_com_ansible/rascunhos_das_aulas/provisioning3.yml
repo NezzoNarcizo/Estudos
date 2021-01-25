@@ -1,0 +1,13 @@
+#Modo 'deprecated' de usar apenas uma task para instalar todas as dependências
+---
+- hosts: all
+  tasks:
+    - name: 'Instala todos os pacotes de dependência do Sistema Operacional'
+      apt:
+        name: "{{ item }}"
+        state: latest
+      become: yes
+      with_items:
+              - php7.4
+              - apache2
+              - libapache2-mod-php7.4

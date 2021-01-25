@@ -1,0 +1,45 @@
+---
+- name: 'Atualiza o repositório apt-get e cache'
+  apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+  become: yes
+    
+- name: 'Instalando as bibliotecas python-3-mysqldb'
+  apt:
+    name: ['python3-mysqldb']
+    state: present
+  become: yes
+
+- name: 'Instala pacotes de dependência do Sistema Operacional'
+  apt: 
+    name: ['mysql-server', 'unzip']
+    state: latest
+  become: yes
+
+- name: 'Cria banco de dados MySQL'
+  mysql_db:
+    name: "{{ wp_db_name }}"
+    login_user: root
+    state: present
+  become: yes
+
+- name: 'Cria usuário do Banco de Dados com nome {{ wp_username }} e senha 12345 com todos os privilégios'
+  mysql_user:
+    name: "{{ wp_username }}"
+    password: "{{ wp_user_password }}"
+    priv: "{{ wp_db_name }}.*:ALL"
+    state: present
+    update_password: always
+    host: "{{ item }}"
+  with_items:
+    - 'localhost'
+    - '127.0.0.1'
+    - "{{ wp_host_ip }}"
+  become: yes
+
+- name: 'Configura o MySQL para aceitar conexões remotas'
+  copy:
+    src: './files/my.cnf'
+    dest: '/etc/mysql/my.cnf'
+  become: yes
+  notify:
+    - restart mysql

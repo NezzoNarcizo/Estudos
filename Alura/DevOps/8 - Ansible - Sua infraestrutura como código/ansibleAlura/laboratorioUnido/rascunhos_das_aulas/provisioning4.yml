@@ -1,0 +1,117 @@
+---
+- hosts: database
+  pre_tasks:
+    - name: 'Atualiza o repositório apt-get e cache'
+      apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+      become: yes
+    
+    - name: 'Instalando as bibliotecas python-3-mysqldb'
+      apt:
+        name: ['python3-mysqldb']
+        state: present
+      become: yes
+  
+  handlers:
+    - name: restart mysql
+      service:
+        name: mysql
+        state: restarted
+      become: yes   
+ 
+  tasks:
+    - name: 'Instala pacotes de dependência do Sistema Operacional'
+      apt: 
+        name: ['mysql-server', 'unzip']
+        state: latest
+      become: yes
+
+    - name: 'Cria banco de dados MySQL'
+      mysql_db:
+        name: "{{ wp_db_name }}"
+        login_user: root
+        state: present
+      become: yes
+
+    - name: 'Cria usuário do Banco de Dados com nome {{ wp_username }} e senha 12345 com todos os privilégios'
+      mysql_user:
+        name: "{{ wp_username }}"
+        password: "{{ wp_user_password }}"
+        priv: "{{ wp_db_name }}.*:ALL"
+        state: present
+        update_password: always
+        host: "{{ item }}"
+      with_items:
+        - 'localhost'
+        - '127.0.0.1'
+        - "{{ wp_host_ip }}"
+      become: yes
+
+    - name: 'Configura o MySQL para aceitar conexões remotas'
+      copy:
+        src: './files/my.cnf'
+        dest: '/etc/mysql/my.cnf'
+      become: yes
+      notify:
+        - restart mysql
+
+- hosts: wordpress
+  pre_tasks:
+    - name: 'Atualiza o repositório apt-get e cache'
+      apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+      become: yes
+      
+  handlers:
+    - name: Restart Apache
+      service:
+        name: apache2
+        state: restarted
+      become: yes    
+
+  tasks:
+    - name: 'Instala todos os pacotes de dependências do Sistema Operacional' 
+      apt: 
+        name: ['php7.4', 'apache2', 'libapache2-mod-php7.4', 'php7.4-gd', 'php7.4-mysql', 'unzip']
+        state: latest
+      become: yes
+
+    - name: 'Baixa o arquivo de instalação do Wordpress'
+      get_url:
+        url: 'https://wordpress.org/latest.tar.gz'
+        dest: '/tmp/wordpress.tar.gz'
+        timeout: 1080
+        force: no
+      become: yes
+        
+    - name: 'Descompactar o arquivo'
+      unarchive:
+        src: '/tmp/wordpress.tar.gz'
+        dest: '/var/www/'
+        remote_src: yes
+      become: yes
+
+    - name: 'Cria uma cópia do arquivo wp-config-sample.php para não perdermos o exemplo'
+      copy:
+        src: "{{ wp_installation_dir }}/wp-config-sample.php"
+        dest: "{{ wp_installation_dir }}/wp-config.php"
+        remote_src: yes
+      become: yes
+
+    - name: 'Configura o wp-config com as entradas do banco de dados'
+      replace:
+        path: "{{ wp_installation_dir }}/wp-config.php"
+        regexp: '{{ item.regex }}'
+        replace: '{{ item.value }}'
+      with_items:
+        - { regex: 'database_name_here', value: "{{ wp_db_name }}"}
+        - { regex: 'username_here', value: "{{ wp_username }}"}
+        - { regex: 'password_here', value: "{{ wp_user_password }}"}
+        - { regex: 'localhost', value: "{{ wp_db_ip }}"}    
+      become: yes
+
+    - name: 'Configura Apache (Colando o arquivo alterado) para servir o Wordpress'
+      template:
+        src: 'templates/000-default.conf.j2'
+        dest: '/etc/apache2/sites-available/000-default.conf'
+      become: yes
+      notify:
+        - Restart Apache
