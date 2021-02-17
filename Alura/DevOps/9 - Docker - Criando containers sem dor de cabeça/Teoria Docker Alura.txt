@@ -1,0 +1,2093 @@
+Teoria - Docker: Criando containers sem dor de cabeça -------
+
+    Aula 01: Introdução ao Docker -------
+
+        O problema das máquinas virtuais:
+
+            Antigamente se quisessemos montar o nosso sistema com vários serviços e aplicações precisaríamos de um servidor físico para cada serviço ex:
+                Apache - NGINX - TOMCAT - MySQL - mongoDB - Microsoft IIS
+
+            E não podiamos, obviamente, instalar estes serviços direto no hardware do servidor, precisávamos de um S.O em cada um deles.
+            Obs: Cada um deles podia ser diferente.
+        
+            Todos eles tinham que estar ligados à rede, à eletrecidade. Ou seja, diversos custos, além daqueles rotineiros como configurações específicas.
+            Tudo era muito demorado, a cada nova apliocação deveríamos comprar um novo servidor físico, instalar sistema operacional, configurá-lo e subir aplicação.
+
+            > Capacidade pouco aproveitada:
+
+                O que foi falado anteriormente não era o único problema. Temos também a questão que os servidores eram sub-utilizados, pois eles comportavam um aplicação só cada, e tinham um desempenho muito além
+                para que quando a quantidade elevada de acesso demandasse um desempenho melhor, ele fosse capaz de suprir. Porém, na maior parte do tempo esta "capacidade a mais" ficava ociosa.
+
+            > Virtualização, uma solução?
+
+                Para resolver os problemas de, exclusividade de hardware para determinada aplicação, custos com infra (eletrecidade e rede) e capacidade de processamento ociosa, surgiu a virtualização, com o uso das
+                famosas máquinas virtuais.
+
+                As máquinas virtuais foram possível por causa dos hypervisor's, que funcionam em cima de um sistema operacional permitindo a virtualização dos recursos físicos do nosso sistema.
+                Assim, criamos, uma máquina virtual que tem acesso a uma parte do nosso HD, memória RAM E CPU, criando um computador dentro de outro.
+
+                E se temos uma máquina virtual que está acessando uma parte do nosso hardware como um todo, conseguimos colocar dentro dela uma das nossas aplicações. E replicar isso, criando mais máquinas virtuais
+                com outras aplicações.
+
+                Assim, reduzimos a quantidade de servidores e consequentemente os custos com luz e rede. Além disso não teremos tantos recursos computacionais ociosos.
+
+            > Problemas das máquinas virtuais:
+
+                Apesar de que, com as máquinas virtuais resolvemos os problemas de recursos computacionais ociosos ou econômia de infra, ainda temos a questão de termos que instalar um S.O em cada máquina virtual.
+
+                Cada aplicação depende de um sistema operacional para poder ser executada, e esses sistemas podem ser diferentes. E, apesar dos sistemas serem um software, eles possuem um custo de memória RAM, disco
+                e processamento também. Ou seja, precisamos de recursos computacionais mínimos para manter as funcionalidades de um sistema operacional, aumentando o seu custo de manutenção a cada servidor virtual
+                virtual que criamos.
+
+                Além disso, temos curstos com configuração, sito é, liberar portas, instalar alguma biblioteca específica, etc, toda uma configuração que um sistema operacional pede. Também temos preocupações com
+                segurança, devemos manter o sistema de cada máquina virtual sempre atualizado.
+
+                O objetivo fim de um servidor de aplicações obviamente é a aplicação, mas, como temos todas estas preocupações acima citadas, mesmo utilizando máquina virtual, acabamos que por gastar com os servidores
+                virtuais o mesmo tempo que gastamos com a aplicação em si. O certo seria focar somente na aplicação ao invés de dividir o trabalho da empresa com manutenção dos sistemas operacionais.
+
+                Para melhorar a situação vieram os containers.
+
+        
+        A era dos containers:
+
+            Um container vai funcionar junto com o S.O base, e a aplicação será executada dentro dele, ou seja, ele não usa um S.O exclusivo ao contrário das máquinas virtuais. Criamos um container para cada aplicação
+            e então elas dividirão os recursos computacionais entre si.
+
+            Nos próprios containers tem a lógica que se encarregará dessa divisão. Assim, com somente um sistema operacional, reduzimos os custos de manutenção e de infraestrutura como um todo.
+
+            > Vantagens de um container
+
+                Por não possuir um sistema operacional, o container é muito mais leve e não possui o custo de manter múltiplos sistemas operacionais.
+                Por ser mais leve, o container é muito mais rápido de "subir", que leva questão de segundos. Container é a solução que supri a necessida de várias máquinas virtuais em um único hardware físico.
+            
+            > Necessidade do uso de containers
+
+                Já que uma das vantagens de utilizar containers é não utilizar um S.O para cada aplicação, por que já não instalamos todas as aplicações em cima da nossa máquina física com nosso S.O?
+                De certa forma já fazemos isso, utilizamos várias aplicações em apenas um S.O. Porém quando se trata de um ambiente profissional/empresarial isto pode apresentar alguns problemas.
+                
+                Por exemplo, e se dois aplicativos precisarem utilizar a mesma porta de rede? Precisamos de algo para isolar uma aplicação de outra. Pode também acontecer de uma aplicação utilizar toda a CPU, a ponto
+                de prejudicar outra aplicação, ou seja, neste modelo não temos o gerenciamento dos recursos. Outro problema é cada aplicação precisar de uma versão específica de uma linguagem, por exemplo, uma aplicação
+                precisa do Java 7, e outra do Java 8.
+
+                Além disso, o travamento de uma aplicação pode ocasionar o travamento de todo o sistema, afetando assim as outras aplicações. Com containers isolamos a aplicação e seus problemas particulares.
+
+                Com containers conseguimos limitar o consumo de CPU das aplicações, melhorando o controle sobre o uso de cada recurso do nosso sistema (CPU, rede, etc). Também temos uma facilidade maior em trabalhar
+                com versões específicas de linguagens/bibliotecas.
+
+        
+        O que é Docker?
+
+            Agora que já entendemos o que é container vamos aprender sobre o Docker, onde temos o Docker Inc. (Empresa) e as tecnologias de containers Docker.
+
+            > Docker Inc.
+
+                No ínicio a Docker Inc era chamada de dotCloud. Esta era uma empresa de PaaS (Platform as a Service), que era responsável pela hospedagem da nossa aplicação, levantando o servidor, configurando-o,
+                liberando portas, etc, fazendo tudo o que é necessário para subir a nossa aplicação. Outros exemplos de empresas PaaS são o Heroku, Microsoft Azure, Google Cloud Platform e Amazon AWS.
+
+                Inicialmente, para prover a parte de infraestrutura, a dotCloud utilizava o Amazon Web Services (AWS), serviço que nos disponibiliza máquinas virtuais e físicas para trabalharmos.
+                E para hospedar uma aplicação, sabemos que precisamos do sistema operacional, mas a dotCloud introduziu o conceito de containers na hora de subir uma aplicação, dando origem ao Docker, tecnologia
+                utilizada para baratear o custo de hospedar várias aplicações em uma mesma máquina.
+
+                Ou seja, quando a dotCloud criou o Docker a intenção era economizar na AWS subindo várias aplicações em containers numa mesma máquina virtual/física. Com o passar do tempo a empresa percebeu que
+                tinham muitos desenvolvedores interessados na tecnologia que ela havia criado, a tecnologia que permite a criação de containers, que faz o intermédio entre eles e o sistema operacional, o Docker.
+
+            
+            > As tecnologias do Docker
+
+                O Docker nada mais é do que uma coleção de tecnologias para facilitar o deploy e a execução das nossas aplicações. A sua principal tecnologia é a 'Docker Engine', a plataforma que segura os Containers,
+                fazendo o intermédio entre o sistema operacional.
+
+                Temos também o 'Docker Compose', que nos permite de uma forma fácil definir e orquestrar múltiplos containers.
+                Temos o 'Docker Swarm', uma ferramenta que comporta vários Docker Engines fazendo com que trabalhem juntos em um cluster.
+                O 'Docker Hub', um repositório com mais de 250 mil imagens diferentes para os nossos containers.
+                E a 'Docker Machine', uma ferramenta que nos permite gerenciar o Docker em um host virtual.
+
+            
+            > Open Source
+
+                Quando a empresa dotCloud se tornou a Docker Inc. focada em manter o Docker, ela o abriu para o mundo Open Source, tudo disponbilizado no seu GitHub (https://github.com/docker) inclusive com várias
+                emrpesas contribuindo para o desenvolvimento dessa tecnologia.
+
+                Apesar de haver alguns serviços pagos, em sua grande parte a tecnologia Docker é Open Source, utilizada por várias empresas.
+
+
+        Instalando Docker no Windows:
+
+            Obs: Não irei utilizar o Docker no Windows, porém achei interessante anotar algumas coisas sobre este ambiente de trabalho
+
+            No Windows temos dois modos de utilizar o Docker...Docker for Windows (https://hub.docker.com/editions/community/docker-ce-desktop-windows) e o Docker Toolbox.
+
+            No Docker for Windows temos alguns detalhes para nos atentar, alguns pré-requisitos que o Windows deve ter...
+
+                - Arquitetura 64 bits;
+                - Versão PRO, Enterprise ou Education;
+                - Virtualização habilitada;
+
+            > Funcionamento do Docker no Windows
+
+                De verdade mesmo, quando se trata de Windows, não temos o Docker executando, de fato, em cima do S.O, entre o Windows e o Docker temos uma micromáquina virtual chamada 'Alpine Linux', onde será
+                executada a sua Docker Engine. Para criar está máquina virtual o Docker precisa do Hyper-V que é o Hypervisor nativos das novas versões do Windows, ele só está presente nas versões Professional, Education
+                e Enterprise, ou seja, ele não funciona para a maior parte dos usuários comuns que utilizam a versão Home Edition. Para estes usuário temos a versão 'Docker Toolbox'.
+
+            > Instalação alternativa no Windows
+
+                Para instalar o 'Docker Toolbox', primeiramente devemos baixá-lo (https://docs.docker.com/docker-for-windows/docker-toolbox/)
+                Obs: Ao ir até a página verifiquei que o 'Docker Toolbox' está "Deprecated" ou seja, em desuso, por tanto sua utilização não é mais recomendada.
+
+        
+        Instalando Docker no Mac:
+
+            A instalação do Docker para Mac é bem similar a instalação do Windows, precisaremos de uma das versões 'Docker for Mac' ou 'Docker Toolbox', mas como já vimos antes, o 'Docker Toolbox' está 'deprecated'.
+            Para instalação do 'Docker for Mac' temos os seguintes requisitos:
+
+                - Modelo 2010 ou mais recente;
+                - Versão OS X El Capitan 10.11 ou mais recente;
+                - Com no mínimo 4gb de memória RAM;
+                - Sem virtualBox instalada na versão 4.3.30 ou anterior, pois causa incompatibilidade com o Docker;
+
+                Página dos requisitos: https://docs.docker.com/docker-for-mac/install/#what-to-know-before-you-install
+
+            > Funcionamento do Docker no MacOS:
+
+                Assim como no Windows o Docker no Mac executa em cima de uma micro máquina virtual chamada 'Alpine Linux', onde será executada a sua 'Docker Engine'.
+                No MacOS o hypervisor que estará presente para a execução deste recurso é a HyperKit, como o Hyper-V só está presente no Windows 10, assim também o HyperKit só está presente na versão OS X El Capitan
+                10.11 ou mais recente.
+
+        
+        Instalando o Docker no Ubuntu:
+
+            Vou colocar aqui o procedimento feito pela documentação (https://docs.docker.com/engine/install/ubuntu/) e não pelo Alura, embora os dois estejam bem parecidos...
+
+                > Desinstalando possíveis versões antigas:
+
+                    $ sudo apt-get remove docker docker-engine docker.io containerd runc
+
+                
+                > Atualizando o banco de pacotes
+
+                    $ sudo apt-get update
+
+                
+                > Instalando pacotes que permitam o módulo apt usar o repositório sobre HTTPS:
+
+                    $ sudo apt-get install \
+                        apt-transport-https \
+                        ca-certificates \
+                        curl \
+                        gnupg-agent \
+                        software-properties-common
+
+                
+                > Adicionando o GPG Key oficial do Docker:
+
+                    $ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+                
+                > Verificando que você agora tem a chave com o 'fingerprint' '9DC8 5822 9FC7 DD38 854A  E2D8 8D81 803C 0EBF CD88', pela busca pelos últimos 8 caracteres do 'fingerprint':
+
+                    $ sudo apt-key fingerprint 0EBFCD88
+
+                    A saída deve ser assim:
+
+                    pub   rsa4096 2017-02-22 [SCEA]
+                          9DC8 5822 9FC7 DD38 854A  E2D8 8D81 803C 0EBF CD88
+                    uid           [ unknown] Docker Release (CE deb) <docker@docker.com>
+                    sub   rsa4096 2017-02-22 [S]
+
+                > Adicione o repositório estável do Docker:
+
+                    $ sudo add-apt-repository \
+                        "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+                        $(lsb_release -cs) \
+                        stable"
+
+                > Atualize mais uma vez o indice dos pacotes apt e instale a ultima versão do Docker Engine
+
+                    $ sudo apt-get update
+
+                    $ sudo apt-get install docker-ce docker-ce-cli containerd.io
+        
+
+                > Para verificar se o Docker foi instalado verificando o versão do mesmo:
+
+                    $ sudo docker version
+
+                    A saída será parecida com:
+
+                        Client: Docker Engine - Community
+                        Version:           20.10.2
+                        API version:       1.41
+                        Go version:        go1.13.15
+                        Git commit:        2291f61
+                        Built:             Mon Dec 28 16:17:43 2020
+                        OS/Arch:           linux/amd64
+                        Context:           default
+                        Experimental:      true
+                        Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
+
+                    
+                > Para executar o Docker sem precisar de 'sudo', adicione o seu usuário ao grupo docker:
+
+                    $ sudo usermod -aG docker $(whoami)
+
+                Obs: Caso o Docker esteja apresentando a seguinte mensagem:
+
+                    "Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?"
+
+                    Tem os seguintes comandos que podem ajudar:
+
+                        $ sudo nohup docker daemon -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock //Para startar o daemon em background
+
+                        $ sudo service docker start
+
+
+        Hello World:
+
+            Hora de testa o nosso Docker:
+
+                Testamos o comando '$ sudo docker version' que nos deu a seguinte saída...
+
+                   Client: Docker Engine - Community
+                    Version:           20.10.2
+                    API version:       1.41
+                    Go version:        go1.13.15
+                    Git commit:        2291f61
+                    Built:             Mon Dec 28 16:17:43 2020
+                    OS/Arch:           linux/amd64
+                    Context:           default
+                    Experimental:      true
+                
+                   Server: Docker Engine - Community
+                    Engine:
+                    Version:          20.10.2
+                    API version:      1.41 (minimum version 1.12)
+                    Go version:       go1.13.15
+                    Git commit:       8891c58
+                    Built:            Mon Dec 28 16:15:19 2020
+                    OS/Arch:          linux/amd64
+                    Experimental:     false
+                    containerd:
+                    Version:          1.4.3
+                    GitCommit:        269548fa27e0089a8b8278fc4fc781d7f65a939b
+                    runc:
+                    Version:          1.0.0-rc92
+                    GitCommit:        ff819c7e9184c13b7c2607fe6c30ae19403a7aff
+                    docker-init:
+                    Version:          0.19.0
+                    GitCommit:        de40ad0
+                
+                
+                Depois testamos o comando que da uma pequena demonstração do que o Docker faz...
+
+                    $ sudo docker run hello-world
+
+                Saída...
+
+                    Hello from Docker!
+                    This message shows that your installation appears to be working correctly.
+                    
+                    To generate this message, Docker took the following steps:
+                    1. The Docker client contacted the Docker daemon.
+                    2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
+                        (amd64)
+                    3. The Docker daemon created a new container from that image which runs the
+                        executable that produces the output you are currently reading.
+                    4. The Docker daemon streamed that output to the Docker client, which sent it
+                        to your terminal.
+                    
+                    To try something more ambitious, you can run an Ubuntu container with:
+                    $ docker run -it ubuntu bash
+                    
+                    Share images, automate workflows, and more with a free Docker ID:
+                    https://hub.docker.com/
+                    
+                    For more examples and ideas, visit:
+                    https://docs.docker.com/get-started/
+
+                    Este comando faz o seguinte:
+
+                        1 - O cliente docker faz uma chamada para o Docker daemon;
+                        2 - O Docker daemon pega a imagem "hello-world" do Docker Hub;
+                        3 - O Docker Daemon cria um novo container da imagem que roda um executavel que produz a saída que estamos lendo;
+                        4 - O Docker daemon transmite a saída para o Docker client, o qual manda para o terminal.
+                        
+                    Tentaremos algo mais ambicioso à frente (rss)
+
+        Utilizando o Play With Docker
+            
+            Não se desespere caso você tenha tido algum problema em instalar o Docker em sua máquina, você também tem a opção de utilizar o Play With Docker. Nele você poderá utilizar os comandos vistos daqui em 
+            diante e testar as diversas funcionalidades que o Docker proporciona. Ao acessar o site basta clicar em +Add New Instance e começar a utilizá-lo como estivesse usando sua máquina normalmente.
+
+        O que aprendemos?
+
+            Nessa aula você:
+
+            - Conheceu a ideia de virtualização,
+            - Entendeu o conceito de containers,
+            - Descobriu o que é o Docker e suas principais tecnologias,
+            - Instalou o Docker no sistema operacional,
+            - E o testou através de uma imagem Hello, World, que foi baixada do Docker Hub
+            
+            Segue também uma breve lista dos comandos utilizados:
+            
+            - docker version - exibe a versão do docker.
+            - docker run NOME_DA_IMAGEM - cria um container com a respectiva imagem passada como parâmetro.
+        
+        Questões aula 01:
+
+            1 - Desvantagens das máquinas virtuais
+            
+                Vimos que utilizar um servidor físico separado para cada serviço do nosso sistema gera vários problemas, entre eles o custo de luz e rede e o seu alto tempo de ociosidade.
+                
+                A solução para esses problemas foi a virtualização dos recursos físicos, reduzindo assim os custos de luz e rede, já que não teremos mais vários servidores físicos e não teremos mais ociosidade do 
+                hardware.
+                
+                Mas as máquinas virtuais também possuem problemas, que estão listados abaixo, exceto um. Qual?
+                
+                Selecione uma alternativa
+
+                R: A dificuldade em fazer um backup dos dados.
+
+                Esse não é um problema das máquinas virtuais! O backup dos dados de uma máquina virtual pode ser feito com certa facilidade, seja por softwares externos ou através das próprias VMs.
+
+            
+            2 - Eduardo está encarregado de convencer seu chefe a utilizar containers na infraestrutura de sua empresa. Para isso criou alguns slides para apresentar suas ideias. Um slide específico está intitulado 
+                Benefícios dos Containers, com os tópicos abaixo. Contudo, um deles não é um benefício do uso de containers. Ajude Eduardo apontando qual alternativa está errada.
+
+                Selecione uma alternativa
+
+                R: O fato de ter um sistema operacional instalado em cada container permite o isolamento de conflitos de rede e versões.
+
+                Isso aí. Eduardo precisa remover esse tópico, porque além de não ser um benefício, está errado afirmar que cada container possui um SO instalado.
+
+            
+            3 - Selecione apenas as alternativas que são tecnologias Docker.
+
+                Selecione 3 alternativas
+
+                R: Docker Engine
+                   Isso aí! Essa é a tecnologia mais famosa e responsável por fazer o meio de campo entre os containers e o SO.
+                
+                   Docker Hub
+                   Isso aí! O Docker Hub provê um repositório com muitas aplicações para você usar em sua infraestrutura.
+                    
+                   Docker Swarm
+                   Isso aí! Essa tecnologia permite o uso de múltiplos docker hosts.
+
+
+    Aula 02: Trabalhando com Imagens -------
+
+        Comandos básicos com containers:
+
+            Primeiro temos que verificar se o Docker está rodando...Podemos rodar alguns comandos para verificar isso...
+
+                $ sudo docker version
+
+                Obs: Se a mensagem "Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?" 
+                        Utilize o comando "$ sudo service docker start"
+                            Isto acontece normalmente no WSL, parece ser uma configuração nativa dos serviços que são e que não são iniciados.
+
+            
+            > A diferença entre imagens e containers
+
+                Na aula anterior, para executar a imagem hello-world, executamos o comando "$ docker run hello world". Quando executado esse comando, a primeira coisa que o Docker faz é verificar se temos a imagem 
+                hello-world no nosso computador, e caso não tenhamos, o Docker buscará e baixará essa imagem no Docker Hub/Docker Store (https://hub.docker.com/)
+                
+                A imagem é coo se fosse uma receita de bolo, uma série de instruções que o Docker seguirá para criar um container, que irá conter instruções da imagem, do hello-world. Criado o container, o Docker
+                executa-o. Então, tudo isso é feito quando executamos o "$ docker run hello-world".
+
+                Há milhares de imagens na Docker Store disponíveis para executarmos a nossa aplicação. Por exemplo, temos a imagem do Ubuntu:
+
+                    $ docker run ubuntu
+
+                Ao executar o comando o download começará. Podemos ver que não é feito somente um download, pois a imagem é dividida em camadas, que veremos mais à frente. Mesmo que após o download não seja exibida
+                nenhuma imagem não significa que o container não foi criado, o que acontece que é a imagem do Ubuntu não executa nada, por isso nenhuma mensagem foi exibida.
+
+                Podemor verificar isso vendo os containers que estão sendo executados utilizando o comando:
+
+                    $ docker ps
+
+                Não vemos nada, porque não há nada para o container executar, quando não há nada para eles executarem eles ficam parados. Para que possamos ver todos os containers, mesmo aqueles que estão parados
+                utilizamos o comando:
+
+                    $ docker ps -a (A flag -a indica que queremos ver todos os containers em todos os estados)
+
+                    Teremos uma saída parecida com esta:
+
+                    CONTAINER ID   IMAGE         COMMAND              CREATED          STATUS                      PORTS     NAMES
+                    cfc436e699fa   ubuntu        "/bin/bash"          27 minutes ago   Exited (0) 16 minutes ago             awesome_noether
+                    0a88b0b3fadc   ubuntu        "ff480424e9bb"       27 minutes ago   Created                               suspicious_sanderson
+                    ff480424e9bb   ubuntu        "/bin/bash"          28 minutes ago   Exited (0) 16 minutes ago             modest_herschel
+                    c131892ecad3   ubuntu        "echo 'Ola mundo'"   29 minutes ago   Exited (0) 23 minutes ago             magical_sinoussi
+                    79aa4a8c8c17   ubuntu        "/bin/bash"          29 minutes ago   Exited (0) 29 minutes ago             happy_shamir
+
+                Com este comando, conseguios ver o id, qual imagem, comando inicial há quanto tempo foi criado, seu status, a porta que está utilizando e o nome do container. Valores que são criados pelo próprio 
+                Docker. 
+
+                Então o container do Ubuntu foi executado, mas ele não fez nada pois não pedimos para o container executar algo que funcione dentro do Ubuntu.
+                Então, quando executamos o container do Ubuntu, precisamos passar para ele um comando que rode dentro dele, por exemplo:
+
+                    $ docker run ubuntu echo "Ola mundo"
+
+                Com isso, o Docker irá executar um container com Ubuntu, executar o comando 'echo "Ola Mundo" ' dentro dele e nos retornar a saída
+
+                    'Ola Mundo'
+
+                Porém o Ubuntu é um sistema operacional completo, então não queremos ficar somente executando comando por comando dentro dele, sempre criando um novo container. Então, como fazemos para criar um
+                container e interagir com eel mais do que com um único comando?
+
+
+            > Trabalhando dentro de um container:
+
+                Podemos fazer com que o terminal da nossa máquina seja integrado ao terminal de dentro do container, para ficar um terminal interativo. Podemos fazer isso adicionando a flag '-it' ao comando, atrelando
+                assim o terminal que estamos utilziando ao terminal do container.
+
+                    $ docker run -it ubuntu
+                
+                Assim que executamos o comando, já podemos perceber que o terminal muda:
+
+                    root@"hostname":/home/nezzonarcizo/docker-alura# docker run -it ubuntu
+                    root@aa0b038515f8:/#
+
+                Com isso, estamos trabalhando dentro do container. E dentro dele, podemos trabalhar como se estivéssemos trabalhando dentro do terminal de um Ubuntu, executando comandos como ls, cat, etc.
+
+                Agora, se abrirmos outro terminal e executar o comando "$ docker ps", veremos o container que estamos executando. Podemos para a sua execução digitando no container o comando "# exit" ou através do 
+                atalho "Ctrl + D".
+
+            
+            > Executando novamente um container:
+
+                Paramos a execução do container, tanto que o comando "$ docker ps" não nos retorna mais nada. E se listarmos todos os containers, através do comando "$ docker ps -a", vemos que ele está lá, parado.
+                Mas agora, para não criar novamente um novo container, queremos executá-lo novamente.
+
+                Fazemos isso pegando id do container a ser iniciado, e passando-o ao comando "$ docker start"
+
+                    $ docker start ff480424e9bb
+
+                Esse comando roda um container já criado, mas não atrela o nosso terminal ao terminal dele. Para atrelar os terminais, primeiramente devemos para o container com o comando "$ docker stop" mais o seu id:
+
+                    $ docker stop ff480424e9bb
+
+                E rodamos novamente o container, mas passando duas flags: "-a", de "attach", para integrar os terminais, e "-i", de "interactive", para interagirmos com o terminal para podermos escrever nele:
+
+                    $ sudo docker start -a -i ff480424e9bb
+
+                    Dentro do container...
+
+                    root@ff480424e9bb:/#
+
+                Com isso conseguimos ve rum pouco de como subir um container, pará-lo e executá-lo novamente, além de trabalhar dentro dele.
+
+        
+        Layered File System:
+
+            Até o momento vimos dois principais estados de um container, quando criamos um ou iniciamos, ele fica no estado de "running", e quando a sua execução encerra ou nós mesmos paramos, ele fica no estado
+            de "stopped".
+
+            > Removendo containers:
+
+                Só que com os testes que fizemos até agora, acabamos criando vários containers (lembrando que podemos ver todos os containers criados executando o comando "docker ps -a") e nunca removemos alguns deles,
+                já que os comandos acima só mudam os seus estados. Para remover um container, executamos o comando "docker rm", passando para ele o id do container a ser removido, por exemplo:
+
+                    $ docker rm c9f83bfb82a8
+
+                Mas para limpar todos os containers inativos, devemos remover um por um? Não, pois há um novo comando do Docker, o "prune", que serve para limparmos algo específico do Docker. Como queremos remover os
+                containers parados, executamos o seguinte comando:
+
+                    $ docker container prune
+
+                O comando é tão perigoso que ele pede para confirmarmos se é isso mesmo que queremos fazer.
+
+            
+            > Listando e removendo imagens
+
+                E do mesmo jeito que temos o comando "$ docker container" para mexermos com o container, temos o comando "$ docker images" que nos exibe as imagens que temos na nossa máquina. Para remover uma imagem,
+                utilizamos o comando "$ docker rmi", passando para ele o nome da imagem a ser removida, por exemplo:
+
+                    $ docker rmi hello-world
+
+            
+            > Camadas de uma imagem
+
+                Na aula anterior, quando baixamos a imagem do Ubuntu, reparamos que ela possui camadas, mas como elas funcionam? Toda imagem que baixamos é composta de uma ou mais camadas, e esse sistema tem o nome
+                de "Layered File System".
+
+                Essas camadas podem ser reaproveitadas em outras imagens, Por exemplo, já temos a imagem do Ubuntu, isso inclui as suas camadas, e agora queremos baixar a imagem do CentOS. Se o CentOS compartilha
+                alguma camada que já tem na imagem Ubuntu, o Docker é inteligente e só baixará as camadas diferentes, e não baixará novamente as camadas que já temos no nosso computador. Assim poupamos tempo.
+
+                Uma outra vantagem é que as camadas de uma imagem são somente para leitura. Mas como então conseguimos criar arquivos na aula anterior? O que acontece é que não escrevemos na imagem, já que quando
+                criamos um container, ele cria uma nova camada acima da imagem, e nessa camada podemos ler e escrever.
+
+                Então, quando criamos um container, ele é criado em cima de uma imagem já existente e nele nós conseguimos escrever. E com uma imagem base podemos reaproveitá-la para diversos containers.
+
+                Isso nos traz economia de espaço, já que não precisamos ter uma imagem por container.
+
+        
+        Praticando com o docker run:
+
+            Até o momento vimos a diferença entre imagem e container, os detalhes de download da imagem e agora podemos fazewr um container mais interessante e complexo.
+            Criaremso um container que irá suportar um site estático, para entendermos também como funciona a parte de redes do Docker. Para isto, baixaremos a imagem "dockersamples/static-site":
+
+                $ sudo docker run dockersamples/static-site
+
+            Nas imagens que vimos anteriormente, as imagens oficiais, não precisamos colocar um username na hora de baixá-las. Esse username representa o usuário que toma conta da imagem, quem a criou.
+            Como a imagem que vamos utilizar foi criada por outro(s) usuário(s), precisamos especificar o seu username para baixá-la.
+
+            Terminando o download da imagem, o container é executado, pois sabemos que os containers ficam no estado de running quando são criados. No caso dessa imagem, o container está executando um processo de 
+            um servidor web, que está disponibilizando o site estático para nós, então esse processo trava o terminal.
+
+            Iremos fazer o procedimento para evitar que o travamento aconteça. Primeiro vamos parar o container que acabamos de criar, poder ser com "CTRL + C" ou "CTRL + D", se não der certo, abra um novo terminal
+            no mesmo host e pare o container com "$ sudo docker stop 'id do container'".
+
+            Depois disso temos que executar o mesmo comando que executamos para subir o container, porém agora, iremos passar a flag '-d'.
+
+                $ docker run -d dockersamples/static-site
+
+            Assim o container fica executando em segundo plano:
+
+                CONTAINER ID   IMAGE                       COMMAND                  CREATED          STATUS          PORTS             NAMES
+                59ffa1d4d104   dockersamples/static-site   "/bin/sh -c 'cd /usr…"   31 seconds ago   Up 31 seconds   80/tcp, 443/tcp   crazy_mayer
+
+            
+            > Acessando o site:
+
+                Em nenhum momento vimos onde está o site estático. Qual porta que utilizamos para acessá-lo? A 80, conforme está na saída do 'docker ps'? Essa é a porta interna que o container está utilziando.
+                Então, o que precisamos fazer é linkar essa porta interna do container a uma porta do nosso computador. Para fazer isso, precisamos adicionar mais uma flag, a '-P', que fará com que o Docker atribua
+                uma porta aleatória do mundo externo, que no caso é a nossa máquina, para poder se comunicar com o que está dentro do container.
+
+                    $ docker run -d -P dockersamples/static-site
+
+                Agora, ao executar novamente o comando 'docker ps', na coluna "PORTS", vemos algo como:
+
+                    CONTAINER ID   IMAGE                       COMMAND                  CREATED         STATUS         PORTS                                           NAMES
+                    4efc85028be9   dockersamples/static-site   "/bin/sh -c 'cd /usr…"   5 seconds ago   Up 4 seconds   0.0.0.0:49154->80/tcp, 0.0.0.0:49153->443/tcp   angry_kirch
+
+                No caso do mapeamento acima, vemos que a porta 9001 da nossa máquina faz referência à porta 80 do container, e a porta 9000 da nossa máquina faz referência à porta 443 do container. Uma outra maneira
+                de ver as protas é utilizar o comando 'docker port', passando para ele o id do container:
+
+                    $ docker port 4efc85028be9
+
+                A saída será algo parecido com:
+
+                    443/tcp -> 0.0.0.0:49153
+                    80/tcp -> 0.0.0.0:49154
+
+                Então, se quisermos acessar a porta 80, que é onde está o site estático, na nossa máquina, como o endereço '0.0.0.0' representa nossa máquina local, podemos acessar o endereço 'http://localhost:49154'
+                no navegador.
+
+                /*Caso você esteja utilizando o Docker Toolbox, como ele está rodando em cima de uma máquina virtual, o endereço http://localhost:49154/ não funcionará, pois você deve acessar a porta através do IP da
+                máquina virtual. Para descobrir o IP dessa máquina virtual, basta executar o comando 'docker-machine ip'. Com o IP em mãos, basta acessá-lo no navegador, utilizando a porta que o Docker atribuiu por
+                exemplo 192.168.0.2:49154*/
+
+                Obs: As últimas versões do Docker não possuem mais o docker-machine, normalmente era muito usado no docker-toolbox.
+
+            
+            > Nomeando um container:
+
+                Uma outra coisa interessante que é possível fazer quando estamos criando um container é que podemos dar um nome para o container, assim não ficamos dependendo os ids aleatórios que o Docker atribui,
+                tornando mais fácil na hora de parar e remover o container, por exemplo. Para dar um nome para o container, utilizamos a flag '--name':
+
+                    $ docker run -d -P --name meu-site dockersamples/static-site
+
+                Assim o nome do nosso container será meu-site. Agora, para pará-lo, basta passar o seu nome para o comando 'docker stop':
+
+                    $ docker stop meu-site
+
+                A mesma coisa seria para rodar o container novamente, ou para removê-lo, bastando apenas nós utilizarmos o seu nome.
+
+            
+            > Definindo uma porta específica:
+
+                Uma outra coisa interessante para vermos é que, quando estamos criando um container e queremos linkar uma porta interna sua a uma porta do nosso computador, utilizamos a flag '-P', para o Docker
+                atribuir uma porta aleatória da nossa máquina, assim podemos nos comunicar com o que está dentro do container. Mas podemos definir essa porta, utilizando a flag '-p', nesse modelo: 
+                '-p PORTA-MUNDO-EXTERNO:PORTA-CONTAINER', por exemplo:
+
+                    $ docker run -d -p 12345:80 dockersamples/static-site
+
+                Nesse exemplo, através da porta '12345' do nosso computador posemos acessar a porta 80 do container.
+
+            
+            > Atribuindo uma variável de ambiente
+
+                Além disso, podemos atribuir uma variável de ambiente do container. Por exemplo, a página do site estático pega o valor da variável de ambiente 'AUTHOR' e o exibe junto à mensagem de "Hello", então
+                podemos modificar o valor dessa variável, através da flag -e:
+
+                    $ docker run -d -P -e AUTHOR="Nezzo Narcizo" dockersamples/static-site
+
+                    Obs: No curso não explicou mas acredito que -e significa "Environment"
+
+                Quando abrirmos o site, a mensagem que será exibida é "Hello Nezzo Narcizo!".
+
+            
+            > Parando todos os containers de uma só vez:
+
+                Por último. podemos ver apenas os ids dos containers que estão rodando, executando o comando 'docker ps -q'. E com esse comando, podemos parar todos os containers de uma só vez. Para isso, podemos
+                utilizar a interpolação de comandos, no padrão ($ comando), que executa o comando, captura sua saída e insere isso na linha de comando:
+
+                    $ docker stop $(docker ps -q)
+
+                Então, o comando 'docker ps -q' será executado e a sua saída, os ids dos containers que estão rodando, será inserida no comando 'docker stop', parando assim todos os containers.
+
+                Além disso, o comando 'docker stop' demora um pouco para ser executado pois ele espera 10 segundos para parar o container, Podemos diminuir esse tempo através da flag '-t', passando o tempo a ser aguardado
+                em segundos, por exemplo:
+
+                    $ docker stop -t 0 $(docker ps -q)
+
+        
+        Para saber mais: Docker e DevOps
+
+            DevOps é um tópico bem amplo que envolve tanto aspectos culturais como técnicos, mas possui como principal objetivo aumentar a qualidade e eficiência da entrega de software. DevOps é uma metodologia que 
+            visa integrar os times de desenvolvimento com infraestrutura e o Docker está tendo um papel importante nessa tarefa.
+
+            Repare que com Docker os desenvolvedores não precisam se preocupar em configurar um ambiente de desenvolvimento específico de cada vez. Em vez disso, eles podem se concentrar na construção de um código de 
+            boa qualidade. Isso, obviamente, leva à aceleração nos esforços de desenvolvimento. O Docker facilita muito construir o ambiente: é rapido, simples e confiável.
+            
+            No outro lado, para a equipe de operações de TI/Sysadmins, o Docker possibilita configurar ambientes que são exatamente como um servidor de produção e permite que qualquer pessoa trabalhe no mesmo projeto
+            com exatamente as mesmas configurações, independentemente do ambiente de host local. As configurações são descritas em arquivos simples facilmente aplicáveis pelo desenvolvedor.
+            
+            Com a padronização de um entregável Docker é possível que o desenvolvedor tenha um ambiente similar ao de produção na sua máquina sem todo o custo de configuração e o Sysadmin consiga lidar apenas com um 
+            tipo de entregável conseguindo, desta forma, dar atenção aos desafios de monitoramento e orquestração para que nada dê errado. Neste caso, o melhor para os dois.
+
+        
+        O que aprendemos?
+
+            Aprendemos neste capítulo:
+
+            - Comandos básicos do Docker para podermos baixar imagens e interagir com o container.
+            - Imagens do Docker possuem um sistema de arquivos em camadas (Layered File System) e os benefícios dessa abordagem principalmente para o download de novas imagens.
+            - Imagens são Read-Only sempre (apenas para leitura)
+            - Containers representam uma instância de uma imagem
+            - Como imagens são Read-Only os containers criam nova camada (layer (camada)) para guardar as alterações
+            - O comando Docker run e as possibilidades de execução de um container
+            
+            Segue também uma breve lista dos comandos utilizados:
+            
+            - docker ps - exibe todos os containers em execução no momento.
+            - docker ps -a - exibe todos os containers, independentemente de estarem em execução ou não.
+            - docker run -it NOME_DA_IMAGEM - conecta o terminal que estamos utilizando com o do container.
+            - docker start ID_CONTAINER - inicia o container com id em questão.
+            - docker stop ID_CONTAINER - interrompe o container com id em questão.
+            - docker start -a -i ID_CONTAINER - inicia o container com id em questão e integra os terminais, além de permitir interação entre ambos.
+            - docker rm ID_CONTAINER - remove o container com id em questão.
+            - docker container prune - remove todos os containers que estão parados.
+            - docker rmi NOME_DA_IMAGEM - remove a imagem passada como parâmetro.
+            - docker run -d -P --name NOME dockersamples/static-site - ao executar, dá um nome ao container.
+            - docker run -d -p 12345:80 dockersamples/static-site - define uma porta específica para ser atribuída à porta 80 do container, neste caso 12345.
+            - docker run -d -P -e AUTHOR="Fulano" dockersamples/static-site - define uma variável de ambiente AUTHOR com o valor Fulano no container criado.
+            - docker ps -q - Mostra apenas os ID's dos containers em execução
+            - docker stop -t 'tempo' (docker ps -q) - Para todos os containers em execução no tempo determinado
+            - docker exec -it ID_CONTAINER bash - Entrar em um container que já está em execução.
+            - ctrl + p + q - Sai do container sem 'matá-lo
+
+            Obs: Containers que não tem nada executando e não atrelamos o terminal a ele, são criados e param imediatamente, temos que starta-lo e deixar algum serviço nele para funcionar.
+
+
+        Questões aula 02:
+
+            01 - Temos os seguintes comandos do Docker e suas respectivas funcionalidades:
+
+                1) O comando docker ps nos permite ver todos os container já criados
+                
+                2) O comando docker rm ID_DO_CONTAINER remove um container
+                    
+                3) O comando docker container prune permite remover todos os containers inativos de uma só vez.
+                    
+                Quais funcionalidades, e seus respectivos comandos, estão corretas?
+                    
+                Selecione2 alternativas
+
+                R1: Funcionalidade 3
+
+                Alternativa correta! O comando docker container prune realmente apaga todos os containers inativos, mas dá um aviso antes.
+
+                R2: Funcionalidade 2
+
+                Alternativa correta! O comando docker rm ID_DO_CONTAINER permite remover um container especifico.
+
+            
+            02 - Temos as seguintes afirmações sobre o Layered File System:
+
+                A) Toda imagem que baixamos é composta de uma ou mais camadas.
+                
+                B) Essas camadas podem ser reaproveitadas em outras imagens, acelerando assim o tempo de download.
+                
+                C) As camadas de uma imagem são de escrita e leitura
+                
+                Qual dessas afirmações é falsa?
+                
+                Selecione uma alternativa
+
+                R: C é falsa
+                
+                Realmente é falsa pois as camadas na imagem são de leitura apenas.
+
+            
+            03 - Luis resolveu acessar sua aplicação, chamada de MinhaAplicacao e que está dentro do container, utilizando a porta 8080 a partir de sua máquina. Porém, como é novo no ramo do Docker, ele está em 
+                dúvida sobre qual comando deve utilizar para saber quais são as portas mapeadas. Marque a opção que realiza o desejo de Luis:
+
+                Selecione uma alternativa
+
+                R: Luis deve usar o comando docker port ID_DO_CONTAINER para que possa saber qual porta de sua máquina faz referência à porta 8080 de seu container.
+
+                Certo!
+
+
+    Aula 03: Usando volumes -------
+
+        Salvando dados com volumes:
+
+            Já vimos que quando criamos um container, criamos apenas uma camada acima das imagens, para que estas permaneçam inalteradas, assim podemos utilizar elas outras vezes. Quando escrevemos algo neste
+            container, tudo que escrevemos em sua estrutura de pastas é apagado quando destruimos o container, é da natureza dos containers a volatilidade, daí a necessidade dos volumes.
+
+
+            > O que são volumes?
+
+                Quando escrevemos em um container, assim que ele for removido, os dados também serão. Mas que podemos criar um local especial dentro dele, e especificamos que esse local será o nosso volume de dados.
+
+                Quando criamos um volume de dados, o que estamos fazendo é apontá-lo para um pequena pasta no 'Docker Host' (Servidor físico ou virtual onde o Docker está instalado). Então, quando criamos um volume,
+                criamos uma pasta dentro do container, e o que escrevermos dentro desta pasta na verdade estaremos escrevendo na pasta do Docker Host.
+
+                Isto faz com que não percamos os nossos dados, pois o container até pode ser removido, mas a pasta no 'Docker Host' ficará intacta.
+
+            
+            > Trabalhando com volumes:
+
+                Sabendo disso, vamos ver como trabalhar com o Docker Host. No terminal, criamos um container com o "$ docker run", mas desta vez utilizando a flag "-v" para criar um volume, seguido do nome do mesmo:
+
+                    $ docker run -v "/var/www" ubuntu
+
+                No exemplo acima, criamos o volume "/var/www", mas a que pasta do Docker Host ele faz referência? Para descobrir, podemos inspecionar o container, executando o comando 'docker inspect', passando o
+                seu 'id' para o mesmo:
+
+                    $ docker inspect 33b65debb465
+
+                Temos uma saída com diversas informações, mas a que nos interessa no momento esta no bloco "Mounts":
+
+                    ..."Mounts": [
+                        {
+                            "Type": "bind",
+                            "Source": "/var/lib/docker/volumes/5e1cbfd48d07284680552e56087c9d5196659600ccd6874bfa3831b51ddd0576/_data",
+                            "Destination": "/var/www",
+                            "Mode": "",
+                            "RW": true,
+                            "Propagation": "rprivate"
+                        }
+                    ],...
+
+                Nele podemos ver que o "/var/www" será escrito na nossa máquina no diretório "/var/lib/docker/volumes/5e1cbfd48d07284680552e56087c9d5196659600ccd6874bfa3831b51ddd0576/_data", endereço que foi gerado
+                automaticamente pelo Docker. Ou seja, tudo que escrevermos na pasta "/var/www" do container, na verdade estaremos escrevendo na pasta
+                /var/lib/docker/volumes/5e1cbfd48d07284680552e56087c9d5196659600ccd6874bfa3831b51ddd0576/_data do host onde o Docker foi instalado.
+
+                E ao remover o container, a pasta continuará na nossa máquina. Essa pasta gerada pelo Docker pode ser configurada, podemos dizer a pasta que será referenciada pela pasta "/var/www" do container.
+                Por exemplo, se quisermos escrever dentro do Desktop da nossa máquina, devemos passá-lo antes do volume, separando-os com dois pontos. Além disso, vamos executar o container no modo interativo:
+
+                    $ docker run -it -v "/home/nezzonarcizo/docker-alura/volumesDocker:/var/www" ubuntu
+                    root@-------:/#
+
+                Ou seja, quando escrevermos na pasta "/var/www" do container, estaremos escrevendo no Desktop da nossa máquina. Para provar isso, na pasta "/var/www", vamos criar um arquivo  e escrever nele uma mensagem:
+
+                    /# cd /var/www
+                    /var/www# touch novo-arquivo.txt
+                    /var/www# echo "Este arquivo foi criado dentro de um container" > novo-arquivo.txt
+
+                Ao acessarmos o nosso Desktop, o arquivo estará lá, também com a mensagem escrita. E ao remover o container, a sua camada de escrita é removida, mas os arquivos continuam no nosso Servidor.
+
+                Então, o uso de volumes é importante para salvarmos os nossos dados fora do container, e esses volumes sempre estarão atrelados ao 'Docker Host'. No caso acima, atrelamos o volume com o servidor, mas podemos
+                atrelar com um lugar mais seguro, salvando os dados do banco de dados nele, logs, e até mesmo o código fonte, coisa que faremos no próximo vídeo.
+        
+        
+        Rodando código em um container:
+
+            Obs: Nesta aula foi disponibilizado um exemplo escrito 'Node.js'. O código desse projeto pode ser baixado aqui (https://s3.amazonaws.com/caelum-online-public/646-docker/03/projetos/volume-exemplo.zip).
+
+            Já vimos que o que escrevemos no volume (pasta /var/www do container) aparece na pasta configurada da nossa máquina local, que no vídeo anterior foi o Servidor. Mas que podemos pensar o contrário, ou seja,
+            tudo o que escrevemos no Desktop será acessivel na pasta "/var/www" do container.
+
+            Isso nos dá a possibilidade de implementar localmente um código de uma linguagem que não está instalada na nossa máquina, e colocá-lo para compilar e rodar dentro do container. Se o container possui Node,
+            Java, PHP, seja qual for a linguagem, não precisamos tê-los instalados na nossa máquina, "nosso ambiente de desenvolvimento pode ser dentro do container".
+
+            É isso que faremos, pegaremos um código nosso, que está na nossa máquina, e colocaremos para rodar dentro do container, utilizando essa técnica com volumes.
+
+            
+            > Rodando código em um container:
+
+                Para isso, vamos usar um exemplo escrito em "Node.js", que pode ser baixado aqui (https://s3.amazonaws.com/caelum-online-public/646-docker/03/projetos/volume-exemplo.zip). Até podemos executar esse código
+                na nossa máquina, mas temos que instalar o Node na versão certa em que o desenvolvedor implementou o código.
+
+                Agora, como fazemos para criar um container, que irá pegar e rodar esse código Node que está na nossa máquina? Vamos utilizar os volumes, Então, vamos começar a montar o comando.
+
+                Primeiramente, como vamos rodar um código em Node.js precisamos utilizar a sua imagem:
+
+                    $ docker run node ...continua
+
+                Além disso, precisamos criar um volume que faça referência à pasta do código no nosso servidor:
+
+                    $ docker run -v  "/home/nezzonarcizo/docker-alura/volumesDocker/volume-exemplo:/var/www" node
+
+                Agora, para iniciar o seu servidor, executamos o comando "$ npm start". Para executar um comando dentro do container, podemos iniciá-lo no modo interativo ou passá-lo no final do "$ docker run":
+
+                    $ docker run -v "/home/nezzonarcizo/docker-alura/volumesDocker/volume-exemplo:/var/www" node npm start
+
+                Por fim, esse servidor roda na porta 3000, então precisamos linkar essa porta a uma porta do nosso computador, no caso a 8080. O comando ficará assim:
+
+                    $ docker run -p 8080:3000 -v "/home/nezzonarcizo/docker-alura/volumesDocker/volume-exemplo:/var/www" node npm start
+
+                Executado o comando, recebemos um erro. Nele podemos verificar a seguinte linha:
+
+                    "npm ERR! enoent ENOENT: no such file or directory, open '/package.json'"
+
+                Isto é, o 'package.json' não foi encontrado, mas ele está dentro da pasta do código. O que acontece é que o container não inicia já dentro da pasta "/var/www", e sim em uma pasta determinada pelo
+                próprio container. Por exemplo, se a imagem é baseada no Ubuntu, o container inicia no root.
+
+                Então devemos especificar que o comando 'npm start' deve ser executado dentro da pasta '/var/www'. Para isso, vamos passar a flag '-w' (Working Directory), para dizer em qual diretório o comando deve
+                ser executado, a pasta '/var/www':
+
+                    $ docker run -p 8080:3000 -v "/home/nezzonarcizo/docker-alura/volumesDocker/volume-exemplo:/var/www" -w "/var/www" node npm start
+                
+                Agora, ao acessar a porta 8080 no navegador, vemos uma página exibindo a mensagem "Eu amo Docker!". E para testar que está mesmo funcionando, podemos editar o arquivo 'index.html' localmente, salvá-lo
+                e ao recarregar a página no navegador, a nova mensagem é exibida! Ou seja, podemos criar um ambiente de desenvolvimento todo baseado em containers, o que ainda facilita o trabalho da nossa equipe, já
+                que se todos utilizarem o container, todos terão o mesmo ambiente de desenvolvimento.
+
+
+            > Melhorando o comando:
+
+                Por fim, sabemos que podemos executar o Docker de qualquer local da nossa máquina, então podemos executar o comando que fizemos dentro da pasta do nosso projeto. Fazendo isso, podemos melhorar esse
+                comando com o auxílio da interpolação de comandos, já que o comando '$ pwd' retorna o nosso diretório atual:
+
+                    nezzonarcizo@BLACK-STAR:~/docker-alura/volumesDocker/volume-exemplo$ pwd
+
+                    Saída:
+
+                    /home/nezzonarcizo/docker-alura/volumesDocker/volume-exemplo
+
+                Assim, ao invés de passar o diretório físico para dentro do comando '$ docker run', podemos utilizar a interpolação de comandos, e interpolar o comando '$ pwd', assim a sua saída será capturada e
+                inserida dentro do '$ docker run':
+                    
+                    $ docker run -p 8080:3000 -v "$(pwd):/var/www" -w "/var/www" node npm start
+                    
+                Assim, vimos como rodar um código local, que está na nossa máquina, dentro de um container, utilizando a tecnologia dos volumes, linkando a nossa pasta local com uma pasta do container, criando
+                assim um ambiente de desenvolvimento todo baseado em containers.
+
+        
+        O que aprendemos?
+                
+                
+            Nessas aulas avançamos bastante e aprendemos:
+              
+            - Que Container são voláteis, isso é, ao remover um, removemos os dados juntos;
+            - Para deixar os dados persistente devemos usar Volumes;
+            - Que volumes salvos não ficam no container e sim no Docker Host;
+            - Como criar um ambiente de execução node.js;
+            
+            Segue também uma breve lista dos comandos utilizados:
+                
+            - docker run -v "[CAMINHO_VOLUME_LOCAL:]CAMINHO_VOLUME_CONTAINER" NOME_DA_IMAGEM - cria um volume no respectivo caminho do container, caso seja especificado um caminho local monta o volume local no volume do container.
+            - docker inspect ID_CONTAINER - retorna diversas informações sobre o container.
+
+        
+        Questões aula 03:
+
+            1 - Por que usamos volumes?
+
+                Selecione uma alternativa
+
+                R: Muitas vezes removemos os containers após o uso. Volumes são usados para os dados que não devem ser removidos.
+
+                Correto, é muito comum usar o container e apagá-lo após seu uso. Dessa forma também são removidos os dados desse container e aí entram os volumes que permitem salvar dados fora do container.
+
+            
+            2 - Um volume fica salvo:
+
+                Selecione uma alternativa
+
+                R: No Docker Host
+
+                Correto, o volume fica no Docker Host. Ou seja, fica salvo no computador onde a Docker Engine está rodando.
+
+
+            3 - Qual dos comandos abaixo configura o volume do diretório /var/www do container para C:\logs do Host?
+
+                Selecione uma alternativa
+
+                R: docker run -v "C:\logs:/var/www" ubuntu
+
+                Correto, usando a flag -v seguindo pelo CAMINHO_HOST:CAMINHO_CONTAINER.
+
+
+            4 - Flavio é um programador com muita experiência no mundo Javascript, porém agora resolveu se aventurar no mundo do Docker. Ao pensar em como iria organizar os caminhos dos volumes em sua máquina e 
+                container, ele executou o comando docker inspect. Abaixo temos um pedaço da saída do comando "$ docker inspect ID_DO_CONTAINER" no terminal de Flavio, sobre a saída abaixo é verdade que:
+
+                ..."Mounts": [
+                    {
+                        "Type": "volume",
+                        "Name": "5e1cbfd48d07284680552e56087c9d5196659600ccd6874bfa3831b51ddd0576",
+                        "Source": "/home/Flavio/Desktop/volumes/caminho/_data",
+                        "Destination": "/var/opt",
+                        "Driver": "local",
+                        "Mode": "",
+                        "RW": true,
+                        "Propagation": ""
+                    }...                
+
+                Selecione uma alternativa
+
+                R: "/var/opt" pertence ao container e será escrito no caminho "/home/Flavio/Desktop/volumes/caminho/_data" em nossa máquina.
+
+                Correto! "/var/opt" pertence ao container enquanto "/home/Flavio/Desktop/volumes/caminho/_data" pertence à máquina e irá armazenar "/var/opt".
+
+    
+    Aula 04: Construindo nossas próprias imagens -------
+
+        Criando um Dockerfile:
+
+            Já trabalhamos com a imagem do ubuntu, hello-world, dockersamples/static-site e por fim do node, mas até agora não criamos a nossa própria imagem para podermos
+            distribuir para as outras pessoas. Então é isso que faremos nesta aula.
+
+            No começo do treinamento, foi comentado que a imagem é como se fosse uma "receita de bolo". Então, para criarmos a nossa própria imagem, temos que criar a nossa 
+            "receita de bolo", o 'Dockerfile', ensinando o Docker a criar uma imagem à partir da nossa aplicação, para que ela seja utilizada em outro locais.
+
+
+            > Montando o Dockerfile:
+
+                Então, no nosso projeto, devemos criar o arquivo 'Dockerfile', que nada mais é do que um arquivo de texto. Ele pode ter qualquer nome, porém nesse caso ele 
+                também deve possuir a extensão '.dockerfile', por exemplo 'node.dockerfile', mas vamos manter o nome padrão mesmo.
+
+                Geralmente, montamos as nossas imagens à partir de uma imagem já existente. Nós podemos criar uma imagem do zero, mas a prática de utilizar uma imagem como base e 
+                adicionar nela o que quisermos é mais comum. Para dizer a imagem-base que queremos, utilizamos a palavra 'FROM' mas o nome da imagem.
+
+                Como o nosso projeto precisa do Node.jf, vamos utilizar a sua imagem:
+
+                    FROM node
+
+                Além disso, podemos indicar a versão da imagem que queremos, ou utilizar o latest, que faz referência à versão mais recente da imagem. Se não passarmos versão 
+                nenhuma, o Docker irá assumir que queremos o 'latest', mas vamos deixar isso explícito:
+
+                    FROM node:latest
+
+                Outra instrução que é comum colocarmos é quem cuida, quem criou a imagem, através do 'MAINTAINER'
+
+                    Obs: Como já deixer registrado no Dockerfile nos arquivos das aulas, a instrução 'MAINTAINER' está "deprecated" nas últimas versões do Docker.
+
+                    FROM node:latest
+                    MAINTAINER Nezzo Narcizo
+
+                Agora, especificamos o que queremos na imagem. No caso, queremos colocar o nosso código dentro da imagem, então utilizamos o 'COPY'. Como queremos copiar tudo o 
+                que está dentro da pasta, vamos utilizar o '.' para copiar tudo que está na pasta do arquivo 'Dockerfile', e vamos copiar para '/var/www', do exemplo da aula 
+                anterior.
+
+                    FROM node:latest
+                    MAINTAINER Nezzo Narcizo
+                    COPY . /var/www
+
+                No projeto já temos as suas dependências dentro da pasta 'node_modules', mas não queremos copiar essa pasta para dentro do container, pois elas podem estar
+                desatualizadas, quebradas, então queremos que a própria imagem instale as dependências para nós, rodando o comando 'npm install'. Para executar um comando, 
+                utilizamos o 'RUN':
+
+                    FROM node:latest
+                    MAINTAINER Nezzo Narcizo
+                    COPY . /var/www
+                    RUN npm install
+
+                Agora, deletamos a pasta 'node_modules' (No caso a minha mandei para uma pasta chamada laboratoryGarbage para ter todo material do curso disponível), para ela
+                não ser copiada para o container. Além disso, toda imagem possui um comando que é executado quando a mesma inicia, e o comando que utilizamos na aula anterior 
+                foi o 'npm start'. Para isso, utilizamos o 'ENTRYPOINT', que executará o comando que quisermos assim que o container for carregado:
+
+                    FROM node:latest
+                    MAINTAINER Nezzo Narcizo
+                    COPY . /var/www
+                    RUN npm install
+                    ENTRYPOINT npm start
+
+                Também podemos passar o comando como se fosse um array ou json, por exemplo ["npm", "start"], ambos funcionam.
+
+                Falta colocarmos a porta em que a aplicação executará, a porta em que ela ficará exposta. Para isso, utilizamos o 'EXPOSE':
+
+                    FROM node:latest
+                    MAINTAINER Nezzo Narcizo
+                    COPY . /var/www
+                    RUN npm install
+                    ENTRYPOINT npm start
+                    EXPOSE 3000
+
+                Por fim, falta dizermos onde os comandos rodarão, pois eles devem ser executados dentro da pasta '/var/www'. Então, através do 'WORKDIR', assim que copiarmos
+                o projeto, dizemos em qual diretório iremos trabalhar:
+
+                    FROM node:latest
+                    MAINTAINER nezzonarcizo
+                    COPY . /var/www
+                    WORKDIR /var/www
+                    RUN npm install
+                    ENTRYPOINT npm start
+                    EXPOSE 3000
+
+                Com isso, finalizamos o 'Dockerfile', baseado no comando que fizemos na aula anterior:
+
+                    "/home/nezzonarcizo/docker-alura/volumesDocker/volume-exemplo"$ docker run -p 8080:3000 -v "$(pwd):/var/www" -w "/var/www" node npm start
+
+                Resta agora criar a imagem.
+
+            
+            > Criando a imagem:
+                
+                Para criar a imagem, precisamos fazer o seu "build" através do comando 'docker build', comando utilizado para "buildar" uma imagem à partir de um Dockerfile.
+                Para configurar esse comando, passamos o nome do Dockerfile através da flag '-f'
+
+                    $ docker build -f Dockerfile
+                
+                Como o noe do nosso Dockerfile é o padrão, poderíamos omitir esse parâmetro, mas se o nome for diferente, por exemplo 'node.dockerfile', é preciso especificar,
+                mas vamos deixar especificado para detalharmos melhor o comando.
+
+                Além disso, passamos a tag da imagem, o seu nome, através da flag '-t'. Já vimos que para imagens não-oficiais, colocamos o nome no padrão:
+
+                    "NOME_DO_USUARIO/NOME_DA_IMAGEM", então é isso que faremos, por exemplo:
+
+                    $ docker build -f Dockerfile -t nezzonarcizo/node
+
+                E agora dizemos onde está o Dockerfile. Como já estamos rodando o comando dentro da pasta 'volume-exemplo', vamos utilizar o ponto (.):
+
+                    $ docker build -f Dockerfile -t nezzonarcizo/node .
+
+                    A saída:
+
+                        Sending build context to Docker daemon  6.656kB
+                        Step 1/8 : FROM node:latest
+                        ---> 1db64f55f800
+                        Step 2/8 : ENV NODE_ENV=production
+                        ---> Using cache
+                        ---> 2563fef7d81f
+                        Step 3/8 : ENV PORT=3000
+                        ---> Using cache
+                        ---> b89d1e9b0ca0
+                        Step 4/8 : COPY . /var/www
+                        ---> Using cache
+                        ---> 44b31e2fa540
+                        Step 5/8 : WORKDIR /var/www
+                        ---> Using cache
+                        ---> cb85ad9cc45c
+                        Step 6/8 : RUN npm install
+                        ---> Using cache
+                        ---> b72e632219b4
+                        Step 7/8 : ENTRYPOINT npm start
+                        ---> Using cache
+                        ---> b85cd03ca2ec
+                        Step 8/8 : EXPOSE 3000
+                        ---> Using cache
+                        ---> e955a07be305
+                        Successfully built e955a07be305
+                        Successfully tagged nezzonarcizo/node:latest
+
+                Ao executar o comando, podemos perceber que cada instrução executada do nosso Dockerfile possui um id. Isso por que para cada passo o Docker cria um container
+                intermediário, para se aproveitar do seu sistema de camadas. Ou seja, cada instrução gera uma nova camada, que fará parte da imagem final, que nada mais é do
+                que a imagem-base com vários containers intermediários em cima, sendo que cada um desses containers representa um comando do 'Dockerfile'.
+
+                Assim, se um dia a imagem precisar ser alterada, somente o container referente à instrução modificada será alterado, com outras partes intermediárias da imagem
+                já prontas.
+
+
+            > Criando um container à partir da nossa imagem:
+                
+                Agora que já temos a imagem criada, podemos criar um container à partir dela:
+
+                    $ docker run -d -p 8080:3000 nezzonarcizo/node
+
+                Ao acessar o endereço da porta no navegador, vemos a página da nossa aplicação. No Dockerfile, tmabém podemos criar variáveis de ambiente utilizando o 'ENV'.
+                Por exemplo, para criar a variável 'PORT', para dizer em que porta a nossa aplicação irá rodar, fazemos:
+
+                    FROM node:latest
+                    MAINTAINER Nezzo Narcizo
+                    ENV PORT=3000
+                    COPY . /var/www
+                    WORKDIR /var/www/
+                    RUN npm install
+                    ENTRYPOINT npm start
+                    EXPOSE $PORT
+
+                    Ou seja, criamos no Dockerfile a variável 'PORT' e nele mesmo à estamos utilizando.
+
+                E como modificaos o Dockerfile, precisamos construir a nossa imagem novamente ("docker build") e podemos perceber que dessa vez o comando é bem mais rápido,
+                já que quase todas as camadas estão "cacheadas" (Verbo inventado para "estão em cache" hahahaha) pelo Docker.
+
+        
+        Subindo a imagem para o Docker Hub:
+
+            Já criamos a imagem, mas por enquanto ela só está na nossa máquina local. Para disponibilizar a imagem para outras pessoas, precisamos enviá-la para o Docker Hub
+            (https://hub.docker.com/).
+
+            O primeiro passo é criar a nossa conta. Com ela criada, no terminal nós executamos o comando '$ docker login' e digitamos o nosso login e senha que acabamos de criar:
+
+                $ docker login
+                
+                Username:
+
+                Password:                
+
+            Após isso, basta executar o comando "$ docker push", passando para ele a imagem que queremos subir, por exemplo:
+
+                $ docker push nezzonarcizo/node
+
+            Esse comando pode demorar um pouco, mas terminada a sua execução, podemos ver que várias mensagens "Mounted from library/node", ou seja, o Docker já sabe que essas
+            camadas podem ser reaproveitadas da imagem do node, então não tem o porquê dessas camadas subirem também, então só as camadas diferentes são enviadas para o Docker
+            Hub.
+
+            Mais uma vantagem em se trabalhar com camadas, o "Layered File System", pois até na hora de fazer upload, só é feito das camadas diferentes, as outras são
+            referenciadas da imagem-base que estamos utilizando, no caso a do node.
+
+            Por fim, ao acessar a nossa conta do Docker Hub, podemos ver que a imagem está lá. Para baixá-la, podemos utilizar o comando '$ docker pull':
+
+                $ docker pull nezzonarcizo/node
+
+            Esse comando somente baixa a imagem sem criar nenhum container acima dela.
+
+            Então, esse é um jeito simples de compartilharmos uma imagem com outras pessoas, através do Docker Hub. A imagem é disponibilizada em um repositório público, mas
+            também podemos disponibilizar em repositórios privados, que no momento da criação do cruso, cada usuário pode criar um repositório privado gratuitamente.
+
+        
+            O que aprendemos?
+            
+            Aprendemos neste capítulo:
+            
+                - A entender o papel do arquivo DockerFile para criar imagens.
+                    O Dockerfile define os comandos para executar instalações complexas e com características específicas.
+                
+                - Vimos os principais comandos como FROM, MAINTAINER, COPY, WORKDIR, RUN, EXPOSE e ENTRYPOINT
+                
+                - A subir uma imagem criada através de um Dockerfile para o Docker Hub e disponibilizar para os desenvolvedores
+
+            Lembrando também:
+            
+                - As imagens são read-only sempre
+                - Um container é uma instância de uma imagem
+                - Para guardar as alterações a docker engine cria uma nova layer em cima da última layer da imagem
+            
+            Segue também uma breve lista dos comandos utilizados:
+            
+                - docker build -f Dockerfile - cria uma imagem a partir de um Dockerfile.
+                - docker build -f CAMINHO_DOCKERFILE/Dockerfile -t NOME_USUARIO/NOME_IMAGEM - constrói e nomeia uma imagem não-oficial informando o caminho para o Dockerfile.
+                - docker login - inicia o processo de login no Docker Hub.
+                - docker push NOME_USUARIO/NOME_IMAGEM - envia a imagem criada para o Docker Hub.
+                - docker pull NOME_USUARIO/NOME_IMAGEM - baixa a imagem desejada do Docker Hub.
+            
+            
+            Obs: Neste "O que aprendemos?" foi citada uma coisa interessante e que torna mais fácil assimilar o conceito de container...
+                    Aqui foi dito que: 'Um container e uma instância de uma imagem'...
+                    Se relacionarmos com orientação à objeto fica mais simples de entender como funciona um container, se os dados não forem persistidos eles somem.
+
+
+        Questões aula 04:
+
+            01 - No primeiro dia de trabalho de Fernando, ele encontrou um Dockerfile chamado ns.dockerfile:
+
+                FROM node:latest
+                MAINTAINER Ubuntu
+                COPY . /var/www
+                WORKDIR /var/www
+                RUN npm install
+                ENTRYPOINT npm start
+                EXPOSE 3000
+
+                Marque as alternativas verdadeiras sobre o Dockerfile encontrado por Fernando:
+
+                Selecione 2 alternativas
+
+                R1: A imagem se baseia na imagem node. Inclusive o container se baseará sempre na última versão da imagem.
+                
+                R2: Todo o conteúdo que será copiado para a imagem ficará dentro da pasta /var/www.
+
+
+            02 - Guilherme Nicolau recebeu as seguintes instruções para criação de um docker container:
+
+                - Deve instalar o mysql da última imagem disponível
+                - Os dados iniciais devem ser copiados para a pasta /etc/sinc
+                - O diretório de trabalho deve ser /etc/sinc/plen
+                - A porta de comunicação deve ser 1711
+                - O comando de entrada chmod 755 /etc/sinc
+                
+                Marque a opção que possui a configuração de um Dockerfile condizente com a especificação passada para Guilherme:
+                
+                Selecione uma alternativa
+
+                R: 
+                    FROM mysql:latest
+                    MAINTAINER Guilherme Nicolau
+                    COPY . /etc/sinc
+                    WORKDIR /etc/sinc/plen
+                    ENTRYPOINT chmod 755 /etc/sinc
+                    EXPOSE 1711
+    
+
+    Aula 05: Comunicação entre containers -------
+
+        Networking no Docker:
+
+            Neste capítulo, veremos como funciona a rede, e como fazemos para interligar diversos containers no Docker. Normalmente uma aplicação é composta por diversas partes, sejam elas
+            o load balancer/proxy, a aplicação em si, um banco de dados, etc. Quando estamos trabalhando com containers, é bem comum separarmos cada uma dessas partes em um container 
+            específico, para cada container ficar com somente uma única responsabilidade.
+
+            Mas se temos uma parte da nossa aplicação em cada container, como podemos fazer para essas partes falarem entre elas? Pois para a nossa aplicação funcionar como um todo, os
+            containers precisam trocar dados entre eles.
+
+            > Redes com Docker:
+
+                A boa notícia é que no Docker, por padrão, já existe uma default network. Isso significa que, quando criamos os nossos containers, por padrão eles funcionam na mesma rede:
+
+                    DOCKER HOST (172.168.0.1 - 172.168.0.2 - 172.168.0.3)
+
+                Para verificar isso, subimos um container com ubuntu:
+
+                    $ docker run -it ubuntu
+
+                Em outro terminal, vamos verificar o id desse container através do comando 'docker ps', e com ele em mãos, vamos passá-lo para o comando 'docker inspect'. Na saída desse
+                comando, em NetworkingSettings, vemos que o container está na rede padrão 'bridge', rede em, que ficam todos os containers que criamos.
+
+                Voltando ao terminal do container, se executarmos o comando 'hostname -i' vemos o IP atribuído a ele pela rede local do Docker:
+
+                    root@61dafcad1e50:/# hostname -i
+                    172.18.0.2
+
+                Então, dentro dessa rede local, os containers podem se comunicar através desses IPs. Para comprovar isso, vamos deixar esse container rodando e criar um novo:
+
+                    $ docker run -it ubuntu
+
+                E vamos verificar o seu IP:
+
+                    root@61dafcad1e50:/# hostname -i
+                    172.18.0.3
+
+                Agora, no primeiro container, vamos instalar o pacote 'iputils-ping' para podermos executar o comando 'ping' para verificar a comunicação entre os containers:
+
+                    root@61dafcad1e50:/# apt-get update && apt-get install iputils-ping
+
+                Após o término da instalação, executamos o comando 'ping', passando para ele o IP do segundo container. Para interromper o comando, utilizamos o atalho 'CTRL + C':
+
+                    root@61dafcad1e50:/# ping 172.18.0.2
+                    PING 172.18.0.2 (172.18.0.2) 56(84) bytes of data.
+                    64 bytes from 172.18.0.2: icmp_seq=1 ttl=64 time=0.083 ms
+                    64 bytes from 172.18.0.2: icmp_seq=2 ttl=64 time=0.057 ms
+                    64 bytes from 172.18.0.2: icmp_seq=3 ttl=64 time=0.064 ms
+                    64 bytes from 172.18.0.2: icmp_seq=4 ttl=64 time=0.075 ms
+
+                Assim, podemos ver que os containers estão conseguindo se comunicar entre eles.
+
+            > Comunicação entre containers utilizando os seus nomes:
+
+                Então, o Docker cria uma rede virtual, em que todos os containers fazem parte dela, com os IPs automaticamente atribuídos. Mas quando os IPs são atribuídos, cada hora
+                em que subirmos um container, ele irá receber um IP novo, que será determinado pelo Docker. Logo, se não sabemos qual o IP que será atribuído, isso não é muito útil
+                quando queremos fazer a counicação entre os containers. Por exemplo, podemos querer colocar dentro do aplicativo o endereço exato do banco de dados, epara saber exatamente
+                o endereço do banco de dados, devemos configurar um nome para aquele container.
+
+                Mas nomear um container nós jká sabemos, basta adicionar o '--name', passando o nome que queremos na hora da criação do container, certo? Apesar de conseguirmos dar um nome
+                a um container, a rede do Docker não permite com que atribuarmos um hostname a um container, diferentemente de quando criamos a nossa própria rede.
+
+                N rede padrão do Docker, só podemos realizar a comunuicação utilizando IPs, mas se criarmos a nossa própria rede, podemos "batizar" os nossos containers, e realizar a
+                comunicação entre eles utilizando os seus nomes:
+
+                    DOCKER HOST (meu-nginx - meu-app - meu-bd)
+
+                Isso não podeser feitona rerde padrão do Docker, somente quando criamos a nossa própria rede.
+
+            > Criando a nossa própria rede do Docker:
+
+                Então, vamos criar a nossa própria rede, através do comando 'docker network create', mas não é só isso, para esse comando também precisamos dizer qual driver vamos utilizar.
+                Para o padrão que vimos, de ter uma nuvém e os container compartilhando a rede, devemos utilzar o driver de bridge.
+
+                Especificamos o driver através do '--driver' e após nós dizemos o nome da rede. Um exemplo do comando é o seguinte:
+
+                    $ docker network create --driver bridge minha-rede
+
+                Agora, quando criamos um container, ao invés de deixarmos ele ser associado à rede padrão do Docker, atrelamos à rede que acabamos de criar, através da flag '--network'.
+                Vamos aproveitar e nomear o container.
+
+                    $ docker run -it --name container1 --network minha-rede ubuntu
+
+                    $ docker run -it --name container2 --network minha-rede ubuntu
+
+                    root@e26f3ef077b9:/# ping container2
+                    PING container2 (172.18.0.2) 56(84) bytes of data.
+                    64 bytes from container2.minha-rede (172.18.0.2): icmp_seq=1 ttl=64 time=0.068 ms
+                    64 bytes from container2.minha-rede (172.18.0.2): icmp_seq=2 ttl=64 time=0.062 ms
+                    64 bytes from container2.minha-rede (172.18.0.2): icmp_seq=3 ttl=64 time=0.051 ms
+                    64 bytes from container2.minha-rede (172.18.0.2): icmp_seq=4 ttl=64 time=0.059 ms
+
+                Conseguimos realizar a comunicação entre os container utilizando somente os seus nomes. É como se o Docker Host, o ambiente que está rodando os containers, criasse
+                uma rede local chamada minha-rede, e o nome do container será utilizado como se fosse um hostname.
+
+                Mas lembrando que só conseguimos fazer isso em redes próprias, redes que criamos, isso não é possível na rede padrão dos containers.
+
+        
+        Pegando dados de um banco:
+
+            Para praticar o que vimos sobre redes no Docker, vamos criar um pequena aplicação que se conectará ao banco de dados, utilziando tudo o que vimos no vídeo anterior.
+
+            O que vamo fazer é utilizar a aplicação 'alura-books', que irá pegar os dados de um banco de dados de livros e exibi-los em uma página web. É uma aplicação feita em Node.js
+            e o banco de dados é o MongoDB.
+
+            > Pegando dados de um banco em um outro container:
+
+                Então, primeiramente vamos baixar essas duas imagens, a imagem 'douglasq/alura-books' na versão cap05 e a imagem 'mongo':
+
+                    $ docker pull douglasq/alura-books:cap05
+                    $ docker pull mongo
+                
+                Na imagem douglasq/alura-books, não há muito mistério. Ela possui o arquivo 'server.js', que carrega algumas dependências e módulos que são instaladaos no momento em que
+                rodamos a imagem. Esse arquivo carrega também as configurações do banco, que diz onde o banco de dados estará em execução, no caso o seu host será 'meu-mongo', e o
+                database, com nome de 'alura-books'. Então, quando formos rodar o container de MongoDB, seu nome deverá ser 'meu-mongo'. Além disso, o arquivo realiza a conexão com o banco,
+                configura a porta que será utilizada (3000) e levanta o servidor.
+
+                No Dockerfile da imagem, também não há mistério, é basicamente o que vimos no vídeo anterior. Por fim, temos as rotas, que são duas: a rota '/', que carrega os livros e os
+                exibe na página, e a rota '/seed', que salva os livros no banco de dados.
+
+                    Caso queira, você pode baixar aqui -> https://s3.amazonaws.com/caelum-online-public/646-docker/05/projetos/alura-docker-cap05.zip 
+                    o código da versão 'cap05' da imagem 'alura-books'
+
+                Visto isso, já podemos subir a imagem:
+
+                    $ docker run -d -p 8080:3000 douglasq/alura-books:cap05
+
+                Ao acessar a página 'http://localhost:8080/', nenhum livro nos é exibido, pois além de não termos levantado o banco de dados, nós não salvamos nenhum dado nele. Então, vamos
+                excluir esse container e subir o container do MongoDB, lembrando que o seu nome deve ser 'meu-mongo', e vamos colocá-lo na rede que criamos no vídeo anterior:
+
+                    $ docker run -d --name meu-mongo --network minha-rede mongo
+
+                Com o banco de dados rodando, podemos subir a aplicação do mesmo jeito que fizemos anteriormente, mas não podemos nos esquecer que ele deve estar na mesma rede do banco de
+                dados, logo vamos configurar isso também:
+
+                    $ docker run --network minha-rede -d -p 8080:3000 douglasq/alura-books:cap05
+
+                Agora, acessamos a página 'http://localhost:8080/seed/' para salvar os livros no banco de dados. Após isso, acessamos a página 'http://localhost:8080/' e vemos os dados
+                dos livros são extraídos do banco e são exibidos na página. Para provar isso, podemos para a execução do 'meu-mongo' e atualizar a página, veremos que nenhum livro mais será
+                exibido.
+
+                Então, esse foi um exemplo para praticar a comunicação entre containers, sempre lembrando que devemos colocá-los na mesma rede. Na próxima aula, veremos um jeito de orquestrar
+                melhor diversos containers e automatizar esse processo de levantá-los e configurá-los, ao invés de fazer tudo a mão.
+
+            > Sobre o comando pull
+
+                No último vídeo usamos o comando 'docker pull douglasq/alura-books:cap05' sem ter explicado antes. Este comando serve para baixarmos a imagem do Docker Hub sem precisar rodar 
+                a mesma.
+
+                Por exemplo, para baixar a imagem 'ubuntu' do Docker Hub você pode usar:
+
+                    $ docker pull ubuntu
+
+                Isso é diferente do comando 'run', que baixa a imagem (se não existe localmente) e depois cria e roda o container. O 'pull' apenas baixa!
+
+                Para baixar uma imagem de um usuário específico vimos a sintaxe:
+
+                    $ docker pull NOME_USUARIO/NOME_IMAGEM
+
+                Além disso, uma imagem pode ter um tag que serve para pegar uma determinada versão dessa imagem. Alias, você já viu a tag ':latest' e no vídeo eu usei a tag ':cap05', por
+                exemplo:
+
+                    $ docker pull douglasq/alura-books:cap5
+
+                Isso baixará a versão (ou tag) 'cap05' da imagem alura-books do usuário 'douglasq'.
+
+
+        Neste capítulo aprendemos:
+
+            - Que imagens criadas pelo Docker acessam a mesma rede, porém apenas através de IP.
+            - Ao criar uma rede é possível realizar a comunicação entre os containers através do seu nome.
+            - Que durante a criação de uma rede precisamos indicar qual driver utilizaremos, geralmente, o driver bridge.
+            
+            Segue também uma breve lista dos comandos utilizados:
+                
+            - hostname -i - mostra o ip atribuído ao container pelo docker (funciona apenas dentro do container).
+            - docker network create --driver bridge NOME_DA_REDE - cria uma rede especificando o driver desejado.
+            - docker run -it --name NOME_CONTAINER --network NOME_DA_REDE NOME_IMAGEM - cria um container especificando seu nome e qual rede deverá ser usada.
+            - docker network ls - lista todas as redes existentes no docker host
+                
+
+        Questões aula 05:
+
+            01 - Marque as alternativas verdadeiras a respeito de uma Rede Docker:
+
+                Selecione 3 alternativas
+
+                R1: Por padrão, os containers ficam na mesma rede com o nome bridge.
+                    Correto. Porém, a comunicação deve ser feita através de IP.
+                
+                R2:Na rede padrão do Docker, só podemos realizar a comunicação utilizando IPs.
+                    Exatamente. Se criarmos nossa própria rede podemos usar seu nome no lugar do IP.
+                
+                R3: Com docker inspect ID_DO_CONTAINER podemos verificar a qual rede ele pertence.
+                    Exatamente, o comando inspect mostra vários detalhes sobre o container, entre eles o network. Nesse item, aparece o nome da nossa rede, IP do container, o gateway e entre 
+                    outras informações.
+
+                
+            02 - Emanuelle decidiu criar uma nova rede para que pudesse realizar a comunicação entre containers através dela. Então, ela executou o seguinte comando:
+
+                $ docker network create --driver bridge local
+                Marque as alternativas verdadeiras a respeito do comando executado por Emanuelle.
+            
+                Selecione 2 alternativas
+
+                R1: A instrução create não é opcional.
+                    Correto, sem ela não será possível criar a rede.
+            
+                R2: O parâmetro --driver indica qual driver será utilizado durante a criação da rede local.
+                    Correto.
+
+            
+            03 - Eric, para testar sua amiga Paula, executou o seguinte comando:
+
+                docker run -d --name meu-mongo --network minha-rede mongo
+
+                Em seguida, pediu para que Paula detalhasse o comando executado.
+                
+                Nesse contexto, marque as afirmativas verdadeiras a respeito do comando executado:
+                
+                Selecione 2 alternativas
+                
+                R1: Sobe um container na rede minha-rede.
+
+                    Correto.
+
+                R2: Executa o container em modo detached.
+
+                    Correto.
+
+    
+    Aula 06: Trabalhando com o Docker Compose -------
+
+        Entendendo o Docker Compose:
+
+            Nesta aula, estudaremos uma tecnologia chamada 'Docker Compose', que nos auxiliará a lidar com múltiplos containers simultaneamente.
+
+            Na aula anterior, para subir a aplicação 'alura-books', foi necessário subirmos dois containers, executando os seguintes comandos:
+
+                $ docker run -d --name meu-mongo --network minha-rede mongo
+
+                $ docker run --network minha-rede -d -p 8080:3000 douglasq/alura-books:cap05
+
+            Isso tudo depois de termos contruido pelo menos a imagem douglasq/alura-books
+
+            > O problema:
+
+                Esses dius comandos criam dois containers, mas subindo eles desse jeito manual, é muito comum esquecermos de passar alguma flag, ou subir o container na ordem errada,
+                sem a devida rede, ou seja, é um trabalho muito manual e facilmente suscetível a erros, isso com somente dois containers.
+
+                Esse modo de subir os containers a mão é bom se quisermos criar um ambiente rapidamente, ou quando são poucos containers, mas quando a aplicação começa a crescer, temos 
+                que digitar muitos comandos.
+
+            > Funcionamento das aplicações em geral:
+
+                Na vida real, sabemos que a aplicação é maior que somente dois containers, geralmente temos dois, três ou mais containers para segurar o tráfego da aplicação, distribuindo
+                a carga. Além disso, temos que colocar todos esses containers para se comunicar com o banco de dados em um outro containermas quanto maior a aplicação, devemos ter mais de
+                um container para o banco também.
+
+                E claro, se temos três aplicações rodando, não podemos ter três endereços diferentes, então nesses casos utilizamos um 'Load Balancer' em um outro container, para fazer a
+                distribuição de carga quando tiveermos muitos acessos. Ele recebe as requisições e distribui para uma das aplicações, e ele também é muito utilizado para servir os arquivos
+                estáticos, como imagens, arquivos CSS e JavaScript. Assim, a nossa aplicação controla somente a lógica, as regras de negócio, com os arquivos estáticos ficando a cargo do
+                'Load Balancer'.
+
+                         NGINX                    Aplicação                 Banco de dados
+                    (Load Balancer)    >  (nodeJS + nodeJS + nodeJS)     >     (mongoDB)
+                    (Arquivos estáticos)
+
+                Se formos seguir esse diagrama, teríamos que criar cinco containers na mão, e claro, cada container com configurações e flags diferentes, além de termos que nos preocupar
+                com a ordem em que vamos subi-los.
+
+            > Docker Compose
+
+                Ao invés de subir todos esses containers na mão, o que vamos fazer é utilizar uma tecnologia aliada do Docker, chamada 'Docker Compose', feito para nos auxiliar a orquestrar
+                melhor múltiplos containers. Ele funciona seguindo um arquivo de texto 'YAML' (extensão .yml), e nele nós descrevemos tudo o que queremos que aconteça para subir a nossa
+                aplicação, todo o nosso processo de build, isto é, subir o banco, os containers das aplicações, etc.
+
+                Assim, não precisamos ficar executando muitos comandos no terminal sem necessidade. E esse será o foco desta próxima aula, montar uma aplicação na estrutura descrita 
+                anteriormente (Load Balancer - Aplicação - Banco), que é uma situação comum no nosso dia-a-dia.
+
+        
+        Entendendo a aplicação:
+
+            O código do projeto pode ser baixado aqui > https://s3.amazonaws.com/caelum-online-public/646-docker/06/projetos/alura-docker-cap06.zip
+                
+            Para começarmos a entender como funciona o 'Docker Compose', primeiramente vamos entender como funciona a aplicação que utilizaremos como base.
+            É uma aplicação bem semelhante à utilizada na aula anterior, com o mesmo servidor, rotas e banco de dados. De novidade, é que agora precisamos criar o 
+            'NGINX', que é mais um container que devemos subir.
+
+            Então, ou utilizamos a imagem nginx, ou criamos a nossa própria. Como vamos configurar o NGINX para algumas coisas específicas, como lidar com os arquivos
+            estáticos, vamos criar a nossa própria imagem, por isso que na aplicação há o 'nginx.dockerfile':
+
+                FROM nginx:latest
+                MAINTAINER Marlon Narcizo
+                COPY /public /var/www/public
+                COPY /docker/config/nginx.conf /etc/nginx/nginx.conf
+                EXPOSE 80 443
+                ENTRYPOINT ["nginx"]
+                # Parametros extras para o entrypoint
+                CMD ["-g", "daemon off;"]
+
+            Nesse arquivo, nós utilizamos a última versão disponível da imagem do nginx como base, e copiamos o conteúdo da pasta public, que contém os arquivos 
+            estáticos, e uma arquivo de configuração do NGINX para dentro do container. Além disso, abrimos as portas 80 e 443 e executa o NGINX através do comando
+            nginx, passando os parâmetros extras '-g' e 'daemon off'.
+
+            Por fim, vamos ver um pouco sobre o arquivo de configuração do NGINX, para entendermos um pouco como o load balancer está funcionando.
+
+            No arquivo 'nginx.conf' dentro server, está a parte que trata de servir os arquivos estáticos. Na porta 80, no localhost, em /var/www/public, ele será
+            responsável por servir as pastas css, img e js. E todo resto, que não for esses três locais, ele irá jogar para o 'node_upstream'.
+
+            No 'node_updstream', é onde ficam as configurações para o NGINX redirecionar as conexões que ele receber para um dos três containers da nossa aplicação.
+            O redirecionamento acontecerá de forma circular, ou seja, a primeira conexão irá para o primeiro container, a segunda irá para o segundo container, a terceira
+            irá para o terceiro container, na quarta, começa tudo de novo, e ela vai para o primeiro container e assim por diante.
+
+            Como dito antes, isto já esta tudo pronto em: https://s3.amazonaws.com/caelum-online-public/646-docker/06/projetos/alura-docker-cap06.zip
+
+            Agora, iremos escrever o respondásvel por orquestrar a subida de cada uma dessas partes da nosa aplicação, o 'docker-compose.yml'.
+
+        
+        Criando o docker-compose.yml:
+
+            Para utilizar o 'Docker Copose', devemos criar o seu arquivo de configuração, o 'docker-compose.yml', na raiz do projeto. Em todo arquivo de 'Docker Copose',
+            que é uma espécie de receita de bolo para construirmos as diferentes partes da nossa aplicação, a primeira coisa que colocamos nele é a versão do Docker Compose
+            que estamos utilizando:
+
+                version: '3'
+
+            Estamos utilizando a versão 3 pois é a versão mais recente no momento da criação do treinamento. O YAML lembra um pouco o JSON, mas ao invés de utilizar as chaves
+            para identar o código, ele utiliza espaços.
+
+            Agora, começamos a descrever os nossos serviços, os nossos 'services':
+
+                version: '3'
+                services:
+
+            Um serviço é uma parte da nossa aplicação. Lembrando do nosso diagrama:
+
+            Temos NGINX, três Node e o Mongo DB como serviços. Logo, se queremos construir cinco containers, vamos construir cinco serviços, cada um deles com um nome
+            específico.
+
+            Então, vamos começar construindo o NGINX, que terá o nome 'nginx':
+
+                version: '3'
+                services:
+                    nginx:
+
+            Em cada serviço, devemos dizer como devemos construí-lo, como devemos fazer o seu build:
+
+                version: '3'
+                services:
+                    nginx:
+                        build:
+
+            O serviço será contruído através de um Dockerfile, então devemos passá-lo onde ele está. E também devemos passar um contexto, para dizermos a partir de onde
+            o Dockerfile dever ser buscado. Como ele será buscado à partir da pasta autal, vamos utilizar o ponto:
+
+                version: '3'
+                services:
+                    nginx:
+                        build:
+                            dockerfile: ./docker/nginx.dockerfile
+                            context: .
+
+            Contruída a imagem, devemos dar um nome para ela, por exemplo 'nezzonarcizo/nginx':
+
+                version: '3'
+                services:
+                    nginx:
+                        build:
+                            dockerfile: ./docker/nginx.dockerfile
+                            context: .
+                        image: douglasq/nginx
+            
+            E quando o Docker Compose criar um container à partir dessa imagem, vamos dizer que o seu nome será nginx:
+
+                version: '3'
+                services:
+                    nginx:
+                        build:
+                            dockerfile: ./docker/nginx.dockerfile
+                            context: .
+                        image: douglasq/nginx
+                        container_name: nginx
+
+            Sabemos também que o NGINX trabalha com duas portas, a 80 e a 443. Como não estamos trabalhando com HTTPS, vamos utilzar somente a porta 80, e no próprio
+            arquivo, podemos dizer para qual porta da nossa máquina queremos mapear a porta 80 do container. Vamos mapear para a porta de mesmo número da nossa máquina:
+
+                version: '3'
+                services:
+                    nginx:
+                        build:
+                            dockerfile: ./docker/nginx.dockerfile
+                            context: .
+                        image: douglasq/nginx
+                        container_name: nginx
+                        ports:
+                            - "80:80"
+
+            No YAML, toda vez que colocamos um traço, significa que a propriedade pode receber mais de um item. Agora, para os containers conseguirem se comunicar, eles
+            devem estar na mesma rede, então vamos configurar isso também. Primeiramente, devemos criar a rede, que não é um serviço, então vamos escrever do começo do
+            arquivo, sem as tabulações:
+
+                version: '3'
+                services:
+                    nginx:
+                        build:
+                            dockerfile: ./docker/nginx.dockerfile
+                            context: .
+                        image: douglasq/nginx
+                        container_name: nginx
+                        ports:
+                            - "80:80"
+                
+                networks:
+
+            O nome da rede será 'production-network' e utilizará o driver 'bridge':
+
+                version: '3'
+                services:
+                    nginx:
+                        build:
+                            dockerfile: ./docker/nginx.dockerfile
+                            context: .
+                        image: douglasq/nginx
+                        container_name: nginx
+                        ports:
+                            - "80:80"
+                
+                networks: 
+                    production-network:
+                        driver: bridge
+
+            Com a rede criada, vamos utilizá-la no serviço:
+
+                version: '3'
+                services:
+                    nginx:
+                        build:
+                            dockerfile: ./docker/nginx.dockerfile
+                            context: .
+                        image: douglasq/nginx
+                        container_name: nginx
+                        ports:
+                            - "80:80"
+                        networks: 
+                            - production-network
+                
+                networks: 
+                    production-network:
+                        driver: bridge
+
+            Isso é para construir o serviço do NGINX, agora vamos construir o serviço do MongoDB, com o nome mongodb. Como ele será construído à partir da imagem mongo,
+            não vamos utilizar nenhum Dockerfile, logo não utilizamos a propriedade 'build'. Além disso, não podemos nos esquecer de colocá-lo na rede que criamos:
+
+                version: '3'
+                services:
+                    nginx:
+                        build:
+                            dockerfile: ./docker/nginx.dockerfile
+                            context: .
+                        image: douglasq/nginx
+                        container_name: nginx
+                        ports:
+                            - "80:80"
+                        networks: 
+                            - production-network
+                
+                    mongodb:
+                        image: mongo
+                        networks: 
+                            - production-network
+                
+                networks: 
+                    production-network:
+                        driver: bridge
+
+            Falta agora criarmos ps três serviços em que ficará a nossa aplicação, node1, node2 e node3. Para eles, será semelhante ao NGINX, com Dockerfile
+            alura-books.dockerfile, contexto, rede production-network e porta 3000.
+
+                version: '3'
+                services:
+                    nginx:
+                        build:
+                            dockerfile: ./docker/nginx.dockerfile
+                            context: .
+                        image: douglasq/nginx
+                        container_name: nginx
+                        ports:
+                            - "80:80"
+                        networks: 
+                            - production-network
+                
+                    mongodb:
+                        image: mongo
+                        networks: 
+                            - production-network
+                
+                    node1:
+                        build:
+                            dockerfile: ./docker/alura-books.dockerfile
+                            context: .
+                        image: douglasq/alura-books
+                        container_name: alura-books-1
+                        ports:
+                            - "3000"
+                        networks: 
+                            - production-network
+                
+                    node2:
+                        build:
+                            dockerfile: ./docker/alura-books.dockerfile
+                            context: .
+                        image: douglasq/alura-books
+                        container_name: alura-books-2
+                        ports:
+                            - "3000"
+                        networks: 
+                            - production-network
+                
+                    node3:
+                        build:
+                            dockerfile: ./docker/alura-books.dockerfile
+                            context: .
+                        image: douglasq/alura-books
+                        container_name: alura-books-3
+                        ports:
+                            - "3000"
+                        networks: 
+                            - production-network
+            
+                networks: 
+                    production-network:
+                        driver: bridge
+
+            Com isso, a construção dos nossos serviços está finalizada.
+
+            > Ordem dos serviços:
+
+                Por último, quando subimos os containers a mão, temos uma ordem, primeiro devemos subir o mongodb, depois a nossa aplicação, ou seja, node1, node2 e node3
+                e após tudo isso subimos o nginx. Mas como que fazemos isso no docker-compose.yml?
+
+                Nós podemos dizer que os serviços da nossa aplicação dependem que um serviço suba antes deles, o serviço do mongodb:
+                    
+                        node1:
+                            build:
+                                dockerfile: ./docker/alura-books.dockerfile
+                                context: .
+                            image: douglasq/alura-books
+                            container_name: alura-books-1
+                            ports:
+                                - "3000"
+                            networks: 
+                                - production-network
+                            depends_on:
+                                - "mongodb"
+                    
+                        node2:
+                            build:
+                                dockerfile: ./docker/alura-books.dockerfile
+                                context: .
+                            image: douglasq/alura-books
+                            container_name: alura-books-2
+                            ports:
+                                - "3000"
+                            networks: 
+                                - production-network
+                            depends_on:
+                                - "mongodb"
+                    
+                        node3:
+                            build:
+                                dockerfile: ./docker/alura-books.dockerfile
+                                context: .
+                            image: douglasq/alura-books
+                            container_name: alura-books-3
+                            ports:
+                                - "3000"
+                            networks: 
+                                - production-network
+                            depends_on:
+                                - "mongodb"
+                
+                Da mesma forma, dizemos que o serviço do nginx, depende dos serviços node1, node2 e node3:
+
+                    version: '3'
+                    services:
+                        nginx:
+                            build:
+                                dockerfile: ./docker/nginx.dockerfile
+                                context: .
+                            image: douglasq/nginx
+                            container_name: nginx
+                            ports:
+                                - "80:80"
+                            networks: 
+                                - production-network
+                            depends_on: 
+                                - "node1"
+                                - "node2"
+                                - "node3"
+
+            Assim, encerramos a configuração do docker-compose.yml. Vamos ver como subir a aplicação à partir desse arquivo na próxima lição.
+
+
+        Instalando o Docker compose no Linux:
+
+            O Docker Compose não é instalado por padrão no Linux, então devemos instalá-lo por fora. Para tal, baixe-o na sua versão mais atual, que pode ser visualizada
+            no seu GiHub (https://github.com/docker/compose/releases), executando o comando abaixo:
+
+                "$ sudo curl -L https://github.com/docker/compose/releases/download/1.15.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose"
+
+            Após isso, dê permissão de execução para o docker-compose:
+
+                $ sudo chmod +x /usr/local/bin/docker-compose
+
+            Pronto, o Docker Compose já está instalado no seu Linux!
+
+        
+        Subindo os serviços:
+
+            Com o docker-compose.yml pronto, podemos subir os serviços, mas antes devemos garantir que temos todas as imagens envolvidas neste arquivo na nossa máquina.
+            Para isso, dentro da pasta do nosso projeto, executamos o seguinte comando:
+
+                $ cd alura-docker-cap06
+
+                $ sudo docker-compose build
+
+            Com os serviços criados, podemos subi-los através do comando 'docker-compose up'. Esse comando irá seguir o que escrevemos no docker-compose.yml, ou seja, 
+            cria a rede, o container do MongoDB, os três containers da aplicação e o container do NGINX. Depois, são exibidos alguns logs, sendo que cada um dos 
+            containers fica com uma cor diferente, para podermos distinguir melhor.
+
+            Se tudo funcionou, quando acessarmos o NGINX, seremos redirecionados para algum dos containers da nossa aplicação, Configuramos a porta 80 para acessar o NGINX,
+            então vamos acessar no navegador a página http://localhost:80/. Ao acessar a página, vemos a seguinte mensagem no log:
+
+                alura-books-1 | Exibindo a Home!
+
+            Ou seja, fomos redirecionados para o primeiro container. Ao atualizar a página, vemos no log que fomos redirecionados apra o segundo container, ou seja,
+            o load balancer está funcionando.
+
+            Vamos então alimentar o banco de dados acessando a página http://localhost:80/seed, e novamente acessar a página inicial, a http://localhost:80/, assim
+            veremos os livros sendo exibidos.
+
+            Então, com um único comando, levantamos todos os container, montamos o load balancer, servimos os arquivos estáticos, criamos o banco e colocamos todos eles
+            na mesma rede, bem mais pático do que estávamos fazendo anteriormente.
+
+            Para parar a execução, utilizamos o atalho 'CTRL + C'. E não somos obrigados a ficasr vendo esses logs, podemos utilizar a já conhecida flag '-d':
+
+                $ docker-compose up -d
+
+            E com o comando 'docker-compose ps', podemos ter uma visualização simples dos serviços que estão rodando:
+
+                Name                        Command             State              Ports            
+                ----------------------------------------------------------------------------------------------
+                alura-books-1                npm start                     Up      0.0.0.0:9022->3000/tcp      
+                alura-books-2                npm start                     Up      0.0.0.0:9021->3000/tcp      
+                alura-books-3                npm start                     Up      0.0.0.0:9023->3000/tcp      
+                aluradockercap06_mongodb_1   docker-entrypoint.sh mongod   Up      27017/tcp                   
+                nginx                        nginx -g daemon off;          Up      443/tcp, 0.0.0.0:88->80/tcp
+
+            Agora que não estamos mais vendo os logs, como paramos os serviços? Para isso, utilizamos o comando 'docker-compose down'. Esse comando para os containers
+            e os remove.
+
+            E não é por que ele são serviços, que eles não tem um container por debaixo dos panos, então nós conseguimos interagir com os containers utilizando todos
+            os comandos que já vimos no treinamento, por exemplo para testar a comunicação entre eles:
+
+                $ docker exec -it alura-books-1 ping alura-books-2
+
+            Mas também podemos utilizar o nome do serviço, não precisamos necessariamente utilizar o nome do container:
+
+                $ docker exec -it alura-books-1 ping node2
+
+            Assim conseguimos faazer a comunicação tanto com o nome do container quanto com o nome do serviço, pois os dois estão atrelados ao mesmo IP.
+     
+        
+        Para saber mais: Docker e Microsserviços:
+
+            > Sobre Microsserviços:
+
+                Já ouviu falar de Microsserviços? Se já ouviu, pode pular a introdução abaixo e ir diretamente para a parte "Docker e Microsserviços", senão continue.
+
+                Uma forma de desenvolver uma aplicaçao é colocar todas as funcionalidades em um único "lugar". Ou seja, a aplicação roda em uma única instância (ou servidor)
+                que possui todas as funcionalidades. Isso talvez seja a forma mais simples de criar um aplicação (também a mais natural), mas quando a base de código cresce,
+                alguns problemas podem aparecer.
+
+                Por exemplo, qualquer atualização ou bug fix necessita para todo o sistema, buildar o sistema todo e subir novamente. Isso pode ficar demorado e lento.
+                Em geral, quanto maior a base de código mais difícil será manter ela mesmo com uma boa cobertura de testes e as desvantagens não param por aí. Outro problema
+                é se alguma funcionalidade possuir um gargalo no desempenho o sistema todo será afetado. Não é raro de ver sistemas onde relatório só devem ser gerados à
+                noite para não afetar o desempenho de outras funcionalidades. Outro problema comum é com os ciclos de testes e build demorados (falta agilidade no 
+                desenvolvimento), problemas no monitoramento da aplicação ou falta de escalabilidade. Enfim, o sistema se torna um legado pesado, onde nenhum desenvolvedor gostaria
+                de colocar a mão no fogo.
+
+            > Arquiterura de Microsserviços
+
+                Então a ideia é fugir desse tipo de arquitetura monolítica monstruosa e dividir ela em pequenos pedaços. Cada pedaço possui uma funcionalidade bem definida
+                e roda como se fosse um "mini sistema" isolado. Ou seja, em vez de termos uma única aplicação enorme, teremos várias instâncias menores que dividem e
+                coordenam o trabalho. Essas instâncias são chamadas de microsserviços.
+
+                Agora fica mais fácil monitora cada serviço específico, atualizá-lo ou escalá-lo pois a base de código é muito menor, e assim o deploy e o teste serão mais
+                rápidos. Podemos agora achar soluções específicas para esse servilo sem precisar alterar os demais. Outra vantagem é que um desenvolvedor novo não precisa
+                conhecer o sistema todo para alterar uma funcionalidade, basta ele focar na funcionalidade desse microsserviço.
+
+                Importante tambpem é que um microsserviço seja acessível remotamente, normalmente usando o protocolo HTTP trocando mensagens JSON ou XML, mas nada impede
+                que outro protocolo seja usado. Um microsserviço pode usar outros serviços para coordenar o trabalho.
+
+                Repare que isso é uma outra abordagem arquitetural bem diferente do monolítico e por isso também é chamado de arquitetura de microsserviço.
+
+                Por fim, uma arquitetura de microsserviços tem um grau de complexidade muito alta se comparada com uma arquitetura monolítica. Aliás, há aqueles profissionais
+                que indicam partir para uma arquitetura monolítica primeiro e mudar para uma baseada em microsserviços depois (Matéria :
+                    https://sdtimes.com/continuous-integration/martin-fowler-monolithic-apps-first-microservices-later/) quando estritamente necessário.
+
+            > Docker e Microsserviços
+
+                Trabalhar com uma arquitetura de microsserviços gera a necessidade de publicar o serviço de maneira rápida, leve, isolada e vimo sque o Docker possui
+                exatamente essas características! Com Docker e Docker Compose podemos criar um ambiente ideal para a publicação destes serviços.
+
+                O Docker é uma ótima opção para rodar os microsserviços pelo fato de isolar os containers. Essa utilização de container para serviços individuais faz
+                com que seja muito simples gerenciar e atualizar esses serviços, de maneira automatizada e rápida.
+
+            > Docker Swarm
+
+                Ok, tudo bem até aqui. Agora vou ter vários serviços rodando usando o Docker. E para facilitar a criação desses containers já aprendemos a usar o Docker
+                Compose que sabe subir vários containers. O Docker Compose é a ferramenta ideal para coordenar a criação dos containers, no entanto para melhorar a 
+                escalabilidade e desempenho pode ser necessário criar muito mais containers para um serviço específico. Em outras palavras, agora gostaríamos de criar
+                muitos containers aproveitando várias máquinas (virtuais ou físicas)! Ou seja, pode ser que um microsserviço fique rodando em 20 containers usando três
+                máquinas físicas diferentes. Como podemos facilmente subir e parar esses containers? Repare que o Docker Compose não é para isso e por isso existe outra
+                ferramenta que se chama Docker Swarm (que não faz parte do escopo desse curso).
+
+                Docker Swarm facilita a criação e administração de um cluster de containers.
+
+        Segue a lista com os principais comandos utilizados durante o curso:
+
+            Comandos relacionados às informações
+                - docker version - exibe a versão do docker que está instalada.
+                - docker inspect ID_CONTAINER - retorna diversas informações sobre o container.
+                - docker ps - exibe todos os containers em execução no momento.
+                - docker ps -a - exibe todos os containers, independentemente de estarem em execução ou não.
+            
+            Comandos relacionados à execução
+                - docker run NOME_DA_IMAGEM - cria um container com a respectiva imagem passada como parâmetro.
+                - docker run -it NOME_DA_IMAGEM - conecta o terminal que estamos utilizando com o do container.
+                - docker run -d -P --name NOME dockersamples/static-site - ao executar, dá um nome ao container e define uma porta aleatória.
+                - docker run -d -p 12345:80 dockersamples/static-site - define uma porta específica para ser atribuída à porta 80 do container, neste caso 12345.
+                - docker run -v "CAMINHO_VOLUME" NOME_DA_IMAGEM - cria um volume no respectivo caminho do container.
+                - docker run -it --name NOME_CONTAINER --network NOME_DA_REDE NOME_IMAGEM - cria um container especificando seu nome e qual rede deverá ser usada.
+
+            Comandos relacionados à inicialização/interrupção
+                - docker start ID_CONTAINER - inicia o container com id em questão.
+                - docker start -a -i ID_CONTAINER - inicia o container com id em questão e integra os terminais, além de permitir interação entre ambos.
+                - docker stop ID_CONTAINER - interrompe o container com id em questão.
+
+            Comandos relacionados à remoção
+                - docker rm ID_CONTAINER - remove o container com id em questão.
+                - docker container prune - remove todos os containers que estão parados.
+                - docker rmi NOME_DA_IMAGEM - remove a imagem passada como parâmetro.
+
+            Comandos relacionados à construção de Dockerfile
+                - docker build -f Dockerfile - cria uma imagem a partir de um Dockerfile.
+                - docker build -f Dockerfile -t NOME_USUARIO/NOME_IMAGEM - constrói e nomeia uma imagem não-oficial.
+                - docker build -f Dockerfile -t NOME_USUARIO/NOME_IMAGEM CAMINHO_DOCKERFILE - constrói e nomeia uma imagem não-oficial informando o caminho para o Dockerfile.
+
+            Comandos relacionados ao Docker Hub
+                - docker login - inicia o processo de login no Docker Hub.
+                - docker push NOME_USUARIO/NOME_IMAGEM - envia a imagem criada para o Docker Hub.
+                - docker pull NOME_USUARIO/NOME_IMAGEM - baixa a imagem desejada do Docker Hub.
+
+            Comandos relacionados à rede
+
+                - hostname -i - mostra o ip atribuído ao container pelo docker (funciona apenas dentro do container).
+                - docker network create --driver bridge NOME_DA_REDE - cria uma rede especificando o driver desejado.
+
+            Comandos relacionados ao docker-compose
+
+                - docker-compose build - Realiza o build dos serviços relacionados ao arquivo docker-compose.yml, assim como verifica a sua sintaxe.
+                - docker-compose up - Sobe todos os containers relacionados ao docker-compose, desde que o build já tenha sido executado.
+                - docker-compose down - Para todos os serviços em execução que estejam relacionados ao arquivo docker-compose.yml.
+
+        Nessa aula aprendemos:
+
+            - A necessidade de usar o Docker Compose
+            - Configurar o build de vários containers através do docker-compose.yml
+            - subir e parar os containers de maneira coordenada com Docker Compose
+            - Segue também uma breve lista dos novos comandos utilizados:
+                
+            - docker-compose up - sobe os serviços criados
+            - docker-compose down - para os serviços criados.
+            - docker-compose ps - lista os serviços que estão rodando.
+            - docker exec -it alura-books-1 ping node2- executa o comando ping node2 dentro do container alura-books-1
+        
+        Questões aula 06:
+
+            01 - Vejamos um exemplo de um dockerfile que utiliza a última imagem disponível do nginx:
+
+                FROM nginx:latest
+                MAINTAINER Marlon Narcizo
+                COPY /public /var/www/public
+                COPY /docker/config/nginx.conf /etc/nginx/nginx.conf
+                EXPOSE 80 443
+                ENTRYPOINT ["nginx"]
+                CMD ["-g", "daemon off;"]
+                Marque as alternativas verdadeiras sobre o arquivo:
+            
+                Selecione 3 alternativas
+
+                R1: Utilizamos a última versão disponível da imagem do nginx como base
+
+                R2: Copiamos o conteúdo da pasta public, que contém os arquivos estáticos, e um arquivo de configuração do NGINX para dentro do container.
+
+                R3: É executado o comando nginx, passando os parâmetros extras -g e daemon off.
+
+            
+            02 - Quais das descrições podem ser responsabilidades do Docker Compose?
+
+                Selecione 3 alternativas
+
+                R1: Executar o build de vários containers.
+
+                R2: Desligar os containers de maneira coordenada.
+
+                R3: Criar nova rede em qual os containers podem participar.
+                    Correto, o docker compose cria uma rede padrão. Também é possível criar uma nova rede usando o comando docker network.
+
+            
+            03 - Ana configurou o docker-compose.yml corretamente e subiu os containers. Depois de um tempo ela gostaria de reinicializá-los. Para tal, ela executa:
+
+                docker-compose down
+                docker-compose up
+                Estes comandos funcionam e não têm nada de errado, mas será que você consegue achar um atalho para isso?
+            
+                Obs: Não vimos o comando na aula, mas basta executar o comando abaixo para descobrir a resposta:
+                
+                docker-compose --help
+
+                Selecione uma alternativa
+
+                R: docker-compose restart
+
+
+
+            Resumo:
+            
+                Chegamos ao fim do treinamento de Docker, onde vimos as vantagens de trabalhar com containers, as diferenças em relação às máquinas virtuais.
+
+                Vimos também como rodar um único container, os comandos envolvidos com o docker run e as suas flags, inclusive a nomeação, remoção e criação de 
+                containers.
+                
+                Além disso, vimos sobre volumes, para armazenar e persistir dados em um container, criando um pequeno ambiente de desenvolvimento, e sobre redes, para 
+                realizar a comunicação entre containers.
+                
+                Utilizamos imagens prontas, como a do MongoDB e Node.js, e vimos como baixar imagens do Docker Hub, o repositório de imagens do Docker, e como criar a 
+                nossa própria imagem, além de disponibilizá-la para outros desenvolvedores utilizarem.
+                
+                Ao final do curso, migramos para uma aplicação, dividindo-a em pequenas partes, com cada parte sendo um serviço da nossa aplicação, e utilizando o 
+                Docker Compose para administrar os diversos containers envolvidos nisso, uma pequena introdução a microsserviços.
+
+
+            
+
+
+
+
+
+
+
+
+
+
+                
+
+                
+                
+
+            
+                
+
+            
