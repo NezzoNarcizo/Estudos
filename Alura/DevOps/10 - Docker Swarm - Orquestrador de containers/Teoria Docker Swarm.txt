@@ -1,0 +1,23 @@
+Aula 01: Cluster com Docker Swarm -------
+
+    O que é Docker Swarm?
+
+        Vamos entender porque utilizar o docker da forma que estavamos utilizando não é o suficiente.
+
+        O que podemos fazer com o Docker? Subir vários containers, com diversos serviços. Subimos 3, 6, 9 e assim por diante...O que acontece quando temos um número
+        imenso de containers? 30, 60, 90 etc?
+
+        Vamos lembrar que cada container é um processo a mais na máquina (Docker host).
+
+        Então, em cada container temos um serviço e externamente, podemos ter diversos processos o que pode fazer com que a nossa máquina/servidor não aguente pois
+        todos estarão consumindo muitos recursos, sejam eles, memória, processamento etc. Não sabemos exatamente o que está sendo executado em cada um destes containers.
+
+        O que pode ocorrer é que um dos container falhe, talvez outros containers dependam do serviço que estava rodando neste container que caiu. Isto faz com que os
+        outros container parem de funcionar mesmo que de maneira indireta. Isto demandará intervensão manual para que o container volte a funcionar da forma que antes
+        estava funcionando.
+
+        
+
+
+    
+    Questões aula 01:
