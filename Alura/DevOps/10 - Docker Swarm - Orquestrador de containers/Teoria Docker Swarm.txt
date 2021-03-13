@@ -14,10 +14,53 @@ Aula 01: Cluster com Docker Swarm -------
 
         O que pode ocorrer é que um dos container falhe, talvez outros containers dependam do serviço que estava rodando neste container que caiu. Isto faz com que os
         outros container parem de funcionar mesmo que de maneira indireta. Isto demandará intervensão manual para que o container volte a funcionar da forma que antes
-        estava funcionando.
+        estava funcionando. É neste momento que o Docker Swarm entra para resolver as coisas de uma forma "elegante".
+
+        Como assim? Vamos imaginar aqui que temos agora uma rede de computadores, e o que podemos fazer com uma rede de computadores? Posso criar um cluster, um conjunto
+        de máquinas agora para dividir determinado processamento, então, por exemplo, no primeiro caso qual é o problema? Que toda uma única máquina ali tem que carregar
+        todos aqueles outros containers de uma vez só e isso poderia acabar sobrecarregando ela.
+
+        Agora tendo um cluster, o que podemos fazer? Podemos instalar o Docker em todas essas máquinas de um mesmo cluster, que vamos ver como vai ser criado, e dividir
+        esses containers, toda essa carga entre essas máquinas dentro de um cluster, e agora não vamos sobrecarregar mais uma máquina em específico, mas vamos dividir 
+        toda essa carga entre elas.
+
+        Isso também significa que vamos conseguir resolver aquele problema, também queremos que caso um container pare de funcionar ele volte ao normal da forma que 
+        deveria. Como resolveremos isso? Precisamos ter alguém que faça o papel de orquestrar, de fazer todo esse controle do que vai ser colocado e onde, como ele vai
+        fazer os serviços voltarem a funcionar no caso de pararem.
+
+        E qual é o papel do orquestrador da forma que conhecemos? É reger uma orquestra, que nesse caso vão ser os próprios containers, e quem vai ser o orquestrador?
+        Será o Docker Swarm, ele vai fazer o papel de definir em qual máquina vai ser melhor rodado determinado container, se um container está pronto para ser reiniciado
+        em caso de falha ou não, e assim por diante.
+
+        O Docker Swarm vai agir como um orquestrador num Cluster de máquinas. Através de um dispatcher ele vai definir qual máquina é a mais apropriada para rodar 
+        determinado container.
+
+        Ele faz de maneira autônoma a escolha da máquina para rodar determinado container. Isso já é uma coisa bem interessante porque já conseguimos evitar aqueles
+        problemas todos de sobrecarga que podem acontecer.
+
+        E como dito antes, pode ser que algum container também por algum motivo falhe, e o que o Docker Swarm consegue fazer? Ele consegue através de políticas de restart
+        definir que esse contêiner vai voltar a funcionar de maneira autônoma, diretamente sem nenhuma intervenção, então o que estava ali com problema, vai parar de ter
+        problema porque um novo serviço vai ser instanciado ali para nós.
+
+        Vamos entender como vamos começar a criar o primeiro cluster, começar a criar um sistema com várias máquinas.
+
+
+    Usando a Docker Machine:
+
+        
 
         
 
 
     
     Questões aula 01:
+
+        01: O Docker Swarm apresenta uma série de vantagens em relação ao Docker usado de maneira tradicional. Marque as alternativas que contém essas vantagens:
+
+            Selecione 2 alternativas
+
+            R1: O Docker Swarm divide os containers entre múltiplas máquinas de um mesmo cluster de maneira automática.
+                Alternativa correta! Através do dispatcher o Docker Swarm define a melhor máquina para executar algum container
+
+            R2: O Docker Swarm consegue resetar containers automaticamente em caso de falhas.
+                Alternativa correta! O Docker Swarm tem capacidade de reiniciar containers a fim de manter a aplicação funcionando.
