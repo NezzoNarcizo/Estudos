@@ -1,3 +1,6 @@
+CMD na pasta de instalação do Virtual Box -> VBoxManage modifyvm "Virtual Machine Name" --nested-hw-virt on //Isto faz com que a opção "Habilitar VT-x/AMD-V Aninhado" habilite
+No PowerShell como administrador -> bcdedit /set hypervisorlaunchtype off //Isto faz com que o Hyperviser (Hyper-V) desabilite para as VMs funcionarem, mas o WSL para de funcionar
+
 Aula 01: Cluster com Docker Swarm -------
 
     O que é Docker Swarm?
