@@ -51,11 +51,187 @@ Aula 01: Cluster com Docker Swarm -------
 
     Usando a Docker Machine:
 
+        Já vimos que o Docker Swarm serve para que tenhamos diversas máquinas para dividir o nosso processamento. O legal é que com o Docker Machine não precisaremos de diversas máquinas para
+        fazer isso, trabalharemos com apenas uma máquina física e as demais serão virtuais.
+
+        Ela não é ferramenta crucial para que utilizemos o Docker Swarm, mas nos ajudará muito neste curso para fins didáticos. As máquinas virtuais que o Docker Machine criará formará o nosso
+        cluster.
+
+        A questão agora é...Como iremos criar estas máquinas virtuais? Como vamos utilizar o Docker Machine? Instalaremos o Docker Machine de acordo com este link:
+
+            https://docs.docker.com/machine/install-machine/
         
+        Com o comando '$ docker-machine' vemos uma sequência de comandos e instruções da aplicação...Vários comandos são bem parecidos com os do próprio Docker...
+        Por exemplo:
+
+            $ docker-machine ls - Irá nos listar todas as máquinas virtuais que criamos até o momento com o 'docker-machine'...
+
+            $ docker-machine ls
+            NAME   ACTIVE   DRIVER       STATE     URL                         SWARM   DOCKER      ERRORS
+
+        Agora se quisermos criar uma Docker Machine, uma máquina virtual pronta para rodar o Docker precisaremos rodar o comando:
+
+            $ docker-machine create ...
+
+            precisamos também informar o driver que o docker-machine utilizará para criar esta máquina virtual, então por exemplo, existem diversos drivers, mas o que vamos utilizar aqui neste
+            curso, por ser o mais famoso e o mais tranquilo de se instalar, será o VirtualBox...
+
+            Então além de instalarmos o Docker Machine , nós também vamos precisar instalar o VirtualBox (Já realizado em cursos anteriores), e como informaremos isso? Acrescentando um '-d'ao 
+            comando junto com 'virtualbox', por fim, colocamos o nome que queremos dar a nossa máquina virtual, neste curso no caso estou usando o mesmo que o instrutor 'vm1', então damos 'Enter'
+            e agora ele começará a criar esta máquina...
+
+            $ docker-machine create -d virtualbox vm1
+            
+            A saída será parecida com esta:
+            
+                Running pre-create checks...
+                Creating machine...
+                (vm1) Copying C:\Users\nesso\.docker\machine\cache\boot2docker.iso to C:\Users\nesso\.docker\machine\machines\vm1\boot2docker.iso...
+                (vm1) Creating VirtualBox VM...
+                (vm1) Creating SSH key...
+                (vm1) Starting the VM...
+                (vm1) Check network to re-create if needed...
+                (vm1) Windows might ask for the permission to configure a dhcp server. Sometimes, such confirmation window is minimized in the taskbar.
+                (vm1) Waiting for an IP...
+                Waiting for machine to be running, this may take a few minutes...
+                Detecting operating system of created instance...
+                Waiting for SSH to be available...
+                Detecting the provisioner...
+                Provisioning with boot2docker...
+                Copying certs to the local machine directory...
+                Copying certs to the remote machine...
+                Setting Docker configuration on the remote daemon...
+                
+                This machine has been allocated an IP address, but Docker Machine could not
+                reach it successfully.
+                
+                SSH for the machine should still work, but connecting to exposed ports, such as
+                the Docker daemon port (usually <ip>:2376), may not work properly.
+                
+                You may need to add the route manually, or use another related workaround.
+                
+                This could be due to a VPN, proxy, or host file configuration issue.
+                
+                You also might want to clear any VirtualBox host only interfaces you are not using.
+                Checking connection to Docker...
+                Docker is up and running!
+                To see how to connect your Docker Client to the Docker Engine running on this virtual machine, run: C:\Users\nesso\bin\docker-machine.exe env vm1
+
+        Este processo demora um tempo, onde baixa todos os arquivos necessários...
+        Se tudo der certo, ao final, somos informados que a máquina está rodando e que agora podemos nos conectar à ela...Podemos utilizar agora aquele comando para listar todas as máquinas
+        virtuais em execução...
+
+            $ docker-machine ls
+
+            Agora nos é apresentada a seguinte, ou semelhante, saída:
+
+            NAME   ACTIVE   DRIVER       STATE     URL                         SWARM   DOCKER      ERRORS
+            vm1    -        virtualbox   Running   tcp://192.168.99.106:2376           v19.03.12
+
+            Temos as informações do nome da máquina virtual, o driver que ela está utilizando, a URL e a versão do docker que está instalada na máquina...
+            Podemos nos conectar à esta máquina realizando o seguinte comando:
+
+                $ docker-machine ssh vm1
+
+                A seguinte saída nos é apresentada:
+
+                    ( '>')
+                   /) TC (\   Core is distributed with ABSOLUTELY NO WARRANTY.
+                  (/-_--_-\)           www.tinycorelinux.net
+        
+        
+            Se caso tivessemos criado a máquina mas ela não estivesse rodando, poderíamos iniciá-la com o comando:
+
+                $ docker-machine start "nome da vm"
+
+            Se utilizarmos este comando agora com a máquina que acabamos de criar, seremos informados que a máquina já está rodando...
+
+                Starting "vm1"...
+                Machine "vm1" is already running.
+
+            Agora que já aprendemos o básico com docker-machine, vamos avançar com o curso...
+
+        A partir de agora, iremos criando as nossas máquinas virtuais conforme formos precisando e, por fim, construir o nosso cluster...Só pra frizar mais uma vez, o que é um Cluster: Nada mais
+        que um conjunto de máquinas, físicas ou não, que dividem o processamento de determinadas aplicações, criaremos o nosso Swarm a partir destas máquinas virtuais leves.
+        
+        Então, só para dar aquela finalizada aqui, se dermos um 'docker -v' dentro da máquina virtual que criamos, ela vai listar a mesma versão que foi listada pela Docker Machine com o comando
+        '$ docker-machine ls', confirmando aqui que temos uma máquina virtual já com o Docker instalado. A ideia agora é ver como vamos criar o nosso primeiro cluster.
+
+    
+    Para saber mais: Cloud e Docker Machine:
+
+        Durante o curso, utilizaremos a Docker Machine apenas para criarmos nosso ambiente com diversas máquinas isoladas e iniciarmos nosso cluster.
+        Porém, a Docker Machine também é muito utilizada com provedores de serviço em nuvem, como a AWS! Podemos definir nossas credenciais, e, utilizando o driver amazonec2, temos a 
+        possibilidade de criar diversas máquinas nos servidores da Amazon!        
+        Caso tenha interesse, mais informações podem ser obtidas na documentação oficial.
+
+    
+    Criando o Cluster:
+
+        A partir da primeira máquina virtual que criamos, iremos iniciar o nosso cluster...
+        A partir de agora, sempre que formos nos referir ao nosso cluster, vamos chamar ele de Swarm, porque além de ser o nome da ferramenta, ele remete ao coletivo de animais em inglês,
+        enxame, bando, alcateia, e tem toda essa ideia de trabalho coletivo, de divisão de trabalho assim como queremos fazer com o Docker Swarm.
+
+        O que precisamos agora para criar o nosso Cluster? Precisamos acessar a nossa máquina virtual recém-criada, e já vimos que para fazer isso, executamos o comando:
+            
+            $ docker-machine ssh vm1
+
+        Agora precisamos ececutar um comando bem simples que é:
+
+            $ docker swarm init (Já dentro da máquina, nunca esquecer disso)
+
+        Nos é apresentado o seguinte erro:
+
+            docker@vm1:~$ docker swarm init
+            Error response from daemon: could not choose an IP address to advertise since this system has multiple addresses on different interfaces (10.0.2.15 on eth0 and 192.168.99.106 on eth1) 
+            - specify one with --advertise-addr
+
+        Se lermos o erro com calma, veremos que ele não conseguiu anunciar o IP que vai ser utilizado por essa máquina dentro do Swarm, ele tem tanto a possibilidade de usar o IP da máquina
+        virtual quanto o IP da minha máquina física, que são os dois drivers que ele está se referenciando o eth0 (10.0.2.15) e o eth1 (192.168.99.106). Ele está dizendo que eu tenho que
+        especificar o IP que eu quero através da '--advertise-addr'.
+
+        Mesmo que não tivessemos este erro, é sempre boa prática usarmos essas flags da '--advertise-addr', porque eu preciso fixar um IP para a minha máquina criadora do meu Swarm, para que 
+        todas as máquinas que foram entrar daqui para frente, elas consigam manter uma comunicação fixa e estável com quem criou o Swarm.
+
+        Então agora vamos tentar iniciar o Swarm da forma correta com o comando:
+
+            $ docker swarm init --advertise-addr "IP da máquina "Física""
+
+        "Física", porque na verdade é o IP da máquina virtual que estamos utilizando...
+        Agora temos a mensagem de que o Swarm foi inicializado:
+
+            Swarm initialized: current node (uf6tlac8zhq0m8an77xqgkjhx) is now a manager.
+
+            To add a worker to this swarm, run the following command:
+            
+                docker swarm join --token SWMTKN-1-3w716knv7dxqhaax04xpxjau0zh2tmkntybpr3g10sl403v3f3-bblekngv16esceoqytg2ugyef 192.168.99.106:2377
+            
+            To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+
+        Como temos a certeza de que esta máquina agora está em um Swarm?
+        Utilizamos o comando:
+
+            $ docker info
+
+            Na parte 'Swarm:' ela deve estar 'active'
+
+        Então todo o trabalho que teríamos se quiséssemos implementar essa ideia de divisão de carga e de políticas de restart na mão, já foi feita com um simples comando, e agora ele está
+        falando que além do Swarm ter isdo incializado, o meu nó corrente tem esse ID (uf6tlac8zhq0m8an77xqgkjhx) e é um manager, e quem é esse sinal corrente? É exatamente essa máquina que
+        criou o Swarm, porque a máquina que criou o Swarm, ela a partir desse momento vai ser considerada manager e líder desse Swarm.
+
+        E agora o que ela precisa ter? Workers ou "Trabalhadores" para realizar as tarefas árduas que vão ser impostas daqui pra frente. A partir de agora precisamos ententer o que são esses
+        tais de workers, como adicionar eles, qual o papel deles dentro do nosso Swarm e será que precisamos adicionar outros managers?
+
+    
+    Nesta aula, aprendemos:
+
+        - O Docker Swarm é um orquestrador
+        - O Docker Swarm é capaz de alocar e reiniciar containers de maneira automática
+        - Como criar máquinas já provisionadas para utilizar o Docker com a Docker Machine utilizando comando docker-machine create
+        - Um cluster é um conjunto de máquinas dividindo poder computacional
+        - Como criar um cluster utilizando o Docker Swarm utilizando o comando docker swarm init
 
         
-
-
     
     Questões aula 01:
 
@@ -68,3 +244,88 @@ Aula 01: Cluster com Docker Swarm -------
 
             R2: O Docker Swarm consegue resetar containers automaticamente em caso de falhas.
                 Alternativa correta! O Docker Swarm tem capacidade de reiniciar containers a fim de manter a aplicação funcionando.
+
+        
+        02: Vimos na última aula que a Docker Machine, por mais que não esteja relacionada diretamente ao Docker Swarm, pode nos ajudar bastante. Qual das alternativas abaixo contém uma 
+            funcionalidade da Docker Machine?
+
+            Selecione uma alternativa
+
+            R: Ao utilizar a Docker Machine, podemos criar máquinas virtuais prontas para executar Docker.
+               Alternativa correta! A Docker Machine cria máquinas virtuais bem leves já provisionadas com o Docker.
+
+        
+        03: Queremos criar nosso primeiro cluster para dividir os containers em diversas máquinas e não sobrecarregar uma única máquina. Qual dos comandos abaixo devemos utilizar para criar o 
+            cluster e darmos o primeiro passo para atingir nosso objetivo?
+
+            Selecione uma alternativa
+
+            R: docker swarm init
+               Alternativa correta! Além disso, a boa prática também seria utilizar a flag --advertise-addr.
+
+
+Aula 02: Responsabilidade dos nós workers -------
+
+    Criando o primeiro worker:
+
+        Temos até agora o nosso Swarm, temos uma máquina fazendo parte desse Swarm, é um nó, que é o nosso manager, o nosso líder até então, mas precisamos agora de alguém para realizar os
+        trabalhos, que carrega os contêiners e faça toda a aparte mais pesada de processamento.
+
+        Ou seja, temos o manager que é a máquina principal, mas precisamos das outras que ajudarão a manager a gerenciar, para isto que serve o Swarm.
+
+        Vamos ter o nosso líder, e ele terá seus "subordinados", e esses subordinados vão fazer exatamente o papel de carregar nossos containers enquanto o principal cordena tudo que vai
+        acontecer, vimos nas primeiras aulas que o computador principal faz o papel de orquestrador enquanto teremos os caras que vão ser responsáveis pelo carregamento das informações,
+        processamento de containers e tudo mais.
+
+        A pergunta que fica agora se formos observar é, como vamos criar esses dois workers? Se formos pensar um pouco mais abstrato, estamos colocando duas novas máquinas, dois novos nós dentro
+        desse Swarm, precisamos criar duas novas máquina virtuais, e para criarmos novas máquinas, já sabemos que é só utilizar aquele clássico comando 'docker-machine create -d virtualbox' e 
+        aqui passamos o nome da VM. No caso segui a sequencia como o instrutor e coloquei 'vm2' e 'vm3'.
+
+        A questão agora é como estes caras vão ser inseridos no Swarm, se buscarmos no terminal, quando criamos o nosso Swarm ele já deu esse comando. Rode o seguinte comando para adicionar mais
+        nós ao Swarm (docker swarm join --token SWMTKN-1-3w716knv7dxqhaax04xpxjau0zh2tmkntybpr3g10sl403v3f3-bblekngv16esceoqytg2ugyef 192.168.99.106:2377).
+
+           $ docker swarm join --token SWMTKN-1-3w716knv7dxqhaax04xpxjau0zh2tmkntybpr3g10sl403v3f3-bblekngv16esceoqytg2ugyef 192.168.99.106:2377
+
+        Como ele sabe que o Swarm que tem que se conectar é o que criamos? Por causa do IP! 192.168.99.106 na porta 2377. Esta é a nossa manager, que é a porta que o Docker Swarm necessita para
+        fazer a comunicação entre os nós que vão fazer parte de um Swarm.
+
+        Após terminar de criar as máquinas teremos que acessá-las através do comando 'docker-machine ssh 'nomeDaMaquina''. Depois de estar dentro da máquina, basta usar o comando informado 
+        na criação do Swarm, aquele que citamos acima, e colar na linha de comando, dentro da máquina virtual acessada. Veremos a seguinte saída:
+
+            docker@vm2:~$ docker swarm join --token SWMTKN-1-3w716knv7dxqhaax04xpxjau0zh2tmkntybpr3g10sl403v3f3-bblekngv16esceoqytg2ugyef 192.168.99.106:2377
+            This node joined a swarm as a worker.
+
+        O comando é grande, mas não precisamos decorá-lo. Tecnicamente não teriamos mais aquele comando disponível no terminal, após executar um clear, exit etc...
+        O que precisamos fazer se quisermos recuperar aquele comando para que possamos adicionar mais workers? É simples...Basta que executemos o seguinte comando dentro da máquina manager:
+
+            docker@vm1:~$ docker swarm join-token worker
+            To add a worker to this swarm, run the following command:
+            
+                docker swarm join --token SWMTKN-1-3w716knv7dxqhaax04xpxjau0zh2tmkntybpr3g10sl403v3f3-bblekngv16esceoqytg2ugyef 192.168.99.106:2377
+
+        Ali ele nos retornou o comando necessário para adicionar novos workers...
+
+        Então agora precisamos entender, depois que nós já adicionamos esse primeiro líder e agora temos nosso workers, como esses caras vão conseguir se comunicar, como conseguimos listar o
+        que é que tem dentro do nosso Swarm. Precisamos arrumar um pouco a casa para entender que no fim das contas esse líder vai fazer o papel de orquestrar, de definir tudo que vai acontecer
+        aqui dentro, enquanto nossos workers vão fazer o trabalho de carregar os nossos containers.
+
+    Listando e removendo nós:
+
+        
+
+    
+    Questões aula 02:
+
+        01 - Agora queremos adicionar nós ao swarm. Qual das alternativas abaixo é realmente uma responsabilidade dos nós workers dentro do swarm?
+
+            Selecione uma alternativa
+
+            R: São responsáveis pela execução dos containers dentro do swarm.
+
+            Alternativa correta! Como o nome diz, eles são os trabalhadores, responsáveis por rodar containers.
+                    
+
+                    
+
+
+
