@@ -311,9 +311,393 @@ Aula 02: Responsabilidade dos nós workers -------
 
     Listando e removendo nós:
 
+        Até o momento aprendemos a criar o nosso Swarm com um manager dentro, conseguimos já adicionar workers também a esses Swarms, mas ainda precisamos saber como listar quais são os nós e
+        quantos são eles dentro do Swarm e como conseguimos remover também os nós a partir do momento que eles estão fazendo parte de um Swarm.
+
+        Apesar de nós sabermos no momento que adicionamos um manager e dois workers, totalizando três nós, precisamos de uma forma sucinta para consultar isso, por isso temos o comando:
+
+            $ docker node ls
+
+            Ele lista para nós o ID, o hostname, o status, se está disponível, se é lider ou não do swarm e a versão da "engine" instalada, ou seja, a versão do docker que eles estão rodando.
+
+            ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+            uf6tlac8zhq0m8an77xqgkjhx *   vm1                 Ready               Active              Leader              19.03.12
+            j9wyh6w89cpk2eh1hx749n7kv     vm2                 Ready               Active                                  19.03.12
+            tycqgy7kndfjaznweg11xprsg     vm3                 Ready               Active                                  19.03.12
+
+        Então por exemplo, ele listou os IDs dos nossos nós e no nó que rodou o comando ele colocou um asterisco. Vemos que é nossa vm1 que rodou o comando, o status é 'ready', que significa
+        que está rodando sem nenhum problema.
+
+        O que os outros nós diferem do primeiro? Que eles não tem a informação em 'MANAGER STATUS', se eles não tem nada de manager status dentro deles, significa para o Swarm que eles são
+        workers, então esses dois caras aqui por não terem informações nessa coluna, significa que são apenas workers do Swarm.
+
+        Mais uma outra pergunta que ficaria: Será que eu posso executar esse 'docker node ls' em qualquer nós do meu Swarm? Se conectarmos ao nosso segundo nó, 'vm2', e tentarmos executar o 
+        mesmo comando, teremos a seguinte saída: 
         
+            "Error response from daemon: This node is not a swarm manager. Worker nodes can't be used to view or modify cluster state. Please run this command on a manager node or promote the 
+                current node to a manager."
+
+            Ele detalha tudo aqui perfeitamente para nós, ele fala "Esse nó não é um manager do Swarm. Workers nnão podem ser usados para visualizar ou alterar o estado do seu cluster. Por favor
+            rode este comando em um nó manager ou promova o nó, no qual você se encontra, para manager."
+
+        Isto significa que se tentassemos na nossa vm3 ou em outros nós que não sejam manager teremos a mesma mensagem de erro.
+
+        Uma coisa que falta ainda, agora que conseguimos adicionar e listar os nossos nós, precisamos fazer esse papel de remoção. Podemos tentar remover um nó primeiro executando o comando:
+
+            $ docker node ls
+
+            Então verificamos qual o é o ID do nó que queremos remover, e então executamos o comando:
+
+            $ docker node rm "ID do nó"
+
+        Receberemos a seguinte saída:
+                    
+            "Error response from daemon: rpc error: code = FailedPrecondition desc = node tycqgy7kndfjaznweg11xprsg is not down and can't be removed"
+
+            Aqui diz que:
+
+            "Este nó não está down e não pode ser removido"
+
+        Então, para que possamos deixar nossa vm3 como down, temos que nos conectar à ela e executar o seguinte comando:
+
+            $ docker swarm leave
+
+            Receberemos a seguinte saída:
+
+                "Node left the swarm."
+
+        Apesar de que um nó não tem autonomia para alterar o Swarm, ele é responsável pela mudança de seu status, ação pré-requerida para que seja removido do Swarm pelo nó líder...
+        Sabendo disso agora voltamos ao nosso nó principal e executamos novamente o comando: $ docker node rm "ID do nó"
+
+        Primeiro vamos executar o comando: "$ docker node ls" para verificar se realmente o status do nós 3 foi modificado
+
+            ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+            uf6tlac8zhq0m8an77xqgkjhx *   vm1                 Ready               Active              Leader              19.03.12
+            j9wyh6w89cpk2eh1hx749n7kv     vm2                 Ready               Active                                  19.03.12
+            tycqgy7kndfjaznweg11xprsg     vm3                 Down                Active                                  19.03.12
+
+            Podemos verificar que agora o STATUS do nó 3 está Down...Vamos ao comando de remover o nó agora...
+
+            $ docker node rm tycqgy7kndfjaznweg11xprsg
+            
+            Agora se executarmos mais uma vez o comando: "$ docker node ls" veremos a seguinte saída...
+
+            ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+            uf6tlac8zhq0m8an77xqgkjhx *   vm1                 Ready               Active              Leader              19.03.12
+            j9wyh6w89cpk2eh1hx749n7kv     vm2                 Ready               Active                                  19.03.12
+
+            Confirmamos que o nó 3 foi removido...Quem realmente executou a exclusão do nó foi o nosso 'Leader'
+        
+        Agora vamos readicionar o nó 3 ao Swarm...
+        Realizamos o comando "docker swarm join-token worker" para pegar o comando com a chave necessária para adição...
+
+            Nossa saída...
+
+            To add a worker to this swarm, run the following command:
+
+            docker swarm join --token SWMTKN-1-3w716knv7dxqhaax04xpxjau0zh2tmkntybpr3g10sl403v3f3-bblekngv16esceoqytg2ugyef 192.168.99.106:2377
+
+        Utilizamos este comando no nó 3 novamente...
+
+            "This node joined a swarm as a worker."
+
+            Executamos agora o comando "docker node ls" novamente no nó líder...
+
+            E...O nó 3 está presente mais uma vez...
+
+            ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+            uf6tlac8zhq0m8an77xqgkjhx *   vm1                 Ready               Active              Leader              19.03.12
+            j9wyh6w89cpk2eh1hx749n7kv     vm2                 Ready               Active                                  19.03.12
+            u1hquwd0mnvktpn9d7wcqvogu     vm3                 Ready               Active                                  19.03.12
+
+        Até o momento então aprendemos como:
+
+            Listar, adicionar, criar um cluster e outras operações básicas dentro do Swarm.
 
     
+    Subindo um serviço:
+
+        Chegou o momento em que vamos criar o nosso primeiro container dentro do nosso Swarm. Onde iremos subir este container? O ideal é que façamos isso em um dos nosso workers, ou seja, na
+        vm1 ou vm3, pois é o trabalho deles executar os container, fazer toda a carga pesada, enquanto, a princípio, o trabalho de orquestração e de leitura de escritas vai ser realizada pelo
+        nosso manager.
+
+        Se queremos subir um container, já aprendemos isso no curso de docker, podemos ir no terminal do nó que desejamos, por exemplo, vm2 que é um dos nossos workers e executar aquele comando
+        "docker container run" passando a porta em que queremos fazer o binding (Mapear atributos em requisições HTTP para objetos ou mapas), no caso a porta "8080" da nossa vm2 com a porta "3000"
+        do container que criamos, colocamos para isso o "-d" para não travar o nosso terminal, e por fim colocamos "aluracursos/barbearia" que é o nome da imagem que iremos utilizar...
+
+            $ docker container run -p 8080:3000 -d aluracursos/barbearia
+
+            O download da imagem irá iniciar...
+
+        Após o download podemos executar um "docker container ls" para verificar que o nosso container está em execução, e podemos conferir que ele está fazendo binding da porta 8080 com a 3000.
+
+            CONTAINER ID        IMAGE                   COMMAND                  CREATED             STATUS              PORTS                    NAMES
+            e851f40e17bf        aluracursos/barbearia   "/bin/sh -c 'node se…"   2 minutes ago       Up 2 minutes        0.0.0.0:8080->3000/tcp   laughing_blackbur
+
+        Como é que acessamos essa aplicação agora? A ideia inicial é irmos até o browser e coloquemos "localhost:8080", mas fazendo isso teremos uma mensagem de erro...Isto porque o nosso
+        container está executando em nossa vm2 e não na nossa máquina local propriamente dito...Esta vm2 tem seu próprio IP e suas próprias configurações básicas. A nossa máquina física nesse
+        curso, está sendo usada só para emular as máquinas que estamos criando para colocar no nosso Swarm.
+
+        Para acessar a aplicação que acabamos de subir com o container, precisamos descobrir o endereço IP da vm2. Ela por ser um nó do nosso Swarm, podemos conseguir informações detalhadas dela
+        pelo Leader. Assim como o Docker, usando ele Stand Alone que fizemos no curso anteior, conseguíamos entender e inspecionar diversas informações sobre um container, sobre uma imagem, sobre
+        um volume...Faz todo o sentido que agora consigamos também ver informações bem mais detalhadas sobre um determinado nó.
+
+        Para inspecionar um nó, usaremos o seguinte comando dentro do nosso manager que é a nossa vm1:
+
+            $ docker node inspect vm2
+
+            Teremos a seguinte saída:
+
+            [
+                {
+                    "ID": "j9wyh6w89cpk2eh1hx749n7kv",
+                    "Version": {
+                        "Index": 35
+                    },
+                    "CreatedAt": "2021-03-25T00:56:22.33036158Z",
+                    "UpdatedAt": "2021-03-31T18:11:50.593637781Z",
+                    "Spec": {
+                        "Labels": {},
+                        "Role": "worker",
+                        "Availability": "active"
+                    },
+                    "Description": {
+                        "Hostname": "vm2",
+                        "Platform": {
+                            "Architecture": "x86_64",
+                            "OS": "linux"
+                        },
+                        "Resources": {
+                            "NanoCPUs": 1000000000,
+                            "MemoryBytes": 1033252864
+                        },
+                        "Engine": {
+                            "EngineVersion": "19.03.12",
+                            "Labels": {
+                                "provider": "virtualbox"
+                            },
+                            "Plugins": [
+                                {
+                                    "Type": "Log",
+                                    "Name": "awslogs"
+                                },
+                                {
+                                    "Type": "Log",
+                                    "Name": "fluentd"
+                                },
+                                {
+                                    "Type": "Log",
+                                    "Name": "gcplogs"
+                                },
+                                {
+                                    "Type": "Log",
+                                    "Name": "gelf"
+                                },
+                                {
+                                    "Type": "Log",
+                                    "Name": "journald"
+                                },
+                                {
+                                    "Type": "Log",
+                                    "Name": "json-file"
+                                },
+                                {
+                                    "Type": "Log",
+                                    "Name": "local"
+                                },
+                                {
+                                    "Type": "Log",
+                                    "Name": "logentries"
+                                },
+                                {
+                                    "Type": "Log",
+                                    "Name": "splunk"
+                                },
+                                {
+                                    "Type": "Log",
+                                    "Name": "syslog"
+                                },
+                                {
+                                    "Type": "Network",
+                                    "Name": "bridge"
+                                },
+                                {
+                                    "Type": "Network",
+                                    "Name": "host"
+                                },
+                                {
+                                    "Type": "Network",
+                                    "Name": "ipvlan"
+                                },
+                                {
+                                    "Type": "Network",
+                                    "Name": "macvlan"
+                                },
+                                {
+                                    "Type": "Network",
+                                    "Name": "null"
+                                },
+                                {
+                                    "Type": "Network",
+                                    "Name": "overlay"
+                                },
+                                {
+                                    "Type": "Volume",
+                                    "Name": "local"
+                                }
+                            ]
+                        },
+                        "TLSInfo": {
+                            "TrustRoot": "-----BEGIN CERTIFICATE-----\nMIIBajCCARCgAwIBAgIUKEOhSAjR7FPZKcH+iPMMA2T27i8wCgYIKoZIzj0EAwIw\nEzERMA8GA1UEAxMIc3dhcm0tY2EwHhcNMjEwMzIwMTkyODAwWhcNNDEwMzE1MTky\nODAwWjATMREwDwYDVQQDEwhzd2FybS1jYTBZMBMGByqGSM49AgEGCCqGSM49AwEH\nA0IABHOI4VRH807sqAc2IA+v7Y5KmpSEn41cCC9eKxp5LqV682AWrLutBZBaoMFY\nvVdiOyPONXH9B8AzdJD6VE3ifdyjQjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMB\nAf8EBTADAQH/MB0GA1UdDgQWBBQaMA1e0wbub/ig0gbb7etkuyyWPTAKBggqhkjO\nPQQDAgNIADBFAiA316oy+8K/wQWS6d4r84liL9t8ulOKxw776XLMIEkMCQIhAI00\ndVqnQmslCaafl4GeQJ7t/huE2m6BKP5T+8Rs6Dg6\n-----END CERTIFICATE-----\n",
+                            "CertIssuerSubject": "MBMxETAPBgNVBAMTCHN3YXJtLWNh",
+                            "CertIssuerPublicKey": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEc4jhVEfzTuyoBzYgD6/tjkqalISfjVwIL14rGnkupXrzYBasu60FkFqgwVi9V2I7I841cf0HwDN0kPpUTeJ93A=="
+                        }
+                    },
+                    "Status": {
+                        "State": "ready",
+                        "Addr": "192.168.99.107"
+                    }
+                }
+            ]
+
+            Muitas informações sobre o nosso nó foram exibidas, a informação que precisamos está no último bloco "Status", ele mostra o endereço IP, que é 192.168.99.107, se formos agora 
+            novamente no browser e colocarmos o endereço 192.168.99.107:8080, veremos o site da "Barbearia Alura" ser exibido.
+
+        Mas...Vamos pensar na estrutura do nosso Swarm...Será que a nossa vm1 e vm3 enxergam este container com a aplicação que está executando na vm2? Será que sabem de algum modo da existência
+        dele? Porque a função do Swarm além de toda divisão do trabalho é manter nossa aplicação sempre disponível.
+
+        A ideia é que todos os nós saibam o que está sendo feito para que eles consigam se comunicar de maneira correta, para não ter nenhum tipo de telefone sem fio dentro do Swarm.
+
+        E para confirmarmos de uma maneira bem simples que os nossos nós sabem da existência desse container, é irmos em cada um deles, por exemplo, e executar um "docker container ls"...
+        Verificamos que não foi exibido nada em nenhum dos outros nós (vm1, vm3), enquanto na vm2 está sendo exibidos os dados deste container...
+
+        Por quê isto está acontecendo? Porque com o comando "docker container run" na vm2 fizemos com que o container e sua aplicação rodassem em escopo local, e não no escopo do Swarm como
+        queremos. Como então podemos criar um container e rodar ele no escopo do Swarm? O primeiro passo será remover o container que criamos...
+
+            $ docker container rm e8 --force
+
+            removido...
+
+        Agora queremos subir esse container de uma forma que todos saibam da existência dele, e como podemos fazer isso? Como queremos subir um container no Swarm de forma que todos vejam
+        não trataremos mais como um simples container, mas sim como um serviço.
+
+        Para criarmos um serviço dentro do nosso Swarm, temos um comando específico para isso, que é o "docker service create", após isso a sintaxe é bem parecida com a da criação de um container
+        comum.
+
+        Inserimos o nosso "-p 8080:3000", não precisamos mais do "-d", porque este novo comando por padrão não trava o terminal, e, por fim, a imagem que queremos utilizar, "aluracursos/barbearia"...
+        Agora como resultado temos aquele mesmo erro que vimos aquela hora que tentamos alterar o Swarm através de um simples worker:
+        "Error response from daemon: This node is not a swarm manager. Worker nodes can't be used to view or modify cluster state. 
+            Please run this command on a manager node or promote the current node to a manager.", o motivo é o mesmo, como agora estamos tentando criar um serviço
+        no escopo do Swarm e não um simples container local, não temos autonomia para realizar esta alteração à partir de um simples worker.
+
+        Sendo assim para que possamos realizar com sucesso esta tarefa precisamos executar este comando dentro do nosso manager, a nossa vm1...
+
+            docker@vm1:~$ docker service create -p 8080:3000 aluracursos/barbearia
+
+        Temos a seguinte saída:
+
+            lrtj4rn0a8nkpl6pysqg3wwfx
+            overall progress: 1 out of 1 tasks
+            1/1: running   [==================================================>]
+            verify: Service converged
+        
+        Agora ele carregou tudo certinho e informou que o serviço convergiu.
+
+
+    Tarefas e o Routing Mesh:
+
+        Serviço convergido nada mais é do que serviço criado. Agora temos um container sendo executado no escopo do Swarm. Agora como listamos os serviços/containers? Podemos realizar o famoso
+        comando do Docker:
+
+            $ docker container ls
+
+            Nossa saída...
+
+            CONTAINER ID        IMAGE                          COMMAND                  CREATED             STATUS              PORTS               NAMES
+            6c866926aa53        aluracursos/barbearia:latest   "/bin/sh -c 'node se…"   11 minutes ago      Up 11 minutes                           strange_hypatia.1.owo4fl9prahzfrejlr7rtvvph
+
+        Vamos usar também o comando:
+
+            $ docker service ls
+
+            Nossa saída
+
+            ID                  NAME                MODE                REPLICAS            IMAGE                          PORTS
+            lrtj4rn0a8nk        strange_hypatia     replicated          1/1                 aluracursos/barbearia:latest   *:8080->3000/tcp
+            
+        Temos o ID do container, o nome, etc...Vamos entender agora o que quer dizer replicado....
+        Podemos ver que ele está fazendo binding na porta 8080 com a 3000, mas nós não sabemos uma coisa ainda, em qual máquina ele está sendo executado? Será que á a vm1, vm2 ou vm3? Porque
+        temos um asterisco na frente da porta, não sabemos de qual vm é...
+
+        Se voltarmos nas informações do console, veremos que ele também criou uma tarefa...
+
+            "overall progress: 1 out of 1 tasks"
+
+        ...e o que é essa tal de tarefa? O que isso quer dizer? Uma tarefa nada mais é do que a instância de um serviço que foi criado, então vamos parar para pensar, temos um serviço que criamos,
+        uma ideia a ser realizada e criamos logo depois de uma tarefa que é a instância desse serviço na prática, se parar para pensar, é como se o serviço fosse meioo que a receita e a task que
+        é só a execução desa receita propriamente dita.
+
+        Se quisermos ver aonde esta tarefa essa tarefa está sendo executada, podemos vir aqui e dar um "docker service ps" e por fim, botar o ID do serviço que queremos ver o detalhe, quais tasks
+        esse serviço tem.
+
+        Vamos usar aqui "lr", que é o inicio da ID, dando um 'Enter', ele mostra diversas informações, como por exemplo o ID dessa tarega e o nome. Repare que é o mesmo nome do nosso serviço
+        seguido de '.1' a imagem que ele está executando. Ele está utilizando a vm1, o estado desejado é que ele esteja rodando e ele realmente está e não vemos nenhum erro...
+
+            docker@vm1:~$ docker service ps lr
+            ID                  NAME                    IMAGE                          NODE                DESIRED STATE       CURRENT STATE             ERROR                              PORTS
+            owo4fl9prahz        strange_hypatia.1       aluracursos/barbearia:latest   vm1                 Running             Running 26 minutes ago
+
+        Então perfeito, sabemos que agora o nosso serviço, a nossa tarega está sendo executada na nossa vm1, ou seja, tem um container sendo executado na nossa vm1, só que agora ele está no
+        escopo do Swarm, e o que isso muda? Porque agora é legal ter isso no escopo do Swarm? Se voltarmos na nossa aplicação e dermos F5 (192.168.99.106:8080), ainda estará funcionando, mas 
+        agora o que conseguimos fazer?
+
+        Para verificar as principais diferenças, vamos executar um "docker node inspect ...", para ver o IP da nossa vm2 e vm3...Verificamos que o IP da vm2 é '192.168.99.107'
+        e da vm3 é '192.168.99.108'. Se colocarmos estes IPs no browser na porta 8080 será que funciona? Se fizermos os testes veremos que sim.
+
+        Então, por mais que o serviço esteja sendo executado, a princípio o container esteja sendo mantido pela vm1, qualquer outra máquina consegue acessar esse container agora.
+
+        E como isso acontece? Isso acontece porque agora quando fazemos essa requisição para a porta 8080 para o nosso Swarm, não mais para um nó específico, através de um cara chamado
+        Routing Mesh, ele consegue fazer esse redirecionamento, e ele vai procurar se tem algum aplicação sendo executada em alguma porta 8080 de algum nó dentro do nosso Swarm, ele vai ver,
+        nesse caso, que temos um serviço na vm1, então qualquer outra máquina, qualquer outro nó que recebe uma requisição para a porta 8080, esta requisição vai ser redirecionada para o nó que
+        tem o serviço de fato. Isto significa que a porta 8080 está sendo utilizada no escopo todo do Swarm.
+
+        E se tentarmos subir outra aplicação na porta 8080? Teremos um erro...
+
+            Error response from daemon: rpc error: code = InvalidArgument desc = port '8080' is already in use by service 'strange_hypatia' (lrtj4rn0a8nkpl6pysqg3wwfx) as an ingress port
+
+        O erro mostra que já temos o serviço 'strange_hypatia', utilizando a porta desejada, e que não pode ser utilizada como uma porta de ingresso.
+
+        Só para vermos um pouco mais do que o Docker Swarm é capaz de fazer, se viermos na nossa vm1 novamente, e executarmos o comando "docker container ls"...
+
+            CONTAINER ID        IMAGE                          COMMAND                  CREATED             STATUS              PORTS               NAMES
+            6c866926aa53        aluracursos/barbearia:latest   "/bin/sh -c 'node se…"   About an hour ago   Up About an hour                        strange_hypatia.1.owo4fl9prahzfrejlr7rtvvph
+
+        ...veremos que no fim das contas temos realmente um container sendo executado aqui, e esse container foi criado pela tarefa que veio lá do serviço que criamos.
+
+        Se executarmos o comando "docker container rm" e colocarmos o ID do container que está executando o nosso serviço, início 6c, acompanhado de '--force' ao final, removemos esse container,
+        podemos verificar com "docker container ls", que o container foi removido. 
+        
+            Obs: Como estamos na máquina 'leader' notamos que já existe outro container mas com o ID diferente, ou seja, 
+            o antigo container foi removido, isto aconteceu porque o Swarm criou o serviço no mesmo nó. Este teste funciona melhor em máquinas que são simplesmente workers, pois de fato o 
+            container some. Veremos mais pra frente no curso como deixar o nó leader apenas como gerenciador dos outros nós, e não sendo mais um nó no qual o Swarm pode alocar serviços.
+
+        Como executamos o "docker container ls" na máquina leader, e vimos que foi criado um novo container, podemos agora executar o comando "docker service ps" acrescentando o ínicio do ID do
+        serviço 'lr' veremos que agora o serviço está rodando no nó vm2, o serviço foi realocado automaticamente pelo Swarm em outro nó.
+
+        Agora o "docker container ls" na vm1 não mostra mais nada...Podemos fazer mais vezes este mesmo teste, indo na nossa vm2 e removendo o container para ver o processo se repetindo.
+        Vimos que da forma que está configurado o serviço acabou caindo dentro da nossa manager...E estudaremos sobre isso mais a frente. Avançaremos nos estudos sobre a manager.
+
+
+        Nesta aula, aprendemos:
+
+        - Que nós workers são responsáveis por executar containers
+        - Comandos de leitura e visualização de nós, como o docker node ls
+        - Comandos que leem ou alteram o estado do swarm só podem ser executados em nós managers
+        - O comando docker container run sobe containers em escopo local e o docker service create cria serviços em escopo do swarm
+        - Tarefas são instâncias de serviços
+        - Portas são compartilhadas entre nós do swarm e são acessíveis a partir de qualquer nó graças ao routing mesh
+        
+        
     Questões aula 02:
 
         01 - Agora queremos adicionar nós ao swarm. Qual das alternativas abaixo é realmente uma responsabilidade dos nós workers dentro do swarm?
@@ -323,7 +707,245 @@ Aula 02: Responsabilidade dos nós workers -------
             R: São responsáveis pela execução dos containers dentro do swarm.
 
             Alternativa correta! Como o nome diz, eles são os trabalhadores, responsáveis por rodar containers.
-                    
+
+        
+        02 - Para executarmos comandos de leitura, como por exemplo docker node ls, e/ou alteração no estado do swarm, temos uma condição. Qual das alternativas abaixo contém essa condição?
+
+            Selecione uma alternativa
+
+            R: Podem ser executados apenas em nós managers.
+
+            Alternativa correta! Tais comandos ficam restritos apenas aos nós managers dentro do swarm.
+
+        
+        03 - Vimos na última aula uma diferença bem importante entre os comandos docker service create e docker container run. Qual é essa diferença?
+
+            Selecione uma alternativa
+            
+            R: O comando docker service create no final cria um container em escopo do swarm e o docker container run em escopo local.
+
+            Alternativa correta! Como vimos, essa é uma grande diferença entre os dois comandos.
+
+        
+        04 - Qual artifício do Docker Swarm permite que nós possamos acessar quaisquer serviços a partir do IP de qualquer nó dentro do swarm, apenas informando a porta?
+
+            Selecione uma alternativa
+
+            R: Routing Mesh.
+
+            Alternativa correta! Graças ao Routing Mesh conseguimos acessar diferentes serviços a partir de qualquer IP pertencente ao swarm.
+
+
+Aula 03: Gerenciando o cluster com managers -------
+
+    O papel do manager:
+
+        Nessa aula agora vamos ter um estudo um pouco mais teórico, mas ainda também prático sobre o papel efetivo dos managers dentro do nosso Swarm.
+
+        Na aula passada estudamos sobre worker, como subimos agora um serviço para que consigamos subir um container no escopo do Swarm e essas coisas. Mas agora queremos saber qual é o papel
+        do manager, será que ele só orquestra e administra o container? O que pode acontecer de diferente, o que pode ser causado de problemas para nós? Vamos imaginar um caso mais real...
+
+        Vamos supor que sejam três máquinas reais, máquinas físicas, temos por exemplo máquina 1, máquina 2 e máquina 3, assim como estão dispostos nossos nós, elas estão em algum lugar do mundo.
+
+        Aí de repente a nossa máquina 1 pega fogo, queima, sei-lá, é destruída, o que vai acontecer? A minha máquina 1 vai parar de funcionar, consequentemente eu perdi o meu manager, eu não tenho
+        mais um manager no meu Swarm, o que isso pode acarretar de problema para mim? Muitas coisas.
+
+        Ainda temos o nosso serviço e nossos nós funcionando da aula anterior, e se tentarmos simular esta situação onde o nó manager é perdido? Temos o comando "docker swarm leave", se tentarmos
+        executar este comando, o próprio Docker nos enviará a mensagem:
+
+        "Error response from daemon: You are attempting to leave the swarm on a node that is participating as a manager. Removing the last manager erases all current state of the swarm. 
+                        Use `--force` to ignore this message."
+
+        Esta mensagem diz: Você está tentando deixar o Swarm a partir de um nó manager. Removendo o último manager (Pois no caso criamos apenas um) apagará todo o estado atual do Swarm.
+        
+        Ou seja, todas as nossas configurações serão perdidas...Mesmo assim ele ainda sugere o comando "--force" para o caso de ser isso mesmo que queremos fazer.
+
+            docker@vm1:~$ docker swarm leave --force
+            Node left the swarm.
+
+        Realizar este passo acarretará na construção do Zero do nosso Swarm, mas é importante para ver o que pode acontecer em algum momento se não tomarmos conta e não observarmos o estado
+        do nosso Swarm desde o início.
+
+        Agora que não temos um nó manager, as nossas workers estão perdidas, por quê? Porque como esse cara não faz parte do nosso Swarm mais, se eu fizer qualquer comando aqui respectivo ao 
+        antigo Swarm, por exemplo um "dsocker node ls", ele irá dizer que este nó não é nenhum Swarm manager e nem faz parte de um Swarm, faz todo sentido...
+
+            docker@vm1:~$ docker node ls
+            Error response from daemon: This node is not a swarm manager. Use "docker swarm init" or "docker swarm join" to connect this node to swarm and try again.
+
+        Eu não consigo mais executar comandos do escopo do Swarm nesta máquina agora, não faz parte mais de um Swarm. Significa que se eu tentar subir algum serviço novo, por exemplo, 
+        "docker service create -p 8080:3000 aluracursos/barbearia"....
+
+            Error response from daemon: This node is not a swarm manager. Use "docker swarm init" or "docker swarm join" to connect this node to swarm and try again.
+
+        Não vamos conseguir porque esse cara ainda é um worker, assim como a nossa vm3. Significa que nós não vamos mais conseguir ler e nem alterar nenhuma informação do nosso Swarm, porque
+        o nosso único manager, o único cara que era responsável por isso não existe mais.
+
+        Porém uma coisa interessante é que o serviço nos outros dois nós (vm2 e vm3) ainda está executando, podemos verificar no browser. Não funciona mais apenas na vm1.
+        O que isso quer dizer? Em certo ponto é uma coisa boa, pois, por mais que agora não tenhamos mais a administração do nosso Swarm, todos os serviços que lá estavam continuam funcionando
+        sem nenhum problema, por mais que não tenha mais um manager. O lado negativo é que não conseguimos mais alterar o estado do nosso Swarm e não conseguimos mais ver nenhuma informação.
+
+        Veremos agora como contornar este problema...
+
+    
+    Como fazer backup do Swarm:
+
+        Como poderíamos ter evitado que toda a configuração do Swarm desaparece-se? Como conseguiremos fazer o backup do nosso Swarm de maneira correta?
+        Executamos o comando para fazer as outras máquinas deixarem o Swarm também...
+
+            $ docker-machine ssh vm3 /depois/ $ docker swarm leave
+            $ docker-machine ssh vm2 /depois/ $ docker swarm leave
+
+        Agora tudo o que tinhamos no Swarm foi apagado...
+
+        Vamos recriar o Swarm do 0 agora...Na vm1 executaremos o comando:
+
+            $ docker swarm init --advertise-addr 192.168.99.106 
+
+            Agora entrar em cada um dos workers e adicionar ao Swarm com o código - 
+                (docker swarm join --token SWMTKN-1-2azgwuekfzuktad34274gc322vavuwqe2p4xwohncm47f7c8p0-3bygfhoibe6mnbgg3c9xb26y6 192.168.99.106:2377)
+
+        Agora vamos recriar o serviço à partir da máquina 1...
+
+            $ docker service creater -p 8080:3000 aluracursos/barbearia
+
+            ipqucvqhh4bev9dlccenkog0z
+            overall progress: 1 out of 1 tasks
+            1/1: running   [==================================================>]
+            verify: Service converged
+
+            Serviço convergiu, verificamos com:
+
+            $ docker service ls
+
+            ID                  NAME                MODE                REPLICAS            IMAGE                          PORTS
+            ipqucvqhh4be        blissful_lamarr     replicated          1/1                 aluracursos/barbearia:latest   *:8080->3000/tcp
+
+        Como é que podemos fazer um backup do nosso Swarm em determinados momentos para evitar que alguma tragédia aconteça e tenhamos um ponto de retorno para não ter que fazer tudo do Zero
+        novamente? Poderíamos ter feito o seguinte, copiado todos os nossos logs, todo o nosso conteúdo do Swarm para uma outra pasta de backup.
+
+        E aonde fica todos esse conteúdo que queremos fazer backup? Poderíamos ver na documentação, mas temos já em mãos, ele fica na pasta "/var/lib/docker/swarm".
+        Se tentarmos com o usuário comum teremos o seguinte erro:
+
+            docker@vm1:~$ cd /var/lib/docker/swarm
+            -bash: cd: /var/lib/docker/swarm: Permission denied
+
+        Teremos que elever a permissão com "sudo su" ou "sudo -s", agora sim conseguiremos entrar na pasta...
+
+            docker@vm1:~$ sudo -s
+            root@vm1:/home/docker# cd /var/lib/docker/swarm
+            root@vm1:/var/lib/docker/swarm#
+
+        E agora se usarmos um "ls" ele nos mostra todos os conteúdos, tudo que está sendo gerenciado pelo nosso Swarm...
+        
+            root@vm1:/var/lib/docker/swarm# ls
+            certificates       raft               worker
+            docker-state.json  state.json
+        
+        ...significa que queremos fazer o que? Queremos copiar toda esta pasta para
+        onde? Para algum outro lugar de onde possamos recuperá-la depois...
+
+        Por exemplom, vamos copiar toda essa pasta...Voltaremos para "home", faremos um "cp", que é o comando de cópia no terminal. Utilizaremos...
+
+            root@vm1:/home# cp -r /var/lib/docker/swarm/ backup
+
+        Acima vemos uma cópia do comando utilizado para copiar o conteúdo da pasta 'swarm' que se encontra em '/var/lib/docker', para a pasta backup (crida no comando) que está na home.
+
+        Como tudo isso acima está em uma pasta, utilizamos o parâmetro '-r' de cópia recursiva, que copia a pasta e tudo que ela tem dentro...
+        Se utilizarmos o 'ls' agora na pasta backup que está em 'home', veremos o conteúdo dentro dela...
+
+            root@vm1:/home/backup# ls
+            certificates       raft               worker
+            docker-state.json  state.json
+
+        Agora, vamos imaginar o que vai acontecer no nosso caso lá no Swarm, tudo queimar novamente, vamos dizer que o Swarm todo parou de funcionar, como é que conseguiríamos recuperar ele
+        agora? Vamos repetir o nosso erro, vamos executar o comando "docker node rm", vamos remover os dois nós adicionados ao Swarm, "vm2 --force", 
+
+            root@vm1:/home/backup# docker node rm vm2 --force
+
+            root@vm1:/home/backup# docker node rm vm3 --force
+
+            Agora se dermos um...
+
+            $ docker node ls
+
+            Só temos a vm1, e agora utilizaremos o:
+
+            $ docker swarm leave --force
+
+        Se formos agora em "/var/lib/docker/swarm", o que irá acontecer?
+
+            $ cd /var/lib/docker/swarm
+
+        Estará vazio...então todo aquele controle que tínhamos foi perdido, por isso que no momento em que criamos um novo Swarm ainda a pouco, não tinha nada como tinha antes, tudo tinha
+        sido apagado...
+
+        E agora o que queremos fazer? Queremos criar um novo swarm usando as configurações que salvamos no nosso backup, então vamos voltar aqui para a nossa home e vamos fazer o seguinte...
+        Vamos utilizar o comando "cp" de novo junto com o "-r", e vamos copiar todo o conteúdo que está dentro de "backup/*", para onde? Para "/var/lib/docker/swarm"
+
+            root@vm1:/home# cp -r /backup/* /var/lib/docker/swarm/
+
+        E agora o que precisamos fazer? Já copiamos todo o conteúdo para lá de novo, agora precisamos recirar o nosso swarm, e ele vai utilizar essas configurações que estão copiadas dentro
+        dessa pasta, mas se eu for ali no terminal e simplesmente fazer um "docker swarm init --advertise-addr 192.168.99.106", qual é o IP que ele irá sugerir?
+
+        Ele não necessariamente vai utilizar essas configurações, eu preciso forçar ele a recarregar todas as configurações que estão dentro desse caminho aqui "/var/lib/docker/swarm"...
+        E como é que forçamos ele a usar essas configurações? Vamos colocar uma outra flag antes, que se chama "--force-new-cluster" e agora dando um 'Enter', o que ele faz? Ele recria o Swarm...
+
+            root@vm1:/home# docker swarm init --force-new-cluster --advertise-addr 192.168.99.106
+            Swarm initialized: current node (j8owlnxj5wmrz3v8wq6dtwahp) is now a manager.
+            
+            To add a worker to this swarm, run the following command:
+            
+                docker swarm join --token SWMTKN-1-2azgwuekfzuktad34274gc322vavuwqe2p4xwohncm47f7c8p0-3bygfhoibe6mnbgg3c9xb26y6 192.168.99.106:2377
+            
+            To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+
+        Se voltarmos nas nossas páginas e dermos um 'F5', tudo estará funcionando normalmente...Se utilizarmos também o "docker node ls", dentro da nossa manager, o que ele mostrará? Que nós já
+        temos os nossos nós, a nossa vm2 e a nossa vm3 já estão dentro do Swarm de novo.
+
+        Se dermos um "docker service ls"...
+
+            ID                  NAME                MODE                REPLICAS            IMAGE                          PORTS
+            ipqucvqhh4be        blissful_lamarr     replicated          1/1                 aluracursos/barbearia:latest   *:8080->3000/tcp
+
+            ...o serviço está rodando, se dermos um "docker service ps ip (Que é o início do id do serviço)"
+
+            ID                  NAME                    IMAGE                          NODE                DESIRED STATE       CURRENT STATE           ERROR                              PORTS
+            muj9lor14r1n        blissful_lamarr.1       aluracursos/barbearia:latest   vm1                 Running             Running 5 minutes ago
+            5fulhdsz10ht         \_ blissful_lamarr.1   aluracursos/barbearia:latest   vm1                 Shutdown            Failed 5 minutes ago    "No such container: blissful_l…"
+
+            ...ele vai mostrar uma coisa bem interessante...Que tem uma tarefa, ele tentou subir uma vez e falhou, na segunda ele conseguiu rodar esse serviço, que é a nossa barbearia da Alura,
+            inclusive na vm1, lembra o que foi dito? A nossa vm manager não é o ideal para carregar e executar container, nós ainda vamos estudar isso, como isso pode ser evitado.
+
+            Então é isso...Acabou de criar o Swarm com os workers desejados, faça um backup, para caso de algum problema que faça o Swarm parar de funcionar termos o backup dele...Antes que
+            percamos todos os nossos managers ou alguma coisa mais absurda, tenhamos sempre o conteúdo mais atual dele e só precisa recriar ele com o:
+
+                $ docker swarm init --force-new-cluster
+
+                ...copiando nosso backup para dentro da pasta "/var/lib/docker/swarm"
+
+
+    Questões aula 03:
+
+        01 - Caso nosso único manager pare de funcionar, podemos ter problemas. O que acontecerá com o nosso swarm em caso de perda do manager?
+
+            Selecione 2 alternativas
+
+            R1: As tarefas em execução em outros nós serão mantidas sem problemas.
+
+            Alternativa correta! A ausência do manager não afetará as tarefas de outros nós.
+
+            R2: Não conseguiremos mais executar comandos de leitura e/ou criar novos serviços.
+
+            Alternativa correta! Com a ausência do manager, não teremos mais nós capazes de executar comandos administrativos.
+
+        
+        02 - É muito importante fazermos backup de todo o nosso swarm para evitarmos desastres. Por padrão, em qual diretório fica armazenado o conteúdo do nosso swarm?
+
+            Selecione uma alternativa
+
+            R: /var/lib/docker/swarm
+
+            Alternativa correta! Nesse diretório temos todas as configurações de estado do nosso swarm.
 
                     
 
