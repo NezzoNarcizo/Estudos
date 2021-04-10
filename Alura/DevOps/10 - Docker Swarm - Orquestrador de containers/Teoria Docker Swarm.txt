@@ -923,6 +923,153 @@ Aula 03: Gerenciando o cluster com managers -------
 
                 ...copiando nosso backup para dentro da pasta "/var/lib/docker/swarm"
 
+    Criando mais managers:
+
+        De quais outras formas poderíamos ter evitado aquele desastre que aconteceu? É claro que pudemos evitar isso fazendo o backup, mas como poderíamos ter evitado de ter que usar o nosso
+        backup de maneira tão rápida? Será que podemos deixar o nosso Swarm mais robusto? Que ele seja mais inteligente, que ele consiga lidar melhor com essas falhas? Porque veja bem, tínhamos
+        um manager até então, será que poderíamos ter mais um, dois, três, cinco, dez? Podemos!
+
+        Como faremos isso? Como podemos deixar o nosso Swarm mais inteligente? Menos suscetível a erros na verdade? Removeremos novamente os nós do Swarm com o comando:
+
+            $ docker swarm leave --force
+
+            Entraremos nas vm's 2 e 3 com o comando "$ docker-machine ssh vmx" e removeremos as máquina virtuais do Swarm com o comando acima.
+
+        E agora o que vamos fazer? Mais uma vez iremos recriar o Swarm na vm1 (Não se esqueça que ela também deve ser removida do Swarm ou então um erro será exibido):
+
+            $ docker swarm init --advertise-addr ...
+
+            e iremos colocar 192.168.99.106, clicaremos no 'Enter'. Ele recriou aqui mais uma vez o swarm, reparem que não usamos o force-new-cluster, não queremos usar nenhum backup, estamos
+            criando ele do zero.
+
+        E agora ele me dá o comando de adicionar um worker, mas agora queremos adicionar um manager, e reparem, ele já até dá a resposta aqui no final...Tínhamos aquele comando:
+
+            $ docker swarm join-token worker --- para poder adicionar um worker ao nosso Swarm.
+
+        Se quisermos adicionar um manager, é só botar "docker swarm join-token manager", e ele vai dar o output aqui para nós mostrando o quê? O comando para adicionar um manager ao Swarm.
+        Reparem que o comando é o mesmo, toda a primeira parte pelo menos, até o último hífen. O que ele troca no final é só o token que vai definir se o nó vai entrar como um worker ou como um
+        manager no Swarm.
+
+            $ docker swarm join-token worker  -> docker swarm join --token SWMTKN-1-1cl89jndiy1wtx413is0ksie8w0j47du6xwhsh0qz89jz5gvkv-22u0i4ztgldudknywbx7xoup5 192.168.99.106:2377
+            $ docker swarm join-token manager -> docker swarm join --token SWMTKN-1-1cl89jndiy1wtx413is0ksie8w0j47du6xwhsh0qz89jz5gvkv-6epka2ougox54z878xkfa38k2 192.168.99.106:2377
+            
+        Agora pegamos esse comando e colamos nas nossas vm2 e vm3. A saída deverá ser: "This node joined a swarm as a manager."
+        Agora temos o que? Agora temos um Swarm com três managers, mas precisamos também adicionar os nossos worker para fazer o nosso trabalho duro.
+
+        Por mais que tenhamos visto que o nosso Swarm consegue atribuir container, serviços aos nossos managers, precisamos ainda ter os nossos worker porque vamos entender mais para frente
+        qual é a definição, do que devemos ou não colocar no manager.
+
+        Mas vamos lá, precisamos agora criar mais workers. Para criá-los utilizaremos o comando:
+
+            $ docker-machine create -d virtualbox vm4
+            $ docker-machine create -d virtualbox vm5
+
+        Se formos na nossa vm1 e executarmos o comando "docker node ls", ela vai exibir algumas informações para nós.
+
+            Obs: No curso o instrutor quis ensinar como melhorar a visualização logo em seguida, já que estava utilizando o terminal do Windows.
+                Como estou utilizando o VSCode desde o ínicio, não tive este problema.
+
+        Veremos como exibir apenas alguns atributos, como exemplo pegaremos apenas o 'HOSTNAME' e o 'MANAGER STATUS'...Utilizaremos o comando:
+
+            $ docker node ls --format "{{.Hostname}} {{.ManagerStatus}}"
+
+            Teremos a seguinte saida:
+
+            vm1 Leader
+            vm2 Reachable
+            vm3 Reachable
+
+        Podemos ver que a nossa vm1 agora ainda é a líder, mas reparem que a nossa vm2 e a nossa vm3 são 'Reachable', ou seja, elas não tem a ausência de informação que tinham anteriormente, 
+        quando eram vazias, eram workers, agora elas são manager.
+
+        Vamos adicionar agora as nossas vm4 e vm5 aqui no nosso Swarm. Vamos acessá-las com "docker-machine ssh vm4" e "docker-machine ssh vm5" e vamos adicioná-las como worker e só para
+        mostrar que podemos, vamos ir na vm3 e vamos executar o comando:
+
+            $ docker swarm join-token worker
+
+        E agora como ela é uma manager, ela vai conseguir dar esse output para nós que é bem legal:
+        
+        docker swarm join --token SWMTKN-1-1cl89jndiy1wtx413is0ksie8w0j47du6xwhsh0qz89jz5gvkv-22u0i4ztgldudknywbx7xoup5 192.168.99.108:2377
+
+            Copiamos o comando, agora iremos até a vm4 de fato, e vamos executá-lo...Faremos o mesmo na vm5. Se executarmos na nossa vm1 novamente o comando para formatar tudo certinho, ele
+            vai exibir vm1, vm2, vm3, vm4 e vm5, mas só que mais uma vez, só com aquela formatação de exibir apenas o hostname e o manager status:
+
+                $ docker node ls --format "{{.Hostname}} {{.ManagerStatus}}"
+
+                Saída:
+
+                vm1 Leader
+                vm2 Reachable
+                vm3 Reachable
+                vm4
+                vm5
+
+        Então se não tem nenhuma informação da vm4 e da vm5, significa que elas são workers, se ele está exibindo esse reachable na vm2 e na vm3 significa que elas são managers, e como ele
+        está exibindo esse leader na vm1, significa que além de manager, ela é uma líder, ou seja, ela é a liderança máxima que tem dentro desse Swarm.
+
+        Mas o que podemos pensar agora? Agora que temos um 'Leader' e mais dois membros managers, 'Reachable'...O que poderia acontecer? Vamos parar e pensar no seguinte, temos a nossa vm1,
+        e se ela parar de funcionar, o que vai acontecer? Será que vamos ter que decidir entre a vm2 e a vm3 quem vai ser o nosso novo líder? Exatamente!
+
+        E como isso vai acontecer? Vamos fazer um teste, vamos na vm1 e mais uma vez, vamos simular uma catastrofe, vamos executar um "docker swarm leave --force", removendo ela do Swarm de 
+        forma abrupta. Se formos agora na nossa vm2 ou na nossa vm3 que também são managers ainda, reparem que nós ainda conseguimos dar um "docker node ls", ou seja, nós ainda temos status, 
+        conseguimos visualizar todas as informações do nosso cluster.
+
+        Se utilizarmos novamente o "docker node ls --format", só para ficar mais apresentável, colocarmos "{{.Hostname}}" e depois "{{.ManagerStatus}}", ele vai exibir que a vm1 está com 
+        estado de 'Unreachable', ou seja, está inacessível, a vm3 ainda é manager porque ela é 'Reachable'.
+
+        E agora a vm2 é a nossa nova líder, ou seja, nós sempre temos um novo líder, a pergunta que fica é: "Como esse cara foi eleito como líder?", veremos nos próximos capítulos sobre o
+        consenso, como o Docker faz essa votação.
+
+    
+    Algoritmo de consenso RAFT:
+
+        O que acabou de acontecer, no que diz respeito da escolha do novo Leader? Foi feita uma eleição e foi decidido no caso aqui da minha máquina, do nosso Swarm que a vm2 é a nova líder,
+        pode ser que na sua máquina tenha sido eleita a vm3, se você estiver fazendo isso que nem estou fazendo, mas a ideia aqui é ver que aconteceu uma eleição que vai variar o resultado
+        conforme o nosso sistema, conforme a nossa máquina.
+
+        Mas a pergunta que fica é: Como foi feita essa eleição? Quem fez essa eleição? Será que ela sempre funciona? Para começarmos a responder isso, precisamos entender que foi aplicado na
+        verdade um algoritmo de consenso e esse algoritmo de consenso é um cara chamado RAFT, o simbolo usado no exemplo é como uma canoa, uma jangada, mas o que importa mesmo não é o símbolo
+        e sim o que ele faz e como ele faz.
+
+        Sempre temos um só líder, e o que acontece quando este líder falha? O líder falhou e a partir de agora, entre todos os outros managers que tem o nosso Swarm, vai ser feita uma votação,
+        uma eleição, e cada um vai votar em quem eles querem que seja o novo líder.
+
+        No meu caso, foi eleita a vm2, mas no momento dessa votação, que eles estão "depositando" o voto, poderia ter sido eleita tanto a vm2 quanto a vm3, o que improta é, temos algumas
+        regrinhas, temos algumas restrições para que o consenso possa ser atingido.
+
+        E quais são as regras para que o RAFT consiga funcionar? Na verdade é bem simples, precisamos do quê? Precisamos ter o número máximo de falhas que vamos conseguir aguentar e
+        consequentemennte, vamos ter um quórum mínimo para que a eleição seja feita. Porque vamos imaginar, se abrissemos a votação e tivessemos só uma pessoa, não faria sentido ter uma votação.
+
+        Então vamos lá, o que acontece? Tínhamos três managers, tanto faz se um era líder ou não, o que importa é que no fim das contas todos os três são managers, mas o que acontece é que, 
+        vamos suportar no caso, N - 1 falhas, no caso aqui nosso N é o número de managers, então vamos suportar ((3 - 1) / 2) (Três menos um igual a dois, dividido por dois), então ele só 
+        suporta uma falha nesse caso aqui que temos três managers, e conseguentemente, o nosso quórum mínimo vai ser N dividido por 2 que é 1, resto 1.
+        
+        E aqui no caso vamos ter N sobre 2 mais 1, ou seja, nosso quórum tem que ser no mínimo 2, então estamos já no nosso limite nesse caso aqui, se tivéssemos cinco managers o que aconteceria?
+        Suportaríamos 5 - 1 = 4, dividido por 2 = 2 falhas, e o nosso quórum mínimo teria que ser N sobre 2 daria 2 mais 1 = 3, que é o nosso quórum ali para ter nossa eleição.
+
+        Número de falhas = (N - 1) / 2 (Onde N é o número de máquinas)
+        Quórum = N / 2 (+ 1) (Onde N é o número de máquinas...E (/) para dividir e ignorar o resto)
+
+        Então repara, quanto mais managers temos, maior a nossa capacidade de suportar falhas e o nosso quórum vai estar lá sempre acompanhando esse número de falhas, por exemplo, por que não
+        adicionamos logo então 300 milhões de managers no nosso Swarm, o problema estará resolvido? Porque na verdade, quanto mais managers adicionamos no nosso Swarm, maior é o nosso tempo
+        de processamento de leitura e escrita, e isso vai reduzir o nosso desempenho cada vez mais.
+
+        Então quanto mais managers nós temos, vamos ter um desempenho menor nesse longo prazo adicionando mais managers, e o que acontece? O próprio Docker, a própria empresa em si, recomanda que
+        nós sempre tenhamos três, cinco ou sete managers, porque tendo esses números ímpares, nós conseguimos sempre ter um número a mais ali para segurar o nosso Swarm.
+
+        E sempre vai ter um consenso, no caso 9 ainda é aceitável, mas nunca mais do que 10, porque aí já começamos a ter um número muito elevado de managers e vamos começar a ter uma taxa de
+        leitura e escrita muito grande, nosso desempenho vai começar a cair.
+
+    
+    Nesta aula, aprendemos:
+
+        - Que nós managers são primariamente responsáveis pela orquestração do swarm
+        - A importância e como realizar o backup do swarm
+        - Que podemos ter mais de um nó manager no swarm
+        - A importância do Leader dentro do swarm
+        - Como é feita a eleição de um novo Leader em caso de falhas
+        - Os requisitos para funcionamento do RAFT
+
 
     Questões aula 03:
 
@@ -946,6 +1093,27 @@ Aula 03: Gerenciando o cluster com managers -------
             R: /var/lib/docker/swarm
 
             Alternativa correta! Nesse diretório temos todas as configurações de estado do nosso swarm.
+
+
+        03 - Ao utilizarmos o comando docker node ls, como podemos identificar quais nós são managers dentro do nosso swarm?
+
+            Selecione uma alternativa
+
+            R: Basta olhar a coluna Manager Status e ver quais nós tem o valor Reachable ou Leader.
+
+            Alternativa correta! Nós com esses status são managers dentro do nosso swarm.
+
+        
+        04 - Vimos que em caso de falhas do Leader do swarm, temos uma eleição entre os nós managers para definir o novo líder. Se tivéssemos um swarm com 7 nós managers, qual seria o nosso 
+            quórum necessário e número máximo de falhas para realização da eleição?
+
+            Obs: Caso não lembre das regras, reveja o último vídeo a partir dos 4:00.
+        
+            Selecione uma alternativa
+
+            R: 4 para o quórum e 3 falhas no máximo.
+
+            Alternativa correta! Como nosso quórum é (N / 2) + 1 e o número máximo de falhas é (N - 1) / 2, temos o valor esperado.
 
                     
 
