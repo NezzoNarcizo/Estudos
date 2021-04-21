@@ -1115,7 +1115,564 @@ Aula 03: Gerenciando o cluster com managers -------
 
             Alternativa correta! Como nosso quórum é (N / 2) + 1 e o número máximo de falhas é (N - 1) / 2, temos o valor esperado.
 
-                    
+
+Aula 04: Separando as responsabilidades -------
+
+    Readicionando um manager:
+
+        Então vamos fazer o que agora? Vamos entender como vamos diviri as responsabilidades aqui dentro do nosso Swarm. Porque viemos falando desde o início que papel dos nossos managers
+        é fazer orquestração e ler operação de leitura e escrita dentro do Swarm enqaunto os workers carregam e executam os containers, as tarefas, agora por assim dizer.
+
+        Mas vamos parar e pensar no seguinte, em certo momento do nosso curso foi alocada uma tarefa dentro da vm1, ou seja, o próprio Swarm não se opôs de colocar uma tarefa para ser executada
+        dentro de um manager, ao invés de colocar ela em um worker, mas a ideia é que evitemos que isso aconteça e nós só vamos querer rodar determinados containers, determinadas tarefas quando
+        quisermos que sejam executadas e não que dê essa liberdade de colocar por exemplo alguns serviços quaisquer dentro daquela manager.
+
+        E como é que faremos isso? Vamos voltar no nosso terminal e vamos fazer o seguinte, vamos dar um "docker node ls" mais uma vez e utilizar de novo o "{{.Hostname}}" e também o 
+        "{{.ManagerStatus}}" para ver nossa situação.
+
+            $ docker node ls --format "{{.Hostname}} {{.ManagerStatus}}"
+
+            Saída:
+                vm1 Unreachable
+                vm2 Reachable
+                vm3 Leader
+                vm4
+                vm5
+
+            A nossa vm1 ainda está unreachable, vamos adicionar ela novamente, quais seriam os passos? Vamos primeiro utilizar o "docker node rm vm1"
+
+                    Saída: Error response from daemon: rpc error: code = FailedPrecondition desc = node o6npnn8j8tf10169sxlee4d5c is a cluster manager and is a member of the raft cluster. 
+                                It must be demoted to worker before removal
+
+            Que erro é esse? Ele diz que: "Este nó é um manager do cluster e é um membro do raft cluster", ou seja, mesmo que ele esteja "Unreachable", ainda é um membro.
+
+        Ele deve ser "demoted" para o worker antes de ser removido, ou seja, ele tem que ser rebaixado, abaixar o nível dele para que ele seja removido, e como é que fazemos isso? Antes de
+        mais nada vamos utilizar o "docker node demote vm1"...
+
+            Saída: Manager vm1 demoted in the swarm.
+
+        ...agora a vm1 por mais que ela ainda esteja "Unreachable", ela é uma worker comum dentro do nosso Swarm, e podemos remover ela agora sem nenhum problema.
+
+        Vamos utilizar o comando para remove-lá:
+
+            $ docker node rm vm1
+
+        Agora para tornar nosso cluster ao estado original, vamos readicionar a vm1 como manager, para a dica utilizamos o comando "docker swarm join-token manager". Acessamos via ssh a vm1
+        e colocamos o comando "docker swarm join --token SWMTKN-1-1cl89jndiy1wtx413is0ksie8w0j47du6xwhsh0qz89jz5gvkv-6epka2ougox54z878xkfa38k2 192.168.99.107:2377" e adicionamos
+        "--advertise-addr 192.168.99.106" só para mantermos o nosso IP original lá.
+
+            Saída: This node joined a swarm as a manager.
+
+            Utilizamos o comando:
+
+                $ docker node ls
+
+                Teremos a saída:
+
+                    ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+                    nhuzr9tiek2za2q26dcbwuwdl *   vm1                 Ready               Active              Reachable           19.03.12      
+                    in3t87hcu77qnk13ln538rg29     vm2                 Ready               Active              Reachable           19.03.12
+                    mr4jjwio2une2dn51od448g9q     vm3                 Ready               Active              Leader              19.03.12
+                    jh0vk0wrgiruzrejjhfor8l3u     vm4                 Ready               Active                                  19.03.12
+                    rzmb7ke49zeocehp5liaq97ez     vm5                 Ready               Active                                  19.03.12
+
+        Tudo voltou a funcionar! A nossa Leader agora é a vm3. O que faremos agora? Vamos voltar para a nossa vm2, vamos questionar o seguinte, se nós subirmos algum Serviço aqui com
+        o "docker service create" mais uma vez, "-p 8080:3000 aluracursos/barbearia", o que vai acontecer aqui? Ele vai criar a nossa task, o nosso serviço.
+
+        E vamos ver o que vai acontecer...
+
+            $ docker service create -p 8080:3000 aluracursos/barbearia
+
+            Saída:
+
+                jb8m98lf24u8rg7p9svtvrg9b
+                overall progress: 1 out of 1 tasks
+                1/1: running   [==================================================>]
+                verify: Service converged
+
+        Utilizamos mais uma vez o "docker service ls"
+
+            Saída:
+
+                ID                  NAME                MODE                REPLICAS            IMAGE                          PORTS
+                jb8m98lf24u8        kind_feynman        replicated          1/1                 aluracursos/barbearia:latest   *:8080->3000/tcp
+
+                ...temos ele aqui rodando, o ID, o início é "jb", vamos utilizar "docker service ps jb" (Só precisamos colocar os primeiros dois dígitos do ID do serviço).
+
+                Saída:
+
+                    ID                  NAME                IMAGE                          NODE                DESIRED STATE       CURRENT STATE           ERROR               PORTS
+                    p82rpw90dm5v        kind_feynman.1      aluracursos/barbearia:latest   vm1                 Running             Running 4 minutes ago
+
+                Ele subiu aonde? Na vm1, também podemos utilizar o "--format" aqui, e fazermos o que agora? Colocamos o que? O que queremos ver! No caso o "{{.Node}}".
+
+                    $ docker service ps jb --format {{.Node}}
+
+                    Saída:
+
+                        vm1
+
+        Então sabemos que esse servilom essa tarefa, foi atribuída para vm1, mas a vm1 é uma manager, e é aquela questão que acabamos de falar...Será que devemos evitar que quaisquer serviços,
+        quaisquer tarefas sejam executadas dentro da manager? E mais, como é que evitamos que isso aconteça? Como é que só rodamos serviços que nós queemos que rode dentro de manager no momento
+        em que queremos?
+
+    
+    Restringindo nós:
+        
+        Como é que podemos evitar que serviços sejam rodados na manager? Porque veja bem, o serviço que subimos ainda pouco está sendo executado em manager porque por padrão Docker, o Swarm
+        permite que serviços sejam executados dentro da manager.
+
+        Mas a ideia é restringirmos os serviços que queremos que sejam executados em managers ou não, mas vamos ver na próxima aula daqui a pouco em quais momentos devemos ou não executar um
+        serviço dentro de uma manager, quais serviços devem fazer isso. Mas antes disso, precisamos aprender como restringimos o comportamento de um serviço ou de um nó para ele ser executado
+        dentro de um manager ou não.
+
+        Vamos começar fazendo aquele velho procedimento, vamos para mais uma vez o serviço que está em execução, e como paramos um serviço? Podemos listar o serviço, criar serviço, podemos
+        remover serviço. Vamos utilizar "docker service rm", e para removermos basta passar aqui o ID do serviço que ele quer remover.
+
+        Mas uma outra possibilidade é, podemos remover todos os serviços de uma vez, só para vermos como faz isso, utilizando a técnica que vimos lá no curso anterior (de Docker) que é passar
+        dentro de parênteses, que é seguido de um cifrão o comando que queremos usar com uma entrada para esse comando aqui.
+
+        Qual o comando que eu quero usar como entrada para o comando de remover? Eu quero que ele use como entrada o ID de todos os serviços que estão em execução, e como eu pego os serviços
+        que estão em execução? Com o "docker service ls", para eu pegar só os IDs, executamos um "docker service ls -q", e damos um Enter aqui, e ele remove.
+
+            $ docker service rm $(docker service ls -q)
+
+            Podemos utilizar um "docker service ls" em seguida, para ver se realmente todos os serviços foram removidos.
+
+        Vamos lá então se subirmos mais uma vez o serviço, será teimosia, o que poderá acontecer?
+
+            $ docker service create -p 8080:3000 aluracursos/barbearia
+
+            Ele vai começar a construir, mas uma vez vai tentar fazer os testes de convergência...
+
+                oo3fmgtoiczzl5uvtzt04rfhm
+                overall progress: 1 out of 1 tasks 
+                1/1: running   [==================================================>]
+                verify: Service converged
+
+            ...se tudo der certo ele vai contruir, se dermos então, o "docker service ls"...
+
+            ID                  NAME                MODE                REPLICAS            IMAGE                          PORTS
+            oo3fmgtoiczz        nervous_dhawan      replicated          1/1                 aluracursos/barbearia:latest   *:8080->3000/tcp
+
+            ...depois "docker service ps oo"
+
+            ID                  NAME                IMAGE                          NODE                DESIRED STATE       CURRENT STATE                ERROR               PORTS
+            nihqij3fvo7r        nervous_dhawan.1    aluracursos/barbearia:latest   vm2                 Running             Running about a minute ago
+
+        Vemos que ele o serviço foi alocado com esse ID "oo3fmgtoiczz", quando utilizamos o segundo comando pudemos verificar que a tarefa foi gerada na vm2, e a vm2 também é um manager.
+
+        Temos duas possibilidades de como evitar que algum serviço seja executado dentro de um determinado nó, vamos ver a primeira, como é que podemos chegar e falar "Eu quero que a minha vm2,
+        a minha manager, não rode nenhum serviço", eu vou restringir o meu nó para que ele não execute nenhum serviço, e só faça papel administrativo.
+        
+        E como restrinjo a capacidade desse nós de executar serviço? Se dermos um "docker node ls" aqui, o que vai acontecer? Ele vai listar os nossos nós aqui, e mais, ele está mostrando essa
+        coluna aqui de disponibilidade, nesse 'AVAILABILITY', e está mostrando o status de ativo para todos os nós, inclusive a nossa vm2.
+
+        E o que significa esse availability que vimos lá na primeira aula? Significa que esse nós está disponível para rodar serviços e se eu quero tornar ele indisponível para rodar qualquer
+        tipo de servilo, eu preciso trocar esse status para indisponível.
+
+        E como é que vamos fazer isso? Temos um comando bem interessante que é o "docker node update", ou seja, vamos atualizar o estado de um nó, e o que queremos atualizar? O availability,
+        e podemos atualizar ele com esse "--availability" aqui, e agora colocamos o status que quereos colocar nesse estadom eu quero que ele esteja com esse status de "drain", que é o Status
+        que por padrão não vai permitir que algum serviçlo seja executado dentro desse nó.
+
+        Por fim, eu preciso informar qual é o nó que eu quero atualizar, porque esse comando aqui, pode ser executado dentro de qualquer manager, e por fim, eu preciso falar q  ue eu quero
+        atualizar a minha vm2, ele deu um output aqui na própria vm2, então significa que tudo correu bem.
+
+            $ docker service ls  
+            
+                ID                  NAME                MODE                REPLICAS            IMAGE                          PORTS
+                oo3fmgtoiczz        nervous_dhawan      replicated          1/1                 aluracursos/barbearia:latest   *:8080->3000/tcp
+
+            $ docker service rm oo
+
+            $ docker node update --availability drain vm2
+            
+            $ docker node ls
+                ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+                q5duspz3ugglfw664ln3xr18n     vm1                 Ready               Drain               Leader              19.03.12      
+                in3t87hcu77qnk13ln538rg29 *   vm2                 Ready               Drain               Reachable           19.03.12      
+                mr4jjwio2une2dn51od448g9q     vm3                 Ready               Active              Reachable           19.03.12
+                jh0vk0wrgiruzrejjhfor8l3u     vm4                 Ready               Active                                  19.03.12
+                rzmb7ke49zeocehp5liaq97ez     vm5                 Ready               Active                                  19.03.12
+    
+        No caso, logo acima, utilizamos mais uma vez "docker node ls", está com o status de drain agora. Significa que, se dermos um "docker service ps" para ver como está essa tarega que
+        estava neste nó vm2, ele foi realocado agora para outro nó, não mais aqui na nossa vm2.
+
+        Ou seja, so movemos o problema de lugar, estamos meio que em uma caça ao rato agora, não queremos mais que seja rodado na vm2, mas ele tentou e fez na vm3, então para cada novo nó
+        que tivermos no nosso Swarm que não queremos que seja executada como um serviço nele, vamos ter que ficar nessa brincadeira de ficar mudando o status dele para drain.
+
+        E mais, com essa mudança, tornamos o nosso nó completamente incapaz de rodar algum serviço e como falamos ainda a pouco, a ideia não é que nenhum serviço nunca vá ser executado dentro
+        de um manager, mas com o drain, tornamos esse nó incapaz de rodar qualquer serviço.
+
+        Essa foi a primeira possibilidade, vamos coloca o status destes nós de volta, "--availability" "Active" "vmx". 
+
+            $ docker node update --availability Active vm"X"
+
+        Se utilizarmos de novo o "docker node ls" veremos que todos os nós estão como Active novamente...Porém se utilziarmos de novo o "docker service ls" e "docker service ps 'id serviço'"
+        veremos que a tarefa continua no nó vm4, não é porque reestabelecemos a disponibilidade dos nós vm1 e vm2 que o serviço volta para onde estava.
+
+        Se formos no navegador verificar, veremos que o serviço está rodando sem nenhum problema. Vimos a primeira possibilidade que é restringindo nosso nó, criamos um limite ali para dentro
+        do nosso nó, para que ele não rode serviços. A outra possibilidade que é um pouco menos invasiva.
+
+    
+    Restringindo serviços:
+
+        Vamos então agora à nossa segunda possibilidade, estamos começando logo de onde paramos no ponto anterior. O serviço teve a nova tarefa criada na vm4, mas a pergunta que fica é:
+        Como eu posso falar agora para o serviço que eu não quero que ele seja executado em determinados tipos de nós, ou seja, como é que eu restrinjo um serviço e não mais um nó? Será que
+        dá para fazer isso? É claro que sim!
+
+        Mas como é que podemos atualizar uma restrição, como é que podemos impor um limite a um serviço? Assim como tínhamos o nosso "docker node uptate" para atualizar o estado de um nó,
+        também temos o nosso "docker service update" para atualizar o estado de um serviço.
+
+        E o que precisamos fazer? Precisamos adicionar uma nova restrição a esse serviço, e como é que faremos? Se nós queremos fazer como mexemos na "--availability" de um nó, adicionaremos uma
+        restrição, uma  "--constraint-add", e qual é a restrição que queremos? Queremos que este serviço, que criamos ainda a pouco, só rode em nós que tenham o papel de worker no nosso Swarm.
+        Então adicionamos qual é a regra desta restrição logo em seguida com "node.role"
+
+        E quais nós tem esse papel? A nossa vm4 e a nossa vm5, não precisamos listar aqui para ele em qual hostname, em qual nó por nome queremos fazer isso, basta explicitarmos o papel desse nó
+        dentro do Swarm, então queremos que ele funcione apenas dentro de nós que tenham um papel de "worker", por isso colocamos em forma de comparação "==worker" (Encostado em "node.role")...
+
+            $ docker service update --constraint-add node.role==worker "ID serviço"
+
+        Se dermos um 'Enter' agora, ele irá atualizar o estado do serviço...
+
+            4d
+            overall progress: 1 out of 1 tasks
+            1/1: running   [==================================================>]
+            verify: Service converged
+
+        Se utilizarmos o comando "docker service ps" novamente, passar o ID do serviço, veremos que ele foi criado em outro nós que é apenas worker, a vm4...
+
+            ID                  NAME                      IMAGE                          NODE                DESIRED STATE       CURRENT STATE             ERROR                         PORTS
+            oudob38vx2r1        intelligent_chaum.1       aluracursos/barbearia:latest   vm4                 Running             Running 25 seconds ago
+            4c3809jhtmty         \_ intelligent_chaum.1   aluracursos/barbearia:latest   vm2                 Shutdown            Shutdown 26 seconds ago
+            0yukvri4q7zy         \_ intelligent_chaum.1   aluracursos/barbearia:latest   vm2                 Shutdown            Failed 10 minutes ago     "task: non-zero exit (137)"
+            198nayz45gli         \_ intelligent_chaum.1   aluracursos/barbearia:latest   vm2                 Shutdown            Failed 18 minutes ago     "task: non-zero exit (137)"
+            h9aq2arwxrtk         \_ intelligent_chaum.1   aluracursos/barbearia:latest   vm4                 Shutdown            Failed 40 minutes ago     "task: non-zero exit (255)"
+
+            Obs: Já tinha encerrado na vm4 anteriormente o serviço para fazer o teste, e atualmente estava rodando na vm2 que é um manager, repare pelo histórico.
+
+        Vamos ver se o serviço está rodando normalmente, vamos pegar o IP e colocar no browser...Caso não lembre o IP, basta sair do nós e executar um "docker-machine ls"...
+        Bom, vimos que tudo continua funcionando perfeitamente. Agora podemos fazer o teste derrubando o serviço na vm4 para ver em qual nó o serviço será levantado novamente...
+        Vamos até a vm4, executar um "docker container ls", utilizaremos o ID do container para derrubá-lo junto com o comando "docker container rm "ID container" --force".
+
+        Vamos ver em qual nó foi levantado o serviço que derrubamos junto com o container. Primeiro precisamos ir para um nó que seja manager...No caso vm1, vm2 ou vm3...
+        Então executar os comandos:
+
+            $ docker service ls
+
+            Pegar pelo menos o início do ID...
+
+            $ docker service ps "id"
+
+            ID                  NAME                      IMAGE                          NODE                DESIRED STATE       CURRENT STATE             ERROR                         PORTS
+            u5p5002sml28        intelligent_chaum.1       aluracursos/barbearia:latest   vm5                 Running             Running 46 seconds ago
+            oudob38vx2r1         \_ intelligent_chaum.1   aluracursos/barbearia:latest   vm4                 Shutdown            Failed 2 minutes ago      "task: non-zero exit (137)"
+            4c3809jhtmty         \_ intelligent_chaum.1   aluracursos/barbearia:latest   vm2                 Shutdown            Shutdown 12 minutes ago
+            0yukvri4q7zy         \_ intelligent_chaum.1   aluracursos/barbearia:latest   vm2                 Shutdown            Failed 22 minutes ago     "task: non-zero exit (137)"   
+            198nayz45gli         \_ intelligent_chaum.1   aluracursos/barbearia:latest   vm2                 Shutdown            Failed 30 minutes ago     "task: non-zero exit (137)"
+
+            Podemos observar que o serviço foi realocado no nó "vm5", que também é um worker. Se ficarmos derrubando e levantando containers o serviço ficará alternando entre os nós que são
+            apenas workers, de acordo com a restrição e regra que criamos.
+
+        Talvez você esteja se perguntando, "E se essa restrição que utilizamos não for aplicável? E se não tiver nenhuma possibilidade para ele rodar esse serviço? Se colocarmos uma condição
+        que ele não consiga atender?"...
+
+        Vamos utilizar, por exemplo, uma restrição que não exista, exemplo "worker123"...
+
+            $ docker service update --constraint-add node.role==worker123 "ID serviço"
+
+            ...é um papel que não existe dentro do nosso Swarm, se utilizarmos este comando acima por exemplo, reparem, ele vai começar a tentar agendar essa tarefa, mas ele vai informar que
+            não tem nenhum nó disponível que satisfaça essa restrição entre os cinco nós que temos.
+
+                overall progress: 0 out of 1 tasks
+                1/1: no suitable node (scheduling constraints not satisfied on 5 nodes)
+
+        Significa que se formos lá no browser acessar o serviço ele vai ter parado de funcionar, porque o nosso serviço como um todo, a nossa tarefa não está alocada em nenhum nó porque
+        nenhum nó está disponível, então sempre temos que tomar cuidado em restringir o nosso serviço, mas também de uma maneira em que nós sempre atendamos isso em algum nó.
+
+        Vimos essas duas possibilidades, tanto restringindo um nó quanto o serviço, e cada caso dependendo da nossa situação, vai variar, será que vale a pena eu restringir o meu nó? Será
+        que vale a pena eu restringir o meu serviço? O que vai custar menos e o que vai ser mais fácil de eu manter? É isso!
+
+        Vimos agora como conseguimos restringir também os nossos serviços, não mais os nossos nós, essa técnica é um pouco menos invasiva, mas precisamos entender agora mais um pouco quando
+        e quais tipos de serviço vamos executar em um manager, será que realmente vale a pena? Que tipo de serviço podemos fazer isso? Vamos descobrir isso no proximo vídeo.
+
+    Para saber mais:
+
+        No último vídeo vimos como podemos adicionar restrições a um serviço utilizando o comando:
+
+        docker service update --constraint-add
+        Utilizamos o comando acima para restringir serviços a funcionarem apenas em nós managers ou workers.
+        Porém, também podemos impor outros tipos de restrições, como id, hostname e o próprio role. Vamos ver alguns exemplos!
+        
+        Caso quiséssemos restringir o serviço de id ci10k3u7q6ti para funcionar apenas em um nó com id t76gee19fjs8, poderíamos utilizar o comando:
+        docker service update --constraint-add node.id==t76gee19fjs8 ci10k3u7q6ti
+        
+        Se o objetivo fosse fazer o serviço rodar apenas em nossa vm4 por exemplo, uma possibilidade seria utilizar:
+        docker service update --constraint-add node.hostname==vm4 ci10k3u7q6ti
+        
+        Por fim, podemos também remover restrições criadas utilizando o comando de atualização passando a flag --constraint-rm. Para remover as duas restrições anteriores:
+        docker service update --constraint-rm node.id==t76gee19fjs8 ci10k3u7q6ti        
+        docker service update --constraint-rm node.hostname==vm4 ci10k3u7q6ti
+        
+        Após esse momento, quaisquer novas réplicas criadas para esse serviço poderão ser alocadas sem restrição alguma!
+
+    
+    Nesta aula, aprendemos:
+
+        - Como readicionar um manager posterior a uma falha
+        - Restringir nós de executarem quaisquer serviços utilizando o docker node update --availability drain
+        - Restringir serviços de serem executados em determinados nós utilizando o docker service update --constraint-add
 
 
+    Questões aula 04:
 
+        1 - No último vídeo, removemos um nó manager do swarm a partir de outro manager. Quais os procedimentos que devemos executar para realizar essa remoção?
+
+            Selecione uma alternativa
+
+            R: Devemos primeiramente rebaixar o cargo do nó com o comando docker node demote e depois removê-lo com o comando docker node rm.
+
+            Alternativa correta! É necessário transformar o nó manager em worker e depois remover.
+
+        2 - Quando o nosso objetivo é restringir o comportamento de nós de um swarm, podemos utilizar o comando:
+
+            docker node update --availability drain
+
+            Qual das alternativas abaixo contém o comportamento esperado do nó sobre o qual foi aplicado esse comando?
+            
+            Selecione uma alternativa
+
+            R: O nó ficará indisponível para executar tarefas.
+
+            Alternativa correta! Com a disponibilidade em drain, não conseguiremos executar mais tarefas/containers nesse nó.
+
+        
+        3 - Podemos também aplicar restrições em serviços utilizando o comando:
+
+            docker service update --constraint-add [outras infos]
+
+            Se quisermos restringir o comportamento para um serviço ser rodado apenas em nós workers, o que mais precisamos informar para o comando acima?
+            
+            Selecione uma alternativa
+
+            R: node.role == worker
+
+            Alternativa correta! Informando o role e fazendo a comparação com ==, não teremos problemas.
+
+
+Aula 05: Serviços globais e replicados -------
+
+    Serviços replicados:
+
+        Já vimos que nós managers também podem comportar serviço, por isso tivemos que usar regras de restrições para que o serviço ao ser criado não instânciasse tarefas nos nossos managers.
+
+        Mas o ponto agora é o seguinte, quais serviços nós vamos querer rodar em nós do tipo manager? Vamos rodar serviços do tipo monitoramento, serviços de segurança, ou seja, serviços que
+        são críticos, que dependemos na nossa aplicação.
+
+        Porque queremos sempre estar monitorando o estado de qualquer nó do nosso Swarm, nós sempre queremos que eles estejam seguros, queremos sempre garantir que a nossa aplicação vai estar
+        funcionando da maneira que esperamos, então como é que no Docker, aqui no Swarm, podemos fazer com que determinados serviços rodem em todos os nós da nossa aplicação? Até então estamos
+        em cinco.
+
+        Como é que eu posso garantir que, subindo de uma vez o serviço, ele rode em torno desses cinco nós? É uma pergunta a ser respondida, vamos responder isso daqui a pouco, mas antes de
+        respondermos isso precisamos entender coo funciona os tipos de serviços do Docker Swarm.
+
+        Nós tinhamos parado o serviço que estava rodando na ultima aula, vamos colocar ele para rodar novamente...
+
+            $ docker service create -p 8080:3000 aluracursos/barbearia
+
+        Vamos entender o que está acontecendo aqui, vamos começar a entender agora quais são os tipos de serviços que o Swarm tem para nós. Se dermos um "docker service ls" o que ele vai
+        mostrar aqui?
+
+            ID                  NAME                MODE                REPLICAS            IMAGE                          PORTS
+            ts9vbn0i3cen        trusting_edison     replicated          1/1                 aluracursos/barbearia:latest   *:8080->3000/tcp
+
+        Temos o ID, o nome e agora sim o modo..."RELICATED"
+
+        O modo aqui está como 'replicated' de replicado e tem uma réplica funcionando no total de uma réplica, o que isso significa? Significa que um dos modos do Docker aqui do Swarm replicado,
+        e o outro é o que vamos ver na próxima aula, no próximo vídeo é o modo global, que é como podemos rodar um serviço em todos os nós.
+
+        Mas o que é esse tal de modo replicado? Para começarmos a entender, esse modo replicado nada mais é que o tipo padrão de um serviço do Swarm e esse cara funciona do seguinte modo:
+        Até então, o que estava acontecendo? Se dermos um "docker service ps "inicio id servico""...
+
+            ID                  NAME                IMAGE                          NODE                DESIRED STATE       CURRENT STATE           ERROR               PORTS
+            vv8r8q9nwyre        trusting_edison.1   aluracursos/barbearia:latest   vm2                 Running             Running 5 minutes ago
+
+        ...ele mostra que tem uma tarefa rodando na vm2 desse serviço que é o trusting_edison.
+
+        Mas, vamos imaginar um caso real, vamos imaginar que aqui na nossa vm2 esses serviços estivessem rodando, tivessem recebendo diversas requisições, todas elas estariam sendo
+        redirecionadas para vm2, por mais que a carga de receber pudesse ser balanceada por conta dos nossos outros nós através do Routing Mesh, tudo seria tratado no fim das contas pela vm2.
+
+        A ideia é que possamos replicar alguns tipos de serviço para que eles sejam copiados, ter diversas cópias dele rodando em diversas máquinas, como assim? Ao invés de termos uma tarefa
+        para esse serviço sendo executada, vamos ter na verdade quantas quisermos espalhadas pelo nosso Swarm para que todos os nós consigam dividir esse trabalho que vai ser executado.
+
+        Até então temos uma tarefa, se eu quiser criar uma cópia de quatro tarefas para esse serviço, o que podemos fazer? Podemos simplesmente e utilizar o comando "docker service update",
+        pois queremos mais uma ver atualizar o estado do nosso serviço, queremos atualizar o número de réplicas , então "--replicas", agora queremos definir um número de réplicas, por exemplo,
+        quatro, e agora qual o serviço que queremos atualizar? Esse que acabamos de criar que é "ts9vbn0i3cen"...
+
+            $ docker service update --replicas 4 ts9
+
+            Saída:
+
+                overall progress: 4 out of 4 tasks
+                1/4: running   [==================================================>]
+                2/4: running   [==================================================>]
+                3/4: running   [==================================================>]
+                4/4: running   [==================================================>]
+                verify: Service converged
+
+        Repare o que ele fez, alocou quatro tarefas para esse serviço, significa que agora se dermos um "docker service ps" com o id do serviço novamente...
+        
+            ID                  NAME                IMAGE                          NODE                DESIRED STATE       CURRENT STATE                ERROR               PORTS
+            vv8r8q9nwyre        trusting_edison.1   aluracursos/barbearia:latest   vm2                 Running             Running 15 minutes ago
+            40sbs4yh8njy        trusting_edison.2   aluracursos/barbearia:latest   vm4                 Running             Running about a minute ago
+            0p2a0g0hgmgc        trusting_edison.3   aluracursos/barbearia:latest   vm3                 Running             Running about a minute ago
+            k6cbg0axfsxg        trusting_edison.4   aluracursos/barbearia:latest   vm1                 Running             Running about a minute ago
+        
+        ...existem quatro tarefas que estão em execução para esse serviços espalhadas entre as nossas vms, 2, 4, 3, 1. Isso quer dizer que a partir desse momento, tem quatro réplicas desse
+        mesmo serviço rodando espalhados pelo nosso Swarm.
+
+        Então quando requisitarmos agora esse serviço, pode ser que ele caia tanto na vm1, quanto 2, 3 ou 4.
+
+        Isso é bem legal porque agora efetivamente vai ter essa divisão de carga entre os nossos nós. Vamos dividir o serviço em mais réplicas para testarmos...
+
+        Por exemplo, se atualizassemos de novo para 8 réplicas, o que o Swarm vai fazer? Ele vai alocar 8 cópias para essa tarefa desse serviço, e como eu só tenho cinco máquinas, alguma
+        máquina vai ter mais de uma réplica não é verdade? 
+
+            $ docker service update --replicas 8 ts9
+
+            Saída:
+
+                overall progress: 8 out of 8 tasks
+                1/8: running   [==================================================>]
+                2/8: running   [==================================================>]
+                3/8: running   [==================================================>]
+                4/8: running   [==================================================>]
+                5/8: running   [==================================================>]
+                6/8: running   [==================================================>]
+                7/8: running   [==================================================>]
+                8/8: running   [==================================================>]
+                verify: Service converged
+
+            $ docker service ps ts9
+
+            Saída:
+
+                ID                  NAME                IMAGE                          NODE                DESIRED STATE       CURRENT STATE            ERROR               PORTS
+                vv8r8q9nwyre        trusting_edison.1   aluracursos/barbearia:latest   vm2                 Running             Running 23 minutes ago
+                40sbs4yh8njy        trusting_edison.2   aluracursos/barbearia:latest   vm4                 Running             Running 10 minutes ago
+                0p2a0g0hgmgc        trusting_edison.3   aluracursos/barbearia:latest   vm3                 Running             Running 10 minutes ago
+                k6cbg0axfsxg        trusting_edison.4   aluracursos/barbearia:latest   vm1                 Running             Running 10 minutes ago
+                zlwle2js7h0u        trusting_edison.5   aluracursos/barbearia:latest   vm5                 Running             Running 2 minutes ago
+                rkuc4eqhn8fn        trusting_edison.6   aluracursos/barbearia:latest   vm5                 Running             Running 2 minutes ago
+                o4lg23vdkgz4        trusting_edison.7   aluracursos/barbearia:latest   vm1                 Running             Running 2 minutes ago
+                mtnugys2q76o        trusting_edison.8   aluracursos/barbearia:latest   vm2                 Running             Running 2 minutes ago
+        
+        Podemos ver que temos as mesmas réplicas de antes, e mais uma na vm1, mais uma na vm2 e mais duas na vm5.
+
+        Ou seja, ele criou diversas cópias desses serviços, diversas tarefas, que agora elas estão espalhadas pelo nosso Swarm, então se em algum momento algum desses caras não conseguir lidar
+        com determinado número de requisições, outros também vão poder receber, porque esse serviços está espalhado pelo nosso Swarm.
+
+        Isso é uma das possibilidades, esse é uma das possibilidades de distribuir um serviço pelo nosso Swarm, a outra possibilidade é, quando queremos um serviço rode em todos os nós do nosso
+        Swarm, nós vamos querer trabalhar com serviço global, não vale a pena criarmos um serviço replicado com um alto número de réplicas só para garantir que ele vai estar em todos os nossos
+        nós, isso já é meio que trapaça e vai diminuir nosso desempenho. A maneira correta para fazer isso é criando um serviço global.
+
+
+    - Para saber mais: service scale
+
+        Vamos supor que temos um serviço com id ci10k3u7q6ti. Como podemos escalar esse serviço para ter 5 réplicas?
+
+        Aprendemos uma das possibilidades de alterar o número de réplicas de um serviço utilizando o comando docker service update --replicas 5 ci10k3u7q6ti, mas esse não é o único meio!
+        
+        Para isso também temos o comando docker service scale. Utilizando o id, podemos atualizar com o comando:
+        
+            $ docker service scale ci10k3u7q6ti=5
+
+        Nesse caso, definimos 5 réplicas para o serviço. Os dois comandos produzem o mesmo resultado, o segundo é apenas uma forma resumida do primeiro comando.
+
+    
+    Serviços globais:
+
+        Então vamos falar agora sobre os nossos serviços que vão ser criados em modo global, vimos ainda há pouco os serviços replicados, o que significa, como eles funcionam e tudo mais,
+        mas agora vamos ver o nosso serviço global, que já falamos no início do vídeo passado que são os serviços que vão ter uma tarefa, uma instância desse serviço rodando em cada nó do
+        nosso Swarm.
+
+        E para que queremos isso? Queremos isso por algum motivo específico, por exemplo, garantir monitoramento, garantir segurança, queremos um serviço que seja crítico para ser executado
+        em todos os nós, todos os nós no nosso caso vão depender da estância desse serviço, então queremos garantir que ele seja executado em todos esses nós.
+
+        E como é que fazemos isso? Vemos que por padrão, se dermos o nosso comando "docker service create" e criar novamente o serviço o que acontece? Já sabemos que ele vai criar um réplica
+        dele, vai criar ele no modo replicado e vai alocar ele aleatoriamente em uma máquina virtual, em algum nó do nosso Swarm.
+
+        Mas e se quisermos criar esse serviço em modo global? Se quisermos que esse serviço tenha uma instância dele rodando em cada nó do nosso Swarm, como é que nós podemos garantir isso?
+        Basta que, no meio do comando, antes de nós explicitarmos a imagem que queremos utilizar, podemos definir o modo em que esse serviço vai ser executado.
+
+        Poderíamos colocar "--mode replicated", que é o padrão, ele já cria um serviço em modo replicado, ou podemos colocar "global", ou seja, global ele vai criar esse serviço em modo global
+        e o que vai acontecer agora? Qual vai ser a grande diferença? A grande diferença é que de uma só vez ele vai começar a criar cinco instância desse serviço, cinco tarefas em diferentes
+        nós, em todos os nós do Swarm.
+
+            $ docker service create -p 8080:3000 --mode global aluracursos/barbearia
+
+            Saída:
+
+                overall progress: 5 out of 5 tasks
+                in3t87hcu77q: running   [==================================================>]
+                q5duspz3uggl: running   [==================================================>]
+                rzmb7ke49zeo: running   [==================================================>]
+                jh0vk0wrgiru: running   [==================================================>]
+                mr4jjwio2une: running   [==================================================>]
+                verify: Service converged
+
+        Se dermos um "docker service ls", o que ele irá mostrar?
+
+            ID                  NAME                  MODE                REPLICAS            IMAGE                          PORTS
+            ck9nppwfl8wr        compassionate_raman   global              5/5                 aluracursos/barbearia:latest   *:8080->3000/tcp
+
+        Ele está mostrando que tem cinco réplicas no total de cinco esperadas funcionando, mas agora o modo é global. Se utilizarmos agora o "docker service ps "id serviço""...
+
+            ID                  NAME                                            IMAGE                          NODE                DESIRED STATE       CURRENT STATE            ERROR               PORTS
+            h2qr8wffwhzb        compassionate_raman.rzmb7ke49zeocehp5liaq97ez   aluracursos/barbearia:latest   vm5                 Running             Running 12 minutes ago
+            97ka1hotzs1x        compassionate_raman.q5duspz3ugglfw664ln3xr18n   aluracursos/barbearia:latest   vm1                 Running             Running 12 minutes ago
+            oon8gbxhb7y4        compassionate_raman.jh0vk0wrgiruzrejjhfor8l3u   aluracursos/barbearia:latest   vm4                 Running             Running 12 minutes ago
+            xxb127sp3ten        compassionate_raman.mr4jjwio2une2dn51od448g9q   aluracursos/barbearia:latest   vm3                 Running             Running 12 minutes ago
+            5qf60a5h3iob        compassionate_raman.in3t87hcu77qnk13ln538rg29   aluracursos/barbearia:latest   vm2                 Running             Running 12 minutes ago
+
+        Ele mostra que em todos os nossos nós está rodando um tarefa, uma instância desse serviço.
+
+        Isso significa que no dispatcher, no momento em que definimos qual nó vai carregar determinado serviço, nesse ponto vai ser diferente, o dispatcher vai dizer "como o serviço é global
+        eu quero que todos os nós carreguem uma réplica desse serviço", ou seja, o serviço vai ser global e todos os nós vão ter uma instância dele.
+
+        Então se caso for alguma aplicação crítica, ela vai estar sendo executada em todos os nossos nós, que talvez seja o que queiramos, ou não, depende, mas no fim das contas, usar só o
+        serviço global ou só serviço replicado para tudo não é a solução, no mundo real, utilizaremos num mesmo Swarm serviços globais e serviços replicados.
+        
+    
+    Nesta aula, aprendemos:
+
+        - Serviços replicados rodam em um ou mais nós do swarm
+        - Serviços globais rodam em todos os nós do swarm
+        - Nós managers por padrão trabalham como workers
+        - Serviços como monitoramento e segurança são bons exemplos de serviços globais
+        - Como definir o modo que o serviço será criado utilizando a flag --mode no momento da criação do serviço
+
+    
+    Questões aula 05:
+
+        1 - No último vídeo, aprendemos diversos aspectos sobre serviços replicados. Quais das alternativas abaixo são verdadeiras sobre esse tipo de serviço?
+
+            Selecione 2 alternativas
+
+            R1: Serviços replicados podem rodar em apenas um nó.
+
+                Alternativa correta! Basta definirmos para o serviço ter apenas uma réplica.
+
+            R2: Serviços por padrão são criados no modo replicado.
+
+                Alternativa correta! Quando não informamos o modo desejado, criamos serviços replicados por padrão.
+
+        
+        2 - No último vídeo, aprendemos diversos aspectos sobre serviços globais. Quais das alternativas abaixo são verdadeiras sobre esse tipo de serviço?
+
+            Selecione uma alternativa
+
+            R: Bons exemplos de serviços globais são serviços de monitoramento e segurança.
+
+            Alternativa correta! Serviços que são críticos à aplicação como um todo podem e devem ser executados como globais para que todos os nós possam ser devidamente monitorados e 
+            estejam seguros.
