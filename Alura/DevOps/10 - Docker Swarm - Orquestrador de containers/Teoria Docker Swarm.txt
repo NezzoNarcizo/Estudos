@@ -1676,3 +1676,751 @@ Aula 05: Serviços globais e replicados -------
 
             Alternativa correta! Serviços que são críticos à aplicação como um todo podem e devem ser executados como globais para que todos os nós possam ser devidamente monitorados e 
             estejam seguros.
+
+
+Aula 06: Driver Overlay -------
+
+    A rede ingress:
+
+        Agora vamos continuar nesse aprofundamento que vamos tendo do Swarm, precisamos entender o que agora? Vimos sobre todas as partes que o Swarm consegue aos nós mas não entendemos de
+        certa forma como isso acontece.
+
+        Quem é o grande responsável por toda essa comunicação que acontece entre os diferentes nós de um Swarm? A questão aqui é a seguinte, se viermos aqui e utilizamos o comando...
+
+            $ docker service ls //Vemos que estamos sem serviços, paramos tudo o que tinha da aula anterior, se não utilize o comando "docker service rm "id serviço""
+
+        Agora utilizaremos aquele comando para listas as nossas redes...
+
+            $ docker network ls
+
+            Saída...
+
+                NETWORK ID          NAME                DRIVER              SCOPE
+                68a44a487ecc        bridge              bridge              local
+                d26db2c1ecac        docker_gwbridge     bridge              local
+                cc604e07f99f        host                host                local
+                ks43cn60dvn7        ingress             overlay             swarm
+                eb687475fca7        none                null                local
+
+        Ele listou as redes em que a nossa máquina, neste caso a vm1, está conectada.
+        Vemos que temos uma rede com o nome de bridger e a semelhante a ela docker_gwbridge, utilizando os drivers bridge, host.
+
+        E o que cada um desses caras faz? Vamos dar aquela lembrada rapidinha, o driver bridge permite a comunicação entre diferentes containers em um mesmo host, então se nós temos 10
+        containers em uma máquina só, todos eles conseguem se comunicar por causa desse driver bridge.
+
+        E o driver host, para que ele serve? O driver host, serve para fazer a comunicação entre container e máquina, então a máquina que está carregando esse container se comunica com o IP
+        desse container por causa desse driver host.
+
+        Mas o que tem de novo então? A novidade aqui para nós é esse cara aqui, o ingress, se repararmos os escopos de todas as outras redes, veremos que é local, mas esse cara não, ele 
+        utiliza um driver diferente, o overlay, tem o escopo de Swarm, e é exatamente isso que vamos analisar agora.
+
+        Esse cara aqui overlay, esse driver que tem a rede ingress, é ele que faz toda mágica acontecer, faremos o seguinte, utilizaremos a vm1 e também a vm3.
+
+        Se utilizarmos o comando "docker network ls" na vm3, o que teremos? A mesma coisa? Mais ou menos...ele vai nos mostrar que as redes de escopo local da vm3...
+
+            NETWORK ID          NAME                DRIVER              SCOPE
+            6812a7a731fd        bridge              bridge              local
+            6b6c8d294be4        docker_gwbridge     bridge              local
+            5a75dd387479        host                host                local
+            ks43cn60dvn7        ingress             overlay             swarm
+            9c001dc45fb3        none                null                local
+
+        Ou seja, todas as redes de escopo "scope" local, tem ids diferentes daqueles que vimos na VM1...
+
+        Mas a rede que é a overlay aqui, a nossa ingress, ele tem um mesmo ID, ou seja, todos os nosso nós do nosso Swarm, seja ele manager ou worker, eles estão todos dentro dessa mesma rede
+        que é a ingress, quando um nó entra em um Swarm por padrão ele entra nessa rede ingress, essa rede é criada junto com o nosso cluster lá no comando do "docker swarm init" e todos que
+        entrarem vão entrar por padrão nessa rede.
+
+        Então qualquer nó que fizermos esse comando aqui, vai nos mostrar o mesmo ID da rede ingress, seja ele um manager ou um worker...Vamos tentar com a vm5...
+
+            NETWORK ID          NAME                DRIVER              SCOPE
+            5bea722cc3a7        bridge              bridge              local
+            f7bd28c990d5        docker_gwbridge     bridge              local
+            c4b80b840b6d        host                host                local
+            ks43cn60dvn7        ingress             overlay             swarm *
+            fdb8ca29ebe2        none                null                local
+
+        Mas o que isso tudo quer dizer? Isso tudo quer dizer que agora que temos essa única rede entre todos os nossos nós, conseguimos fazer aquela comunicação que vem sendo feita de maneira
+        muito mais direta, e o que acontece agora? Essa comunicação agora em aspectos mais técnicos, é feita de maneira completamente criptografada.
+
+        Se utilizarmos o comando "docker node inspect" na nossa vm1, por exemplo, colocar no final do comando um "--pretty" para ele exibir bonito, não em formato de lista, ele vai "parciar"
+        o JSON, o que ele vai mostrar?
+
+            $ docker node inspect vm1 --pretty
+
+            Saída: 
+
+                ID:                     q5duspz3ugglfw664ln3xr18n
+                Hostname:               vm1
+                Joined at:              2021-04-13 03:27:51.01200965 +0000 utc
+                Status:
+                State:                 Ready
+                Availability:          Active
+                Address:               192.168.99.106
+                Manager Status:
+                Address:               192.168.99.106:2377
+                Raft Status:           Reachable
+                Leader:                No
+                Platform:
+                Operating System:      linux
+                Architecture:          x86_64
+                Resources:
+                CPUs:                  1
+                Memory:                985.4MiB
+                Plugins:
+                Log:           awslogs, fluentd, gcplogs, gelf, journald, json-file, local, logentries, splunk, syslog
+                Network:               bridge, host, ipvlan, macvlan, null, overlay
+                Volume:                local
+                Engine Version:         19.03.12
+                Engine Labels:
+                - provider=virtualbox
+                TLS Info:
+                TrustRoot:
+                -----BEGIN CERTIFICATE-----
+                MIIBajCCARCgAwIBAgIUfwk5k4j8LKc1DrFTKxLl2Iv7aXwwCgYIKoZIzj0EAwIw
+                EzERMA8GA1UEAxMIc3dhcm0tY2EwHhcNMjEwNDEwMDA0ODAwWhcNNDEwNDA1MDA0
+                ODAwWjATMREwDwYDVQQDEwhzd2FybS1jYTBZMBMGByqGSM49AgEGCCqGSM49AwEH
+                A0IABFZP1F4lbH91QCnQ6pulI8D9loAaz9cnLeN1IGaJgp+OR1MJQdLVgxsyrITk
+                vgTlLZWd/8LXS1+lUqdHor0wjt+jQjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMB
+                Af8EBTADAQH/MB0GA1UdDgQWBBT+IoF3Y1n5aJ2dTDAEo5DmgHUTtzAKBggqhkjO
+                PQQDAgNIADBFAiEApHYMm97UXu9dsED2UKosYyXQ884vQnTpodQF2pqjZqkCIFUd
+                58U+9+DAgntlXc15eys2x/nF9+2DGkLqUgtjbnku
+                -----END CERTIFICATE-----
+                
+                Issuer Subject:        MBMxETAPBgNVBAMTCHN3YXJtLWNh
+                Issuer Public Key:     MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEVk/UXiVsf3VAKdDqm6UjwP2WgBrP1yct43UgZomCn45HUwlB0tWDGzKshOS+BOUtlZ3/wtdLX6VSp0eivTCO3w==
+
+        Essa última parte aqui "BEGIN CERTIFICATE" - "END CERTIFICATE", é exatamente um certificado, toda a nossa comunicação entre todos os nossos nós é criptografada.
+
+        Temos essa comunicação completamente segura, mas se começarmos a olhar as outras informações do nosso "docker node inspect", veremos o que? Além de aspectos como recurso sendo
+        consumido, temos IP, hostname e todas as outras informações que já tinhamos, como o nosso endereço de manager (com porta) e tudo mais.
+
+        O ponto é o seguinte, como estamos em diferentes máquinas, tecnicamente eu estou com cinco máquinas diferentes abertas aqui, da vm1 até a vm5, se nós tentarmos no final fazer um
+        comando clássico de dar um ping. Vamos descobrir o ping da nossa vm4, que nós quase não usamos...
+
+            $ docker node inspect vm4 --pretty
+
+            Saída:
+
+                ID:                     jh0vk0wrgiruzrejjhfor8l3u
+                Hostname:               vm4
+                Joined at:              2021-04-10 01:30:00.912753049 +0000 utc
+                Status:
+                State:                 Ready
+                Availability:          Active
+                Address:               192.168.99.109
+                Platform:
+                Operating System:      linux
+                Architecture:          x86_64
+                Resources:
+                CPUs:                  1
+                Memory:                985.4MiB
+                Plugins:
+                Log:           awslogs, fluentd, gcplogs, gelf, journald, json-file, local, logentries, splunk, syslog
+                Network:               bridge, host, ipvlan, macvlan, null, overlay
+                Volume:                local
+                Engine Version:         19.03.12
+                Engine Labels:
+                - provider=virtualbox
+                TLS Info:
+                TrustRoot:
+                -----BEGIN CERTIFICATE-----
+                MIIBajCCARCgAwIBAgIUfwk5k4j8LKc1DrFTKxLl2Iv7aXwwCgYIKoZIzj0EAwIw
+                EzERMA8GA1UEAxMIc3dhcm0tY2EwHhcNMjEwNDEwMDA0ODAwWhcNNDEwNDA1MDA0
+                ODAwWjATMREwDwYDVQQDEwhzd2FybS1jYTBZMBMGByqGSM49AgEGCCqGSM49AwEH
+                A0IABFZP1F4lbH91QCnQ6pulI8D9loAaz9cnLeN1IGaJgp+OR1MJQdLVgxsyrITk
+                vgTlLZWd/8LXS1+lUqdHor0wjt+jQjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMB
+                Af8EBTADAQH/MB0GA1UdDgQWBBT+IoF3Y1n5aJ2dTDAEo5DmgHUTtzAKBggqhkjO
+                PQQDAgNIADBFAiEApHYMm97UXu9dsED2UKosYyXQ884vQnTpodQF2pqjZqkCIFUd
+                58U+9+DAgntlXc15eys2x/nF9+2DGkLqUgtjbnku
+                -----END CERTIFICATE-----
+                
+                Issuer Subject:        MBMxETAPBgNVBAMTCHN3YXJtLWNh
+                Issuer Public Key:     MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEVk/UXiVsf3VAKdDqm6UjwP2WgBrP1yct43UgZomCn45HUwlB0tWDGzKshOS+BOUtlZ3/wtdLX6VSp0eivTCO3w==
+
+            Descobrimos que o IP da vm4 é 192.168.99.109...Se tentarmos pingar da vm1 a vm4 o que vai acontecer?
+
+                $ ping 192.168.99.109
+
+                Saída:
+
+                    PING 192.168.99.109 (192.168.99.109): 56 data bytes
+                    64 bytes from 192.168.99.109: seq=0 ttl=64 time=0.351 ms
+                    64 bytes from 192.168.99.109: seq=1 ttl=64 time=0.452 ms
+                    64 bytes from 192.168.99.109: seq=2 ttl=64 time=0.464 ms
+                    64 bytes from 192.168.99.109: seq=3 ttl=64 time=0.459 ms
+
+        Ela respondeu ao ping! Ou seja, ele está recebendo, está conseguindo enviar informações para a nossa vm4, por mais que sejam máquinas diferentes, nós conseguimos nos cominicar agora
+        por causa de quem? Exatamente, da nossa rede overlay.
+
+        E ela também quer fazer todos esse papel de ajudar a nós com aquele Routing Mesh, porque antes de batermos em qualquer um dos nossos nós quando enviamos uma requisição, essa requisição
+        passa pela rede overlay, que é meio que um filtro, ela vai agir antes de passar para qualquer nó, e ela vai saber como resolver isso para nós, mas ela por padrão, da maneira que ela
+        vem, ela já ajuda a nós de grande formar, mas ainda conseguimos tirar ainda mais proveito dela, só que isso vamos ver na nossa próxima aula.
+
+    
+    Service Discovery:
+
+        Vamos continaur agora com o nosso estudo sobre o driver overlay. O que mais ele pode fazer de interessante? Um conceito bem famoso no dia de hoje, bem moderno, é um cara chamado Service
+        Discovery, o que é o Service Discovery? Se formos traduzir literalmente é descobrir um serviço, mas é descobrir esse serviço à partir do nome dele.
+
+        Ou seja, não precisamos ficar chamando um serviço ou outro pelo IP dele e sim chamar ele simplesmente pelo nome, que é uma maneira bem mais prática de conseguirmos comunicar diferentes
+        serviços.
+
+        Então como é que será, se dermos um "docker network ls" aqui, como é que será que utilizando esse driver overlay conseguimos fazer isso?
+
+            NETWORK ID          NAME                DRIVER              SCOPE
+            9a68a33c3af7        bridge              bridge              local
+            d26db2c1ecac        docker_gwbridge     bridge              local
+            cc604e07f99f        host                host                local
+            ks43cn60dvn7        ingress             overlay             swarm
+            eb687475fca7        none                null                local
+        
+        Vamos subir um serviço para fazermos esse experimento, e como é que criamos um serviço? utilizamos o comando "docker service create", daremos um nome para esse serviço, colocaremos
+        "--name" e então o nome que queremos para o serviço, vamos chama-lo de "servico" mesmo, só vamos traduzir.
+
+        Queremos também criar duas réplicas desse serviço, por que duas réplicas? Porque assim vamos ter dois containers, vamos fazer esses dois tentar comunicar esses dois containers, e
+        para podermos criar um serviço já definido com duas réplicas, basta colocarmos no momento da criação dele a flag "--replicas" e informar o número de réplicas que queremos. O número de
+        tarefas a ser gerado definimos como 2 neste exemplo, então serão gerados dois containers para esse cara.
+
+        E por fim, a imagem que vamos utilizar, que é no caso o "alpine", que é uma distribuição Linux bem leve, só vamos utilizar ela para testar o terminal. E agora precisamos adicionar um
+        comando para que o nosso novo container rode um pequeno processo para que assim que seja criado não caia, "sleep 1d", poderia ser qualquer comando que travasse o terminal.
+
+            $ docker service create --name servico --replicas 2 alpine sleep 1d
+
+            Saída:
+
+                lbr10f60qe45usk1ttne8bvub
+                overall progress: 2 out of 2 tasks
+                1/2: running   [==================================================>]
+                2/2: running   [==================================================>]
+                verify: Service converged
+
+        Depois de apertarmos o Enter, vimos que subiram duas tarefas, ele vai colocar a princípio nós aleatórios porque não definimos nenhum constraint para esse serviço. Vamos ver onde foi
+        criado...
+
+            $ docker service ls
+
+            Saída:
+
+                ID                  NAME                MODE                REPLICAS            IMAGE               PORTS
+                lbr10f60qe45        servico             replicated          2/2                 alpine:latest
+
+            Temos agora o ID do serviço, vamos ver em quais nós as tarefas deste serviço foram alocadas...
+
+                $ docker service ps lbr
+
+                Saída:
+
+                    ID                  NAME                IMAGE               NODE                DESIRED STATE       CURRENT STATE           ERROR               PORTS
+                    do8fouae0iyp        servico.1           alpine:latest       vm2                 Running             Running 6 minutes ago
+                    e61oy5cq6lm5        servico.2           alpine:latest       vm4                 Running             Running 6 minutes ago
+
+            Podemos ver que as tarefas deste serviço foram alocadas nos nós 2 e 4, ou seja, foi criado um container na nossa vm2 e um container na nossa vm4. Qual experimento podemos fazer
+            agora? Temos dois containers, vamos dar um "docker container ls" na nossa vm2...
+
+                $ docker-machine ssh vm2
+
+                $ docker container ls
+
+                Saida:
+
+                    CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+                    3e4f999123fa        alpine:latest       "sleep 1d"          10 minutes ago      Up 10 minutes                           servico.1.do8fouae0iypwnoeojypf2s8s
+
+            Agora temos o nosso container do nosso nó vm2, nome/ID - servico.1.do8fouae0iypwnoeojypf2s8s, faremos o mesmo procedimento para pegar as informações do nosso nó vm4...
+            Nosso nó vm4 tem o container com nome/ID - servico.2.e61oy5cq6lm5n4jok83ltz3m6.
+
+        Eu quero fazer um experimento para tentar comunicar esses dois conteiners via nome, então primeiramente vamos acessar o container...Como é o comando para acessar um container?
+        "docker exec", colocaremos também o "-it" do modo interativo, que vimos no curso de Docker, e vou informar o container que eu quero fazer isso, que é esse servico.1.do8...
+        E o comando que queremos rodar junto para interagir com o container é o "sh", que é do terminal alpine.
+
+            $ docker exec -it servico.1.do8fouae0iypwnoeojypf2s8s sh
+
+            / #
+
+            Estou dentro do terminal do alpine, dentro do meu container. Vou fazer a mesma coisa na vm4.
+
+            $ docker exec -it servico.2.e61oy5cq6lm5n4jok83ltz3m6 sh
+
+            / #
+
+        Eu vou tentar agora conectar esses dois containers, fazer uma comunicação entre eles via nome, ou seja, eu vou tentar à partir de um container acessar o outro. Primeiro vamos tentar
+        um pint, do nó 4 para o nó 2...
+
+            $ ping servico.1.do8fouae0iypwnoeojypf2s8s
+
+            Saída:
+
+                ping: bad address 'servico.1.do8fouae0iypwnoeojypf2s8s'
+
+        Repare que ele está falando que foi "bad address", ele não conseguiu se comunicar aquele container.
+
+        Mas se vier aqui e utilizasse algum comando por exemplo, de IP, desse um "ifconfig" por exemplo, teremos o que?
+
+            / # ifconfig
+
+            Saída:
+
+                eth0      Link encap:Ethernet  HWaddr 02:42:AC:11:00:02
+                inet addr:172.17.0.2  Bcast:172.17.255.255  Mask:255.255.0.0
+                UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+                RX packets:23 errors:0 dropped:0 overruns:0 frame:0
+                TX packets:4 errors:0 dropped:0 overruns:0 carrier:0        
+                collisions:0 txqueuelen:0
+                RX bytes:1946 (1.9 KiB)  TX bytes:274 (274.0 B)
+    
+                lo        Link encap:Local Loopback
+                inet addr:127.0.0.1  Mask:255.0.0.0
+                UP LOOPBACK RUNNING  MTU:65536  Metric:1
+                RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+                TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+                collisions:0 txqueuelen:1000
+                RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+
+        Temos o IP dele que é 172.17.0.2, vamos utilizar esse IP para tentar um ping agora do nosso nó vm2...
+
+            / # ping 172.17.0.2
+
+            Saída:
+
+                PING 172.17.0.2 (172.17.0.2): 56 data bytes
+                64 bytes from 172.17.0.2: seq=0 ttl=64 time=0.044 ms
+                64 bytes from 172.17.0.2: seq=1 ttl=64 time=0.064 ms
+                64 bytes from 172.17.0.2: seq=2 ttl=64 time=0.065 ms
+                64 bytes from 172.17.0.2: seq=3 ttl=64 time=0.062 ms
+
+        O que aconteceu agora? Ele está pingando! Ou seja, eles conseguem se comunicar, mas a princípio sem comunicação via nome, não conseguimos chamar um serviço pelo nome dele até então.
+
+        Ou seja, temos uma restrição aqui na nossa overlay até agora. Vamos ver como conseguimos contornar este tipo de problema.
+
+    
+    User-Defined Overlay:
+
+        Como faremos agora o Docker fazer e entender esse Service Discovery, como é que vamos conseguir fazer a comunicação entre diferentes containers, diferentes tarefas à partir
+        simplesmente do nome dessa tarefa, desse container, e não necessariamente à partir do IP.
+
+        Eu já parei o serviço que estava em execução anteriormente, se dermos um "docker service ls" ele não está mais rodando, e vamos fazer o que agora? Vamos dar um "docker network ls",
+        e ver mais uma vez nossas redes.
+
+            NETWORK ID          NAME                DRIVER              SCOPE
+            f4ac554b54af        bridge              bridge              local
+            d26db2c1ecac        docker_gwbridge     bridge              local
+            cc604e07f99f        host                host                local
+            ks43cn60dvn7        ingress             overlay             swarm
+            eb687475fca7        none                null                local
+
+        No outro curso de Docker estavamos trabalhando com Stand Alone, em um único host, podíamos criar as nossas próprias redes utilizando driver bridge, as "user defined bridge" que podíamos
+        criar, agora a ideia vai ser bem parecida, nós criamos as nossas próprias redes utilizando drive overlay, e vamos ver o que isso vai ajudar a nós.
+
+        Como é que criamos uma rede no Docker? Já sabemos que é com o comando "docker network create", e precisamos informar qual o driver que queremos utilizar, para isso colocamos o "-d" e
+        informamos que queremos utilizar o driver "overlay". Por fim precisamos colocar o nome da rede que vai ser criada, que eu vou chamar de "my_overlay", vamos lá, Enter...
+        
+            $ docker network create -d overlay my_overlay
+
+            (sq8zp7u7i7u9gea1k6up75wx8)
+        
+        ...e se dermos um "docker network ls", veremos a nossa rede recém-criada.
+        
+            NETWORK ID          NAME                DRIVER              SCOPE
+            f4ac554b54af        bridge              bridge              local
+            d26db2c1ecac        docker_gwbridge     bridge              local
+            cc604e07f99f        host                host                local
+            ks43cn60dvn7        ingress             overlay             swarm
+            sq8zp7u7i7u9        my_overlay          overlay             swarm *******
+            eb687475fca7        none                null                local
+
+        Se formos na nossa vm3 e na nossa vm2 que são as outras managers que tem no nosso Swarm, e executarmos o "docker network ls", o que acontece?
+            
+            NETWORK ID          NAME                DRIVER              SCOPE
+            sq8zp7u7i7u9        my_overlay          overlay             swarm
+
+        Está aparecendo a mesma rede com o mesmo ID, a rede que criamos na nossa manager vm1, se fizermos isso nos nós workers vm4 e vm5, podemos reparar que não tem a nossa "my_overlay".
+
+        Isso porque vem o primeiro segredo, quando criamos a rede com o driver overlay no Swarm, elas são criadas de maneira "lazy", então todos os managers a princípio vão saber da existência
+        dessa rede, mas os workers só vão listar essa rede aqui com o "docker network ls", à partir do momento em que alguma tarefa, algum container for colocado e utilize essa rede dentro 
+        desse nó.
+
+        Então vamos fazer exatamente isso agora. Vamos voltar na nossa vm1 e agora vamos subir dois serviços no nosso worker. Já sabemos como sobe o serviço "docker service create", e vamos
+        fazer o que? Eu quero que esse serviço tenha mais uma vez aqui o nome de "servico", isso não é nada novo, é uma questão semântica para nós.
+
+        Agora vem o ponto chave, queremos que ele utilize o driver overlay e que utilize a rede que criamos, que é a "my_overlay". Então repara no momento da criação em que estamos criando um
+        serviço, nós podemos definir a rede em que esse serviço vai rodar, "--network", então além de ele ser executado por padrão aqui na ingress, ele também vai ser executado na my_overlay, duas redes
+        diferentes.
+
+        E agora vamos fazer o mesmo passo que fizemos antes, eu quero que ele tenha duas "--replicas" e vai utilizar o "alpine" aqui, com um "sleep" de um dia...
+
+            $ docker service create --name servico --network my_overlay --replicas 2 alpine sleep 1d...
+
+            Saída:
+
+                nxz1pc9h88sswb5a9785bjph0
+                overall progress: 2 out of 2 tasks
+                1/2: running   [==================================================>]
+                2/2: running   [==================================================>]
+                verify: Service converged
+
+            ...ele criou duas tarefas.
+
+        Vamos utilizar o comando "docker service ps "id_servico"", para ver onde ele alocou...
+
+            $ docker service ps nxz
+
+            Saída:
+
+                ID                  NAME                IMAGE               NODE                DESIRED STATE       CURRENT STATE           ERROR               PORTS
+                up1px3miblaj        servico.1           alpine:latest       vm2                 Running             Running 3 minutes ago
+                riurwcvh32i3        servico.2           alpine:latest       vm4                 Running             Running 3 minutes ago
+
+            ...ele está rodando na vm4 que é um worker e na vm2 que é um manager. Se dermos um "docker network ls" na vm4, o que vai acontecer?
+
+                NETWORK ID          NAME                DRIVER              SCOPE
+                6b0d4ff43713        bridge              bridge              local
+                547eeeb28baa        docker_gwbridge     bridge              local
+                68094332e67e        host                host                local
+                ks43cn60dvn7        ingress             overlay             swarm
+                sq8zp7u7i7u9        my_overlay          overlay             swarm *******
+                da3087950007        none                null                local
+
+            Repare que agora ele está listando a my_overlay...
+
+        Porque, se dermos um "docker container ls", o que está acontecendo aqui?
+
+            CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+            741cdf2a1a16        alpine:latest       "sleep 1d"          7 minutes ago       Up 7 minutes                            servico.2.riurwcvh32i3kgmzzeynzuel
+
+        Ele tem um container, ele tem uma tarefa alocada, uma tarefa alocada utilizando a rede "my_overlay", se agora utilizarmos o comando "docker network inspect"...
+
+            $ docker network inspect my_overlay
+
+            Saída:
+
+                [
+                    ...
+                        },
+                        "ConfigOnly": false,
+                        "Containers": {
+                            "741cdf2a1a165853427ea1a9bd4dee5cb81a9e58e29e07f036839e1b26072a29": {
+                                "Name": "servico.2.riurwcvh32i3kgmzzeynzuelp",
+                                "EndpointID": "ea988b4aad6ec413325dfdeeda6679092cc2b9095a2e6689f00b815a2706cf8a",
+                                "MacAddress": "02:42:0a:00:01:03",
+                                "IPv4Address": "10.0.1.3/24",
+                                "IPv6Address": ""
+                            },
+                            "lb-my_overlay": {
+                                "Name": "my_overlay-endpoint",
+                                "EndpointID": "bd36c24d642cce4d3abf7c86fed27e3a2366a889c3238b185abdd911409efe6f",
+                                "MacAddress": "02:42:0a:00:01:05",
+                                "IPv4Address": "10.0.1.5/24",
+                                "IPv6Address": ""
+                            }
+                        }
+                    ...
+                ]
+
+        Podemos ver o que? Exatamente o container que foi criado utilizando a rede "my_overlay", o serviço dois aqui, mas se repararmos bem, temos duas tarefas que foram criadas rodando nessa
+        rede my_overlay, porque ele só mostra um container? Esse abaixo do container é o endpoint da rede, porque ele só mostra um container? Que é o serviço 2, cadê o serviço 1 que foi criado?
+        É porque até então, o "docker network inspect", só vai mostrar os containers que estão nessa rede neste container.
+
+        Dentro do nó que executou esse comando, então quando executamos o "docker network inspect" dentro da vm4, ele mostrou o container que está nessa rede dentro apenas da vm4.
+
+        Mas agora o ponto é o seguinte, vamos executar um "docker exec -it" nesse serviço 2, e acessar o terminal do alpine neste container...
+
+            $ docker exec -it servico.2.riurwcvh32i3kgmzzeynzuelp sh
+
+            ...pegamos o nome do container, a outra réplica, que está sendo executada na vm2, servico.1.up1px3miblajtqh5n9h40u9em. Agora se tentarmos realizar um ping da vm4 utilizando o nome
+            do container que está na vm2...
+
+                / # ping servico.1.up1px3miblajtqh5n9h40u9em
+
+                Saída:
+
+                    PING servico.1.up1px3miblajtqh5n9h40u9em (10.0.1.4): 56 data bytes
+                    64 bytes from 10.0.1.4: seq=0 ttl=64 time=0.587 ms
+                    64 bytes from 10.0.1.4: seq=1 ttl=64 time=0.500 ms
+                    64 bytes from 10.0.1.4: seq=2 ttl=64 time=0.578 ms
+                    64 bytes from 10.0.1.4: seq=3 ttl=64 time=0.620 ms
+
+            ...nós conseguimos fazer uma requisição de um container para outro em nós diferentes apenas pelo nome do serviço, nós não precisamos em momento algum procurar pelo IP desse cara,
+            nós só passamos o nome e o Docker resolveu isso para nós chamando o serviço com esse nome.
+
+        Isso é muito legal, é uma coisa muito interessante que está sendo muito utilizada no mercado, que é o conceito de "Service Discovery". Agora veremos com o é feito o processo de produção
+        de serviços com o Docker.
+
+    Para saber mais: Containers e Overlay:
+
+        Por mais que o driver overlay seja responsável por comunicar múltiplos hosts em uma mesma rede, também podemos conectar containers em escopo local criados com o comando "docker container 
+        run" em redes criadas com esse driver.
+
+        Para isso, basta no momento da criação da rede utilizarmos a flag --attachable:
+        
+            $ docker network create -d overlay --attachable my_overlay
+
+        Com o comando acima, conseguiremos conectar tanto serviços como containers "standalone" em nossa rede my_overlay.
+
+    O que aprendemos?
+
+        Nesta aula, aprendemos:
+
+        - A rede ingress é a padrão criada junto com nosso swarm
+        - O driver overlay é utilizado para a comunicação entre nós em diferentes hosts
+        - Como criar nossas próprias redes com o driver overlay utilizando o comando docker network create -d overlay
+        - Redes overlays criadas manualmente (User-Defined Overlay) permitem a comunicação entre serviços por seus nomes (Service Discovery)
+        - As redes criadas com o driver overlay são listadas de maneira lazy para workers
+
+    Questões Aula 06:
+            
+        1 - Conhecemos agora a rede ingress e vimos que, além de ser a rede padrão criada pelo Docker Swarm para os nós que fazem parte cluster, ela utiliza o driver overlay. 
+            Qual das alternativas abaixo contém uma finalidade desse driver?
+
+            Selecione 2 alternativas
+
+            R1: O driver overlay comunica seus dados de maneira criptografada para garantir nossa segurança.
+
+                Alternativa correta! Executando o comando docker node inspect podemos ver os certificados de segurança.
+
+            R2: O driver overlay permite a comunicação entre diferentes hosts de um mesmo cluster.
+
+                Alternativa correta! Além de garantir a segurança, o driver overlay também permite a comunicação entre diferentes hosts rodando Docker.
+
+        
+        2 - A rede ingress, utilizando o driver overlay, consegue fazer diversas coisas por nós, como garantir por exemplo, a comunicação entre diferentes nós de maneira altamente segura. 
+            Porém, ela também possui certas limitações. Qual das alternativas abaixo contém uma dessas limitações?
+
+            Selecione uma alternativa
+
+            R: Serviços conseguem se comunicar apenas via endereço IP.
+
+            Alternativa correta! Temos que saber o endereço IP do serviço que queremos nos comunicar utilizando a rede ingress.
+
+        
+        3 - Na última aula, aprendemos alguns fatos novos sobre User-Defined Overlay networks. Quais das alternativas abaixo contém informações verdadeiras sobre redes criadas manualmente?
+
+            Selecione 2 alternativas
+
+            R1: User-Defined Overlay são criadas de maneira lazy para workers.
+
+            Alternativa correta! Essas redes só serão reconhecidas por workers que rodarem tarefas que utilizem a rede.
+
+            R2: Serviços que utilizam redes customizadas conseguem descobrir outros serviços diretamente por nome.
+
+            Alternativa correta! Podemos utilizar o conceito de Service Discovery com User-Defined Overlay.
+
+
+Aula 07: Deploy com Docker Stack -------
+
+    Lembrando do Docker Compose:
+
+        Agora estamos nos aproximando de um momento muito importante, para fazer o que? Para pararmos para pensar, como é que é feito o deploy de uma aplicação utilizando o Swarm?
+
+        Como é que subimos esses serviços se intercomunicando, tendo essa comunicação ali coletiva entre diferentes hosts para que consigamos ter uma grande aplicação composta por vários
+        desses serviços independentemente? É meio que aquela ideia de micro serviços, vamos ter vários pontinhos isolados, vários serviços independentes, formando lá uma grande aplicação com
+        eles já tendo toda essa escalabilidade para eles conseguirem se resolver.
+
+        O que conseguíamos fazer lá com o Docker Stand Alone, trabalhando em um host só? Podíamos utilizar aquele tal de arquivo chmado docker-compose, utilizando arquivo yml podíamos definir
+        além da versão, definíamos, repara a palavra-chave, 'serviços', nós já víamos essa palavra desde esse momento e não associavamos, podemos associar e criar diversos serviços definindo
+        uma imagem...Obs: Arquivo do Docker compose na pasta do curso.
+
+        Então vamos ter um serviço chamado redis utilizando a imagem aqui do 'redis:alpine', determinada a rede, rede network front-end, que foi declarada onde? Lá no final do nosso arquivo
+        assim como a rede backend e podemos utilizar também o volume 'db-data', vamos fazer isso em alguns momentos.
+
+        Então esse aqui é um docker compose de exemplo que estamos visualizando e que criamos diversos serviços, é claro, revisando aqui, definindo uma imagem, definindo um volume para esse
+        serviço fazendo o binding, definindo uma rede, fazendo o binding de portas também, na porta 80 com a porta 5000, informando dependências que esse serviço depende.
+
+        Diversas coisas que conseguíamos fazer já com esse tal de docker-compose, mas num contexto local, sem envolver diversos hosts, poderíamos utilizar o comando clássico, não precisa
+        executar, mas só para lembrarmos, "docker-compose up ...". Conseguiríamos contruir a partir desse arquivo, docker-compose, diversos containers de uma única vez, subindo todos
+        simultaneamente para fazer uma aplicação local.
+
+        A ideia seguindo esse conceito de micro serviços, é que vamos fazer essa mesma coisa, só que em vez de entregarmos simples containers, vamos entregar diversos serviços dispostos,
+        espalhados pelo nosso cluster em diversos nós, e eles vão se comunicar também a fim de construir uma grande aplicação.
+
+        Mas cada um desses serviços que vamos ter a partir daqui, vão ser isolados, então vamos ver como é que podemos utilizar esse tal de docker-compose, colocando algumas novas instruções
+        que vieram a partir da versão três que poderemos utilizar.
+
+        Como é que podemos integrar esse docker compose, o arquivo com o Swarm, será que ele provê alguma maneira para podermos utilizar um arquivo yaml, dispor diversos serviços de uma vez?
+        Não precisar ficar subindo um serviço por vez.
+
+    
+    Definindo o arquivo de composição:
+
+        O arquivo com as modificações feitas nessa aula pode ser obtido aqui: https://caelum-online-public.s3.amazonaws.com/1486-docker-swarm-cluster-container/07/docker-compose.yml
+
+        Atenção! Houve uma mudança em todo o repositório do Postgres no Docker Hub. Para o devido funcionamento, devemos utilizar uma variável de ambiente para ignorar o uso de senhas. A
+        alteração já foi feita no arquivo para download:
+
+            db:
+                image: postgres:9.4
+                volumes:
+                - db-data:/var/lib/postgresql/data
+                networks:
+                - backend
+                deploy:
+                placement:
+                    constraints: [node.role == manager]
+                environment:
+                    POSTGRES_HOST_AUTH_METHOD: trust
+
+        Pessoal o que almejamos aqui? Queremos fazer o seguinte, agora utilizando esse docker-compose que já vimos tanto lá do curso anterior, vimos as instruções e a capacidade dele em nos
+        ajudar, vamos utilizar as novas instruções que vieram na versão três para lançar não agora um simples container, mas serviços, construções específicas do Swarm que vão nos ajudar, seja
+        com política de restart, seja com limitações dos nossos nós ou dos nossos serviços e assim por diante.
+
+        E utilizando essas instruções, vamos ver que conseguimos, subindo esses múltiplos serviços, alcançar resultados bem legais como por exemplo, subir um serviço que vai ser responsável por
+        ser o visualizador de como está rodando cada container, cada serviço, cada tarefa dentro do nosso Swarm.
+
+        Então olha que legal, esse cara aqui que é o visualizer, ele mostra para nós que na vm1 está rodando alguns serviços, na vm2 está rodando uma única tarefa, na vm3 duas tarefas, e quais 
+        são, e assim por diante.
+
+        Vamos ter um core, faremos o seguinte, na parte da aplicação em si faremos uma votação entre gatos e cachorros e podemos votar entre estas duas espécies, teremos uma tela para mostrar
+        o resultado das votações, poderemos alterar o nosso voto também.
+
+        E essa aplicação não será tão trivial assim, ela terá multiplos serviços, local do repositório da aplicação: 
+            'https://github.com/dockersamples/example-voting-app' 
+        
+        ela tem código aberto para qualquer um que quiser visualizar e utilizar, é uma aplicação de votação feita em 'python', que se comunica com o 'redis' que conta os votos e envia para o 
+        worker que está rodando no ambiente '.Net', e ele faz esse envio do voto que foi feito para um banco de dados.
+
+        Esse banco de dados exibe o resultado em uma aplicação 'node', ou seja, conseguimos ter um resultado bem legal combinando esses múltiplos serviços em diferentes plataformas, e o Docker, o
+        Swarm em conjunto com o compose vai nos ajudar nisso.
+
+        E como podemos alcançar esse resultado? Vamos fazer o seguinte, vamos no arquivo 'docker-compose.yml', no nosso 'Visual Studio Code', o que faremos? Precisamos tornar esse cara mais 
+        próximo do Swarm, com a versão três que veio, além dessas instruções clássicas que conhecemos, vem um cara novo chamado 'deploy', e dentro dele podemos definir diversas coisas, como por
+        exemplo, eu posso definir um número de réplicas que eu quero para as tarefas que vão ser geradas por esse serviço.
+
+        Então por exemplo, eu quero que tenha uma réplica do registro funcionando, e posso definir também a política de restart, como por exemplo, qual é a condição para que esse cara reinicie?
+        A condição para ele reiniciar é caso ele tenha falahado em algum momento, assim por diante, eu posso definindo cada um dos meus serviços, além de toda a imagem e volume que eu definir
+        aqui.
+
+            redis:
+              image: redis:alpine
+              networks:
+                - frontend
+              deploy:
+                replicas: 1
+                restart_policy:
+                  condition: on-failure
+
+        O que mais podemos fazer? No nosso serviço de banco de dados por exemplo, o db, podemos definir onde vamos colocar o serviço, qual é a minha restrição para esse serviço? Quero vir aqui
+        e definir que ele só vai poder rodar em nós que sejam manager, que tenha esse papel dentro do nosso Swarm:
+
+            db:
+              image: postgres:9.4
+              volumes:
+                - db-data:/var/lib/postgresql/data
+              networks:
+                - backend
+              deploy:
+                placement:
+                  constraints: [node.role == manager]
+              environment:
+                POSTGRES_HOST_AUTH_METHOD: trust
+
+        No nosso serviço de votação, ele está rodando em Python, eu quero que ele rode em um nó qualquer, não preciso explicitar uma restrição para ele, então ele pode rodar tanto em um
+        manager, quanto em um worker por exemplo, mas também podemos colocar no deploy qual vai ser o número de réplicas dele.
+
+        Podemor definir como ele vai estar lidando com toda a votação, podem ter várias pessoas votando ao mesmo tempo, eu quero definir que o número de réplicas dele vão ser duas, para que
+        o Docker, o Swarm através do algoritmo 'Round Robin', veja que está recebendo alguma informação e defina qual é o melhor nó para receber essa tarefa, então ele vai definir qual das 
+        réplicas vai ser.
+
+            vote:
+              image: dockersamples/examplevotingapp_vote:before
+              ports:
+                - 5000:80
+              networks:
+                - frontend
+              depends_on:
+                - redis
+              deploy:
+                replicas: 2
+                restart_policy:
+                  condition: on-failure
+
+            Então eu quero que tenha duas réplicas para caso tenha múltiplas votações ao mesmo tempo, consigamos lidar com isso.
+            Também definimos a nossa política de restart, que vai ser em qual condição? Na condição de falha.
+
+        E no nosso 'result'? Que é uma aplicação que está rodando em 'node', podemos também definir configurações de deploy, não é verdade? Quais outras coisas que podemos fazer, além do
+        número de réplicas, que podemos colocar 1? Podemos definir mais uma vez a nossa política de restart, então eu quero que esse cara na condição de falha reinicie.
+
+            result:
+              image: dockersamples/examplevotingapp_result:before
+              ports:
+                - 5001:80
+              networks:
+                - backend
+              depends_on:
+                - db
+              deploy:
+                replicas: 1
+                restart_policy:
+                  condition: on-failure
+
+        Agora vamos ver um diferente, vamos no nosso worker, o cara .Net, o que queremos que ele faça? Nós já sabemos que o papel dele é fazer a comunicação entre o voto que foi recebido e o
+        envio para o banco de dados, então queremos que esse cara faça o seguinte: Podemos dizer que esse cara, por padrão já é replicado, vimos isso antes quando criamos um serviço na outra
+        aula.
+
+        Mas podemos explicitar também, podemos colocar só para mostrar as possibilidades, colocar ele como 'replicated' ou como 'global', vamos deixar ele replicado, mas, como já dito, explicito.
+
+        Queremos que rode com apenas uma réplica, e podemos fazer o que nele? Podemos definir uma label, podemos definir uma etiqueta para ele, podemos fazer isso como? Colocamos entre 
+        colchetes, chamamos esse cara de "VOTING", "[APP=VOTING]" no caso vai ser a etiqueta desse nosso serviço.
+
+        E podemos mais uma vez definir a política de reinício e a política mais uma vez vai ser em caso de falha, mais do que isso, ainda por cima, eu quero colocar que este serviço, como ele
+        faz o papel de "trabalho duro" e ele já está meio que explicitando para nós o nome do serviço que é worker, eu quero que esse cara só rode em nós que tenham o papel de "worker's", 
+        [node.role == worker].
+
+            worker:
+              image: dockersamples/examplevotingapp_worker
+              networks:
+                - frontend
+                - backend
+              depends_on:
+                - db
+                - redis
+              deploy:
+                mode: replicated
+                replicas: 1
+                labels: [APP=VOTING]
+                restart_policy:
+                  condition: on-failure
+                placement:
+                  constraints: [node.role == worker]
+
+        E para finalizarmos, o nosso último serviço, que é o 'visualizer', que é aquele que mostra o status todo do que está acontecendo para nós, como esse cara tem um papel mais administrativo, 
+        no fim das contas, eu quero que esse cara aqui só rode no meu manager, e isso aqui não é nada de novo, vamos colocar "deploy:", "placement:", e no fim das contas, colocamos o nosso       
+        "constraints" e o meu constraint vai ser o quê? "[node.role==manager]".
+
+            visualizer:
+              image: dockersamples/visualizer:stable
+              ports:
+                - 8080:8080
+              stop_grace_period: 1m30s
+              volumes:
+                - "/var/run/docker.sock:/var/run/docker.sock"
+              deploy:
+                placement:
+                  constraints: [node.role == manager]
+
+        Então agora que definimos o nosso 'docker-compose', vamos ver como utilizamos o Docker Swarm, vamos fazer o deploy desses múltiplos serviços.
+
+    
+    Subindo a stack:
+
+        
+    Questões aula 07:
+
+        1 - Você assumiu um projeto que usa Docker Swarm. No arquivo de configuração tem o seguinte trecho:
+
+            deploy:
+                mode: replicated
+                replicas: 4
+                restart_policy:
+                    condition: on-failure
+                placement:
+                    constraints: [node.role == manager]
+
+            O que podemos afirmar sobre o trecho acima?
+        
+            Selecione 2 alternativas
+
+            R1: Garantirá que teremos exatamente 4 réplicas desse serviço.
+                Alternativa correta! Isso será possível graças ao trecho replicas: 4.
+
+            R2: Em caso de falhas o serviço será reiniciado.
+                Alternativa correta! Isso foi definido no trecho de restart_policy.
