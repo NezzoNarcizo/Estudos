@@ -1272,7 +1272,7 @@ Aula 04: Separando as responsabilidades -------
         tipo de servilo, eu preciso trocar esse status para indisponível.
 
         E como é que vamos fazer isso? Temos um comando bem interessante que é o "docker node update", ou seja, vamos atualizar o estado de um nó, e o que queremos atualizar? O availability,
-        e podemos atualizar ele com esse "--availability" aqui, e agora colocamos o status que quereos colocar nesse estadom eu quero que ele esteja com esse status de "drain", que é o Status
+        e podemos atualizar ele com esse "--availability" aqui, e agora colocamos o status que quereos colocar nesse estado eu quero que ele esteja com esse status de "drain", que é o Status
         que por padrão não vai permitir que algum serviçlo seja executado dentro desse nó.
 
         Por fim, eu preciso informar qual é o nó que eu quero atualizar, porque esse comando aqui, pode ser executado dentro de qualquer manager, e por fim, eu preciso falar q  ue eu quero
@@ -2401,8 +2401,275 @@ Aula 07: Deploy com Docker Stack -------
 
     
     Subindo a stack:
+        
+        Atenção! Houve uma mudança em todo o repositório do Postgres no Docker Hub. Para o devido funcionamento, devemos utilizar uma variável de ambiente para ignorar o uso de senhas.
+        Ficando no seguinte formato:
+
+            Obs: Se a alteração já foi feita na outra aula, não é mais necessário realiza-la.
+
+        Definimos o nosso arquivo, agora precisamos copiar esse conteúdo aqui de algum modo para dentro de algum nó manager, porque isso aqui está na nossa máquina física, como é que eu posso
+        copiar o conteúdo desse arquivo aqui e mover ele para dentro de alguma máquina virtual? Nesse caso, vamos aprender um pequeno truque de Linux para que nos ajude bastante.
+
+        Off Topic -------
+
+            Como é que dentro dessa máquina virtual Linux podemos criar um arquivo utilizando o menor ferramental possível, sem abrir nenhum tipo de editor de texto de terminal? Podemos fazer
+            o seguinte, tem um cara bem famoso que se chama "cat", ele permite que leiamos e escrevamos arquivos...
+
+            E para criarmo um arquivo, vamos aprender o truque, que basta colocar "cat >" e o nome do arquivo que queremos criar, que no caso é "docker-compose.yml", se dermos um 'Enter' repare,
+            que ele faz uma quebra de linha e assim, basta colocar o conteúdo dentro deste arquivo clicando com o botão direito após ter copiado...
+
+                $ cat > docker-compose.yml
+
+                    version: "3"
+                    services:
+                    
+                    redis:
+                      image: redis:alpine
+                      networks:
+                        - frontend
+                      deploy:
+                        replicas: 1
+                        restart_policy:
+                          condition: on-failure
+                            
+                    db:
+                      image: postgres:9.4
+                      volumes:
+                        - db-data:/var/lib/postgresql/data
+                      networks:
+                        - backend
+                      deploy:
+                        placement:
+                          constraints: [node.role == manager]
+                      environment:
+                        POSTGRES_HOST_AUTH_METHOD: trust
+                    
+                    vote:
+                      image: dockersamples/examplevotingapp_vote:before
+                      ports:
+                        - 5000:80
+                      networks:
+                        - frontend
+                      depends_on:
+                        - redis
+                      deploy:
+                        replicas: 2
+                        restart_policy:
+                          condition: on-failure
+                    
+                    result:
+                      image: dockersamples/examplevotingapp_result:before
+                      ports:
+                        - 5001:80
+                      networks:
+                        - backend
+                      depends_on:
+                        - db
+                      deploy:
+                        replicas: 1
+                        restart_policy:
+                          condition: on-failure
+                    
+                    worker:
+                        image: dockersamples/examplevotingapp_worker
+                        networks:
+                        - frontend
+                        - backend
+                        depends_on:
+                        - db
+                        - redis
+                        deploy:
+                        mode: replicated
+                        replicas: 1
+                        labels: [APP=VOTING]
+                        restart_policy:
+                            condition: on-failure
+                        placement:
+                            constraints: [node.role == worker]
+                    
+                    visualizer:
+                      image: dockersamples/visualizer:stable
+                      ports:
+                        - 8080:8080
+                      stop_grace_period: 1m30s
+                      volumes:
+                        - "/var/run/docker.sock:/var/run/docker.sock"
+                      deploy:
+                        placement:
+                          constraints: [node.role == manager]
+                    
+                    networks:
+                    frontend:
+                    backend:
+                    
+                    volumes:
+                    db-data:
+
+            Obs: Caso esteja utilizando o prompt de comando do Windows e não esteja conseguindo colar o conteúdo, vá até propriedades, opções, e é só marcar a opção "Edição rápida", todas essas
+            opções do prompt vão permitir que consigamos copiar e colar dentro do prompt de comando.
+
+            Por fim, para sair do arquivo basta utilizar o "Ctrl + D"
+        
+        -------
+
+        Agora se utilizarmos o comando "cat docker-compose.yml" ele vai listar o nosso arquivo, então o arquivo realmente foi criado, para fazer a contra prova, basta utilizar o "ls", e veremos
+        o nosso arquivo.
+
+        Mas o que importa é que agora vamos precisar fazer o deploy desse arquivo e gerar os nossos serviços, como vamos fazer isso? Temos o comando do Docker e faremos o deploy de uma pilha de
+        arquivos.
+
+        O nosso comando será o "docker stack deploy", ele faz o deploy de uma pilha de arquivos, e para esse cara podemos informar o seguinte: 
+        "Faça o deploy dessa pilha utilizando um '--compose-file'", um arquivo de composição, e qual o nome do nosso arquivo? É "docker-compose.yml".
+
+        Se dermos um 'Enter' agora, ele informará que está faltando um parâmetro, qual é esse último parâmetro? É o nome da stack que queremos criar, para isso vamos colocar o nome "vote", no
+        momento que dermos um 'Enter', reparem ele vai começar a criar cada um daqueles atributos que estão declarados dentro do nosso arquivo, as nossas redes, a front-end, a backend, a rede
+        padrão, a dbdata que é o nosso banco de dados, o nosso volume, os nossos serviços, cada um deles...
+
+            $ docker stack deploy --compose-file docker-compose.yml "Nome da Stack"
+
+            Saída:
+
+                Creating network vote_backend
+                Creating network vote_frontend
+                Creating network vote_default
+                Creating service vote_visualizer
+                Creating service vote_redis
+                Creating service vote_db
+                Creating service vote_vote
+                Creating service vote_result
+                Creating service vote_worker
+
+        Ele vai começar a criar cada uma separadamente e logo depois quando dermos um "docker service ls", ele vai estar listando tudo perfeitamente...
+
+            ID                  NAME                MODE                REPLICAS            IMAGE                                          PORTS
+            dq7po174szg9        vote_db             replicated          0/1                 postgres:9.4
+            mtn063vnituq        vote_redis          replicated          1/1                 redis:alpine
+            oz8zlqih5uqs        vote_result         replicated          0/1                 dockersamples/examplevotingapp_result:before   *:5001->80/tcp
+            7xhf1gfq3k4c        vote_visualizer     replicated          0/1                 dockersamples/visualizer:stable                *:8080->8080/tcp
+            4rlp5akzxbaf        vote_vote           replicated          0/2                 dockersamples/examplevotingapp_vote:before     *:5000->80/tcp
+            hai71l8rwkfn        vote_worker         replicated          0/1                 dockersamples/examplevotingapp_worker:latest
+
+        Cada um dos serviços criados para nós, e nesse meio tempo, se voltarmos no navegador, repare que nosso visualizer não está mostrando mais nenhum container, porque removemos antes de 
+        fazer esta aula..."192.168.99.XXX:8080"...Temos que esperar um tempo...
+
+        E agora quando ele termina, só falta mais um, se dermos um "docker stack ls", poderemos visualizar as nossas stacks, tem uma stack que se chama "vote" com 6 seviços e com o 
+        orquestrador, do Swarm.
+
+            NAME                SERVICES            ORCHESTRATOR
+            vote                6                   Swarm
+        
+        Se dermos um "docker service ls" o que acontece? Vamos ver que tem todos esses serviços...
+
+            ID                  NAME                MODE                REPLICAS            IMAGE                                          PORTS
+            dq7po174szg9        vote_db             replicated          1/1                 postgres:9.4
+            mtn063vnituq        vote_redis          replicated          1/1                 redis:alpine
+            oz8zlqih5uqs        vote_result         replicated          1/1                 dockersamples/examplevotingapp_result:before   *:5001->80/tcp
+            7xhf1gfq3k4c        vote_visualizer     replicated          1/1                 dockersamples/visualizer:stable                *:8080->8080/tcp
+            4rlp5akzxbaf        vote_vote           replicated          2/2                 dockersamples/examplevotingapp_vote:before     *:5000->80/tcp
+            hai71l8rwkfn        vote_worker         replicated          1/1                 dockersamples/examplevotingapp_worker:latest
+
+        Agora vamos fazer o seguinte, vamos dar um "docker service ls --format" e vamos formatar ele utilizando lá uma técnica bem legal...Queremos forma ele como? Queremos visualizar quais
+        campos? Queremos visualizar o "{{.Name}}" e queremos visualizar também o número de réplicas "{{.Replicas}}"
+
+            $ docker service ls --format "{{.Name}} {{.Replicas}}"
+
+                
+                Saída:
+
+                    vote_db 1/1
+                    vote_redis 1/1
+                    vote_result 1/1
+                    vote_visualizer 1/1
+                    vote_vote 2/2
+                    vote_worker 1/1
+
+        Se ele ainda não tiver todas as réplicas que solicitamos significa que ele ainda está baixando as nossas imagens, e ainda não subiu os serviços da forma que deveria, ou ele ainda está
+        alocando todas as tarefas da maneira como deveriam, então se ficarmos dando aqui esse comando várias vezes, vamos ver que ele está aos poucos, subindo cada uma dessas tarefas.
+
+        Mas quais que já subiram? Por exemplo o visualizer ainda não subiu, o result já subiu, então significa que se viermos aqui no 192.168.99.112 ou 107, 108 que são os IP's dos nossos nós
+        que estão dentro desse Swarm, ou seja, conseguimos acessar com aquela mesma ideia do Routing Mesh qualquer um dos serviços.
+
+        Temos que aguardar o Swarm subir os serviços aos poucos...
+
+        Por fim, terminando de subir todos os serviços da Stack, se formos inspecionando um a um por exemplo, "docker service ps vote_db"...
+
+            $ docker service ps vote_db
+
+            ID                  NAME                IMAGE               NODE                        DESIRED STATE       CURRENT STATE             ERROR               PORTS
+            vuljefjktm1m        vote_db.1           postgres:9.4        vm2                         Running             Running 55 minutes ago
+            su2tnrmy2edj         \_ vote_db.1       postgres:9.4        q5duspz3ugglfw664ln3xr18n   Shutdown            Orphaned 24 minutes ago
+
+            Ele está mostrando que na vm2 está rodando o nosso servilo com esse nome, essa tarefa e tudo perfeitamente, então ele vai ter respeitado todos as nossas restrições que impomos,
+            todas as condições de restart.
+
+        Se formos no nosso navegador, ele está exibindo tudo perfeitamente, se repararmos inclusive, que talvez, nenhuma tarefa, nenhum serviço foi alocado para determinado nó, então o Swarm
+        definiu que para ele é melhor essa configuração atualmente, podemos passear agora pela aplicação na verdade.
+
+        Podemos entrar na parte da votação que está na porta 5000, que se viermos aqui estamos vendo que o binding de portas está sendo feito na porta 5001 para de resultado, e na 5000 para
+        a de votação, além disso 8080 foi reservada para a de visualizer.
+        
+        Então agora já temos a nossa aplicação feita, múltiplos serviços estão interagindo, e a parte mais legal, se formos na nossa vm1 e dermos um "$ docker service ps vote_vote" que é o
+        nosso serviço de votação vamos ver que ele tentou subir a primeira vez, subiu as duas réplicas na verdade no fim das contas, uma na vm2 e uma na vm3.
+
+        E o nosso serviço de resultado está rodando aqui na nossa vm2, então significa que se viermos na nossa vm2 o que acontece? 
+
+            $ docker-machine ssh vm2
+
+            $ docker container ls
+
+            CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS               NAMES
+            c3a47f8ef617        postgres:9.4        "docker-entrypoint.s…"   38 seconds ago      Up 31 seconds       5432/tcp            vote_db.1.yt26rn03k2mjums2em2kwekg5
+
+            Está aqui o nosso container, e agora o momento mais belo desse curso, vamos dar um "docker container rm c3a47f8ef617" que é o ID, com "--force", vamos vir aqui, ver que esse é o
+            nosso serviço de votação, esse aqui é o nosso serviço de resultado, e eu vou remover esse cara.
+
+            Se dermos um F5 no monitoramento (http://192.168.99.XXX:8080/), poderemos ver que o container saiu do ar, mas todos os outros nossos serviços continuam funcionando normalmente,
+            enquanto esse cara vai voltar a ser executado, se dermos um "docker service ps" de novo, o que acontece? Ele foi realocado novamente na vm2, mas nesse tempo aqui o serviço estava
+            reiniciando, isso não comprometeu em nenhum momento o resto da nossa aplicação, porque os serviços são independentes.
+
+            Vamos finalizar por aqui, vimos como podemos criar as nossas stack's agora, os nosso múltiplos serviços, só para finalizar aqui com chave de ouro, o último comando que vamos ver,
+            caso quisessemos remover toda essa nossa stack de uma só vez, temos também o comando "docker stack rm" e com isso, podemos passar a stack que eu quero remover, de 'vote'...
+            
+                $ docker stack rm vote
+
+                Removing service vote_db
+                Removing service vote_redis
+                Removing service vote_result
+                Removing service vote_visualizer
+                Removing service vote_vote
+                Removing service vote_worker
+                Removing network vote_default
+                Removing network vote_frontend
+                Removing network vote_backend
+
+            se dermos um 'Enter', aqui, ele vai remover todos os serviços, e se dermos um "docker service ls" não tem mais nenhum serviço rodando...
+
+                $ docker service ls
+                
+                ID                  NAME                MODE                REPLICAS            IMAGE               PORTS
+
+            Com esse comando finalizamos...
+
+        - Para saber mais...
+
+            Por padrão, tanto o Docker no modo standalone quanto o Docker Swarm, partilham apenas de um driver local para uso de volumes. Isso quer dizer que o Docker Swarm não possui, até 
+            então, solução nativa para distribuir volumes entre os nós.
+
+            Então, no exemplo do vídeo anterior, ao definirmos o volume para cada serviço, criamos um volume local dentro de cada nó que for executar a tarefa. Logo, os volumes não são 
+            compartilhados entre os diferentes nós do cluster.
+            
+            Existem soluções que não são nativas do Docker Swarm para utilizar volumes distribuídos entre nós, que podem ser consultadas na Docker Store 
+            (https://hub.docker.com/search?category=volume&q=&type=plugin).
 
         
+        - Nesta aula, aprendemos:
+
+            - O docker-compose.yml também pode ser utilizado para serviços de um swarm
+            - Novas instruções a partir da versão 3, como deploy e suas instruções internas
+            - Uma stack é uma pilha de serviços trabalhando em conjunto
+            - Como criar e remover nossa própria stack utilizando o comando docker stack
+
+
     Questões aula 07:
 
         1 - Você assumiu um projeto que usa Docker Swarm. No arquivo de configuração tem o seguinte trecho:
@@ -2424,3 +2691,51 @@ Aula 07: Deploy com Docker Stack -------
 
             R2: Em caso de falhas o serviço será reiniciado.
                 Alternativa correta! Isso foi definido no trecho de restart_policy.
+
+        
+        2 - Qual a finalidade do comando docker stack deploy?
+
+            Selecione uma alternativa
+
+            R: Utilizar um arquivo de composição e subir uma pilha de serviços simultaneamente.
+               Alternativa correta! Podemos inclusive utilizar as instruções do docker-compose.
+
+    
+    Conclusão:
+
+        Vimos qual é a real motivação do Swarm, porque nós utilizamos ele. Vimos que se nós fossemos subir diversos containers em uma única máquina, poderíamos ter diversos tipos de problemas.
+
+        Como por exemplo, a máquina não ter recursos suficientes, a máquina recebia muitas requisições, e assim por diante, ou também o caso de um container falhar e nós não conseguirmos fazer
+        isso, de fazer um container voltar a funcionar de maneira automática.
+
+        E o Swarm provê todas as soluções para nós que fomos aplicando no decorrer do curso, vimos como inicializamos o nosso primeiro Swarm com o "docker swarm init", viu a boa prática de
+        manter um IP estático para que consifamos sempre manter a comunicação ali do nosso manager, do nosso líder com os outros que vão entrar.
+
+        E a partir daí vimos a diferença entre nós managers, que são responsáveis, majoritariamente pela orquestração e administração do Swarm e ao mesmo tempo eles são workers também, mas a 
+        ideia é que restringimos esse serviço que queremos utilizar nesse tipo de nó. E temos os tipos workers que são os reais trabalhadores, que executam quaisquer serviços que vamos alocar.
+
+        Logo depois disso, seguimos a nossa caminhada e vimos como poderíamos agora restringir serviços de serem executados em determinados tipos de nós, seja pelo papel dele, seja pelo 
+        hostname, seja pelo IP que também podemos fazer.
+
+        E depois, vimos como poderíamos restringir nossos nós também, quando queriamos que um nó não executasse determinado serviço, ou que ele não possa executar serviço nenhum, vimos todos 
+        esses aspectos.
+
+        E seguindo essa lógica, começamos a ver como é feita a comunicação ali por debaixo dos panos entre os diferentes nós de um Swarm e como é que essa rede é utilizada, que rede é essa, 
+        e vimos que é um tal de ingress utilizando lá o driver overlay no escopo do Swarm.
+
+        Como ele, podemos criar a nossa própria rede, e vimos que o benefício  disso é poder fazer a comunicação entre diferentes serviços,  emtre doferemtes containers gerados à partir de 
+        apenas do hostname destes containers, à partir do nome dele, e não mais só do IP, conseguimos agora descobrir um serviço utilizando só um nome, e isso é bem interessante, porque está 
+        utilizando o conceito de 'Service Discovery'.
+
+        E depois avançando os nossos estudos, vimos também como poderíamos fazer o deploy de múltiplos serviços utilizando um "docker-compose" da mesma maneira que fazíamos lá com o
+        "docker-compose" no Stand Alone, do Docker trabalhando em um único host, com diversos containers.
+
+        Aplicamos a mesma ideia para diversos serviços agora, utilziando à partir da versão 3 do Docker-compose em que tínhamos diversas novas instruções para utilizar a mais próxima ao Swarm,
+        ter políticas de restart, restrição de nós e assim por diante, e para fazer esse deploy, utilizamos o 'docker stack deploy' que é a meneira utilizada de fazermos o deploy, criar uma
+        pilha de serviços.
+
+        E chegando de fato ao final, antes da nossa despedida pra valer, é sempre bom lembrar que todo o conhecimento desse curso pode ser tirado à partir da documentação.
+
+        E caso você ainda tenha mais alguma questão a ser solucionada, que você queira tirar alguma dúvida que você acha que não foi abordada nesse curso, ou que você pense:
+        "Quero me aprofundar em determinado tópico...", ele com certeza vai ter a sua resposta, aqui a documentação ... docs.docker.com/swarm/, e podemos ver todos os aspectos que queiramos 
+        consultar.
