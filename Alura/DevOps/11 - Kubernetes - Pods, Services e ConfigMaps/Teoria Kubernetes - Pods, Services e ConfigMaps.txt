@@ -223,7 +223,7 @@
 
     Mas agora como nosso 'cluster' funcionando nós podemos acessar, por exemplo, o nosso 'PowerShell'. À partir daí, nós já temos o 'KubeCTL' funcionando!
 
-    E nós podemos ver informações do nosso cluster. COmo por exemplo: Eu quero retornar meus nósm, então...
+    E nós podemos ver informações do nosso cluster. Como por exemplo: Eu quero retornar meus nós, então...
 
         > kubectl get nodes
 
