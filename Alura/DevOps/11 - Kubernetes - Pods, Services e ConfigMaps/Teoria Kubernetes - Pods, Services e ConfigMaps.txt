@@ -795,7 +795,7 @@ Aula 03: Criando e endentendo Pods -------
         nós quisermos para esse campo desse nosso container.
 
             metadata:
-                name: protal-noticias
+                name: portal-noticias
             spec:
                 containers:
                     - name: portal-noticias-container
