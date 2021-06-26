@@ -1460,7 +1460,58 @@ Aula 04: Expondo pods com services -------
 
     Criando um Load Balancer:
 
-        
+        Entender o que é um LoadBalancer depois que nós já entendemos do que se trata um Node Port e um ClusterIP é bem fácil - principalmente porque o LoadBalancer nada mais é do 
+        que um ClusterIP que permite a comunicação entre uma máquina do mundo externo e os nossos pods. Só que ele automaticamente se integra ao LoadBalancer nosso cloud provider.
+
+        Então quando nós criamos um LoadBlanacer ele vai utilizar automaticamente, sem nenhum esforço manual, o cloud provider da AWS ou do Google Cloud Platform ou da Azure, e assim
+        por diante.
+
+        Vamos pegar o nosso pod-1 que nós viemos trabalhando e vamos criar esse mesmo pod no nosso cluster do Google Cloud Platform.
+
+        Vamos colocar o arquivo, vamos criar ele com as mesmas definições que acabamos de copiar ali, vamos colar, vamos digitar um 'apply', 'kubectl apply -f' e passar o nosso 
+        'pod-1.yaml'. Ele foi criado sem nenhum problema, nós digitamos um 'kubectl get pods', ele foi criado e agora nós precisamos criar o nosso 'LoadBalancer'.
+
+        Então vamos criar no Visual Studio Code para nós conseguirmos visualizar melhor. Nós vamos fazer o seguinte: Vamos criar o nosso 'svc-pod-1-loadbalancer.yaml' e dentro dele
+        nós vamos definir mais uma vez a versão da nossa API como v1. O que nós queremos criar continua sendo um service e em metadata vamos chamar ele também pelo:
+        'name: svc-pod-1-loadbalancer'.
+
+        Nas especificações nós vamos definir o tipo que vai ser o nosso 'type: LoadBalancer', agora sem nenhum problema, em 'ports:' nós vamos definir a nossa porta de entrada, onde
+        nós podemos ir definindo.
+
+        Como ele é um NodePort, ele também é um ClusterIP, queremos que dentro do Cluster ouça na porta 80 e despache também para a porta 80, dentro do cluster. E que também o nosso
+        nodePort: 30000, por exempo. Nós podemos fazer essa definição.
+
+        Por fim, falta apenas nós selecionarmos qual é o nosso pod. Nesse caso vamos definir a label com a chave API e o valor primeiro pod.
+
+        Tudo perfeito! Basta agora nós copiarmos essas mesmas definições, vir no nosso Google Cloud Platform e criar esse arquivo que vai ser o nosso "lb.yaml". Nós colamos sem 
+        nenhum mistério: 'kubectl apply -f lb.yaml' e ele vai criar para nós sem nenhum problema.
+
+        Se nós viermos agora dentro do nosso cluster na atividade na parte visual, nós conseguimos vir em "Serviços e entradas" e olhe só: está o nosso serviço, que nós acabamos
+        de criar! E mostra que tem 1 de 1 pod sendo gerenciado por ele no nosso "cluster-1".
+
+        Ele está terminando de criar os endpoints para acesso. Se nós continuarmos atualizando, vai ser bem rapidinho, nós vamos conseguir acessar esse nosso pod à partir do próprio
+        navegador.
+
+        Então se desse pra assistir em tempo real a aula, conseguiriamos ver ao mesmo tempo que o instrutor faz o acesso a esse pod, porque no exato momento que ele é criado ela já é
+        publicado e sendo possivelmente acessado com o LoadBalancer do Google Cloud Platform - Já tudo integrado sem nenhum problema, sem nenhum configuração adicional na gestão de
+        balanceamento de carga que acabou de ficar pronto.
+
+        Basta nós clicarmos no link que foi gerado o do IP. Ele alerta sobre o redirecionamento e está o nosso 'nginx', que é o nosso pod-1 na web.
+
+        Então agora que nós já nos familiarizamos com os três tipos de serviço, ClusterIP, NodePort e LoadBalancer, nós vamos colocar eles na prática em uma aula em que nós vamos 
+        trabalhar com eles em cima do nosso projeto, do portal de notícias e nós vamos sedimentar o conteúdo que nós aprendemos agora, nessas últimas aulas.
+
+
+    Nesta aula, aprendemos:
+
+    - O que são e para que servem os Services
+    - Como garantir estabilidade de IP e DNS
+    - Como criar um Service
+    - Labels são responsáveis por definir a relação Service x Pod
+    - Um ClusterIP funciona apenas dentro do cluster
+    - Um NodePort expõe Pods para dentro e fora do cluster
+    - Um LoadBalancer também é um NodePort e ClusterIP
+    - Um LoadBalancer é capaz de automaticamente utilizar um balanceador de carga de um cloud provider
 
         
 Questões aula 04:
@@ -1491,3 +1542,498 @@ Questões aula 04:
         R1: Dentro do cluster o service escuta na porta 80, enquanto fora do cluster escuta na porta 30000.
 
         R2: Utilizamos o IP do nó para acessar o service através da porta 30000.
+
+    
+    4 - Quais afirmativas são verdadeiras sobre Load Balancers?
+
+        R1: Utilizam automaticamente os balanceadores de carga de cloud providers.
+
+        R2: Por serem um Load Balancer, também são um NodePort e ClusterIP ao mesmo tempo.
+
+
+Aula 05: Aplicando services ao projeto -------
+
+    Acessando o portal:
+
+        Primeiro passo será colocar o nosso "portal-notícias" com o NodePort para que nós consigamos acessar ele de fora do nosso cluster.
+
+        Então, primeiramente, por questão de organização, vamos deletar todos os pods que foram criados até o momento com o comando:
+
+            $ kubectl delete pods --all 
+            
+        e vamos fazer a mesma coisa para os serviços; para nós ficarmos com todo o nosso projeto limpinho, nós não vamos precisar desses pods que nós usamos para entender os conceitos
+        de serviço agora.
+
+        Vamos fazer a mesma coisa com os serviços:
+
+            $ kubectl delete svc --all
+
+        Removidos. No Visual Studio Code vamos deixar apenas o pod, o arquivo do pod do nosso "portal-noticias". Pronto, removido! Agora só o nosso "portal-noticias" e a partir daqui
+        nós vamos definir um serviço para fazermos a exposição desse nosso pod.
+
+        E como nós vamos fazer isso agora? Nós precisamos primeiramente definir um serviço para ele, mas nós vimos que para definir um serviço par aum pod nós precisamos definir uma
+        label para ele.
+
+        Então vamos definir uma label chamada 'app: portal-noticias', que nada impede de nós termos uma chave com um valor igual ao 'name'. E também, aquela questão de documentação,
+        vamos definir em: 
+        
+            ports: 
+                - containerPort: 80
+
+        E agora nós podemos finalmente criar o nosso serviço - que vamos chamar de o arquivo de "svc-portal-noticias.yaml".
+
+        A apiVersionque nós vamos colocar vai ser v1. o kind nós já vimos que vai ser um Service e a partir daí nós definimos um 'metadata:', que vamos dar um meio para ele - que vai
+        ser 'svc-portal-noticias'. Nas especificações do tipo dele nós vamos colocar como type: NodePort, porque nós queremos acessar de fora do cluster.
+
+        Em 'ports:', o que nós vamos definir? Que dentro do cluster nós queremos que quando ele ouça algo na porta 80 e encaminhe para a porta 80 do pod que está sendo gerenciado,
+        por ele.
+
+        Então nós podemos definir de maneira implícita só o 'port' uma vez, não precisamos definir também nosso 'TargetPort'; porque se escrevermos só o 'port', ele já assume que nós
+        estamos definindo igualmente.
+
+        Então vamos deixar comentado só para entendermos isso e frisarmos essa ideia e agor anós conseguimos definir o nosso NodePort, que vamos colocar na porta 30000 - porque nós
+        temos essa restrição entre 30000 e 32767.
+
+        E por fim, nós precisamos também colocar o nosso seletor. Então eu quero selecionar o recurso que tenha a chave 'app' e o valor de 'portal-noticias'. Tudo correndo bem,
+        podemos agora limpar o nosso PowerShell e executar um:
+
+            $ kubectl apply -f portal-noticias.yaml
+
+            e
+
+            $ kubectl apply -f svc-portal-noticias.yaml
+
+        Tudo correndo bem, ele vai estar em execução e agora nós podemos abrir uma nova aba do nosso navegador. Vamos abrir para nós fazermos o acesso ao nosso 'localhost: 30000'.
+
+        Agora nós conseguimos acessar a nossa aplicação à partir do mundo externo. Nós não estamos mais dentro do nosso cluster e vale lembrar que, caso você esteja faznedo isso 
+        dentro do Linux, você vai precisar fazer o mapeamento com o seu IP do Minikube. Então sem mistérios vamos precisar utilizar aquele internal IP para fazermos o acesso.
+
+        Então basicamente é isso que temos que fazer; utilizar um 'INTERNAL-IP' para fazer a comunicação e não o 'localhost'.
+
+    
+    Subindo o sistema:
+    
+        O que nós temos até então é o nosso portal de notícias sendo gerenciado por esse serviço do tipo NodePort, que permite o acesso do mundo externo ao nosso pod dentro do nosso
+        cluster.
+
+        Mas o qeu nós queremos? Como nós falamos, criar um serviço e um pod responsáveis no caso pelo sistema de notícias onde nós vamos cadastrar. Esse sistema também vai prover
+        para o nosso portal essas notícias para que nós possamos exibir.
+
+        Então, como nós queremos acesso do mundo externo ao nosso pod do sistema de notícias e também ao mundo interno do nosso cluster, para que o nosso portal consiga consumir essas
+        notícias, nós precisamos criar um NodePort e um pod no caso - obviamente com a imagem do nosso sistema.
+
+        Vamos abrir o Visual Studio Code mais uma vez e nós vamos criar o nosso 'sistema-noticias.yaml', o arquivo de declaração dele.
+
+        Vamos achar "apiVersion: v1", o tipo que nós queremos criar é um 'kind: Pod' e no 'metadata:' dele vamos chamar de 'name: sistema-noticias'.
+
+        E como mais uma vez, ele também vai ser gerenciado por outro serviço uma label com 'app: sistema-noticias'.
+
+        Nas especificações (spec) vamos definir as configurações do container, onde o 'name:' dele vai ser 'sistema-noticias-container'. Na 'image:', ao invés de nós utilizarmos a 
+        nossa clássica 'aluraCursos/portal-noticias', nós vamos usar o 'aluracursos/sistema-noticias'; a imagem que contém todas as informações do nosso sistema, toda implementação 
+        para nós podermos executar.
+
+        Vamos colocar o nosso 'ports:' com o "- containerPorts:80", que nós estamos deixando claro que a nossa aplicação da aluraCursos/sistema-noticias é executada na porta 80. 
+        Como nós temos dois pods diferentes, cada um vai ter o seu respectivo IP, não vai ter nenhum conflito de porta.
+
+        E por fim, precisamos agora criar o nosso para esse sistema, então: "svc-sistema-noticias.yaml" e vamos lá! Digitamos 'apiVersion: v1'. Nós queremos expor ele para o mundo 
+        externo então: 'kind: Service', com um 'metadata:', um 'name: svc-sistema-noticias', com as especificações. O tipo dele nós vimos que vai ser um 'type: NodePort'.
+
+        Em 'ports:' nós vamos fazer o mapeamento de como nós queremos que ele ouça na porta 80 este serviço e despache também para a porta 80.
+
+        Mais uma vez, nós não precisamos fazer essa declaração do TargetPort se nós queremos que a entrada seja igual a saída. Por fim, o 'NodePort:' - como nós não podemos, nós 
+        estamos acessando o nosso cluster de maneira externa, nós precisamos ter uma maneira única de garantir o que nós estamos acessando.
+
+        Então como nós já estamos utilizando a porta 30000, nós não podemos utilizá-la de novo, então vamos utilizar a porta 30001.
+
+        Finalizando, basta nós usarmos o nosso "select" e definirmos que nós queremos gerenciar o 'app' que tem as informações com a label 'sistema-noticias'. Copiando, salvando e
+        nós já conseguimos aplicar.
+
+            $ kubectl apply -f sistema-noticias.yaml
+
+            e
+
+            $ kubectl apply -f svc-sistema-noticias.yaml
+
+            e
+
+            $ kubectl get pods
+
+        Estão os dois, já em execução...
+
+        Se nós voltarmos no nosso navegador e abrirmos agora o nosso 'localhost:30001'...está o nosso sistema de notícias.
+
+        Teremos um erro de banco de dados...
+
+        Então nós precisamos também subir um banco que vai ser responsável por guardar as informações das nossas notícias, e esse banco vai se comunicar com o nosso sistema.
+
+    
+    Subindo o banco:
+
+        Agora vai ser o seguinte: nós precisamos, como nós vimos, de alguma maneira criar um banco de dados para que nós possamos nos comunicar com o nosso sistema e guardar as 
+        notícias. Precisamos ter uma forma de armazenar as nossas notícias.
+
+        Então se nós viermos na nossa apresentação, nada mais válido do que nós criarmos um pod e um serviço, para que nós possamos nos comunicar com ele.
+
+        E para isso,  como nós queremos comunicação apenas dentro do cluster. Nós não queremos que o nosso banco seja acessível para o mundo externo, nós podemos criar um ClusterIP
+        para ele. 
+
+        Então vamos colocar a mão na massa, vamos criar o nosso 'db-noticias.yaml', vamos definir a nossa 'apiVersion: v1', o 'kind: Pod' e no 'metadata:' vamos colocar um
+        'name: db-noticias'. Como ele vai ser gerenciado por um serviço, precisamos de uma 'label' que vai ser 'app: db-noticias'.
+
+        Nas especificações nós vamos colocar sobre o nosso container, que vai ter um nome de 'db-noticias-container'. Ele vai utilizar a imagem da 'aluracursos/mysql-db:1'. Não vai
+        ser nenhuma das outras imagens, vai ser uma imagem já prontinha com o nosso banco para nós podermos utilizar.
+
+        E o nosso "ports:"? O que nós vamos definir no nosso 'containerPort:'? Nós vamos falar para ele, e para todo mundo que vê esse arquivo, que o container dessa aplicação do 
+        MySQL por padrão é executado na 3306. Pod, a princípio, bem definido.
+
+        Vamos definir o nosso serviço, como "svc-db-noticias.yaml" e vamos digitar 'apiVersion: v1', 'kind: Service' e em 'metadata:' vai ser "name:" - e definimos o que? O nosso 
+        'svc-db-noticias' e em 'spec:' definimos o tipo - que não vai ser o 'NodePort', e sim um 'ClusterIP'.
+
+        Em 'ports:' nós vamos definir que nós queremos que as requisições dentro do cluster cheguem nesse IP do nosso serviço na porta 3306 e saiam também na 3306. Por fim, basta nós
+        selecionarmos o que nós vamos gerenciar, então 'app: db-noticias'. Nós salvamos.
+
+        Nós vamos no nosso banco de dados, no nosso PowerShell e digitamos:
+
+            $ kubectl apply -f
+
+            e passamos o nosso 'db-noticias.yaml'...Ele foi criado e:
+
+            $ kubectl apply -f svc-db-noticias.yaml
+
+            devidamente criado...
+
+        Se nós viermos e vermos o serviço, está sem nenhum problema em execução no nosso clusterIP. Se nós viermos agora e executarmos:
+
+            $ kubectl get pods
+
+            O que nós vamos ver? Que tem um erro.
+
+        Por quê? Vamos descobrir! Vamos executar:
+
+            $ kubectl describe pods
+
+            e passar o nosso 'db-noticias'. Ele baixou, atribuiu com sucesso ao nó, baixou a imagem - no caso nós tínhamos encontrado - criou o container e inicializou o nosso
+            container.
+
+        Só que, o que aconteceu? Ele ficou reiniciando indefinidamente. Por quê? Vamos descobrir. Vamos olhar na documentação do MySQL no Docker Hub. Se nós viermos olhando com
+        bastante paciência, nós descobriremos que essa parte de variáveis de ambientes precisa ser definida, porque nós precisamos informar diversas informações no fim das contas.
+
+        Como, por exemplo: qual é a senha do banco que nós estamos criando, qual é o nome do banco, qual é a senha de root, dentre outras coisas. Nós precisamos explicitar essas 
+        informações.
+
+        Só que no nosso Visual Studio Code nó snão estamos fazendo isso, então a pergunta que fica é: como nós podemos utilizar variáveis de ambiente com o Kubernetes para definirmos
+        as informações do nosso container?
+
+
+    Nesta aula, aprendemos:
+
+        - Como escolher o melhor tipo de Service para cada situação
+        - Como comunicar diversos pods através de um Service
+        - Devemos definir informações necessárias para inicializações de Pods.
+
+Questões aula 05:
+
+    01 - O que podemos dizer sobre o arquivo YML abaixo?
+
+        apiVersion: v1
+        kind: Service
+        metadata:
+            name: svc-portal-noticias
+        spec:
+            type: NodePort
+            ports:
+                - port: 80
+            #Trecho omitido...
+
+        R: Ele funcionará sem problema algum.
+
+        Alternativa correta! O campo nodePort e targetPort serão definidos implicitamente.
+
+
+    02 - Queremos acessar um pod de maneira estável tanto de maneira interna quanto externa ao cluster. O cluster está rodando no Google Cloud Platform e queremos usar o 
+        balanceador de carga da plataforma. Qual o tipo de service mais recomendado para acessar o pod?
+
+        R: LoadBalancer
+
+
+Aula 06: Definindo variáveis de ambiente -------
+
+    Utilizando variáveis de ambiente:
+
+        Então, como nós conseguimos fazer o nosso banco funcionar e agora? Porque ele é baseado na imagem do MySQL e então nós precisamos definir para este container algumas informações.
+
+        E se nós viermos olhar dentro da página do MySQL no Docker Hub, nós vamos encontrar que nós precisamos obrigatoriamente definir essa variável chamada MYSQL_ROOT_PASSWORD, 
+        onde ela vai ser a nossa senha de root.
+        
+        Nós também temos opcionalmente a possibilidade de definir qual vai ser o nosso banco, a nossa senha sem ser de root. Se o nosso banco permite senha vazia, ou não - mas também 
+        é opcional - qual vai ser. Todas essas informações que nós vamos utilizar na inicialização do nosso banco.
+        
+        Então nós precisamos ter alguma maneira de que no nosso arquivo de definição, para colocarmos essas informações para o nosso container dentro do nosso pod.
+        
+        E como nós fazemos isso? Todas essas informações para um container nós estamos definindo dessa maneira: o nome, a imagem, as portas que nós estamos documentando que estão 
+        expostas.
+        
+        Então nada mais válido do que embaixo nós também definirmos as env (Environment variables), que nós vamos definir - e é bem fácil, é bem simples, sem muito mistério. Nós 
+        conseguimos agora colocar o - name: para essa variável, que no caso nós vamos definir primeiro a ”MYSQL_ROOT_PASSWORDS”, que é obrigatório; e um valor para ela, que no caso do 
+        nosso banco vai ser value: “q1w2e3r4”.
+        
+        E nós precisamos no nosso caso específico, não é obrigatório para subir uma imagem do MySQL, mas nós vamos fazer também a definição do MySQL_Password e do MySQL_Database.
+        
+        E como nós podemos definir múltiplas variáveis de ambientes? Será que nós precisamos repetir tudo isso d? Na verdade, não; basta dentro ainda de env:, nós alinharmos 
+        outro - name:, que vai entender com esse travessão que nós estamos começando uma nova definição, de uma nova variável e nós colocamos o nome dela que vai ser 
+        name: “MYSQL_DATABASE” e o seu respectivo valor que vai ser value: “empresa”, o nome do banco que nós vamos trabalhar.
+        
+        E por fim, a última variável que nós vamos definir vai ser também o nosso MySQL_Password. Vamos colocar ele : - name: “MYSQL_PASSWORD” e o nosso valor vai ser o mesmo do nosso 
+        root(value: “q1w2e3r4”).
+        
+        Com isso feito, basta nós voltarmos no nosso PowerShell e deletarmos esse pod atual do nosso db-noticias. A partir daí nós vamos reiniciar e recriar este pod manualmente.
+        
+        Para isso, é só nós utilizarmos o comando que nós viemos trabalhando desde sempre, que é o kubectl apply, e passarmos o nosso arquivo de definição do banco. 
+        Ele vai ser criado e se nós digitarmos um kubectl get pods, olhe que legal: ele está com status de “running”.
+        
+        Mas como nós podemos verificar agora se está tudo funcionando direito? Vamos executar esse pod em modo interativo do nosso db-noticias e acessar o banco diretamente dentro dele. 
+        Para isso, nós acessamos ele com bash e executamos o nosso“mysql -u root –p, colocamos a nossa senha q1w2e3r4 e o banco está rodando. Se nós digitarmos um show database temos 
+        já o nosso banco “empresa”!
+        
+        E se nós usarmos esse banco, nós também conseguimos ver todas as configurações de tabela. Já está o show tables. Nós conseguimos selecionar o usuário para nós conseguirmos fazer 
+        o nosso login, sem nenhum problema.
+        
+        E só para deixar claro: todas essas configurações de tabelas e de banco já vieram configuradas nessa imagem (mysql-db) para nós não precisarmos nos preocupar com popular o banco.
+        
+        A questão é só o acesso. Então nós fizemos a definição de tudo o que nós queremos utilizar para inicializar o container do nosso banco. E agora, o que nós precisamos fazer? 
+        Se nós voltarmos no nosso login da Alura e apertarmos a tecla “F5”, ainda não está funcionando. Mas por que, se o banco já está rodando?
+        
+        Vamos voltar para o nosso PowerShell e digitar um kubectl get pods. Simplesmente porque o nosso sistema de notícias não é evidente para saber onde está o banco, qual o endereço 
+        dele e quais são as informações que ele deve usar para acessar o banco.
+        
+        Então se nós dermos uma olhada mais detalhada também dentro desse sistema de notícias, o que nós veremos? Nós veremos que nós temos um arquivo chamado bancodedados.php.
+        
+        Vocês não precisam ter conhecimento de PHP, não se preocupem. Dando uma olhada dentro desses arquivos nós percebemos que nós precisamos também definir outras variáveis de 
+        ambiente para esse pod.
+        
+        Como: qual é o host do banco, qual é o usuário, qual é a senha e qual é o nome do banco que nós queremos utilizar. Então essas informações nós também vamos precisar utilizar 
+        uma variável. Nesse caso, quatro variáveis de ambiente para fazer o acesso deste nosso pod do sistema ao banco.
+        
+        Só que, se nós voltarmos no nosso arquivo, o que nós temos? Observando de maneira um pouco mais crítica, nós temos as configurações do nosso pod, toda a definição dele. 
+        Mas nós também temos a definição de ambiente, de variáveis de ambiente e de configuração.
+        
+        Então se nós formos um pouco mais detalhistas, nós vamos ver que nós estamos misturando arquivos de configuração, trechos de configuração com o nosso conteúdo de imagem.
+        
+        Nós estamos deixando tudo muito acoplado. Seria interessante se nós separássemos isso para mantermos as responsabilidades - onde todo esse trecho vai ser responsável pela 
+        definição do pod e da imagem que vai ser utilizada para ele.
+        
+        E nas envs nós poderíamos separar isso de alguma maneira para que seja só as partes de configuração para deixar este pod o máximo de portável possível. Nós não estamos 
+        atrelando ele à nenhuma configuração específica.
+        
+        Então no próximo vídeo nós vamos entender como nós podemos tornar esse pod mais portável separando, desacoplando informações de configuração da definição do nosso pod.
+
+    
+    Criando um ConfigMap:
+
+        Então, como nós podemos extrair essas informações de configuração para fora do nosso arquivo de definição do nosso bando de dados? Como nós podemos tornar o nosso pod nesse 
+        sentido de ser mais portável, para nós não acoplarmos as configurações com a definição do nosso pod?
+
+        Como eu falei para vocês, o kubernetes vai muito além de ser um simples orquestrador de containers e ele já nos provê diversas soluções nativas para diversos problemas. Para 
+        esse caso não seria diferente.
+    
+        Nós temos a solução chamada ConfigMap, onde ele vai ser responsável por armazenar essas configurações que nós precisamos utilizar dentro de determinados pods, determinados 
+        recursos. Nós podemos guardar dentro deles para não acoplarmos o nosso recurso com informações de configuração, por isso um ConfigMap.
+    
+        E ele vai muito além, nós vamos extrair todo esse trecho que nós definimos no nosso banco de dados para dentro de um ConfigMap. Nós vamos aprender como criar ele também. Mas 
+        ele também vai muito além disso, porque ele permite a reutilização e o desacoplamento.
+    
+        Então, a partir de determinado momento nós conseguimos reutilizar configurações definidas dentro de ConfigMaps em diferentes pods. Nós podemos ter pods utilizando diferentes 
+        ConfigMaps.
+    
+        Três ícones de "pod" conectados a um ícone de "cm". O terceiro "pod" também se liga a um segundo ícone de "cm".
+    
+        Então isso nos dá um poder de desacoplamento muito grande e de reutilização também. Mas como é que nós criamos um ConfigMap? É bem fácil! Vocês viram como nós criamos um pod e 
+        um serviço até então, mas criar um ConfigMap é tão fácil quanto.
+    
+        Vamos voltar no nosso Visual Studio Code e vamos criar um novo arquivo chamado “db-configmap.yaml” e dentro dele nós vamos definir uma apIVersion: v1 e o kind: ConfigMap.
+    
+        No metadata: nós vamos definir um name: db-configmap e nós vamos definir também agora a data:, o conteúdo dele. Não temos um spec como nós tínhamos tradicionalmente com os 
+        nossos outros recursos.
+    
+        Dentro nós vamos fazer agora a definição de chave e valor, como nós já vínhamos fazendo antes. Então, vamos só recortar isso e colocar. Vamos fazer a seguinte mudança: nós não 
+        vamos definir um env, não vamos definir um name também. O que nós vamos fazer vai ser definir, nesse caso, chaves e valores.
+    
+        Então nós vamos definir um MySQLRoot Password, onde value: “q1w2e3r4”. Colocamos isso sem nenhum problema e podemos até colocar fora das nossas aspas e vai ser a mesmíssima 
+        ideia para os outros campos que nós já temos. Vai ter um name: “MySQL_DATABASE” e colocamos também um valor para ele, que vai ser value: “empresa”.
+    
+        Repare em como nós estamos fazendo. Nós estamos definindo todos os nossos campos, todas as nossas chaves e os valores que nós queremos para este ConfigMap. A partir desse 
+        momento, quando nós criarmos ele nós vamos conseguir reutilizar tudo sem nenhum problema.a
+    
+        Então definimos o nosso MySQL_ROOT_PASSWORD, o nosso MySQL_DATABASE e o nosso MySQL_PASSWORD, e salvamos o arquivo. Vamos salvar também a operação que nós fizemos no nosso 
+        db-noticias.
+    
+        E agora, se nós viermos no nosso PowerShell... Deixe-me eu sair do nosso pod e dar um clear para nós visualizarmos melhor. Basta nós executarmos um kubectl apply –f e passar o 
+        nosso .\db-configmap.yaml e foi criado. Simples assim!
+    
+        Se nós dermos um kubectl get configmap, temos o nosso db-configmap criado há 8 segundos. Nós podemos também descrever ele com o comando kubectl describe configmap db-configmap.
+    
+        E nós vamos ter todas as informações que nós queremos, o nosso MySQL_DATABASE, o nosso MySQL_PASSWORD e ele sempre fazendo ; a chave e o valor, a chave e o valor; a chave e o 
+        valor; a chave e o valor.
+    
+        Olhe que simples e fácil! A questão agora vai ser como nós utilizamos esse configmap para configurarmos e utilizarmos o nosso banco no nosso projeto.
+
+    
+    Aplicando o ConfigMap ao projeto:
+
+        Nós já temos o nosso ConfigMap em execução, mas nós precisamos agora de uma maneira de importarmos esses valores:
+        (MYSQL_ROOT_PASSWORD: q1w2e3r4; MYSQL_DATABASE: empresa; MYSQL_PASSWORD: q1w2e3r4) para dentro do container do nosso pod.
+
+        E a declaração vai ser bem parecida de como nós já tínhamos antes. Nós temos o nosso env: - e qual é a variável que nós queremos criar? Uma variável chamada 
+        MySQL_ROOT_PASSWORD, mas agora nós não vamos simplesmente definir um value para ela, nós vamos definir de onde ela vem.
+    
+        Então vai ser valueFrom: e nós vamos informar a origem dela - que vem de um configMap”, que tem uma referência a uma chave, entãoKeyRef. O nome desseconfigMapKeyRef” é 
+        db-configmap e a chave que nós queremos colocar dentro dessa nossa variável é exatamente essa, de MYSQL_ROOT_PASSWORD.
+    
+        Então, MYSQL_ROOT_PASSWORD, nós estamos fazendo o acesso d (db_noticias.yaml) (db-configmap.yaml) e estamos armazenando (MYSQL_ROOT_PASSWORD), certo?
+    
+        E se nós quiséssemos fazer isso para MySQL_DATABASE e para MySQL_PASSWORD também, nós teremos que repetir toda essa declaração mais duas vezes. Então nosso arquivo, por mais 
+        que ficasse portável, ele ficaria bem grande também.
+    
+        Como nesse caso nós queremos fazer declaração de todas as variáveis que estão dentro do nosso configMap, nós podemos fazer uma declaração mais simples e ao invés de importar 
+        uma a uma, nós podemos importar todo o nosso configMap de uma única vez.
+    
+        Como? Nós podemos fazer a referência ao invés de variável à variável, nós podemos fazer referência direto ao configMap. Então, configMapRef e qual é o nome desse configMap? 
+        É db-configmap! Salvamos ele.
+    
+        E agora nós já temos ele em execução, então nós vamos fazer ele parar para ele usar o configMap efetivamente, kubectl delete pod db-noticias. E nós vamos aplicar novamente com 
+        essa nova declaração que nós estamos fazendo ao nosso configMap.
+    
+        Então, kubectl apply -f .\db-noticias.yaml, se nós digitarmos um kubectl get pods e agora, ele está em execução.
+    
+        Mais uma vez, confirmando: kubectl exec –it no nosso db-noticias – bash e temos o nosso mysql -u root –p; a nossa senha q1w2e3r4 e no show databases está o nosso banco empresa.
+    
+        Só que... O que nós precisamos agora? Se nós voltarmos no nosso navegador, no nosso sistema, e apertarmos a tecla “F5”, nós precisamos ainda fazer a referência a esse banco - 
+        que era o que nós já estávamos planejando.
+    
+        Se nós acessarmos o nosso sistema com comando também kubectl exec –it no nosso sistema-noticias, nós conseguimos ver o que ? Se ele estava nos arquivos nós temos esse arquivo
+        chamado “bancodedados.php”.
+    
+        Que nós não precisamos nos preocupar com o “php”, não vai ter nenhum foco em PHP nesse curso, fique tranquilo. Mas nós olhando esse arquivo nós conseguimos ver que precisamos 
+        declarar essas quatro variáveis, para que ele consiga localizar o banco.
+    
+        Qual é o host, o endereço desse banco, qual é o usuário dele, a senha e o nome do banco que nós queremos utilizar - para nós fazermos isso é bem simples
+    
+        Então, o que nós vamos fazer agora? Nós vamos simplesmente criar um novo configMap, só que dessa vez para o nosso sistema.
+    
+        Então vamos ter agora o nosso sistema-configmap.yaml. Dentro dele, a versão da API vai continuar sendo a v1, o kind: ConfigMap, no nosso metadata: vamos definir um name: 
+        sistema-configmap.
+    
+        E por fim, no nosso data: nós vamos definir essas quatro variáveis. O nosso “HOST-DB” vai ter um valor e como nós queremos fazer a comunicação do nosso serviço, do nosso pod 
+        de sistema com o serviço do nosso banco de dados.
+    
+        Imagem com figura de computador conectado por duas setas a dois ícones de "SVC" dentro da área tracejada de Cluster. O primeiro é "svc-portal-noticias" de "NodePort" e se 
+        conecta ao pod "portal-noticias". O segundo é "svc-sistema-noticias" de "NodePort" e se conecta ao pod "sistema-noticas", que por sua vez se conecta so "svc-db-noticas" de 
+        "ClusterIP", que se liga ao pod "db-noticias".
+    
+        O que nós precisamos? Eu vou abrir uma nova aba do PowerShell e digitar kubectl get svc. Nós precisamos fazer a referência ou ao nosso DNS, que é o nosso nome do nosso serviço
+        para nós acessarmos o nosso pod do banco, ou ao IP também.
+    
+        Ambos estão ouvindo na porta 3306, então vamos fazer isso . Vamos colocar que o nosso “HOST_DB”, nada mais é do que o nosso próprio DNS. Vamos utilizar ele para mostrar que 
+        funciona também. Vamos copiar e vamos colocar ele na porta 3306.
+    
+        Vamos definir o nosso USER_DB, que é “root”, o nosso Pass_Db que é q1w2e3r4 e por fim o nosso DATABASE_DB, que é o empresa.
+    
+        Basta nós voltarmos agora. Vamos sair de dentro desse container, desse pod, vamos digitar kubectl apply –f no nosso .\sistema-configmap.yaml. E ele foi criado.
+    
+        E agora nós precisamos no nosso sistema de notícias fazer a mesma coisa que nós fizemos antes, importar este configMap para uso, ou seja, envFrom: configmapRef e o nome dele, 
+        que é o nosso sistema-configmap.
+    
+        Vamos precisar agora deletar e recriar ele: delete pod sistema-notícias e vamos aplicar novamente kubectl apply -f .\sistema-noticias.yaml. Foi criado.
+    
+        E se nós voltarmos agora e apertarmos a tecla “F5”, o erro some. Então agora nós já conseguimos fazer o login, que nós vimos no banco que é “admin” e “admin”. 
+        Podemos vir, digitarmos e estaremos autenticados. Podemos cadastrar as notícias.
+    
+        Então, podemos vir em “Nova Notícia” e colocarmos uma notícia com alguma informação qualquer e colocarmos também uma foto, onde podemos colocar uma foto qualquer da Alura. 
+        Vamos salvar.
+    
+        Repare que ele salvou e agora no nosso portal nós queremos que esse portal se comunique com esse sistema para fazer a exibição dessa notícia para nós. Se nós queremos fazer 
+        essa comunicação voltando na nossa apresentação, nós queremos também fazer essa comunicação via variável de ambiente.
+    
+        Se nós viermos no nosso PowerShell e entrarmos em modo interativo dentro do nosso portal-noticias, o que nós vamos ver? Vai ser algo bem parecido com o nosso sistema, nós 
+        temos um arquivo chamado de “configuracao”, nesse arquivo nós precisamos definir qual é o IP do nosso sistema. Bem simples e prático.
+    
+        Então vamos voltar no nosso Visual Studio Code e vamos criar o nosso também “portal-configmap.yaml” e dentro dele vamos definir também todas as mesmas coisas que nós já viemos
+        fazendo com os configMaps.
+    
+        Então, configMap, vamos definir um metadata: para ele, que vai ser um name: portal-configmap. Vamos definir a data:, que vai ser IP_SISTEMA:.
+    
+        E nesse momento, o que vai acontecer? Quem está utilizando o Windows assim como eu, vai colocar o IP do nosso sistema. E o nosso sistema está sendo executado em qual porta? 
+        localhost:30001, onde nós definimos o nosso NodePort.
+    
+        Então quem está utilizando Windows vai colocar “http://localhost”. Atentem-se ao “http://”, ele é necessário. Na porta 30001, caso você esteja utilizando o Linux é aquela 
+        velha história: você vai precisar colocar o seu INTERNAL_IP. Então, caso seja 192.168.99.106, você vai colocar também 192.168.99.106, mas como eu estou no Windows vou deixar 
+        o localhost.
+    
+        E agora nós vamos fazer o que ? Nós vamos simplesmente aplicar este arquivo também ao nosso cluster, kubectl apply -f .\portal-configmap.yaml e vamos utilizar esse configMap 
+        dentro do nosso portal de notícias.
+    
+        Com o nosso envFrom e vamos colocar mais uma vez o nosso configMapKeyRef, onde o nome do configMap que nós queremos fazer referência é o nosso portal-configmap.
+    
+        Vamos agora voltar, sair do nosso container dentro do nosso pod e recriar esse pod no nosso portal de notícias e vamos reaplicar com essa devida mudança.
+    
+        Então vai ser o nosso kubectl apply –f em cima do nosso novo arquivo. Então, kubectl apply -f .\portal-noticias.yaml.
+    
+        Eu só esqueci de colocar o espaço, ele ficou com um espaço a mais, estão espere aí! portal-configmap e não é configMapKeyRef, é ConfigMapKeyRef só, porque agora nós estamos 
+        fazendo a referência só ao configMap, e não a uma chave dele.
+    
+        E vamos aplicar. Se nós voltarmos agora no nosso navegador, vamos colocar, apertar a tecla “F5” - e olhe só, está a nossa notícia com uma imagem e a nossa informação que nós 
+        definimos.
+    
+        Comunicamos os três pods via serviço, utilizando as melhores práticas, um NodePort para os dois que precisam ser NodePort e um ClusterIP, para o que é o ClusterIP.
+    
+        E também, se nós voltarmos na nossa aplicação, para visualizarmos tudo o que foi feito, nós também utilizamos as variáveis de ambiente para mantermos essa comunicação 
+        agnóstica. Ali nós vamos definir onde eles estão.
+    
+        Por esse vídeo nós vamos finalizar, eu verei vocês no próximo. Até mais!
+
+    
+    Para saber mais: NodePort e IP's
+
+        No último vídeo, definimos como variável de ambiente o endereço do sistema de notícias para o nosso portal de notícias conseguir acessá-lo. Fizemos isso utilizando o IP do node
+        seguido da porta exposta pelo nosso NodePort, nesse caso localhost:30001.
+
+        Caso tivéssemos múltiplos nodes em nosso cluster, tudo funcionaria da mesma maneira, pois as portas mapeadas pelo NodePort são compartilhadas entre os IP's de todos os nodes.
+        
+        Mais informações podem ser adquiridas em https://kubernetes.io/docs/concepts/services-networking/service/#nodeport.
+
+    
+    Nesta aula, aprendemos:
+
+        - Como definir variávies de ambiente através do campo env
+        - Como desacoplar configurações e definições com um ConfigMap
+        - Como criar e definir um ConfigMap
+        - Como importar variáveis de ambiente individualmente com um ConfigMap
+        - Como importar todo um ConfigMap com o campo envFrom
+
+
+Questões aula 06:
+
+    1 - Quais das alternativas abaixo são verdadeiras sobre variáveis de ambiente com o Kubernetes?
+
+        R: Podemos usar o campo env para definir uma ou mais variáveis.
+
+    
+    2 - O que podemos afirmar sobre a declaração do ConfigMap abaixo?
+
+        apiVersion: v2
+        kind: ConfigMap
+        metadata:
+            name: config-data
+        spec:
+            MYSQL_ROOT_PASSWORD: q1w2e3r4
+            MYSQL_DATABASE: empresa
+            MYSQL_PASSWORD: q1w2e3r4 
+
+        R1: Ele não funcionará, a versão da API está errada!
+
+        R2: Ele não funcionará, no lugar de spec o certo seria data.
+
+    
+    3 - Como podemos fazer um pod utilizar dados de um ConfigMap?
+
+        R: Utilizando os campos env ou envFrom
