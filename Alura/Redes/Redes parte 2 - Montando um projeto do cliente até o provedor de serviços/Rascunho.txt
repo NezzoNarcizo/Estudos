@@ -1,0 +1,137 @@
+ARP - Address Resolution Protocol
+ICMP - Internet Control Message Protocol
+PING - Packet Internet Network Grouper
+
+
+- É importante seguimentar a rede para evitar o alto volume de protocolos broadcast que podem circular uma rede.
+
+- No caso da tecnologia VOIP (Voz sobre Protocolo IP) a conversa tem que ser em tempo real (Obviamente), por isso em uma rede ela tem prioridade no tráfego.
+
+- Configurando Switch Cisco
+
+    Modo de configuração > enable
+
+    Configurar > configure terminal
+    
+    Mostrar configurações de VLAN > show vlan brief
+        Obs: Não criar VLAN's com números reservados.
+    
+    Criar VLAN >vlan ?
+                vlan "número que quer para vlan"
+                name "nome da vlan"
+
+    Configurando interface > configure terminal
+                            > interface fastEthernet 0/1
+                            > switchport mode access
+                            > switchport access vlan "número da vlan"
+
+
+PORTAS TRUNK (Trabalhando com mais de uma VLAN):
+
+    - Mesmo depois de seguimentar entre vlans, se colocarmos os computadores em outros switchs, mesmo que conectados, os computadores da mesma vlan não conseguirão se conectar.
+        Temos que definir a porta na qual os switchs estão conectados como 'TRUNK', após isso os computadores conseguirão se comunicar, porém entre VLANs diferentes ainda não.
+
+        Definindo porta TRUNK:
+
+            > configure terminal
+            > interface fastEthernet 0/3
+            > switchport mode trunk
+
+
+COMUNICAÇÃO ENTRE VLANS:
+
+    1º - Ligar a porta do roteador.
+    2º - Criação dos pools DHCP.
+    3º - Criação de sub-interface. Isto é necessário quando temos apenas uma interface levando tráfego de dados para dois Switchs.
+
+     Para ligar o roteador:
+
+        >configure terminal
+        >interface GigabittEthernet 0/0
+        >no shutdown
+
+    
+    Definindo pool DHCP para uma VLAN:
+
+        >ip dhcp pool "nome vlan"
+        >network 192.168.20.0 255.255.255.0
+
+
+    Configurando sub-interface:
+
+        > interface GigabittEthernet 0/0.1 // '.1' defini a sub-interface
+        > encapsulation dot1Q 2 // dot1Q protocolo de encapsulação
+        > ip adress 192.168.10.1 255.255.255.0// Endereço IP que esteja dentro da rede 192.168.10.0, pois foi dentro da rede 192.168.10.X que decidimos colocar os micros desta 
+                                                    VLAN, configurar máscara também.
+
+    
+    Ver todas as configurações ativas do dispositivo:
+
+        > enable
+        > show running-config
+
+    - Para que nossos Switchs se comuniquem com nosso roteador, precisamos configurar sua porta de saída para o roteador como 'TRUNK'.
+
+    Definindo DHCP para as VLANS (Gateway):
+
+        >ip dhcp pool VLAN2
+        >default-router 192.168.10.1
+
+        >ip dhcp pool VLAN3
+        >default-router 192.168.20.1
+
+        - Os comandos acima "dizem" que quando o roteador for entregar os IPs das máquinas (que estão em DHCP) também deverá entregar o default-router (gateway) que permite a 
+            comunicação entre VLAN's.
+
+Questões Aula 01:
+
+    1 - Qual seria a funcionalidade das Vlans?
+
+        R: As Vlans são usadas para segmentação de rede e priorização de tráfego.
+
+        As Vlans (Virtual Lans) são usadas para segmentação de redes e priorização de tráfego. Hoje em dia as redes corporativas trafegam diferentes tipos de dados em suas redes, 
+        como por exemplo, podemos ter tráfego de dados, vídeo e voz e acaba sendo necessário lidar com esses diferentes tipos de tráfego de uma maneira a priorizar um sobre o 
+        outro.
+
+        Para maiores detalhes sobre essa questão de priorização de tráfego (Qualidade de Serviço - QoS), segue link em inglês da documentação da Cisco: 
+            http://www.cisco.com/c/en/us/td/docs/ios/12_2sb/feature/guide/vlntgqos.html
+
+    
+    2 - O que seriam portas Trunk?
+
+        R: Portas Trunk são portas usadas para o transporte de múltiplas Vlans
+
+    
+    3 - Porque foi necessária a criação de sub-interfaces?
+
+        R: A criação de sub-interfaces foi necessária para comunicação entre a Vlan de vendas e a Vlan de finanças.
+
+        Isso ocorre porque precisamos realizar a comunicação entre a Vlan de vendas e a Vlan de finanças. Uma vez que possuímos duas Vlans, uma estará isolada da outra, como se 
+        fossem duas redes distintas, para realizar a comunicação entre elas é necessário de um equipamento capaz de fazer esse roteamento.
+
+        Isso é obtido com equipamentos Switches Layer 3 ou no nosso caso através da criação de sub-interfaces no roteador. Essa configuração realizada no roteador é conhecida como
+        Router on a Stick.
+
+
+Aula 02 - Spanning Tree Protocol (STP) -------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ - Criando Redundância
+
+    Importante para prevenir incidentes criar redundâncias na conexão, para caso algum cabo solte, quebre, ou mesmo um equipamento seja danificado, nenhum dos setores fiquem 
+    sem conexão.
+
+    No nosso exemplo incluímos mais um Switch, e deixamos ele entre a conexão dos dois outros switchs de cada setor e o roteador. Depois definimos as portas da conexão como TRUNK.
+    Além de criar neste terceiro Switch as outras VLANs dos outros dois Switches.
+
+    Isso garante um "link reserva".
+
+    Porém, após montar toda esta estrutura, em uma das portas de um Switch não tinha comunicação. Veremos o que aconteceu em seguida.
+
+
+Questões aula 02:
+
+    1 - 
+
+
+
