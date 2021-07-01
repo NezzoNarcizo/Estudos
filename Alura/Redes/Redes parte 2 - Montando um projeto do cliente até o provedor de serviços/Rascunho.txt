@@ -116,22 +116,60 @@ Questões Aula 01:
 Aula 02 - Spanning Tree Protocol (STP) -------------------------------------------------------------------------------------------------------------------------------------------
 
 
- - Criando Redundância
+    - Criando Redundância
 
-    Importante para prevenir incidentes criar redundâncias na conexão, para caso algum cabo solte, quebre, ou mesmo um equipamento seja danificado, nenhum dos setores fiquem 
-    sem conexão.
+        Importante para prevenir incidentes criar redundâncias na conexão, para caso algum cabo solte, quebre, ou mesmo um equipamento seja danificado, nenhum dos setores fiquem 
+        sem conexão.
 
-    No nosso exemplo incluímos mais um Switch, e deixamos ele entre a conexão dos dois outros switchs de cada setor e o roteador. Depois definimos as portas da conexão como TRUNK.
-    Além de criar neste terceiro Switch as outras VLANs dos outros dois Switches.
+        No nosso exemplo incluímos mais um Switch, e deixamos ele entre a conexão dos dois outros switchs de cada setor e o roteador. Depois definimos as portas da conexão como TRUNK.
+        Além de criar neste terceiro Switch as outras VLANs dos outros dois Switches.
 
-    Isso garante um "link reserva".
+        Isso garante um "link reserva".
 
-    Porém, após montar toda esta estrutura, em uma das portas de um Switch não tinha comunicação. Veremos o que aconteceu em seguida.
+        Porém, após montar toda esta estrutura, em uma das portas de um Switch não tinha comunicação. Veremos o que aconteceu em seguida.
+
+
+    - Importância do STP
+
+        Na etapa anterior conseguimos configurar o terceiro Switch, que proporcionou uma redundância em nossa rede. Agora temos uma certa segurança, caso um dos links caia.
+        Porém agora, com dois links funcionando, entre um ponto A e um ponto B, corremos o risco de criar um looping no envio de pacotes, como o ARP, por exemplo.
+
+        Como o Switch encaminha a informação que acabou de chegar para todas as portas menos por aquela que ele recebeu, se ele receber a mesma informação em duas portas, esta
+        informação ficará em looping, pois a primeira porta que recebeu a informação receberá a mesma informação da segunda.
+
+        O pacote enviado deixa de existir após totalizar os ciclos (TTL - Time to live), problema que o pacote ping é interpretado apenas por roteadores e não pelo Switch, então
+        teoricamente o pacote ficará circulando entre os Switchs "eternamente".
+
+        Para resolver este problema temos o STP (Spanning Tree Protocol) que teoricamente "derruba uma árvore" em um dos links, por exemplo, o de backup. Desta forma, as
+        informações só serão passadas pelo link principal. Caso haja um problema com o link primário, o STP removerá esta "árvore", fazendo com que o link de bakup fique disponível
+        novamente, atuando no lugar do primário.
 
 
 Questões aula 02:
 
-    1 - 
+    1 - Qual seria o equipamento que utiliza o STP para evitar a ocorrência de loops na rede?
+
+        R: Switches
+
+        Os Switches que utilizam o protocolo STP para deixar uma de suas portas bloqueadas na ocorrência de loops na rede.
+
+    
+    2 - Qual a funcionalidade do protocolo STP?
+
+        R: O protocolo STP é utilizado pelos Switches como uma forma de prevenção de que loops aconteçam.
+
+
+    3 - Qual endereço MAC o Switch interpretaria como sendo um endereço broadcast?
+
+        R: FF-FF-FF-FF-FF-FF
+
+        O endereço FF-FF-FF-FF-FF-FF será interpretado como sendo um endereço broadcast e será passado para todas as portas do Switch com exceção da porta a qual enviou essa 
+        informação
+
+
+
+
+
 
 
 
