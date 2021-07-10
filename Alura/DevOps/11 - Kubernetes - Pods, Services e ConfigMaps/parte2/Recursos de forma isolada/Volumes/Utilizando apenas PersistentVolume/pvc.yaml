@@ -1,0 +1,18 @@
+# Exemplo de PersistentVolumeClaim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-1
+spec: # Aqui o bind com o PV não é feito através de labels, mas sim, igualdade nas especificações. Portanto, devemos deixar os valores idênticos ao YAML do PV...
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: standard
+  # Obs: Temos algumas mudanças nas tags, pois aqui nesta declaração das especificações do PVC, temos algumas requisições/demandas de determinados recursos (CLAIM, em inglês)
+
+  # O PV (PersistentVolume) é o serviço que persiste os dados no disco na cloud, é um recurso independente do POD responsável também
+  # por abstrair como o cloud provider armazena os dados e o PVC (PersistentVolumeClaim) é o serviço que o
+  # POD utiliza para se comunicar com o PV, serve como "Passaporte"...
+  

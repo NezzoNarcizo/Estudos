@@ -1,0 +1,795 @@
+Aula 01: Conhecendo ReplicaSets e Deployments -------
+
+    Conhecendo ReplicaSets:
+
+        Já vimos que o Kubernetes consegue deinifir onde um Pod vai ser executado através do 'Scheduler'. Ele também cria um novo Pod do zero, caso o principal pare, um Pod
+        iêntico, mas não o mesmo.
+
+        Isso porque os Pods são efêmeros, então, eles devem estar prontos para serem substituídos por questão de falha ou de atualização, sem causar grande impacto na nossa 
+        aplicação, como um todo.
+
+        Mas, como o Kubernetes vai conseguir fazer isso? Para isso, temos recursos, como nós já vimos. E esses dois recursos vão nos ajudar a resolver este tipo de problema: 
+        os 'ReplicaSets' e os 'Deployments'.
+
+        Criamos um arquivo para de ReplicaSet para o portal-noticias...
+
+            portal-noticias-replicaset.yaml
+
+            apiVersion: apps/v1
+            kind: ReplicaSet
+            metadata:
+            name: portal-noticias-replicaset
+                spec:
+                    template:
+                        metadata:
+                            name: portal-noticias
+                            labels:
+                                app: portal-noticias
+                        spec:
+                            containers:
+                                - name: portal-noticias-container
+                                image: aluracursos/portal-noticias:1
+                                ports:
+                                    - containerPort: 80
+                                envFrom:
+                                    - configMapRef:
+                                        name: portal-configmap
+                    replicas: 3
+                    selector:
+                        matchLabels:
+                            app: portal-noticias
+
+        
+        Se deletarmos um Pod, por si só não subirá nenhum novo, mas agora como nosso portal-noticias-replicaset, teremos uma divergência quando um Pod for
+        deletado, pois ali em réplicas estamos explicitando nosso número de réplicas do Pod desejadas, sendo assim o número de réplicas desejadas e ativas
+        serão diferentes. Quando acontecer isso o recurso ReplicaSet irá igualar a quantidade de pods ativos com o que desejamos.
+
+        Obs: Se não definirmos nenhum número ali, ele vai ser 1 por padrão.
+
+        Mesmo definindo todas as características do nosso Pod ali, ainda temos que dizer para o 'Kubernetes' que template o 'ReplicaSet' deve gerenciar, para
+        isso, utilizaremos um 'Selector' com uma 'tag' chamada 'matchLabels', quais recursos que tem esta 'Label'.
+
+        Obs: Assim como já vimos antes ele vai verificar a label dos recursos, como nosso recurso 'portal-noticias' já tem a label:
+
+            app: portal-noticias
+
+            ...já está tudo ok.
+
+        Se executarmos um 'kubectl get pods' veremos que agora temos 3 réplicas do recurso, mudando somente o identificador no final...
+
+            NAME                               READY   STATUS    RESTARTS   AGE
+            db-noticias                        1/1     Running   0          155m
+            portal-noticias-replicaset-bnq64   1/1     Running   0          154m
+            portal-noticias-replicaset-hpnlf   1/1     Running   0          154m
+            portal-noticias-replicaset-pbqf7   1/1     Running   0          154m
+            sistema-noticias                   1/1     Running   0          154m
+        
+        Todas as réplicas utilizaram as mesmas variáveis, são idênticas.
+
+        Se quiser testar podemos abrir dois terminais, em um deles executamos o comando:
+
+            $ kubectl get rs ou $ kubectl get replicasets
+
+            Utilizando o flag --watch para que assistamos o que acontece...
+
+        No outro terminal podemos deletar um dos pods com '$ kubectl delete pod portal-noticias-replicaset-bnq64'.
+        Se olharmos os detalhes do que aconteceu...
+
+            NAME                         DESIRED   CURRENT   READY   AGE
+            portal-noticias-replicaset   3         3         3       160m
+            portal-noticias-replicaset   3         2         2       160m
+            portal-noticias-replicaset   3         3         2       160m
+            portal-noticias-replicaset   3         3         3       160m
+        
+        Num primeiro momento estava tudo ok, entre réplicas desejadas, que existiam e não estavam rodando e, por fim, as prontas. Logo em seguida perdemos
+        uma réplica, o que fez com que o saldo das que existiam e prontas decaísse em 1. Depois o recurso ReplicaSet criou um novo pod e o deixou pronto, em
+        execução.
+
+        Ao executarmos mais uma vez o 'kubectl get pods', veremos que foi criado um novo pod com o identificador diferente 'portal-noticias-replicaset-9mvkd'.
+
+        Agora temos um load balancer praticamente funcionando da forma que tem que ser, replicas de um mesmo pod que são acessadas por uma mesma chave,
+        'portal-noticias', e tendo seu trafego alternado pelo servidor web, neste caso, é claro, que é o 'nginx'.
+
+    
+    Conhecendo Deployments:
+
+        Nós vimos que um ReplicaSet nada mais é do que esse conjunto de réplicas que permite a criação, de maneira automática, em caso de falhas de um Pod, 
+        dentro de um cluster gerenciado por um ReplicaSet.
+
+        Um Deployment nada mais é do que uma camada acima de um ReplicaSet. Então, quando nós definimos um Deployment, nós estamos, automaticamente, 
+        definindo um ReplicaSet, sem nenhum mistério.
+
+        Para demonstrar criamos um novo arquivo chamado 'nginx-deployment.yaml' com o seguinte conteúdo...
+
+            apiVersion: apps/v1
+            kind: Deployment
+            metadata:
+                name: nginx-deployment
+            spec:
+                replicas: 3
+                template:
+                    metadata:
+                        name: nginx-pod
+                        labels:
+                            app: nginx-pod
+                    spec:
+                        containers:
+                            - name: nginx-container
+                              image: nginx:stable
+                              ports:
+                                - containerPort: 80
+                selector:
+                    matchLabels:
+                        app: nginx-pod
+
+            Ele é bem parecido com o ReplicaSet, com excessão do 'kind' que agora é 'deployment'. O 'apiVersion' também muda.
+
+        Para aplicá-lo, basta realizar o mesmo comando que viemos utilizando:
+
+            $ kubectl apply -f nginx-deployment.yaml
+
+            Para verificar os novos pods criados:
+
+                $ kubectl get pods
+
+                NAME                                READY   STATUS    RESTARTS   AGE
+                db-noticias                         1/1     Running   0          3h18m
+                nginx-deployment-58d6df6b6b-lkkfm   1/1     Running   0          22m
+                nginx-deployment-58d6df6b6b-t4wz8   1/1     Running   0          22m
+                nginx-deployment-58d6df6b6b-v62zz   1/1     Running   0          22m
+                portal-noticias-replicaset-9mvkd    1/1     Running   0          36m
+                portal-noticias-replicaset-hpnlf    1/1     Running   0          3h17m
+                portal-noticias-replicaset-pbqf7    1/1     Running   0          3h17m
+                sistema-noticias                    1/1     Running   0          3h17m
+
+            Para verificar que criamos mais um ReplicaSet com este nosso deployment...
+
+                $ kubectl get rs
+
+                NAME                          DESIRED   CURRENT   READY   AGE
+                nginx-deployment-58d6df6b6b   3         3         3       23m
+                portal-noticias-replicaset    3         3         3       3h18m
+
+            Ou seja, nosso 'Deployment' nada mais é que mais uma camada acima do 'ReplicaSet'
+
+            Para ver isso podemos realizar um '$ kubectl get deployments'
+
+                NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+                nginx-deployment   3/3     3            3           25m
+
+        
+            O que vai mudar na prática agora? A grande vantagem do uso de Deployments é que, assim como temos um git, por exemplo, para o nosso controle 
+            de versionamento de código, nós temos os Deployments em Kubernetes, que permitem o nosso controle de versionamento das nossas imagens e Pods, 
+            olha que legal.
+
+            Agora com o comando 'kubectl rollout history deployment nginx-deployment' vemos nossas revisões.
+
+            Se mudarmos da versão 'stable' para 'latest' no código e executarmos o comando:
+
+                $ kubectl apply -f nginx-deployment.yaml --record
+
+        Se utilizarmos o comando:
+
+            $ kubectl rollout history deployment nginx-deployment
+
+            Veremos a label ou descrição do que ele executou...
+
+                REVISION  CHANGE-CAUSE
+                1         Versão stable dos nossos pods nginx
+                2         kubectl apply --filename=nginx-deployment.yaml --record=true
+
+            Mas queremos deixar a descrição da revisão 2 tão clara como está a 1.
+            Então utilizamos o comando:
+
+                $ kubectl annotate deployment nginx-deployment kubernetes.io/change-cause=""
+
+                E colocamos entre "" qual descrição queremos para esta última revisão de 'deploy'...
+
+            $ kubectl annotate deployment nginx-deployment kubernetes.io/change-cause="Versão latest dos nossos pods nginx"
+
+            Utilizamos mais uma vez o comando:
+
+                $ kubectl rollout history deployment nginx-deployment
+
+                Saída:
+
+                deployment.apps/nginx-deployment 
+                REVISION  CHANGE-CAUSE
+                1         Versão stable dos nossos pods nginx
+                2         Versão latest dos nossos pods nginx
+
+        Mais uma vez mudei no arquivo e voltei para a versão stable...
+
+            $ kubectl rollout history deployment nginx-deployment
+
+            deployment.apps/nginx-deployment 
+            REVISION  CHANGE-CAUSE
+            2         Versão latest dos nossos pods nginx
+            3         Voltando para a versão stable
+
+        Para verificar que realmente voltou para a versão stable podemos realizar um....
+
+            $ kubectl describe pod nginx-deployment-58d6df6b6b-58dx4 
+            
+            Poderemos ver:
+
+                Normal  Pulled     2m42s  kubelet            Container image "nginx:stable" already present on machine
+
+        Podemos fazer roolback do nosso deployment, voltando para a versão latest com o comando...
+
+            $ kubectl rollout undo deployment "nome do deployment" - que no nosso caso é 'nginx-deployment'
+        
+            deployment.apps/nginx-deployment 
+            REVISION  CHANGE-CAUSE
+            3         Voltando para a versão stable
+            4         Versão latest dos nossos pods nginx
+
+            Poderíamos ter específicado a revisão para a qual queriamos voltar com a flag --to-revision=2
+
+            $ kubectl rollout undo deployment "nome do deployment" --to-revision=2
+
+        Se utilizarmos os comandos 'kubectl get pods' e depois 'kubectl describe pod 'nome do pod'' poderemos ver que voltamos para a versão latest.
+        
+        Então, no fim das contas, a boa prática, o mais comum que vocês irão ver quando vocês forem criar Pods é criar eles através de Deployments, que eles 
+        já vão permitir todo esse controle de versionamento e também os benefícios de um ReplicaSet.
+
+        Nada impede de criarmos manualmente, como viemos fazendo com Pods e ReplicaSets, mas, o mais comum, a boa prática, é fazer a criação através de 
+        Deployments, por conta desses benefícios de controle de versionamento e de estabilidade, disponibilidade da nossa aplicação.
+
+
+    Aplicando Deployments ao projeto:
+
+        Vantagens que podemos citar em criar deployments para nossos POD's, seriam, a questão do reinício automático em caso de falhas e também teremos
+        a questão do controle de versionamento, para que tudo fique pradonizado sem nenhum problema, utilizando os melhores recursos possíveis para o nosso
+        momento.
+
+        Vamos aplicar ao projeto todo os deployments e deletar os deployments de teste que fizemos na última aula:
+
+        Vamos ver os deployments que temos ativos no momento:
+
+            $ kubectl get pods
+
+        Para aplicar este conceito de deployment ao resto do projeto, primeiro deletamos os pods 'db-noticias' e 'sistema-noticias' com o comando...
+
+            $ kubectl delete deployment nginx-deployment
+
+            Obs: Podemos deletar utilizando o arquivo também...
+
+            $ kubectl delete -f portal-noticias-replicaset.yaml
+
+            Ctrl + L -> Para limpar o terminal...
+
+        É muito simples mudar do ReplicaSet para o Deployment...A seguir temos o arquivo de ReplicaSet que criamos...
+
+
+        apiVersion: apps/v1
+        kind: ReplicaSet
+        metadata:
+            name: portal-noticias-replicaset
+        spec:
+            template:
+                metadata:
+                    name: portal-noticias
+                    labels:
+                        app: portal-noticias
+                    spec:
+                        containers:
+                            - name: portal-noticias-container
+                              image: aluracursos/portal-noticias:1
+                              ports:
+                                - containerPort: 80
+                              envFrom:
+                                configMapRef:
+                                  name: portal-configmap
+            replicas: 3
+            selector:
+                matchLabels:
+                    app: portal-noticias
+
+
+        Vamos pegar este conteúdo e colocar dentro de um novo arquivo chamado 'portal-noticias-deployment.yaml'...
+        Primeiro trocamos a declaração do 'kind' para 'Deployment' ao invés de deixarmos 'ReplicaSet', assim como no name...
+
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+            name: portal-noticias-deployment
+
+        Simples assim!
+
+        Agora basta utilizarmos o comando:
+
+            $ kubectl apply -f portal-noticias-deployment
+
+            E pronto! Ele foi criado...
+
+        Para verificarmos a nossa revisão veremos...
+
+            deployment.apps/portal-noticias-deployment 
+            REVISION  CHANGE-CAUSE
+            1         <none>
+
+        Para adicionarmos uma anotação à nossa revisão, realizamos o comando com a seguinte mensagem de exemplo...
+
+            $ kubectl annotate deployment portal-noticias-deployment kubernetes.io/change-cause "Criando portal de notícias na versão 1 dia 09/07/2021"
+
+        Se voltarmos o nosso navegador tudo vai estar funcionando corretamente...
+
+            localhost:30000 o portal-noticias
+
+        Vamos fazer isso com o sistema-noticias também e com o db-noticias...
+
+        sistema-noticias...
+
+        apiVersion: v1
+        kind: Pod
+        metadata:
+          name: sistema-noticias
+          labels:
+            app: sistema-noticias
+        spec:
+          containers:
+            - name: sistema-noticias-container
+              image: aluracursos/sistema-noticias:1
+              ports:
+                - containerPort: 80
+              envFrom:
+                - configMapRef:
+                    name: sistema-configmap
+
+        Para transforma-lo em Deployment vamos fazer o caminho direto, sem antes criar o 'ReplicaSet', pois para o banco de dados e para o sistema noticias
+        teremos apenas um POD.
+
+        apiVersion: v1
+        kind: Deployment # Trocamos o kind para Deployment
+        metadata:
+          name: sistema-noticias-deployment # o Metadata também acrescentamos o indicador que é um Deployment e logo abaixo tiramos o Label
+        spec: # Primeiro as especificações do Deployment
+            # replicas: Deixaremos vazio pois queremos apenas um pod do sistema-noticias, e para isso não precisamos explicitar
+            template: # Template que utilizaremos no Deployment
+                metadata:
+                    name: sistema-noticias # O nome do nosso template
+                    labels:
+                        app: sistema-noticias # Chave valor de mapeamento que ele irá utilizar
+                spec: # Agora as especificações do Template, que são basicamente as especificações do POD que este Deployment cuidará
+                    containers:
+                        - name: sistema-noticias-container
+                            image: aluracursos/sistema-noticias:1
+                            ports:
+                                - containerPort: 80
+                            envFrom:
+                                - configMapRef:
+                                    name: sistema-configmap
+            selector: # Esta de fato é uma parte que adicionamos, com matchLabels e a nossa chave e valor
+                matchLabels:
+                    app: sistema-noticias
+
+
+        db-noticias...
+
+        apiVersion: v1
+        kind: Pod
+        metadata:
+          name: db-noticias
+          labels:
+            app: db-noticias
+        spec:
+          containers:
+            - name: db-noticias-container
+              image: aluracursos/mysql-db:1
+              ports:
+                - containerPort: 3306
+              envFrom:
+                - configMapRef:
+                    name: db-configmap
+    
+        Mesmo processo de antes para transforma-lo em Deployment...
+
+        apiVersion: apps/v1
+        kind: Deployment # Mudamos o kind
+        metadata:
+          name: db-noticias-deployment # Mudamos o nome no metadata indicando que agora é um Deployment
+        spec:
+          #replicas: 1 //Como exemplo, não definimos réplicas para fazer o teste se ele vai criar apenas um Pod mesmo
+          template:
+            metadata:
+              name: db-noticias
+              labels:
+                app: db-noticias
+            spec:
+              containers:
+                - name: db-noticias-container
+                  image: aluracursos/mysql-db:1
+                  ports:
+                    - containerPort: 3306
+                  envFrom:
+                    - configMapRef:
+                        name: db-configmap
+          selector: # A última mudança é este selector, onde diremos para o Deployment que ele vai utilizar o db-noticias que já tinhamos criado
+            matchLabels:
+              app: db-noticias
+
+        Deletamos o nossos PODs 'sistema-noticias' e 'db-noticias'
+
+            $ kubectl delete pod db-noticias sistema-noticias
+
+        Agora recriamos ele utilizando o 'Deployment'...
+
+            $ kubectl apply -f sistema-noticias-deployment.yaml
+
+            $ kubectl apply -f db-noticias-deployment.yaml
+
+        Podemos verificar a revisão destes 'Deployments' utilizando novamente...
+
+            $ kubectl rollout history deployment sistema-noticias-deployment
+
+                deployment.apps/sistema-noticias-deployment 
+                REVISION  CHANGE-CAUSE
+                1         Subindo o sistema na versão 1
+
+                Obs: Já tinha coloca o 'CHANGE-CAUSE' outro dia quando estava já fazendo estes exercícios
+
+                Mas caso queira mudar o 'CHANGE-CAUSE' basta utilizar o comando...
+
+                    $ kubectl annotate deployment sistema-noticias-deployments kubernetes.io/change-cause="Uma outra causa"
+
+        E a mesma coisa podemos fazer com o db-noticias-deployment...
+
+            deployment.apps/db-noticias-deployment 
+            REVISION  CHANGE-CAUSE
+            1         Subindo o banco na versão 1
+
+                Obs: Mesmo caso do 'sistema-noticias-deployment' que já havia sido testado por mim anteriormente...
+
+                Para mudar a causa...
+
+                    $ kubectl annotate deployment db-noticias-deployment kubernetes.io/change-cause="Uma outra causa 2 - O retorno"
+
+        E agora, temos todo esse controle, se caso alguma de nossas aplicações parem de funcionar, tudo vai voltar da maneira que estava. O deploymente se encarrega de subir
+        outras réplicas caso o "número de réplicas desejadas" seja maior que o "número de réplicas prontas".
+
+        Porém com todas estas mudanças, principalemente a do Banco de Dados, onde derrubamos seu POD para subi-lo novamente com o Deployment, perdemos toda a informação que 
+        tinhamos salvo durante o curso, todas aquelas notícias que tinhamos postado junto com as imagens...
+
+        Isto acontece porque os PODs são efêmeros eles não tem nenhum dado armazenado neles, porque eles estão prontos para serem armazenados, criados e destruídos.
+
+        A pergunta que fica agora é: Como podemos persistir os dados em caso de falhas? Precisamos de alguma maneira, que, caso um container dentro de um POD reinicie, ou o POD
+        todo reinicie, continuemos tendo acesso às informações que já estavam lá.
+
+        E, para issom vamos começar a ver um conceito novo que vão ser os 'Volumes Persistentes', 'Storage Classes'. Um conteúdo bem vasto sobre toda esssa questão de
+        armazenamento no Kubernetes.
+
+    
+    O que aprendemos nessa aula:
+
+        - A manter pods em execução com ReplicaSets e Deployments através de arquivos declarativos
+        - A fazer o controle de versionamento de Deployments com o kubectl
+        - Como utilizar os comandos kubectl rollout para ver e alterar as versões de Deployments.
+        - Que ReplicaSets são criados automaticamente dentro de um Deployment
+        - Que Pods normalmente são criados através de Deployments, e não individualmente. 
+            (Deployment é Padrão corporativo)
+        
+
+Questões aula 01:
+
+    01 - Qual será o resultado produzido pelo arquivo declarativo abaixo?
+
+        apiVersion: apps/v1
+        kind: ReplicaSet
+        metadata:
+            name: nginx-replicaset
+        spec:
+            template:
+                metadata:
+                    name: nginx-app
+                    labels:
+                        app: nginx-app
+                spec:
+                    containers:
+                        - name: nginx-container
+                          image: nginx:latest
+            replicas: 6
+            selector:
+                matchLabels:
+                    app: nginx-app
+
+
+        R: Ele criará um ReplicaSet que terá 6 réplicas do pod nginx-app.
+
+    
+    02 - Quais das alternativas abaixo contém diferenças entre ReplicaSets e Deployments?
+
+        R: Quando criados, Deployments auxiliam com controle de versionamento e criam um ReplicaSet automaticamente.
+
+    
+    03 - Qual comando podemos utilizar para voltar um Deployment para uma revisão específica?
+
+        R: kubectl rollout undo deployment <nome do deployment> --to-revision=<versão a ser retornada>
+
+
+Aula 02: Persistindo dados com o Kubernetes -------
+
+    Persistindo dados com volumes:
+
+        Primeiro veremos a persistência de dados dentro de containers, depois veremos a persistência de dados dentro dos POD's.
+        Já vimos que o Docker consegue fazer o compartilhamento de dados entre containers, agora veremos como o Kubernetes faz isso.
+
+        Primeiro veremos compartilhamento de dados entre containers que estão dentro do mesmo POD, depois avançaremos.
+
+        Temos 4 recursos do Kubernetes para tratarmos persistência de dados.
+
+            - Volumes
+            - Persistent Volumes
+            - Persistent Volumes Claim
+            - Storage Classes
+
+        Começaremos por 'Volumes', utilizaremos ele para compartilhar dados e arquivos entre containers num mesmo POD.
+
+        No Kubernetes temos a peculiaridade de que se os containers 'morrem' temos nosso volume salvo pelo POD.
+
+        Ou seja, se dos containers que temos dentro de um POD sobrar ainda 1 'vivo', nosso volume e o POD permanecerão a 'salvo'.
+
+        Mas, o que acontece com os nossos dados e arquivos?
+
+        Podemos olhar a documentação do Kubernetes -> https://kubernetes.io/docs/concepts/storage/volumes/ podemos ver todos os detalhes sobre volumes, e já sabemos que 
+        containers e PODs são efêmeros, porém se formos mais a fundo na documentação veremos que o Kubernetes suporta diversos tipos de volumes, por exemplo:
+        'awsElasticBlockStore', 'azureDisk', 'azureFile' etc
+
+        Lista dos tipos de volumes suportados pelo Kubernetes:
+
+            - awsElasticBlockStore
+            - azureDisk
+            - azureFile
+            - cephfs
+            - cinder
+            - configMap
+            - downwardAPI
+            - emptyDir
+            - fc (fibre channel)
+            - flocker (deprecated)
+            - gcePersistentDisk
+            - Regional persistent disks
+            - gitRepo (deprecated)
+            - glusterfs
+            - hostPath
+            - iscsi
+            - local
+            - nfs
+            - persistentVolumeClaim
+            - portworxVolume
+            - projected
+            - quobyte
+            - rbd
+            - scaleIO (deprecated)
+            - secret
+            - storageOS
+            - vsphereVolume
+            - csi
+            - flexVolume
+        
+        Utilizaremos o 'hostPath' para exemplificar a nossa utilização de volumes, vai ser bem semelhante ao tipos de volume que utilizamos no curso de Docker.
+
+        Nós precisamos fazer o bind de um diretório do nosso host para um diretório de dentro do nosso container do nosso Pod.
+
+        Se olharmos na parte da documentação que explica o 'hostPath' (https://kubernetes.io/docs/concepts/storage/volumes/#hostpath), veremos que é exatamente da maneira
+        que já vimos antes, o hostPath monta um caminho ou arquivo do nosso host e monta ele dentro dos containers do POD.
+
+        E equanto o Pod ficar 'vivo', esse volume vai existir.
+
+        Vamos exemplificar criando um arquivo yaml com o tipo Pod para facilitar a explicação, o nome do arquivo será pod-volume.yaml. Funcionaria também se fosse um
+        'ReplicaSet' ou um 'Deployment'.
+
+        Definimos o 'kind' que será 'Pod' e no 'metadata' definimos um 'name' que será 'pod-volume' mesmo.
+
+            apiVersion: v1
+            kind: Pod
+            metadata: 
+                name: pod-volume
+
+        Nas especificações declararemos dois containers, para isso basta duplicar as tags a partir da tag '- name', e escolher seus atributos, como imagem, por exemplo...
+
+            spec:
+            containers:
+                - name: nginx-container
+                  image: nginx:latest
+
+                - name: jenkins-container
+                  image: jenkins:2.60.3-alpine
+
+        Agora falta apenas definirmos qual será o volume que estes containers irão utilizar. Porém como já vimos antes o volume será do Pod na verdade, e não dos containers
+        então temos que ajustar a declaração deste volume ao do POD.
+
+        Criaremos o volume dando um nome pra ele, que será 'primeiro-volume' e definir qual é o tipo. Nós queremos um 'hostPath', sendo assim temos que definir um caminho
+        na nossa máquina local para este volume, o local por mim escolhido foi 
+            '/F/Projetos para Git e Github/Estudos/Alura/DevOps/11 - Kubernetes - Pods, Services e ConfigMaps/parte2/primeiro-volume'
+        Depois basta declararmos que este tipo de volume é um diretório, 'Directory' na linguagem do Kubernetes.
+
+            volumes:
+                - name: primeiro-volume
+                  hostPath: 
+                    path: /F/Projetos para Git e Github/Estudos/Alura/DevOps/11 - Kubernetes - Pods, Services e ConfigMaps/parte2/primeiro-volume
+                    type: Directory
+
+        Definido para o POD qual será e onde ficará o volume, temos que fazer isso para os containers agora...Temos que dizer onde nos containers o POD vai montar o volume
+        'primeiro-volume'.
+
+        Então, dentro da definição de cada um desses containers, nós precisamos colocar a tag 'volmeMounts' e dentro dele basta definir qual é o caminho dentro do nosso
+        container. Pode ser, por exemplo, 'volume-dentro-do-container', e qual é o volume que queremos montar? 'primeiro-volume', então o nome do volume será 'primeiro-volume'...
+
+        - name: nginx-container
+        image: nginx:latest
+        volumeMounts:
+          - mountPath: /volume-dentro-do-container
+            name: primeiro-volume
+      
+      - name: jenkins-container
+        image: jenkins:2.60.3-alpine
+        volumeMounts:
+          - mountPath: /volume-dentro-do-container
+            name: primeiro-volume
+
+        Por fim, se estivermos no Windows utilizando o Docker Desktop, nas configurações, desativar, caso esteja ativada, a utilização do WSL como base. 
+        Depois em resources, basta irmos em 'File Sharing' e adicionar o diretório 'pai' de onde ficarão seus outros diretórios dos volumes, ou declarar o diretório do volume
+        já de cara...No caso deixei um diretório acima para criar outros subdiretórios como volumes.
+
+        Depois de termos feito tudo isso, basta irmos no terminal e digitar...
+
+            $ kubectl apply -f pod-volume.yaml
+
+        Para conferirmos...
+
+            $ kubectl get pods
+
+        Podemos reparar que foi criado um Pod com dois containers dentro.
+
+        Entraremos no modo interativo para que possamos realizar uns testes...
+
+            $ kubectl exec -it pod-volume --container nginx-container -- bash
+
+        Se executarmos o comando 'ls' veremos que o nosso 'volume-dentro-do-container' está lá...
+
+        Podemos criar um arquivo com 'touch arquivo.txt' e verificar na nossa máquina local...
+
+        Entrar no outro container...
+
+            $ kubectl exec -it pod-volume --container jenkins-container -- bash
+        
+        Executar novamente o comando 'ls', verificamos que o arquivo que foi criado no 'nginx-container' está ali também, pois eles compartilham o mesmo volume.
+
+        Podemos criar outro arquivo neste nosso 'jenkins-container' com 'touch outro-arquivo.txt' se verificarmos na nossa máquina local e no 'nginx-container', veremos que
+        temos mais um arquivo criado no mesmo diretório compartilhado.
+
+        Este volume será deletado quando destruirmos o POD, mas os arquivos permanecerão na nossa pasta no computador físico.
+
+        O que não continua é o Volume em si, se nós fizermos a mesma declaração e criarmos de novo o POD e o novo volume, vai estar tudo ali porque os arquivos já existem.
+
+
+    Volumes no Linux:
+
+        Por causa da máquina virtual que utilizamos para acessar o Minikube, não basta criarmos o diretório do 'hostPath' na nossa máquina local, na hora de subir o POD será
+        apresentado um erro. Isso porque não máquina o diretório não existe, teríamos que acessar o Minikube e criar o diretório que declaramos no yaml.
+
+        Mas isso é fácil de resolver, na declaração do tipo de volume dentro do yaml do POD, basta que coloquemos 'DirectoryOrCreate' porque assim se o diretório não existir
+        ele será criado...
+
+        volumes:
+        - name: segundo-volume
+          hostPath:
+            path: /home/segundo-volume
+                  type: DirectoryOrCreate
+
+
+    Validando a definição de Volumes:
+
+        Esta parte foi colocada em três YAMLs de exemplo na pasta do curso...
+
+        - Para saber mais: Mais informações sobre PersistentVolumes
+
+            Como dito, existem diversos tipos de plugins de volumes que podem ser utilizados pelos Cloud Providers, cada um com seu respectivo modo de acesso e nomes. 
+            Por exemplo, o GCEPersistentDisk que usamos nos vídeos anteriores, permite apenas a criação de um PersistentVolume em modo de ReadWriteOnce ou ReadOnlyMany. 
+            Diversas outras informações sobre plugins de volumes e modos de acesso podem ser conferidas nesse link 
+            (https://kubernetes.io/docs/concepts/storage/persistent-volumes/) da documentação oficial.
+        
+
+    O que aprendemos nessa aula:
+
+        - Como criar Volumes através de arquivos de definição
+        - Volumes persistem dados de containers dentro de pods e permitem o compartilhamento de arquivo dentro dos pods
+        - Que Volumes possuem ciclo de vida independente dos containers, porém, vinculados aos pods
+        - Como criar PersistentVolumes através de arquivos de definição
+        - PersistentVolumes persistem dados de pods como um todo
+        - PersistentVolumes possuem ciclo de vida independente de quaisquer outros recursos, inclusive pods
+        - Como criar e para que servem os PersistentVolumeClaims
+        - Que precisamos de um PersistentVolumeClaim para acessar um PersistentVolume
+
+
+Questões aula 02:
+
+    01 - Quais são as principais características de um Volume?
+
+        R: Volumes possuem ciclo de vida dependentes de Pods e independentes de containers.
+
+    
+    02 - Qual será o resultado produzido pelo arquivo de definição abaixo?
+
+        apiVersion: v1
+        kind: Pod
+        metadata:
+            name: um-pod-qualquer
+        spec:
+            containers:
+                - name: nginx-container
+                  image: nginx:latest
+                  volumeMounts:
+                    - mountPath: /pasta-de-arquivos #Local no container onde será criado o diretório
+                      name: volume-pod #Tag das especificações do volume que será criado no container
+            volumes:
+                - name: volume-pod #Especificações do volume que será criado nos containers que declararam esta tag
+                  hostPath:
+                    path: /C/Users/Daniel/Desktop/uma-pasta-no-host
+                    type: Directory
+
+        R: Caso a pasta /C/Users/Daniel/Desktop/uma-pasta-no-host exista no host, um volume chamado volume-pod será criado e montado na pasta pasta-de-arquivos dentro do 
+            container do Pod.
+
+    
+    3 - Quais das alternativas abaixo são verdadeiras sobre PersistentVolumes?
+
+        Selecione 2 alternativas
+
+        R1: PersistentVolumes possuem ciclos de vida independentes de Pods.
+
+        R2: É necessário um PersistentVolumeClaim para acessar um PersistentVolume.
+
+
+Aula 03: Storage Classes e StatefulSets -------
+
+    Utilizando Storage Classes:
+
+        https://kubernetes.io/docs/concepts/storage/storage-classes/
+
+        O que um StorageClass muda efetivamente? Ele muda no sentido de que agora nós vamos conseguir criar Volumes, PersistentVolumes, no caso, e discos dinamicamente.
+        Ou seja, o Disco na Cloud e o recurso que abstraía a forma como os dados eram persistidos, serão criados e destruídos de forma dinâmica, depois que fizermos o bind
+        entre o nosso POD e o PVC.
+
+        Este foi o trecho de código que pegamos da documentação para construir nosso StorageClass
+        Obs: Na documentação, pelo que pude notar, temos exemplos de praticamente todos os tipos de StorageClasses suportados pelo Kubernetes.
+
+        Utilizamos no exemplo desta aula o GCEPersistentDisk que é o StorageClasss da Google Cloud Provider.
+
+        apiVersion: storage.k8s.io/v1
+        kind: StorageClass
+        metadata:
+          name: slow
+        provisioner: kubernetes.io/gce-pd
+        parameters:
+          type: pd-standard
+          fstype: ext4
+          replication-type: none
+        
+        Não foi mudado absolutamente nada! Tivemos apenas que construir o PersistentVolumeClaim e o YAML do POD para que pudessem ser utilizados na núvem.
+
+        Depois de rodar os 3 arquivos (sc.yaml, pvc-sc.yaml e pod-sc.yaml), dentro da GCP com o velho comando 'kubectl apply -f "arquivo yaml"', se quiser podemos colocar a
+        tag '--watch' para assistir a criação.
+
+        Depois foi feito o mesmo procedimento para verificar o compartilhamento de arquivos...
+
+            Comandos: 'kubectl exec -it "pod" -- bash', 'ls' etc
+
+    
+    Conhecendo StatefulSets:
+
+        
+
+
+Questões aula 03:
+
+    01 - Qual das afirmativas abaixo lista uma vantagem da utilização de Storage Classes?
+
+        R: Storage Classes fornecem dinamismo para criação de PersistentVolumes conforme demanda.
+
+        
+
+
+
+

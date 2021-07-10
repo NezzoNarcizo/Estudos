@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-2 # Mudamos bem pouco, inclusive o nome neste PVC, para conferir que as mudanças no YAML do POD são bem pequenas
+spec: # Usando a mesmas especificações de antes
+  accessModes:
+    - ReadWriteOnce # Leitura e escrita "Apenas um por vez"
+  resources:
+    requests:
+      storage: 10Gi # Queremos a mesma quantidade de espaço, a diferença é que agora será criado dinamicamente
+  storageClassName: slow # StorageClass Name que definimos no nosso sc.yaml, ou seja, estamos aqui definindo qual o StorageClass iremos utilizar

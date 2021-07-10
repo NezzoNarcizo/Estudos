@@ -1,0 +1,15 @@
+# Exemplo de volume caso queira utilizar GCP (Persistência com PersistentVolumes)
+# A ligação é a seguinte: 'DISCO NA NUVEM' -> 'PV' -> 'PVC' -> 'POD'
+# PersistentVolume existe independente de um PersistentVolumeClaim
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-1 # Nome do persistent Volume
+spec:
+  capacity:
+    storage: 10Gi # Capacidade
+  accessModes:
+    - ReadWriteOnce # Apenas 1 escreve pro vez
+  gcePersistentDisk:
+    pdName: pv-disk # Nome do disco criado na núvem
+  storageClassName: standard

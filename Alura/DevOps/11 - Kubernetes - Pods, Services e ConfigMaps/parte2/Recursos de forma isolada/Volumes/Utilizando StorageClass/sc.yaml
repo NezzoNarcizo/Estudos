@@ -1,0 +1,13 @@
+
+# Exemplo de Storage Classes - GCP
+apiVersion: storage.k8s.io/v1 # Versão da API
+kind: StorageClass
+metadata:
+  name: slow # Nome do StorageClass
+provisioner: kubernetes.io/gce-pd # Provedor específico da GCP, cada Cloud Provider possúi o seu
+parameters:
+  type: pd-standard # Aqui é o Persistent Disk, poderíamos criar um pd-ssd se quiséssemos, aqui utilizamos o padrão da documentação
+  fstype: ext4 # File System que iremos utilizar
+  replication-type: none # Poderíamos ter apagado esta parte, mas preferi explicitar que por padrão é none na definição de replicação
+
+  # Antigamente a Zona também era definida, mas atualmente é deprecated

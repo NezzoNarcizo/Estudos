@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-sc
+spec: # As especificações para o Pod que utilizará o pvc-sc e o StorageClass são as mesmas de quando estivamos utilizando o PersistentVolume, mudando apenas os valores
+  containers:
+    - name: nginx-container
+      image: nginx:latest
+      volumeMounts:
+        - mountPath: /volume-dentro-do-container
+          name: primeiro-pv
+  volumes:
+    - name: primeiro-pv
+      persistentVolumeClaim:
+        claimName: pvc-2 # Única mudança nas especificações. Agora estamos utilizando o PVC-2 que faz comunicação com o nosso StorageClass (slow)
